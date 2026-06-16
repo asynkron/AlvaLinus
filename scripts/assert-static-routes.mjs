@@ -3,13 +3,12 @@ import path from "node:path";
 
 const expectedRoutes = [
   "/tjanster/",
+  "/om-oss/",
   "/stensattning/",
   "/markarbete/",
   "/gravjobb/",
   "/dranering/",
-  "/pool/",
   "/tradgardsplanering/",
-  "/referenser/",
   "/kontakt/",
 ];
 

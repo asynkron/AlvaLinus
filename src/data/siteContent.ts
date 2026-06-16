@@ -6,13 +6,12 @@ export const siteContent = {
     source: "https://www.erikssonsvard.se/page-sitemap.xml",
     pageCount: 58,
     routeDecision:
-      "Sitemappen visar många publika undersidor. Den här statiska repliken gör de begärda huvudsidorna till primär struktur: Hem, Tjänster, Dränering, Pool, Referensobjekt och Kontakt.",
+      "Den publika strukturen är uppdaterad efter ägarens önskemål: Hem, Tjänster, Om oss, Dränering och Kontakt är primära vägar. Pool och referensjobb är borttagna som egna ytor.",
     primaryRoutes: [
       { label: "Hem", href: "/" },
       { label: "Tjänster", href: "/tjanster/" },
+      { label: "Om oss", href: "/om-oss/" },
       { label: "Dränering", href: "/dranering/" },
-      { label: "Pool", href: "/pool/" },
-      { label: "Referensobjekt", href: "/referenser/" },
       { label: "Kontakt", href: "/kontakt/" },
     ],
   },
@@ -22,7 +21,7 @@ export const siteContent = {
       kind: "home",
       label: "Hem",
       href: "/",
-      summary: "Startsida med översikt över tjänster, process, referensobjekt och offertkontakt.",
+      summary: "Startsida med översikt över tjänster, arbetsprocess och offertkontakt.",
     },
     {
       id: "services",
@@ -30,6 +29,14 @@ export const siteContent = {
       label: "Tjänster",
       href: "/tjanster/",
       summary: "Samlad sida för de huvudsakliga mark-, bygg- och anläggningstjänsterna.",
+    },
+    {
+      id: "about",
+      kind: "about",
+      label: "Om oss",
+      href: "/om-oss/",
+      summary:
+        "Läs om Svärd Entreprenads arbetssätt, erfarenhet och ansvar från första spadtag till färdigt resultat.",
     },
     {
       id: "stensattning",
@@ -53,7 +60,7 @@ export const siteContent = {
       sourceId: "gravjobb",
       label: "Grävjobb",
       href: "/gravjobb/",
-      summary: "Egen tjänstesida för maskin- och grävarbeten.",
+      summary: "Egen tjänstesida för maskin- och grävarbeten, inklusive poolgrävning.",
     },
     {
       id: "dranering",
@@ -65,28 +72,12 @@ export const siteContent = {
         "Toppsida för dränering med fuktsäkra markarbeten, schakt, återfyllnad och trygg hantering runt husgrund och mur.",
     },
     {
-      id: "pool",
-      kind: "service",
-      sourceId: "pool",
-      label: "Pool",
-      href: "/pool/",
-      summary:
-        "Toppsida för poolprojekt med markförberedelser, installation, glasfiberpool, thermopool och samordnad utemiljö.",
-    },
-    {
       id: "tradgard",
       kind: "service",
       sourceId: "tradgard",
       label: "Trädgårdsplanering",
       href: "/tradgardsplanering/",
       summary: "Egen tjänstesida för tomt- och trädgårdsplanering.",
-    },
-    {
-      id: "references",
-      kind: "references",
-      label: "Referensobjekt",
-      href: "/referenser/",
-      summary: "Egen sida för referensobjekt från dränering, pool, markarbete och större entreprenaduppdrag.",
     },
     {
       id: "contact",
@@ -100,7 +91,7 @@ export const siteContent = {
     eyebrow: "Mark & anläggning i Örebro",
     title: "Svärd Entreprenad",
     intro:
-      "En statisk AlvaLinus-replik av den inventerade entreprenadytan: tjänster, arbetsprocess, trygghetssignaler, referenser, samarbetspartners och offertkontakt med korrekt svensk text.",
+      "Välkommen till Svärd Entreprenad\n\nVi erbjuder professionella mark- och anläggningsarbeten för privatpersoner, företag och fastighetsägare. Med fokus på kvalitet, noggrannhet och pålitlighet levererar vi hållbara lösningar inom schaktning, dränering, VA-arbeten, grundläggning och tomtplanering.\n\nDin trygga partner från första spadtag till färdigt resultat.",
     primaryAction: {
       label: "Våra tjänster",
       href: "/tjanster/",
@@ -110,9 +101,20 @@ export const siteContent = {
       href: "/kontakt/",
     },
     stats: [
-      { value: "58", label: "inventerade sitemap-URL:er" },
-      { value: "9", label: "huvudtjänster på startsidan" },
-      { value: "100%", label: "nöjd-kund-garanti som trust-signal" },
+      { value: "Kvalitet", label: "noggrant utförda markarbeten" },
+      { value: "Trygghet", label: "tydliga överenskommelser och ansvar" },
+      { value: "Hållbart", label: "lösningar som håller över tid" },
+    ],
+  },
+  about: {
+    title: "Om oss",
+    summary:
+      "På Svärd Entreprenad brinner vi för att skapa hållbara och välutförda mark- och anläggningsarbeten.",
+    body: [
+      "På Svärd Entreprenad brinner vi för att skapa hållbara och välutförda mark- och anläggningsarbeten. Med erfarenhet, kompetens och ett stort engagemang hjälper vi privatpersoner, företag och fastighetsägare att genomföra projekt av alla storlekar.",
+      "Vi erbjuder tjänster inom markarbeten, schaktning, dränering, VA-arbeten, grundläggning, tomtplanering, stenläggning och övriga anläggningsarbeten. Oavsett om det handlar om att förbereda marken för ett nybygge, anlägga en uppfart eller genomföra större entreprenader arbetar vi alltid med samma mål – att leverera ett resultat som håller över tid.",
+      "För oss är kvalitet, noggrannhet och pålitlighet självklara delar av varje uppdrag. Vi tror på god kommunikation, tydliga överenskommelser och ett professionellt bemötande genom hela projektet. Genom att kombinera modern utrustning med gedigen yrkeskunskap kan vi erbjuda effektiva lösningar anpassade efter varje kunds behov.",
+      "När du väljer Svärd Entreprenad får du en trygg samarbetspartner som tar ansvar från första spadtag till färdigt resultat.",
     ],
   },
   services: [
@@ -138,10 +140,10 @@ export const siteContent = {
       id: "gravjobb",
       title: "Grävjobb",
       summary:
-        "Maskin- och grävarbeten för husgrunder, avlopp, VA och tomter där rätt förarbete avgör slutresultatet.",
+        "Maskin- och grävarbeten för husgrunder, avlopp, VA, tomter och poolgrävning där rätt förarbete avgör slutresultatet.",
       href: "/gravjobb/",
       sourceHref: "https://www.erikssonsvard.se/gravjobb/",
-      tags: ["Grävning", "Husgrund", "VA"],
+      tags: ["Grävning", "Husgrund", "Poolgrävning"],
     },
     {
       id: "dranering",
@@ -151,15 +153,6 @@ export const siteContent = {
       href: "/dranering/",
       sourceHref: "https://www.erikssonsvard.se/dranering/",
       tags: ["Dränering", "Mur", "Fuktskydd"],
-    },
-    {
-      id: "pool",
-      title: "Pool",
-      summary:
-        "Poolprojekt från markarbete till installation, inklusive glasfiberpool, thermopool och MAGIclassic-spår.",
-      href: "/pool/",
-      sourceHref: "https://www.erikssonsvard.se/pool/",
-      tags: ["Glasfiberpool", "Thermopool", "MAGIclassic"],
     },
     {
       id: "tradgard",
@@ -193,12 +186,12 @@ export const siteContent = {
     {
       title: "Allt inom mark & anläggning",
       summary:
-        "Husgrunder, stensättning, stenmurar, pooler, enskilt avlopp, VA, dräneringar och relaterade markjobb samlas under samma kompetens.",
+        "Husgrunder, stensättning, stenmurar, enskilt avlopp, VA, dräneringar, poolgrävning och relaterade markjobb samlas under samma kompetens.",
     },
     {
-      title: "100% nöjd-kund-garanti",
+      title: "Noggrant utförande",
       summary:
-        "Startsidan lyfter garantin som ett tydligt löfte om att arbetet ska avslutas först när kunden är nöjd.",
+        "Kvalitet, noggrannhet och pålitlighet är självklara delar från första genomgång till färdigt resultat.",
     },
     {
       title: "Mångårig erfarenhet",
@@ -206,48 +199,14 @@ export const siteContent = {
         "Teamen beskrivs som certifierade och erfarna, med bred kompetens som används för att hålla hög standard i varje uppdrag.",
     },
   ],
-  references: [
-    {
-      title: "Boman Svahn ÖBO",
-      category: "Referensobjekt",
-      href: "/referenser/",
-      sourceHref: "https://www.erikssonsvard.se/boman-svahn-obo/",
-    },
-    {
-      title: "Byggpart Örebro",
-      category: "Referensobjekt",
-      href: "/referenser/",
-      sourceHref: "https://www.erikssonsvard.se/byggpart-orebro/",
-    },
-    {
-      title: "Dränering av mur",
-      category: "Dränering",
-      href: "/referenser/",
-      sourceHref: "https://www.erikssonsvard.se/dranering-av-mur-hackgravning/",
-    },
-    {
-      title: "Pool Gällersta Örebro",
-      category: "Pool",
-      href: "/referenser/",
-      sourceHref: "https://www.erikssonsvard.se/pool-gallersta-orebro/",
-    },
-  ],
-  partners: [
-    { name: "UC Brons", kind: "Utmärkelse" },
-    { name: "Benders", kind: "Samarbetspartner" },
-    { name: "Ahlsell", kind: "Samarbetspartner" },
-    { name: "SGC Installatör", kind: "Certifiering" },
-    { name: "NCC", kind: "Partner/referens" },
-    { name: "Wasa Kredit", kind: "Finansiering" },
-  ],
+  partners: [{ name: "Eriksson & Svärd AB", kind: "Samarbetspartner" }],
   contact: {
     title: "Kontakta oss för offert",
-    summary:
-      "Den inventerade startsidan avslutar med en tydlig offertväg. Den här statiska ytan samlar uppgifter för en första förfrågan och lämnar över den via besökarens e-postklient.",
+    summary: "Skicka en förfrågan om ditt projekt så återkommer Svärd Entreprenad med nästa steg.",
     offertLabel: "Boka ett kostnadsfritt besök eller be om offert",
     form: {
       ariaLabel: "Offertförfrågan via e-post",
-      recipientEmail: "kontakt@alvalinus.example",
+      recipientEmail: "kontakt@svardentreprenad.se",
       subject: "Offertförfrågan från alvalinus.se",
       submitLabel: "Skicka offertförfrågan",
       nameField: {
@@ -263,7 +222,7 @@ export const siteContent = {
       serviceField: {
         label: "Tjänst",
         name: "service",
-        options: ["Stensättning", "Markarbete", "Grävjobb", "Dränering", "Pool", "Trädgårdsplanering", "Annat"],
+        options: ["Stensättning", "Markarbete", "Grävjobb", "Dränering", "Trädgårdsplanering", "Annat"],
       },
       messageField: {
         label: "Meddelande",
@@ -273,7 +232,7 @@ export const siteContent = {
       },
     },
     items: [
-      { label: "Kontaktsida", value: "Gå till kontakt", href: "/kontakt/" },
+      { label: "E-post", value: "kontakt@svardentreprenad.se", href: "mailto:kontakt@svardentreprenad.se" },
       { label: "Källa", value: "Eriksson & Svärd", href: "https://www.erikssonsvard.se/kontakt/" },
     ],
   },
