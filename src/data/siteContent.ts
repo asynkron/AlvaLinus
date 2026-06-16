@@ -6,17 +6,95 @@ export const siteContent = {
     source: "https://www.erikssonsvard.se/page-sitemap.xml",
     pageCount: 58,
     routeDecision:
-      "Sitemappen visar många publika undersidor, men den här statiska repliken samlar startsidans navigering, tjänster, referenser och kontaktflöde som en komplett sektionerad landningssida.",
+      "Sitemappen visar många publika undersidor. Den här statiska repliken återskapar flera navigerbara sid-URL:er för startsida, tjänster, referenser och kontakt.",
     primaryRoutes: [
-      { label: "Stensättning", href: "#stensattning" },
-      { label: "Markarbete", href: "#markarbete" },
-      { label: "Grävjobb", href: "#gravjobb" },
-      { label: "Dränering", href: "#dranering" },
-      { label: "Pool", href: "#pool" },
-      { label: "Referensobjekt", href: "#referenser" },
-      { label: "Kontakt", href: "#kontakt" },
+      { label: "Stensättning", href: "/stensattning/" },
+      { label: "Markarbete", href: "/markarbete/" },
+      { label: "Grävjobb", href: "/gravjobb/" },
+      { label: "Dränering", href: "/dranering/" },
+      { label: "Pool", href: "/pool/" },
+      { label: "Referensobjekt", href: "/referenser/" },
+      { label: "Kontakt", href: "/kontakt/" },
     ],
   },
+  routes: [
+    {
+      id: "home",
+      kind: "home",
+      label: "Startsida",
+      href: "/",
+      summary: "Översikt över tjänster, process, referenser och offertkontakt.",
+    },
+    {
+      id: "services",
+      kind: "services",
+      label: "Tjänster",
+      href: "/tjanster/",
+      summary: "Samlad sida för de huvudsakliga mark-, bygg- och anläggningstjänsterna.",
+    },
+    {
+      id: "stensattning",
+      kind: "service",
+      sourceId: "stensattning",
+      label: "Stensättning",
+      href: "/stensattning/",
+      summary: "Egen tjänstesida för stensättning, marksten och stenmurar.",
+    },
+    {
+      id: "markarbete",
+      kind: "service",
+      sourceId: "markarbete",
+      label: "Markarbete",
+      href: "/markarbete/",
+      summary: "Egen tjänstesida för mark och anläggning.",
+    },
+    {
+      id: "gravjobb",
+      kind: "service",
+      sourceId: "gravjobb",
+      label: "Grävjobb",
+      href: "/gravjobb/",
+      summary: "Egen tjänstesida för maskin- och grävarbeten.",
+    },
+    {
+      id: "dranering",
+      kind: "service",
+      sourceId: "dranering",
+      label: "Dränering",
+      href: "/dranering/",
+      summary: "Egen tjänstesida för dränering och fuktsäkra markarbeten.",
+    },
+    {
+      id: "pool",
+      kind: "service",
+      sourceId: "pool",
+      label: "Pool",
+      href: "/pool/",
+      summary: "Egen tjänstesida för poolprojekt och markförberedelser.",
+    },
+    {
+      id: "tradgard",
+      kind: "service",
+      sourceId: "tradgard",
+      label: "Trädgårdsplanering",
+      href: "/tradgardsplanering/",
+      summary: "Egen tjänstesida för tomt- och trädgårdsplanering.",
+    },
+    {
+      id: "references",
+      kind: "references",
+      label: "Referensobjekt",
+      href: "/referenser/",
+      summary: "Egen sida för referensprojekt från den inventerade sitemappen.",
+    },
+    {
+      id: "contact",
+      kind: "contact",
+      label: "Kontakt",
+      href: "/kontakt/",
+      summary: "Egen kontaktsida för offertvägen.",
+    },
+  ],
   hero: {
     eyebrow: "Mark & anläggning i Örebro",
     title: "Eriksson & Svärd",
@@ -24,11 +102,11 @@ export const siteContent = {
       "En statisk AlvaLinus-replik av den inventerade Eriksson & Svärd-ytan: tjänster, arbetsprocess, trygghetssignaler, referenser, samarbetspartners och offertkontakt med korrekt svensk text.",
     primaryAction: {
       label: "Våra tjänster",
-      href: "#tjanster",
+      href: "/tjanster/",
     },
     secondaryAction: {
       label: "Kontakta oss för offert",
-      href: "#kontakt",
+      href: "/kontakt/",
     },
     stats: [
       { value: "58", label: "inventerade sitemap-URL:er" },
@@ -42,7 +120,8 @@ export const siteContent = {
       title: "Stensättning",
       summary:
         "Planerade stenytor, marksten och murar för entréer, gångar och gårdar där finish och bärighet behöver hålla över tid.",
-      href: "https://www.erikssonsvard.se/stensattning/",
+      href: "/stensattning/",
+      sourceHref: "https://www.erikssonsvard.se/stensattning/",
       tags: ["Marksten Örebro", "Stenmurar", "Finplanering"],
     },
     {
@@ -50,7 +129,8 @@ export const siteContent = {
       title: "Markarbete",
       summary:
         "Bredden i mark och anläggning samlad i ett erbjudande för privatpersoner, företag och kommunala projekt.",
-      href: "https://www.erikssonsvard.se/markarbete/",
+      href: "/markarbete/",
+      sourceHref: "https://www.erikssonsvard.se/markarbete/",
       tags: ["Schakt", "Tomt", "Anläggning"],
     },
     {
@@ -58,7 +138,8 @@ export const siteContent = {
       title: "Grävjobb",
       summary:
         "Maskin- och grävarbeten för husgrunder, avlopp, VA och tomter där rätt förarbete avgör slutresultatet.",
-      href: "https://www.erikssonsvard.se/gravjobb/",
+      href: "/gravjobb/",
+      sourceHref: "https://www.erikssonsvard.se/gravjobb/",
       tags: ["Grävning", "Husgrund", "VA"],
     },
     {
@@ -66,7 +147,8 @@ export const siteContent = {
       title: "Dränering",
       summary:
         "Dräneringar och fuktsäkra markarbeten runt hus, murar och tomter med ansvar för hela arbetskedjan.",
-      href: "https://www.erikssonsvard.se/dranering/",
+      href: "/dranering/",
+      sourceHref: "https://www.erikssonsvard.se/dranering/",
       tags: ["Dränering", "Mur", "Fuktskydd"],
     },
     {
@@ -74,7 +156,8 @@ export const siteContent = {
       title: "Pool",
       summary:
         "Poolprojekt från markarbete till installation, inklusive glasfiberpool, thermopool och MAGIclassic-spår.",
-      href: "https://www.erikssonsvard.se/pool/",
+      href: "/pool/",
+      sourceHref: "https://www.erikssonsvard.se/pool/",
       tags: ["Glasfiberpool", "Thermopool", "MAGIclassic"],
     },
     {
@@ -82,7 +165,8 @@ export const siteContent = {
       title: "Trädgårdsplanering",
       summary:
         "Tomt- och trädgårdsplanering som binder ihop höjder, ytor, planteringar och praktisk användning.",
-      href: "https://www.erikssonsvard.se/tradgardsplanering/",
+      href: "/tradgardsplanering/",
+      sourceHref: "https://www.erikssonsvard.se/tradgardsplanering/",
       tags: ["Tomtplanering", "Utemiljö", "Finish"],
     },
   ],
@@ -125,22 +209,26 @@ export const siteContent = {
     {
       title: "Boman Svahn ÖBO",
       category: "Referensobjekt",
-      href: "https://www.erikssonsvard.se/boman-svahn-obo/",
+      href: "/referenser/",
+      sourceHref: "https://www.erikssonsvard.se/boman-svahn-obo/",
     },
     {
       title: "Byggpart Örebro",
       category: "Referensobjekt",
-      href: "https://www.erikssonsvard.se/byggpart-orebro/",
+      href: "/referenser/",
+      sourceHref: "https://www.erikssonsvard.se/byggpart-orebro/",
     },
     {
       title: "Dränering av mur",
       category: "Dränering",
-      href: "https://www.erikssonsvard.se/dranering-av-mur-hackgravning/",
+      href: "/referenser/",
+      sourceHref: "https://www.erikssonsvard.se/dranering-av-mur-hackgravning/",
     },
     {
       title: "Pool Gällersta Örebro",
       category: "Pool",
-      href: "https://www.erikssonsvard.se/pool-gallersta-orebro/",
+      href: "/referenser/",
+      sourceHref: "https://www.erikssonsvard.se/pool-gallersta-orebro/",
     },
   ],
   partners: [
@@ -157,7 +245,7 @@ export const siteContent = {
       "Den inventerade startsidan avslutar med en tydlig offertväg. Den här statiska ytan gör samma kontaktsteg synligt utan att bygga ett formulär eller backendflöde.",
     offertLabel: "Boka ett kostnadsfritt besök eller be om offert",
     items: [
-      { label: "Kontaktsektion", value: "Hoppa till kontakt", href: "#kontakt" },
+      { label: "Kontaktsida", value: "Gå till kontakt", href: "/kontakt/" },
       { label: "Källa", value: "Eriksson & Svärd", href: "https://www.erikssonsvard.se/kontakt/" },
     ],
   },

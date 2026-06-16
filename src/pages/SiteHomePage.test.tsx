@@ -34,8 +34,16 @@ describe("SiteHomePage", () => {
     render(<SiteHomePage initialState={{ status: "ready", content }} />);
 
     expect(screen.getByText(/58 publika sid-URL:er kontrollerade/)).toBeInTheDocument();
-    expect(screen.getByText(/komplett sektionerad landningssida/)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Referensobjekt" })).toHaveAttribute("href", "#referenser");
+    expect(screen.getByText(/flera navigerbara sid-URL:er/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Referensobjekt" })).toHaveAttribute("href", "/referenser/");
+  });
+
+  it("links from the home page to real static subpage paths", () => {
+    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+
+    expect(screen.getByRole("link", { name: "Våra tjänster" })).toHaveAttribute("href", "/tjanster/");
+    expect(screen.getByRole("link", { name: "Kontakta oss för offert" })).toHaveAttribute("href", "/kontakt/");
+    expect(screen.getByRole("link", { name: "Stensättning" })).toHaveAttribute("href", "/stensattning/");
   });
 
   it("shows an empty state when static data has no services", () => {
@@ -61,5 +69,35 @@ describe("SiteHomePage", () => {
 
     expect(screen.getByText("Marksten Örebro")).toBeInTheDocument();
     expect(screen.getByText("Glasfiberpool")).toBeInTheDocument();
+  });
+
+  it("renders a dedicated service page for a sitemap path", () => {
+    render(<SiteHomePage currentPath="/stensattning/" initialState={{ status: "ready", content }} />);
+
+    expect(screen.getByRole("heading", { name: "Stensättning", level: 1 })).toBeInTheDocument();
+    expect(screen.getByText(/egen URL i den statiska strukturen/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Visa källsida" })).toHaveAttribute(
+      "href",
+      "https://www.erikssonsvard.se/stensattning/",
+    );
+  });
+
+  it("renders dedicated references and contact paths", () => {
+    const { rerender } = render(<SiteHomePage currentPath="/referenser/" initialState={{ status: "ready", content }} />);
+
+    expect(screen.getByRole("heading", { name: "Referensobjekt", level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Projekt och uppdrag som ger substans" })).toBeInTheDocument();
+
+    rerender(<SiteHomePage currentPath="/kontakt/" initialState={{ status: "ready", content }} />);
+
+    expect(screen.getByRole("heading", { name: "Kontakt", level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Kontakta oss för offert" })).toBeInTheDocument();
+  });
+
+  it("fails unknown paths gracefully", () => {
+    render(<SiteHomePage currentPath="/saknas/" initialState={{ status: "ready", content }} />);
+
+    expect(screen.getByRole("heading", { name: /Sidan finns inte/ })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Startsida" })).toHaveAttribute("href", "/");
   });
 });

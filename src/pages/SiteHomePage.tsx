@@ -14,7 +14,7 @@ import { StaticState } from "../components/StaticState";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { loadSiteContent } from "../lib/site-content";
-import type { SiteContent } from "../types/site";
+import type { ServiceArea, SiteContent, SiteRoute } from "../types/site";
 
 type LoadState =
   | { readonly status: "loading" }
@@ -22,10 +22,11 @@ type LoadState =
   | { readonly status: "ready"; readonly content: SiteContent };
 
 type SiteHomePageProps = {
+  readonly currentPath?: string;
   readonly initialState?: LoadState;
 };
 
-export function SiteHomePage({ initialState }: SiteHomePageProps) {
+export function SiteHomePage({ currentPath = "/", initialState }: SiteHomePageProps) {
   const [state, setState] = useState<LoadState>(initialState ?? { status: "loading" });
 
   useEffect(() => {
@@ -56,7 +57,7 @@ export function SiteHomePage({ initialState }: SiteHomePageProps) {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <Header />
-      <ContentSurface state={state} />
+      <ContentSurface currentPath={currentPath} state={state} />
     </main>
   );
 }
@@ -72,16 +73,16 @@ function Header() {
           aria-label="Huvudnavigation"
           className="hidden items-center gap-5 text-sm text-muted-foreground md:flex"
         >
-          <a className="transition-colors hover:text-foreground" href="#tjanster">
+          <a className="transition-colors hover:text-foreground" href="/tjanster/">
             Tjänster
           </a>
-          <a className="transition-colors hover:text-foreground" href="#process">
+          <a className="transition-colors hover:text-foreground" href="/#process">
             Process
           </a>
-          <a className="transition-colors hover:text-foreground" href="#referenser">
+          <a className="transition-colors hover:text-foreground" href="/referenser/">
             Referenser
           </a>
-          <a className="transition-colors hover:text-foreground" href="#kontakt">
+          <a className="transition-colors hover:text-foreground" href="/kontakt/">
             Kontakt
           </a>
         </nav>
@@ -90,7 +91,7 @@ function Header() {
   );
 }
 
-function ContentSurface({ state }: { readonly state: LoadState }) {
+function ContentSurface({ currentPath, state }: { readonly currentPath: string; readonly state: LoadState }) {
   if (state.status === "loading") {
     return (
       <section id="content" className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
@@ -108,6 +109,7 @@ function ContentSurface({ state }: { readonly state: LoadState }) {
   }
 
   const { content } = state;
+  const route = getRouteForPath(content, currentPath);
 
   if (content.services.length === 0) {
     return (
@@ -115,6 +117,48 @@ function ContentSurface({ state }: { readonly state: LoadState }) {
         <StaticState state="empty" title="Inget innehåll ännu" message="Lägg till statiska dataposter i src/data." />
       </section>
     );
+  }
+
+  return (
+    <>
+      {route ? <RoutedPage content={content} route={route} /> : <NotFound content={content} currentPath={currentPath} />}
+    </>
+  );
+}
+
+function getRouteForPath(content: SiteContent, currentPath: string): SiteRoute | undefined {
+  const normalizedPath = normalizePath(currentPath);
+
+  return content.routes.find((route) => normalizePath(route.href) === normalizedPath);
+}
+
+function normalizePath(path: string) {
+  const withoutQuery = path.split(/[?#]/)[0] || "/";
+
+  if (withoutQuery === "/") {
+    return "/";
+  }
+
+  return withoutQuery.endsWith("/") ? withoutQuery : `${withoutQuery}/`;
+}
+
+function RoutedPage({ content, route }: { readonly content: SiteContent; readonly route: SiteRoute }) {
+  if (route.kind === "services") {
+    return <ServicesIndexPage content={content} route={route} />;
+  }
+
+  if (route.kind === "service") {
+    const service = content.services.find((item) => item.id === route.sourceId);
+
+    return service ? <ServicePage content={content} route={route} service={service} /> : <NotFound content={content} currentPath={route.href} />;
+  }
+
+  if (route.kind === "references") {
+    return <ReferencesPage content={content} route={route} />;
+  }
+
+  if (route.kind === "contact") {
+    return <ContactPage content={content} route={route} />;
   }
 
   return (
@@ -195,6 +239,140 @@ function Inventory({ content }: { readonly content: SiteContent }) {
   );
 }
 
+function ServicesIndexPage({ content, route }: { readonly content: SiteContent; readonly route: SiteRoute }) {
+  return (
+    <>
+      <PageHero title={route.label} summary={route.summary} />
+      <Services content={content} />
+      <Trust content={content} />
+      <ContactLinkBand content={content} />
+    </>
+  );
+}
+
+function ServicePage({
+  content,
+  route,
+  service,
+}: {
+  readonly content: SiteContent;
+  readonly route: SiteRoute;
+  readonly service: ServiceArea;
+}) {
+  return (
+    <>
+      <PageHero title={service.title} summary={route.summary} />
+      <section className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-12 sm:px-8 lg:grid-cols-[1fr_0.72fr] lg:px-10">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-normal text-primary">Tjänstesida</p>
+          <h2 className="mt-2 text-4xl font-semibold tracking-normal text-foreground">{service.title}</h2>
+          <p className="mt-4 text-lg leading-8 text-muted-foreground">{service.summary}</p>
+          <div className="mt-6 flex flex-wrap gap-2">
+            {service.tags.map((tag) => (
+              <span key={tag} className="rounded-full bg-secondary px-3 py-1 text-sm text-secondary-foreground">
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+        <aside className="rounded-lg border bg-card p-5">
+          <h2 className="text-xl font-semibold">Sitemap-replik</h2>
+          <p className="mt-3 text-sm leading-6 text-muted-foreground">
+            Den här sidan ger {service.title.toLowerCase()} en egen URL i den statiska strukturen och behåller källans
+            tjänstespår som extern referens.
+          </p>
+          <a
+            href={service.sourceHref}
+            className="mt-5 inline-flex items-center text-sm font-medium text-primary hover:text-foreground"
+          >
+            Visa källsida
+            <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden="true" />
+          </a>
+        </aside>
+      </section>
+      <Process content={content} />
+      <ContactLinkBand content={content} />
+    </>
+  );
+}
+
+function ReferencesPage({ content, route }: { readonly content: SiteContent; readonly route: SiteRoute }) {
+  return (
+    <>
+      <PageHero title={route.label} summary={route.summary} />
+      <References content={content} />
+      <ContactLinkBand content={content} />
+    </>
+  );
+}
+
+function ContactPage({ content, route }: { readonly content: SiteContent; readonly route: SiteRoute }) {
+  return (
+    <>
+      <PageHero title={route.label} summary={route.summary} />
+      <Contact content={content} />
+    </>
+  );
+}
+
+function NotFound({ content, currentPath }: { readonly content: SiteContent; readonly currentPath: string }) {
+  return (
+    <section className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
+      <div className="rounded-lg border bg-card p-6">
+        <p className="text-sm font-semibold uppercase tracking-normal text-primary">Okänd sida</p>
+        <h1 className="mt-2 text-3xl font-semibold tracking-normal">Sidan finns inte i den statiska replikens sitemap</h1>
+        <p className="mt-3 leading-7 text-muted-foreground">
+          {currentPath} matchar ingen av de replikerade undersidorna. Välj en publicerad sidväg nedan.
+        </p>
+        <div className="mt-6 flex flex-wrap gap-2">
+          {content.routes.map((route) => (
+            <a
+              key={route.id}
+              href={route.href}
+              className="rounded-full border bg-background px-3 py-1 text-sm text-foreground transition-colors hover:border-primary"
+            >
+              {route.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PageHero({ title, summary }: { readonly title: string; readonly summary: string }) {
+  return (
+    <section className="border-b bg-secondary/50">
+      <div className="mx-auto w-full max-w-7xl px-5 py-12 sm:px-8 lg:px-10">
+        <a href="/" className="text-sm font-medium text-primary hover:text-foreground">
+          Startsida
+        </a>
+        <h1 className="mt-4 text-4xl font-semibold leading-tight tracking-normal text-foreground sm:text-5xl">{title}</h1>
+        <p className="mt-4 max-w-3xl text-lg leading-8 text-muted-foreground">{summary}</p>
+      </div>
+    </section>
+  );
+}
+
+function ContactLinkBand({ content }: { readonly content: SiteContent }) {
+  return (
+    <section className="border-t bg-secondary/50">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-5 py-10 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-10">
+        <div>
+          <p className="text-sm font-semibold text-primary">Nästa steg</p>
+          <h2 className="mt-1 text-2xl font-semibold tracking-normal">{content.contact.title}</h2>
+        </div>
+        <Button asChild>
+          <a href="/kontakt/">
+            Kontakta oss
+            <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+          </a>
+        </Button>
+      </div>
+    </section>
+  );
+}
+
 function Services({ content }: { readonly content: SiteContent }) {
   return (
     <section id="tjanster" className="mx-auto w-full max-w-7xl px-5 py-12 sm:px-8 lg:px-10">
@@ -223,7 +401,7 @@ function Services({ content }: { readonly content: SiteContent }) {
                 className="inline-flex items-center text-sm font-medium text-primary hover:text-foreground"
               >
                 Läs mer
-                <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden="true" />
+                <ArrowRight className="ml-1.5 h-3.5 w-3.5" aria-hidden="true" />
               </a>
             </CardContent>
           </Card>
@@ -298,7 +476,7 @@ function References({ content }: { readonly content: SiteContent }) {
           <div className="mt-6 grid gap-3">
             {content.references.map((reference) => (
               <a
-                key={reference.href}
+                key={reference.sourceHref}
                 href={reference.href}
                 className="flex items-center justify-between gap-4 rounded-lg border bg-card p-4 transition-colors hover:border-primary"
               >
@@ -306,7 +484,7 @@ function References({ content }: { readonly content: SiteContent }) {
                   <span className="block font-medium">{reference.title}</span>
                   <span className="text-sm text-muted-foreground">{reference.category}</span>
                 </span>
-                <ExternalLink className="h-4 w-4 text-primary" aria-hidden="true" />
+                <ArrowRight className="h-4 w-4 text-primary" aria-hidden="true" />
               </a>
             ))}
           </div>
