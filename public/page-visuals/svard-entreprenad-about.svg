@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc" viewBox="0 0 1200 800">
+  <title id="title">Svärd Entreprenad om oss platshållarbild</title>
+  <desc id="desc">Platshållarbild för om oss-sidan med arbetslag, maskin och ansvarsfull entreprenadmiljö.</desc>
+  <rect width="1200" height="800" fill="#f5f0e8"/>
+  <rect x="115" y="190" width="970" height="390" rx="26" fill="#d6cbb8"/>
+  <circle cx="320" cy="330" r="78" fill="#3f4a3b"/>
+  <circle cx="520" cy="330" r="78" fill="#68775c"/>
+  <circle cx="720" cy="330" r="78" fill="#a37846"/>
+  <path d="M225 520c35-100 155-100 190 0m10 0c35-100 155-100 190 0m10 0c35-100 155-100 190 0" fill="none" stroke="#f8f5ef" stroke-width="26" stroke-linecap="round"/>
+  <path d="M840 430h130l55 65h-185z" fill="#586a78"/>
+  <circle cx="875" cy="515" r="32" fill="#2f352e"/>
+  <circle cx="985" cy="515" r="32" fill="#2f352e"/>
+  <text x="115" y="700" fill="#2f352e" font-family="Arial, sans-serif" font-size="42" font-weight="700">Om oss</text>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc" viewBox="0 0 1200 800">
+  <title id="title">Svärd Entreprenad kontakt platshållarbild</title>
+  <desc id="desc">Platshållarbild för kontaktsidan med offertförfrågan, platsbesök och projektstart.</desc>
+  <rect width="1200" height="800" fill="#f4f1ea"/>
+  <rect x="120" y="150" width="440" height="500" rx="26" fill="#ffffff"/>
+  <path d="M170 260h300m-300 85h240m-240 85h310m-310 85h190" stroke="#c9bdab" stroke-width="24" stroke-linecap="round"/>
+  <circle cx="890" cy="305" r="125" fill="#617056"/>
+  <path d="M890 470c-95-115-145-205-145-265a145 145 0 0 1 290 0c0 60-50 150-145 265z" fill="#3f4a3b"/>
+  <circle cx="890" cy="205" r="50" fill="#f8f5ef"/>
+  <path d="M690 575h360" stroke="#8b6f4e" stroke-width="28" stroke-linecap="round"/>
+  <path d="M725 630h290" stroke="#d99c49" stroke-width="20" stroke-linecap="round"/>
+  <text x="120" y="735" fill="#2f352e" font-family="Arial, sans-serif" font-size="42" font-weight="700">Kontakt</text>
+</svg>

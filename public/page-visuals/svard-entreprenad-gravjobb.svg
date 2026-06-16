@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc" viewBox="0 0 1200 800">
+  <title id="title">Svärd Entreprenad grävjobb platshållarbild</title>
+  <desc id="desc">Platshållarbild för grävjobb med grävmaskin, schakt och förberedelse för grund eller pool.</desc>
+  <rect width="1200" height="800" fill="#eef1ec"/>
+  <path d="M0 520h1200v280H0z" fill="#8b6f4e"/>
+  <path d="M120 610c170-70 270-72 430-10 160 62 300 63 520-18v218H120z" fill="#594937"/>
+  <rect x="295" y="360" width="360" height="120" rx="18" fill="#d99c49"/>
+  <rect x="430" y="260" width="150" height="115" rx="14" fill="#c88937"/>
+  <path d="M650 410c140-70 210-140 250-255" fill="none" stroke="#c88937" stroke-width="34" stroke-linecap="round"/>
+  <path d="M875 160l95 45-78 72z" fill="#c88937"/>
+  <circle cx="370" cy="505" r="52" fill="#2f352e"/>
+  <circle cx="575" cy="505" r="52" fill="#2f352e"/>
+  <path d="M180 650h340" stroke="#f8f5ef" stroke-width="20" stroke-linecap="round"/>
+  <text x="95" y="745" fill="#f8f5ef" font-family="Arial, sans-serif" font-size="42" font-weight="700">Grävjobb</text>
+</svg>

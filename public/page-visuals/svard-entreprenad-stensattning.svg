@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc" viewBox="0 0 1200 800">
+  <title id="title">Svärd Entreprenad stensättning platshållarbild</title>
+  <desc id="desc">Platshållarbild för stensättning med marksten, gångyta och stenmur som serviceämne.</desc>
+  <rect width="1200" height="800" fill="#eee9df"/>
+  <path d="M80 520h1040v180H80z" fill="#756b5b"/>
+  <g fill="#c9bdab" stroke="#eee9df" stroke-width="10">
+    <rect x="120" y="170" width="160" height="110" rx="8"/>
+    <rect x="300" y="170" width="160" height="110" rx="8"/>
+    <rect x="480" y="170" width="160" height="110" rx="8"/>
+    <rect x="210" y="300" width="160" height="110" rx="8"/>
+    <rect x="390" y="300" width="160" height="110" rx="8"/>
+    <rect x="570" y="300" width="160" height="110" rx="8"/>
+  </g>
+  <path d="M760 455c95-80 205-80 315 0" fill="none" stroke="#46513f" stroke-width="34" stroke-linecap="round"/>
+  <path d="M170 610h860" stroke="#f8f5ef" stroke-width="22" stroke-linecap="round" stroke-dasharray="76 34"/>
+  <text x="90" y="745" fill="#2f352e" font-family="Arial, sans-serif" font-size="42" font-weight="700">Stensättning</text>
+</svg>

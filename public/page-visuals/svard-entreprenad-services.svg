@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc" viewBox="0 0 1200 800">
+  <title id="title">Svärd Entreprenad tjänster platshållarbild</title>
+  <desc id="desc">Platshållarbild för tjänsteöversikten med flera mark- och anläggningstjänster i ordnade fält.</desc>
+  <rect width="1200" height="800" fill="#eef1ec"/>
+  <rect x="90" y="120" width="300" height="230" rx="18" fill="#617056"/>
+  <rect x="450" y="120" width="300" height="230" rx="18" fill="#9b7a4f"/>
+  <rect x="810" y="120" width="300" height="230" rx="18" fill="#586a78"/>
+  <rect x="90" y="420" width="480" height="210" rx="18" fill="#c4b79f"/>
+  <rect x="630" y="420" width="480" height="210" rx="18" fill="#3f4a3b"/>
+  <path d="M145 300h190M505 300h190M865 300h190M145 590h370M685 590h370" stroke="#f8f5ef" stroke-width="20" stroke-linecap="round"/>
+  <circle cx="240" cy="215" r="48" fill="#f8f5ef"/>
+  <path d="M560 250l40-72 40 72z" fill="#f8f5ef"/>
+  <path d="M895 250h130v-82H895z" fill="#f8f5ef"/>
+  <text x="90" y="720" fill="#2f352e" font-family="Arial, sans-serif" font-size="42" font-weight="700">Tjänster</text>
+</svg>
