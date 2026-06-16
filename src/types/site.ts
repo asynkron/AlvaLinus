@@ -3,6 +3,15 @@ export type SiteLink = {
   readonly href: string;
 };
 
+export type SiteRouteKind = "home" | "services" | "service" | "references" | "contact";
+
+export type SiteRoute = SiteLink & {
+  readonly id: string;
+  readonly kind: SiteRouteKind;
+  readonly sourceId?: string;
+  readonly summary: string;
+};
+
 export type SiteStat = {
   readonly label: string;
   readonly value: string;
@@ -13,6 +22,7 @@ export type ServiceArea = {
   readonly title: string;
   readonly summary: string;
   readonly href: string;
+  readonly sourceHref: string;
   readonly tags: readonly string[];
 };
 
@@ -30,6 +40,7 @@ export type ReferenceItem = {
   readonly title: string;
   readonly category: string;
   readonly href: string;
+  readonly sourceHref: string;
 };
 
 export type PartnerItem = {
@@ -51,6 +62,7 @@ export type SiteContent = {
     readonly routeDecision: string;
     readonly primaryRoutes: readonly SiteLink[];
   };
+  readonly routes: readonly SiteRoute[];
   readonly hero: {
     readonly title: string;
     readonly eyebrow: string;

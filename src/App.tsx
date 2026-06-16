@@ -1,5 +1,5 @@
 import { SiteHomePage } from "./pages/SiteHomePage";
 
 export function App() {
-  return <SiteHomePage />;
+  return <SiteHomePage currentPath={window.location.pathname} />;
 }
