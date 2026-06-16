@@ -16,6 +16,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../co
 import { loadSiteContent } from "../lib/site-content";
 import type { ServiceArea, SiteContent, SiteRoute } from "../types/site";
 
+const BRAND_NAME = "Svärd Entreprenad";
+const BRAND_LOGO_SRC = "/svard-entreprenad-logo.png";
+
 type LoadState =
   | { readonly status: "loading" }
   | { readonly status: "error"; readonly message: string }
@@ -66,8 +69,13 @@ function Header() {
   return (
     <header className="sticky top-0 z-20 border-b bg-background/95 backdrop-blur">
       <div className="mx-auto flex min-h-16 w-full max-w-7xl items-center justify-between gap-4 px-5 sm:px-8 lg:px-10">
-        <a href="/" className="text-base font-semibold">
-          AlvaLinus
+        <a href="/" className="flex min-w-0 items-center gap-3" aria-label={`${BRAND_NAME} startsida`}>
+          <img
+            src={BRAND_LOGO_SRC}
+            alt={`${BRAND_NAME} logotyp`}
+            className="h-9 w-auto max-w-[11rem] object-contain sm:h-10 sm:max-w-[14rem]"
+          />
+          <span className="sr-only">{BRAND_NAME}</span>
         </a>
         <nav
           aria-label="Huvudnavigation"
@@ -179,6 +187,12 @@ function Hero({ content }: { readonly content: SiteContent }) {
     <section className="border-b bg-[linear-gradient(135deg,hsl(var(--background))_0%,hsl(var(--secondary))_54%,hsl(var(--muted))_100%)]">
       <div className="mx-auto grid w-full max-w-7xl gap-10 px-5 py-14 sm:px-8 md:grid-cols-[1fr_0.78fr] md:items-center lg:px-10 lg:py-20">
         <div className="max-w-3xl">
+          <img
+            src={BRAND_LOGO_SRC}
+            alt=""
+            aria-hidden="true"
+            className="mb-7 h-auto w-full max-w-[18rem] object-contain sm:max-w-[24rem]"
+          />
           <p className="text-sm font-semibold uppercase tracking-normal text-primary">{content.hero.eyebrow}</p>
           <h1 className="mt-4 text-5xl font-semibold leading-tight tracking-normal text-foreground sm:text-6xl">
             {content.hero.title}

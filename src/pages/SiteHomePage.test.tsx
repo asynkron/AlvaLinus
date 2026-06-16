@@ -10,7 +10,9 @@ describe("SiteHomePage", () => {
   it("renders target-inspired service, process, trust, reference, partner, and contact areas", () => {
     render(<SiteHomePage initialState={{ status: "ready", content }} />);
 
-    expect(screen.getByRole("heading", { name: "Eriksson & Svärd" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Svärd Entreprenad startsida" })).toHaveAttribute("href", "/");
+    expect(screen.getByRole("img", { name: "Svärd Entreprenad logotyp" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Svärd Entreprenad" })).toBeInTheDocument();
     expect(screen.getAllByText("Våra tjänster").length).toBeGreaterThan(0);
     expect(screen.getByRole("heading", { name: "En pålitlig partner inom mark, bygg och anläggning" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Från första kontakt till slutfört arbete" })).toBeInTheDocument();
