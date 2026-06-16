@@ -89,14 +89,11 @@ function Header() {
           <a className="transition-colors hover:text-foreground" href="/tjanster/">
             Tjänster
           </a>
+          <a className="transition-colors hover:text-foreground" href="/om-oss/">
+            Om oss
+          </a>
           <a className="transition-colors hover:text-foreground" href="/dranering/">
             Dränering
-          </a>
-          <a className="transition-colors hover:text-foreground" href="/pool/">
-            Pool
-          </a>
-          <a className="transition-colors hover:text-foreground" href="/referenser/">
-            Referensobjekt
           </a>
           <a className="transition-colors hover:text-foreground" href="/kontakt/">
             Kontakt
@@ -163,14 +160,14 @@ function RoutedPage({ content, route }: { readonly content: SiteContent; readonl
     return <ServicesIndexPage content={content} route={route} />;
   }
 
+  if (route.kind === "about") {
+    return <AboutPage content={content} route={route} />;
+  }
+
   if (route.kind === "service") {
     const service = content.services.find((item) => item.id === route.sourceId);
 
     return service ? <ServicePage content={content} route={route} service={service} /> : <NotFound content={content} currentPath={route.href} />;
-  }
-
-  if (route.kind === "references") {
-    return <ReferencesPage content={content} route={route} />;
   }
 
   if (route.kind === "contact") {
@@ -184,15 +181,16 @@ function RoutedPage({ content, route }: { readonly content: SiteContent; readonl
       <Services content={content} />
       <Process content={content} />
       <Trust content={content} />
-      <References content={content} />
+      <Partners content={content} />
       <Contact content={content} />
+      <Footer content={content} />
     </>
   );
 }
 
 function Hero({ content }: { readonly content: SiteContent }) {
   return (
-    <section className="border-b bg-[linear-gradient(135deg,hsl(var(--background))_0%,hsl(var(--secondary))_54%,hsl(var(--muted))_100%)]">
+    <section className="border-b bg-foreground text-background">
       <div className="mx-auto grid w-full max-w-7xl gap-10 px-5 py-14 sm:px-8 md:grid-cols-[1fr_0.78fr] md:items-center lg:px-10 lg:py-20">
         <div className="max-w-3xl">
           <img
@@ -202,10 +200,10 @@ function Hero({ content }: { readonly content: SiteContent }) {
             className="mb-7 h-auto w-full max-w-[18rem] object-contain sm:max-w-[24rem]"
           />
           <p className="text-sm font-semibold uppercase tracking-normal text-primary">{content.hero.eyebrow}</p>
-          <h1 className="mt-4 text-5xl font-semibold leading-tight tracking-normal text-foreground sm:text-6xl">
+          <h1 className="mt-4 text-5xl font-semibold leading-tight tracking-normal text-background sm:text-6xl">
             {content.hero.title}
           </h1>
-          <p className="mt-6 text-lg leading-8 text-muted-foreground sm:text-xl">{content.hero.intro}</p>
+          <p className="mt-6 whitespace-pre-line text-lg leading-8 text-background sm:text-xl">{content.hero.intro}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild size="lg">
               <a href={content.hero.primaryAction.href}>
@@ -218,9 +216,9 @@ function Hero({ content }: { readonly content: SiteContent }) {
             </Button>
           </div>
         </div>
-        <div className="grid gap-3 rounded-lg border bg-card p-4 shadow-sm">
+        <div className="grid gap-3 rounded-lg border border-background/20 bg-background/10 p-4 shadow-sm">
           {content.hero.stats.map((stat) => (
-            <div key={stat.label} className="rounded-md bg-secondary p-5">
+            <div key={stat.label} className="rounded-md bg-background p-5 text-foreground">
               <p className="text-3xl font-semibold text-primary">{stat.value}</p>
               <p className="mt-1 text-sm text-muted-foreground">{stat.label}</p>
             </div>
@@ -267,6 +265,17 @@ function ServicesIndexPage({ content, route }: { readonly content: SiteContent; 
       <PageHero title={route.label} summary={route.summary} />
       <Services content={content} />
       <Trust content={content} />
+      <Partners content={content} />
+      <ContactLinkBand content={content} />
+    </>
+  );
+}
+
+function AboutPage({ content, route }: { readonly content: SiteContent; readonly route: SiteRoute }) {
+  return (
+    <>
+      <PageHero title={route.label} summary={route.summary} />
+      <About content={content} />
       <ContactLinkBand content={content} />
     </>
   );
@@ -293,12 +302,6 @@ function ServicePage({
             <p className="mt-4 leading-7 text-muted-foreground">
               Dräneringssidan är en egen toppnivå för besökare som behöver fuktsäkring runt husgrund, mur eller
               källarvägg. Innehållet lyfter helheten från bedömning och grävning till återställning.
-            </p>
-          ) : null}
-          {service.id === "pool" ? (
-            <p className="mt-4 leading-7 text-muted-foreground">
-              Poolsidan är en egen toppnivå för besökare som planerar pool och mark runt poolmiljön. Innehållet samlar
-              markarbete, installation och val av pooltyp i samma kundresa.
             </p>
           ) : null}
           <div className="mt-6 flex flex-wrap gap-2">
@@ -330,21 +333,12 @@ function ServicePage({
   );
 }
 
-function ReferencesPage({ content, route }: { readonly content: SiteContent; readonly route: SiteRoute }) {
-  return (
-    <>
-      <PageHero title={route.label} summary={route.summary} />
-      <References content={content} />
-      <ContactLinkBand content={content} />
-    </>
-  );
-}
-
 function ContactPage({ content, route }: { readonly content: SiteContent; readonly route: SiteRoute }) {
   return (
     <>
       <PageHero title={route.label} summary={route.summary} />
       <Contact content={content} />
+      <Footer content={content} />
     </>
   );
 }
@@ -445,6 +439,21 @@ function Services({ content }: { readonly content: SiteContent }) {
   );
 }
 
+function About({ content }: { readonly content: SiteContent }) {
+  return (
+    <section id="om-oss" className="mx-auto w-full max-w-7xl px-5 py-12 sm:px-8 lg:px-10">
+      <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+        <SectionHeading eyebrow="Om oss" title={content.about.title} summary={content.about.summary} />
+        <div className="grid gap-5 text-base leading-8 text-muted-foreground">
+          {content.about.body.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Process({ content }: { readonly content: SiteContent }) {
   return (
     <section id="process" className="border-y bg-secondary/60">
@@ -497,50 +506,44 @@ function Trust({ content }: { readonly content: SiteContent }) {
   );
 }
 
-function References({ content }: { readonly content: SiteContent }) {
+function Partners({ content }: { readonly content: SiteContent }) {
   return (
-    <section id="referenser" className="border-y bg-muted/70">
-      <div className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-12 sm:px-8 lg:grid-cols-[1fr_1fr] lg:px-10">
-        <div>
+    <section id="samarbetspartner" className="border-y bg-muted/70">
+      <div className="mx-auto w-full max-w-7xl px-5 py-12 sm:px-8 lg:px-10">
+        <div className="max-w-2xl">
           <SectionHeading
-            eyebrow="Referensobjekt"
-            title="Projekt och uppdrag som ger substans"
-            summary="Sitemappen innehåller referensobjekt och projektsidor. Repliken visar ett urval så besökaren ser att tjänsterna är förankrade i verkliga uppdrag."
+            eyebrow="Samarbetspartner"
+            title="Samarbetspartner"
+            summary="Partnerfältet är uppdaterat enligt ägarens önskemål och visar endast aktuell samarbetspartner."
           />
-          <div className="mt-6 grid gap-3">
-            {content.references.map((reference) => (
-              <a
-                key={reference.sourceHref}
-                href={reference.href}
-                className="flex items-center justify-between gap-4 rounded-lg border bg-card p-4 transition-colors hover:border-primary"
-              >
-                <span>
-                  <span className="block font-medium">{reference.title}</span>
-                  <span className="text-sm text-muted-foreground">{reference.category}</span>
-                </span>
-                <ArrowRight className="h-4 w-4 text-primary" aria-hidden="true" />
-              </a>
-            ))}
-          </div>
         </div>
-        <div>
-          <SectionHeading
-            eyebrow="Samarbetspartners & utmärkelser"
-            title="Partnerfältet från källsidan"
-            summary="Källan visar partner- och utmärkelseloggor. Här återges namnen textbaserat för att undvika externa bildberoenden i den statiska appen."
-          />
-          <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            {content.partners.map((partner) => (
-              <div key={partner.name} className="rounded-lg border bg-card p-4">
-                <Handshake className="h-5 w-5 text-primary" aria-hidden="true" />
-                <p className="mt-3 font-medium">{partner.name}</p>
-                <p className="text-sm text-muted-foreground">{partner.kind}</p>
-              </div>
-            ))}
-          </div>
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {content.partners.map((partner) => (
+            <div key={partner.name} className="rounded-lg border bg-card p-4">
+              <Handshake className="h-5 w-5 text-primary" aria-hidden="true" />
+              <p className="mt-3 font-medium">{partner.name}</p>
+              <p className="text-sm text-muted-foreground">{partner.kind}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
+  );
+}
+
+function Footer({ content }: { readonly content: SiteContent }) {
+  const email = content.contact.form.recipientEmail;
+
+  return (
+    <footer className="border-t bg-foreground text-background">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-5 py-8 text-sm sm:px-8 md:flex-row md:items-center md:justify-between lg:px-10">
+        <p className="font-medium">{BRAND_NAME}</p>
+        <a href={`mailto:${email}`} className="inline-flex items-center gap-2 hover:text-primary">
+          <Mail className="h-4 w-4" aria-hidden="true" />
+          {email}
+        </a>
+      </div>
+    </footer>
   );
 }
 

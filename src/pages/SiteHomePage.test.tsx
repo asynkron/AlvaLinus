@@ -7,18 +7,19 @@ import { SiteHomePage } from "./SiteHomePage";
 const content: SiteContent = siteContent;
 
 describe("SiteHomePage", () => {
-  it("renders target-inspired service, process, trust, reference, partner, and contact areas", () => {
+  it("renders owner-approved home content, service, process, partner, and contact areas", () => {
     render(<SiteHomePage initialState={{ status: "ready", content }} />);
 
     expect(screen.getByRole("link", { name: "Svärd Entreprenad startsida" })).toHaveAttribute("href", "/");
     expect(screen.getByRole("img", { name: "Svärd Entreprenad logotyp" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Svärd Entreprenad" })).toBeInTheDocument();
+    expect(screen.getByText(/Välkommen till Svärd Entreprenad/)).toBeInTheDocument();
+    expect(screen.getByText(/Din trygga partner från första spadtag till färdigt resultat/)).toBeInTheDocument();
     expect(screen.getAllByText("Våra tjänster").length).toBeGreaterThan(0);
     expect(screen.getByRole("heading", { name: "En pålitlig partner inom mark, bygg och anläggning" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Från första kontakt till slutfört arbete" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Trygghetssignalerna från startsidan" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Projekt och uppdrag som ger substans" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Partnerfältet från källsidan" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Samarbetspartner" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Kontakta oss för offert" })).toBeInTheDocument();
   });
 
@@ -37,27 +38,29 @@ describe("SiteHomePage", () => {
 
     expect(screen.getAllByRole("link", { name: "Hem" })[0]).toHaveAttribute("href", "/");
     expect(screen.getAllByRole("link", { name: "Tjänster" })[0]).toHaveAttribute("href", "/tjanster/");
+    expect(screen.getAllByRole("link", { name: "Om oss" })[0]).toHaveAttribute("href", "/om-oss/");
     expect(screen.getAllByRole("link", { name: "Dränering" })[0]).toHaveAttribute("href", "/dranering/");
-    expect(screen.getAllByRole("link", { name: "Pool" })[0]).toHaveAttribute("href", "/pool/");
-    expect(screen.getAllByRole("link", { name: "Referensobjekt" })[0]).toHaveAttribute("href", "/referenser/");
     expect(screen.getAllByRole("link", { name: "Kontakt" })[0]).toHaveAttribute("href", "/kontakt/");
+    expect(screen.queryByRole("link", { name: "Pool" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Referensobjekt" })).not.toBeInTheDocument();
   });
 
-  it("documents the sitemap inventory and route decision in the rendered page", () => {
+  it("documents the updated route decision in the rendered page", () => {
     render(<SiteHomePage initialState={{ status: "ready", content }} />);
 
     expect(screen.getByText(/58 publika sid-URL:er kontrollerade/)).toBeInTheDocument();
-    expect(screen.getByText(/begärda huvudsidorna/)).toBeInTheDocument();
-    expect(screen.getAllByRole("link", { name: "Referensobjekt" })[0]).toHaveAttribute("href", "/referenser/");
+    expect(screen.getByText(/Pool och referensjobb är borttagna som egna ytor/)).toBeInTheDocument();
+    expect(screen.getAllByRole("link", { name: "Om oss" })[0]).toHaveAttribute("href", "/om-oss/");
   });
 
-  it("links from the home page to real requested static subpage paths", () => {
+  it("links from the home page to active static subpage paths only", () => {
     render(<SiteHomePage initialState={{ status: "ready", content }} />);
 
     expect(screen.getByRole("link", { name: "Våra tjänster" })).toHaveAttribute("href", "/tjanster/");
     expect(screen.getByRole("link", { name: "Kontakta oss för offert" })).toHaveAttribute("href", "/kontakt/");
     expect(screen.getAllByRole("link", { name: "Dränering" })[0]).toHaveAttribute("href", "/dranering/");
-    expect(screen.getAllByRole("link", { name: "Pool" })[0]).toHaveAttribute("href", "/pool/");
+    expect(content.routes.map((route) => route.href)).not.toContain("/pool/");
+    expect(content.routes.map((route) => route.href)).not.toContain("/referenser/");
   });
 
   it("shows an empty state when static data has no services", () => {
@@ -78,11 +81,11 @@ describe("SiteHomePage", () => {
     expect(screen.getByLabelText("Laddar innehåll")).toBeInTheDocument();
   });
 
-  it("renders representative service tags", () => {
+  it("renders representative service tags including pool digging under Grävjobb", () => {
     render(<SiteHomePage initialState={{ status: "ready", content }} />);
 
     expect(screen.getByText("Marksten Örebro")).toBeInTheDocument();
-    expect(screen.getByText("Glasfiberpool")).toBeInTheDocument();
+    expect(screen.getByText("Poolgrävning")).toBeInTheDocument();
   });
 
   it("renders a dedicated service page for a sitemap path", () => {
@@ -96,7 +99,7 @@ describe("SiteHomePage", () => {
     );
   });
 
-  it("renders dedicated Dränering and Pool top-level pages", () => {
+  it("renders dedicated Dränering and Grävjobb pages", () => {
     const { rerender } = render(<SiteHomePage currentPath="/dranering/" initialState={{ status: "ready", content }} />);
 
     expect(screen.getByRole("heading", { name: "Dränering", level: 1 })).toBeInTheDocument();
@@ -106,21 +109,22 @@ describe("SiteHomePage", () => {
       "https://www.erikssonsvard.se/dranering/",
     );
 
-    rerender(<SiteHomePage currentPath="/pool/" initialState={{ status: "ready", content }} />);
+    rerender(<SiteHomePage currentPath="/gravjobb/" initialState={{ status: "ready", content }} />);
 
-    expect(screen.getByRole("heading", { name: "Pool", level: 1 })).toBeInTheDocument();
-    expect(screen.getByText(/mark runt poolmiljön/)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Grävjobb", level: 1 })).toBeInTheDocument();
+    expect(screen.getByText(/poolgrävning där rätt förarbete avgör slutresultatet/)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Visa källsida" })).toHaveAttribute(
       "href",
-      "https://www.erikssonsvard.se/pool/",
+      "https://www.erikssonsvard.se/gravjobb/",
     );
   });
 
-  it("renders dedicated references and contact paths", () => {
-    const { rerender } = render(<SiteHomePage currentPath="/referenser/" initialState={{ status: "ready", content }} />);
+  it("renders dedicated about and contact paths", () => {
+    const { rerender } = render(<SiteHomePage currentPath="/om-oss/" initialState={{ status: "ready", content }} />);
 
-    expect(screen.getByRole("heading", { name: "Referensobjekt", level: 1 })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Projekt och uppdrag som ger substans" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Om oss", level: 1 })).toBeInTheDocument();
+    expect(screen.getAllByText(/På Svärd Entreprenad brinner vi/).length).toBeGreaterThan(0);
+    expect(screen.getByText(/modern utrustning med gedigen yrkeskunskap/)).toBeInTheDocument();
 
     rerender(<SiteHomePage currentPath="/kontakt/" initialState={{ status: "ready", content }} />);
 
@@ -128,7 +132,17 @@ describe("SiteHomePage", () => {
     expect(screen.getByRole("heading", { name: "Kontakta oss för offert" })).toBeInTheDocument();
   });
 
-  it("renders a static email handoff form on the dedicated contact route", () => {
+  it("shows only the requested collaborator and no award/old partner entries", () => {
+    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+
+    expect(screen.getByText("Eriksson & Svärd AB")).toBeInTheDocument();
+    expect(screen.queryByText("UC Brons")).not.toBeInTheDocument();
+    expect(screen.queryByText("Benders")).not.toBeInTheDocument();
+    expect(screen.queryByText("Ahlsell")).not.toBeInTheDocument();
+    expect(screen.queryByText("Wasa Kredit")).not.toBeInTheDocument();
+  });
+
+  it("renders a static email handoff form and footer contact email", () => {
     render(<SiteHomePage currentPath="/kontakt/" initialState={{ status: "ready", content }} />);
 
     const form = screen.getByRole("form", { name: "Offertförfrågan via e-post" });
@@ -145,7 +159,11 @@ describe("SiteHomePage", () => {
     expect(formScope.getByLabelText("Tjänst")).toHaveAttribute("name", "service");
     expect(formScope.getByLabelText("Meddelande")).toHaveAttribute("name", "message");
     expect(formScope.getByRole("button", { name: "Skicka offertförfrågan" })).toHaveAttribute("type", "submit");
-    expect(formScope.getByRole("option", { name: "Dränering" })).toBeInTheDocument();
+    expect(formScope.queryByRole("option", { name: "Pool" })).not.toBeInTheDocument();
+    expect(screen.getAllByRole("link", { name: "kontakt@svardentreprenad.se" })[0]).toHaveAttribute(
+      "href",
+      "mailto:kontakt@svardentreprenad.se",
+    );
     expect(screen.getByRole("link", { name: /Källa/ })).toHaveAttribute("href", "https://www.erikssonsvard.se/kontakt/");
   });
 

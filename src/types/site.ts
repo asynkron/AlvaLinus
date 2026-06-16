@@ -3,7 +3,7 @@ export type SiteLink = {
   readonly href: string;
 };
 
-export type SiteRouteKind = "home" | "services" | "service" | "references" | "contact";
+export type SiteRouteKind = "home" | "services" | "about" | "service" | "contact";
 
 export type SiteRoute = SiteLink & {
   readonly id: string;
@@ -34,13 +34,6 @@ export type ProcessStep = {
 export type TrustSignal = {
   readonly title: string;
   readonly summary: string;
-};
-
-export type ReferenceItem = {
-  readonly title: string;
-  readonly category: string;
-  readonly href: string;
-  readonly sourceHref: string;
 };
 
 export type PartnerItem = {
@@ -96,10 +89,14 @@ export type SiteContent = {
     readonly secondaryAction: SiteLink;
     readonly stats: readonly SiteStat[];
   };
+  readonly about: {
+    readonly title: string;
+    readonly summary: string;
+    readonly body: readonly string[];
+  };
   readonly services: readonly ServiceArea[];
   readonly process: readonly ProcessStep[];
   readonly trust: readonly TrustSignal[];
-  readonly references: readonly ReferenceItem[];
   readonly partners: readonly PartnerItem[];
   readonly contact: {
     readonly title: string;
