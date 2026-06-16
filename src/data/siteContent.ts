@@ -97,9 +97,9 @@ export const siteContent = {
   ],
   hero: {
     eyebrow: "Mark & anläggning i Örebro",
-    title: "Eriksson & Svärd",
+    title: "Svärd Entreprenad",
     intro:
-      "En statisk AlvaLinus-replik av den inventerade Eriksson & Svärd-ytan: tjänster, arbetsprocess, trygghetssignaler, referenser, samarbetspartners och offertkontakt med korrekt svensk text.",
+      "En statisk AlvaLinus-replik av den inventerade entreprenadytan: tjänster, arbetsprocess, trygghetssignaler, referenser, samarbetspartners och offertkontakt med korrekt svensk text.",
     primaryAction: {
       label: "Våra tjänster",
       href: "/tjanster/",
