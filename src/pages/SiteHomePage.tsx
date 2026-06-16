@@ -19,6 +19,12 @@ import type { ServiceArea, SiteContent, SiteRoute } from "../types/site";
 
 const BRAND_NAME = "Svärd Entreprenad";
 const BRAND_LOGO_SRC = "/svard-entreprenad-logo.png";
+const HERO_PHOTO_SRC = "/page-visuals/hero-photo.webp";
+const SERVICE_PHOTOS: Record<string, string> = {
+  stensattning: "/page-visuals/stensattning-photo.webp",
+  markarbete: "/page-visuals/markarbete-photo.webp",
+  dranering: "/page-visuals/dranering-photo.webp",
+};
 
 type LoadState =
   | { readonly status: "loading" }
@@ -60,15 +66,24 @@ export function SiteHomePage({ currentPath = "/", initialState }: SiteHomePagePr
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <Header />
+      <Header currentPath={currentPath} />
       <ContentSurface currentPath={currentPath} state={state} />
     </main>
   );
 }
 
-function Header() {
+function Header({ currentPath = "/" }: { readonly currentPath?: string }) {
+  const navLinks = [
+    { label: "Hem", href: "/" },
+    { label: "Tjänster", href: "/tjanster/" },
+    { label: "Om oss", href: "/om-oss/" },
+    { label: "Dränering", href: "/dranering/" },
+    { label: "Kontakt", href: "/kontakt/" },
+  ];
+  const active = normalizePath(currentPath);
+
   return (
-    <header className="sticky top-0 z-20 border-b bg-background/95 backdrop-blur">
+    <header className="sticky top-0 z-20 bg-foreground text-background shadow-sm">
       <div className="mx-auto flex min-h-16 w-full max-w-7xl items-center justify-between gap-4 px-5 sm:px-8 lg:px-10">
         <a href="/" className="flex min-w-0 items-center gap-3" aria-label={`${BRAND_NAME} startsida`}>
           <img
@@ -80,23 +95,26 @@ function Header() {
         </a>
         <nav
           aria-label="Huvudnavigation"
-          className="hidden items-center gap-5 text-sm text-muted-foreground md:flex"
+          className="hidden items-center gap-6 text-sm font-medium md:flex"
         >
-          <a className="transition-colors hover:text-foreground" href="/">
-            Hem
-          </a>
-          <a className="transition-colors hover:text-foreground" href="/tjanster/">
-            Tjänster
-          </a>
-          <a className="transition-colors hover:text-foreground" href="/om-oss/">
-            Om oss
-          </a>
-          <a className="transition-colors hover:text-foreground" href="/dranering/">
-            Dränering
-          </a>
-          <a className="transition-colors hover:text-foreground" href="/kontakt/">
-            Kontakt
-          </a>
+          {navLinks.map((link) => {
+            const isActive = normalizePath(link.href) === active;
+
+            return (
+              <a
+                key={link.href}
+                className={
+                  isActive
+                    ? "text-primary"
+                    : "text-background/75 transition-colors hover:text-primary"
+                }
+                aria-current={isActive ? "page" : undefined}
+                href={link.href}
+              >
+                {link.label}
+              </a>
+            );
+          })}
         </nav>
       </div>
     </header>
@@ -189,20 +207,26 @@ function RoutedPage({ content, route }: { readonly content: SiteContent; readonl
 
 function Hero({ content }: { readonly content: SiteContent }) {
   return (
-    <section className="border-b bg-foreground text-background">
-      <div className="mx-auto grid w-full max-w-7xl gap-10 px-5 py-14 sm:px-8 md:grid-cols-[1fr_0.78fr] md:items-center lg:px-10 lg:py-20">
-        <div className="max-w-3xl">
-          <img
-            src={BRAND_LOGO_SRC}
-            alt=""
-            aria-hidden="true"
-            className="mb-7 h-auto w-full max-w-[18rem] object-contain sm:max-w-[24rem]"
-          />
-          <p className="text-sm font-semibold uppercase tracking-normal text-primary">{content.hero.eyebrow}</p>
-          <h1 className="mt-4 text-5xl font-semibold leading-tight tracking-normal text-background sm:text-6xl">
+    <section className="relative isolate overflow-hidden bg-foreground text-background">
+      <img
+        src={HERO_PHOTO_SRC}
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 h-full w-full object-cover"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 bg-gradient-to-r from-foreground via-foreground/90 to-foreground/55"
+      />
+      <div className="mx-auto w-full max-w-7xl px-5 py-20 sm:px-8 lg:px-10 lg:py-28">
+        <div className="max-w-2xl">
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{content.hero.eyebrow}</p>
+          <h1 className="mt-4 text-5xl font-bold uppercase leading-[1.05] tracking-tight text-background sm:text-6xl">
             {content.hero.title}
           </h1>
-          <p className="mt-6 whitespace-pre-line text-lg leading-8 text-background sm:text-xl">{content.hero.intro}</p>
+          <p className="mt-6 whitespace-pre-line text-lg leading-8 text-background/85 sm:text-xl">
+            {content.hero.intro}
+          </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild size="lg">
               <a href={content.hero.primaryAction.href}>
@@ -210,18 +234,23 @@ function Hero({ content }: { readonly content: SiteContent }) {
                 <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
               </a>
             </Button>
-            <Button asChild size="lg" variant="outline">
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="border-background/40 bg-transparent text-background hover:bg-background/10 hover:text-background"
+            >
               <a href={content.hero.secondaryAction.href}>{content.hero.secondaryAction.label}</a>
             </Button>
           </div>
-        </div>
-        <div className="grid gap-3 rounded-lg border border-background/20 bg-background/10 p-4 shadow-sm">
-          {content.hero.stats.map((stat) => (
-            <div key={stat.label} className="rounded-md bg-background p-5 text-foreground">
-              <p className="text-3xl font-semibold text-primary">{stat.value}</p>
-              <p className="mt-1 text-sm text-muted-foreground">{stat.label}</p>
-            </div>
-          ))}
+          <dl className="mt-10 flex flex-wrap gap-x-8 gap-y-4">
+            {content.hero.stats.map((stat) => (
+              <div key={stat.label} className="max-w-[14rem]">
+                <dt className="text-base font-semibold text-primary">{stat.value}</dt>
+                <dd className="mt-0.5 text-sm leading-5 text-background/70">{stat.label}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </div>
     </section>
@@ -401,31 +430,46 @@ function Services({ content }: { readonly content: SiteContent }) {
         title="En pålitlig partner inom mark, bygg och anläggning"
         summary="Svärd Entreprenad hjälper privatpersoner, företag och fastighetsägare med markarbeten, dränering, grundläggning, stenläggning och andra anläggningsuppdrag."
       />
-      <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {content.services.map((service) => (
-          <Card key={service.id} id={service.id} className="flex flex-col">
-            <CardHeader>
-              <CardTitle>{service.title}</CardTitle>
-              <CardDescription>{service.summary}</CardDescription>
-            </CardHeader>
-            <CardContent className="mt-auto grid gap-4">
-              <div className="flex flex-wrap gap-2">
-                {service.tags.map((tag) => (
-                  <span key={tag} className="rounded-full bg-secondary px-3 py-1 text-xs text-secondary-foreground">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <a
-                href={service.href}
-                className="inline-flex items-center text-sm font-medium text-primary hover:text-foreground"
-              >
-                Läs mer
-                <ArrowRight className="ml-1.5 h-3.5 w-3.5" aria-hidden="true" />
-              </a>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {content.services.map((service) => {
+          const visual = content.routes.find(
+            (route) => route.kind === "service" && route.sourceId === service.id,
+          )?.visual;
+          const photo = SERVICE_PHOTOS[service.id] ?? visual?.assetPath;
+
+          return (
+            <Card key={service.id} id={service.id} className="flex flex-col overflow-hidden">
+              {photo ? (
+                <img
+                  src={photo}
+                  alt={visual?.alt ?? service.title}
+                  className="aspect-[16/10] w-full border-b object-cover"
+                  loading="lazy"
+                />
+              ) : null}
+              <CardHeader>
+                <CardTitle>{service.title}</CardTitle>
+                <CardDescription>{service.summary}</CardDescription>
+              </CardHeader>
+              <CardContent className="mt-auto grid gap-4">
+                <div className="flex flex-wrap gap-2">
+                  {service.tags.map((tag) => (
+                    <span key={tag} className="rounded-full bg-secondary px-3 py-1 text-xs text-secondary-foreground">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <a
+                  href={service.href}
+                  className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary/80"
+                >
+                  Läs mer
+                  <ArrowRight className="ml-1.5 h-3.5 w-3.5" aria-hidden="true" />
+                </a>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
     </section>
   );
@@ -448,21 +492,28 @@ function About({ content }: { readonly content: SiteContent }) {
 
 function Process({ content }: { readonly content: SiteContent }) {
   return (
-    <section id="process" className="border-y bg-secondary/60">
-      <div className="mx-auto w-full max-w-7xl px-5 py-12 sm:px-8 lg:px-10">
-        <SectionHeading
-          eyebrow="Arbetsprocess"
-          title="Från första kontakt till slutfört arbete"
-          summary="Varje uppdrag drivs med tydlig dialog, planering på plats och noggrant utförande hela vägen till färdigt resultat."
-        />
-        <div className="mt-8 grid gap-4 md:grid-cols-4">
+    <section id="process" className="bg-foreground text-background">
+      <div className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
+        <div className="max-w-3xl">
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Arbetsprocess</p>
+          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-background">
+            Från första kontakt till slutfört arbete
+          </h2>
+          <p className="mt-3 leading-7 text-background/70">
+            Varje uppdrag drivs med tydlig dialog, planering på plats och noggrant utförande hela vägen till färdigt
+            resultat.
+          </p>
+        </div>
+        <div className="mt-10 grid gap-8 md:grid-cols-4">
           {content.process.map((step, index) => (
-            <div key={step.title} className="rounded-lg border bg-card p-5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+            <div key={step.title}>
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary text-base font-bold text-primary-foreground">
                 {index + 1}
               </div>
-              <h3 className="mt-4 text-lg font-semibold">{step.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">{step.summary}</p>
+              <h3 className="mt-4 text-lg font-semibold text-background">
+                {index + 1}. {step.title}
+              </h3>
+              <p className="mt-2 text-sm leading-6 text-background/65">{step.summary}</p>
             </div>
           ))}
         </div>
@@ -475,21 +526,27 @@ function Trust({ content }: { readonly content: SiteContent }) {
   const icons = [ShieldCheck, BadgeCheck, CheckCircle2];
 
   return (
-    <section className="mx-auto w-full max-w-7xl px-5 py-12 sm:px-8 lg:px-10">
-      <SectionHeading
-        eyebrow="Varför välja oss"
-        title="Trygghetssignalerna från startsidan"
-        summary="Garantier, certifieringar och bred erfarenhet är centrala delar av företagets förtroendeyta."
-      />
-      <div className="mt-8 grid gap-4 md:grid-cols-3">
+    <section className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
+      <div className="mx-auto max-w-3xl text-center">
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Varför välja oss</p>
+        <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
+          Trygghetssignalerna från startsidan
+        </h2>
+        <p className="mt-3 leading-7 text-muted-foreground">
+          Garantier, certifieringar och bred erfarenhet är centrala delar av företagets förtroendeyta.
+        </p>
+      </div>
+      <div className="mt-12 grid gap-10 md:grid-cols-3">
         {content.trust.map((item, index) => {
           const Icon = icons[index] ?? CheckCircle2;
 
           return (
-            <div key={item.title} className="rounded-lg border bg-card p-5">
-              <Icon className="h-6 w-6 text-primary" aria-hidden="true" />
-              <h3 className="mt-4 text-lg font-semibold">{item.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.summary}</p>
+            <div key={item.title} className="flex flex-col items-center text-center">
+              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <Icon className="h-7 w-7" aria-hidden="true" />
+              </span>
+              <h3 className="mt-5 text-lg font-semibold">{item.title}</h3>
+              <p className="mt-2 max-w-xs text-sm leading-6 text-muted-foreground">{item.summary}</p>
             </div>
           );
         })}
@@ -548,24 +605,28 @@ function Contact({ content }: { readonly content: SiteContent }) {
   const emailAction = `mailto:${form.recipientEmail}?subject=${encodeURIComponent(form.subject)}`;
 
   return (
-    <section id="kontakt" className="mx-auto w-full max-w-7xl px-5 py-12 sm:px-8 lg:px-10">
-      <div className="grid gap-8 rounded-lg border bg-card p-6 lg:grid-cols-[0.9fr_1.1fr] md:p-8">
+    <section id="kontakt" className="bg-foreground text-background">
+      <div className="mx-auto grid w-full max-w-7xl gap-10 px-5 py-16 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:px-10">
         <div className="flex flex-col">
-          <p className="text-sm font-semibold text-primary">Kontakt</p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-normal">{content.contact.title}</h2>
-          <p className="mt-4 leading-7 text-muted-foreground">{content.contact.summary}</p>
-          <div className="mt-6 inline-flex max-w-max items-center rounded-md bg-accent px-4 py-3 text-sm font-medium text-accent-foreground">
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Kontakt</p>
+          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-background">{content.contact.title}</h2>
+          <p className="mt-4 leading-7 text-background/75">{content.contact.summary}</p>
+          <div className="mt-6 inline-flex max-w-max items-center rounded-md bg-primary/15 px-4 py-3 text-sm font-medium text-primary">
             <MapPinned className="mr-2 h-4 w-4" aria-hidden="true" />
             {content.contact.offertLabel}
           </div>
           <div className="mt-6 grid gap-3">
             {content.contact.items.map((item) => (
-              <a key={item.label} href={item.href} className="rounded-lg border bg-background p-4 hover:border-primary">
-                <span className="flex items-center gap-2 text-sm text-muted-foreground">
+              <a
+                key={item.label}
+                href={item.href}
+                className="rounded-lg border border-background/15 bg-background/5 p-4 transition-colors hover:border-primary"
+              >
+                <span className="flex items-center gap-2 text-sm text-background/70">
                   <PhoneCall className="h-4 w-4 text-primary" aria-hidden="true" />
                   {item.label}
                 </span>
-                <span className="mt-2 block font-medium">{item.value}</span>
+                <span className="mt-2 block font-medium text-background">{item.value}</span>
               </a>
             ))}
           </div>
@@ -575,7 +636,7 @@ function Contact({ content }: { readonly content: SiteContent }) {
           action={emailAction}
           method="post"
           encType="text/plain"
-          className="grid gap-4 rounded-lg border bg-background p-5"
+          className="grid gap-4 rounded-lg border bg-card p-6 text-foreground"
         >
           <input type="hidden" name="subject" value={form.subject} />
           <label className="grid gap-2 text-sm font-medium text-foreground">
@@ -645,8 +706,8 @@ function SectionHeading({
 }) {
   return (
     <div className="max-w-3xl">
-      <p className="text-sm font-semibold uppercase tracking-normal text-primary">{eyebrow}</p>
-      <h2 className="mt-2 text-3xl font-semibold tracking-normal text-foreground">{title}</h2>
+      <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{eyebrow}</p>
+      <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">{title}</h2>
       <p className="mt-3 leading-7 text-muted-foreground">{summary}</p>
     </div>
   );
