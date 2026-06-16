@@ -7,9 +7,9 @@ Accepted
 ## Context
 
 Issue gh7 asked to redo the earlier gh3 direction and turn the site toward the
-target Eriksson & Svärd-inspired content surface. The accepted delivery in PR
-#9 replaced the placeholder Vite page with production React content instead of
-adding a separate mockup artifact.
+target service-company content surface. The accepted delivery in PR #9 replaced
+the placeholder Vite page with production React content instead of adding a
+separate mockup artifact.
 
 The build-stage agent captured the live target site's sitemap and homepage
 navigation before editing. The sitemap exposed 58 public page URLs, while the

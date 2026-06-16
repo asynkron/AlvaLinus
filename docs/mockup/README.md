@@ -8,6 +8,6 @@ intentionally strict and plain so the review stays focused on content hierarchy,
 navigation, service coverage, process, trust signals, references/partners, and
 the contact/offert path.
 
-The structure is inspired by the content categories on `https://www.erikssonsvard.se/`
-as reviewed on 2026-06-16, but the copy and layout are original placeholders for
-AlvaLinus.
+The structure is inspired by a reviewed external landscaping and groundwork
+reference site from 2026-06-16, but the copy and layout are original
+placeholders for AlvaLinus.

@@ -2,7 +2,6 @@ import {
   ArrowRight,
   BadgeCheck,
   CheckCircle2,
-  ExternalLink,
   Handshake,
   Mail,
   MapPinned,
@@ -318,13 +317,6 @@ function ServicePage({
             {service.title} passar när du vill ha en tydlig genomgång av behov, markförutsättningar och nästa steg
             innan arbetet planeras.
           </p>
-          <a
-            href={service.sourceHref}
-            className="mt-5 inline-flex items-center text-sm font-medium text-primary hover:text-foreground"
-          >
-            Visa källsida
-            <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden="true" />
-          </a>
         </aside>
       </section>
       <Process content={content} />
@@ -507,6 +499,10 @@ function Trust({ content }: { readonly content: SiteContent }) {
 }
 
 function Partners({ content }: { readonly content: SiteContent }) {
+  if (content.partners.length === 0) {
+    return null;
+  }
+
   return (
     <section id="samarbetspartner" className="border-y bg-muted/70">
       <div className="mx-auto w-full max-w-7xl px-5 py-12 sm:px-8 lg:px-10">
