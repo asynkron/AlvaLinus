@@ -1,0 +1,40 @@
+- main [ref=e3]:
+  - generic [ref=e5]:
+    - link "Svärd Entreprenad startsida" [ref=e6] [cursor=pointer]:
+      - /url: /
+      - img "Svärd Entreprenad logotyp" [ref=e7]
+      - generic [ref=e8]: Svärd Entreprenad
+    - navigation "Huvudnavigation" [ref=e9]:
+      - link "Hem" [ref=e10] [cursor=pointer]:
+        - /url: /
+      - link "Tjänster" [ref=e11] [cursor=pointer]:
+        - /url: /tjanster/
+      - link "Om oss" [ref=e12] [cursor=pointer]:
+        - /url: /om-oss/
+      - link "Dränering" [ref=e13] [cursor=pointer]:
+        - /url: /dranering/
+      - link "Kontakt" [ref=e14] [cursor=pointer]:
+        - /url: /kontakt/
+  - generic [ref=e16]:
+    - link "Startsida" [ref=e17] [cursor=pointer]:
+      - /url: /
+    - heading "Om oss" [level=1] [ref=e18]
+    - paragraph [ref=e19]: Läs om Svärd Entreprenads arbetssätt, erfarenhet och ansvar från första spadtag till färdigt resultat.
+  - generic [ref=e21]:
+    - generic [ref=e22]:
+      - paragraph [ref=e23]: Om oss
+      - heading "Om oss" [level=2] [ref=e24]
+      - paragraph [ref=e25]: På Svärd Entreprenad brinner vi för att skapa hållbara och välutförda mark- och anläggningsarbeten.
+    - generic [ref=e26]:
+      - paragraph [ref=e27]: På Svärd Entreprenad brinner vi för att skapa hållbara och välutförda mark- och anläggningsarbeten. Med erfarenhet, kompetens och ett stort engagemang hjälper vi privatpersoner, företag och fastighetsägare att genomföra projekt av alla storlekar.
+      - paragraph [ref=e28]: Vi erbjuder tjänster inom markarbeten, schaktning, dränering, VA-arbeten, grundläggning, tomtplanering, stenläggning och övriga anläggningsarbeten. Oavsett om det handlar om att förbereda marken för ett nybygge, anlägga en uppfart eller genomföra större entreprenader arbetar vi alltid med samma mål - att leverera ett resultat som håller över tid.
+      - paragraph [ref=e29]: För oss är kvalitet, noggrannhet och pålitlighet självklara delar av varje uppdrag. Vi tror på god kommunikation, tydliga överenskommelser och ett professionellt bemötande genom hela projektet. Genom att kombinera modern utrustning med gedigen yrkeskunskap kan vi erbjuda effektiva lösningar anpassade efter varje kunds behov.
+      - paragraph [ref=e30]: När du väljer Svärd Entreprenad får du en trygg samarbetspartner som tar ansvar från första spadtag till färdigt resultat.
+  - generic [ref=e32]:
+    - generic [ref=e33]:
+      - paragraph [ref=e34]: Nästa steg
+      - heading "Kontakta oss för offert" [level=2] [ref=e35]
+    - link "Kontakta oss" [ref=e36] [cursor=pointer]:
+      - /url: /kontakt/
+      - text: Kontakta oss
+      - img [ref=e37]

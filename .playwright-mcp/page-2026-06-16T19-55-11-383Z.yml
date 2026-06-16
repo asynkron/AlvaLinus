@@ -1,0 +1,234 @@
+- main [ref=e3]:
+  - generic [ref=e5]:
+    - link "Svärd Entreprenad startsida" [ref=e6] [cursor=pointer]:
+      - /url: /
+      - img "Svärd Entreprenad logotyp" [ref=e7]
+      - generic [ref=e8]: Svärd Entreprenad
+    - navigation "Huvudnavigation" [ref=e9]:
+      - link "Hem" [ref=e10] [cursor=pointer]:
+        - /url: /
+      - link "Tjänster" [ref=e11] [cursor=pointer]:
+        - /url: /tjanster/
+      - link "Om oss" [ref=e12] [cursor=pointer]:
+        - /url: /om-oss/
+      - link "Dränering" [ref=e13] [cursor=pointer]:
+        - /url: /dranering/
+      - link "Kontakt" [ref=e14] [cursor=pointer]:
+        - /url: /kontakt/
+  - generic [ref=e16]:
+    - generic [ref=e17]:
+      - img [ref=e18]
+      - paragraph [ref=e19]: Mark & anläggning i Örebro
+      - heading "Svärd Entreprenad" [level=1] [ref=e20]
+      - paragraph [ref=e21]: Välkommen till Svärd Entreprenad Vi erbjuder professionella mark- och anläggningsarbeten för privatpersoner, företag och fastighetsägare. Med fokus på kvalitet, noggrannhet och pålitlighet levererar vi hållbara lösningar inom schaktning, dränering, VA-arbeten, grundläggning och tomtplanering. Din trygga partner från första spadtag till färdigt resultat.
+      - generic [ref=e22]:
+        - link "Våra tjänster" [ref=e23] [cursor=pointer]:
+          - /url: /tjanster/
+          - text: Våra tjänster
+          - img [ref=e24]
+        - link "Kontakta oss för offert" [ref=e26] [cursor=pointer]:
+          - /url: /kontakt/
+    - generic [ref=e27]:
+      - generic [ref=e28]:
+        - paragraph [ref=e29]: Kvalitet
+        - paragraph [ref=e30]: noggrant utförda markarbeten
+      - generic [ref=e31]:
+        - paragraph [ref=e32]: Trygghet
+        - paragraph [ref=e33]: tydliga överenskommelser och ansvar
+      - generic [ref=e34]:
+        - paragraph [ref=e35]: Hållbart
+        - paragraph [ref=e36]: lösningar som håller över tid
+  - generic [ref=e38]:
+    - generic [ref=e39]:
+      - paragraph [ref=e40]: Källinventering
+      - heading "Sitemap och synliga huvudspår" [level=2] [ref=e41]
+      - paragraph [ref=e42]: "Den publika strukturen är uppdaterad efter ägarens önskemål: Hem, Tjänster, Om oss, Dränering och Kontakt är primära vägar. Pool och referensjobb är borttagna som egna ytor."
+    - generic [ref=e43]:
+      - paragraph [ref=e44]: 58 publika sid-URL:er kontrollerade från https://www.erikssonsvard.se/page-sitemap.xml.
+      - generic [ref=e45]:
+        - link "Hem" [ref=e46] [cursor=pointer]:
+          - /url: /
+        - link "Tjänster" [ref=e47] [cursor=pointer]:
+          - /url: /tjanster/
+        - link "Om oss" [ref=e48] [cursor=pointer]:
+          - /url: /om-oss/
+        - link "Dränering" [ref=e49] [cursor=pointer]:
+          - /url: /dranering/
+        - link "Kontakt" [ref=e50] [cursor=pointer]:
+          - /url: /kontakt/
+  - generic [ref=e51]:
+    - generic [ref=e52]:
+      - paragraph [ref=e53]: Våra tjänster
+      - heading "En pålitlig partner inom mark, bygg och anläggning" [level=2] [ref=e54]
+      - paragraph [ref=e55]: Startsidan och navigationen lyfter ett brett tjänsteutbud. Den statiska repliken samlar det i skannbara tjänstekort med länkar till källans undersidor.
+    - generic [ref=e56]:
+      - generic [ref=e57]:
+        - generic [ref=e58]:
+          - heading "Stensättning" [level=3] [ref=e59]
+          - paragraph [ref=e60]: Planerade stenytor, marksten och murar för entréer, gångar och gårdar där finish och bärighet behöver hålla över tid.
+        - generic [ref=e61]:
+          - generic [ref=e62]:
+            - generic [ref=e63]: Marksten Örebro
+            - generic [ref=e64]: Stenmurar
+            - generic [ref=e65]: Finplanering
+          - link "Läs mer" [ref=e66] [cursor=pointer]:
+            - /url: /stensattning/
+            - text: Läs mer
+            - img [ref=e67]
+      - generic [ref=e69]:
+        - generic [ref=e70]:
+          - heading "Markarbete" [level=3] [ref=e71]
+          - paragraph [ref=e72]: Bredden i mark och anläggning samlad i ett erbjudande för privatpersoner, företag och kommunala projekt.
+        - generic [ref=e73]:
+          - generic [ref=e74]:
+            - generic [ref=e75]: Schakt
+            - generic [ref=e76]: Tomt
+            - generic [ref=e77]: Anläggning
+          - link "Läs mer" [ref=e78] [cursor=pointer]:
+            - /url: /markarbete/
+            - text: Läs mer
+            - img [ref=e79]
+      - generic [ref=e81]:
+        - generic [ref=e82]:
+          - heading "Grävjobb" [level=3] [ref=e83]
+          - paragraph [ref=e84]: Maskin- och grävarbeten för husgrunder, avlopp, VA, tomter och poolgrävning där rätt förarbete avgör slutresultatet.
+        - generic [ref=e85]:
+          - generic [ref=e86]:
+            - generic [ref=e87]: Grävning
+            - generic [ref=e88]: Husgrund
+            - generic [ref=e89]: Poolgrävning
+          - link "Läs mer" [ref=e90] [cursor=pointer]:
+            - /url: /gravjobb/
+            - text: Läs mer
+            - img [ref=e91]
+      - generic [ref=e93]:
+        - generic [ref=e94]:
+          - heading "Dränering" [level=3] [ref=e95]
+          - paragraph [ref=e96]: Dräneringar och fuktsäkra markarbeten runt hus, murar och tomter med ansvar för hela arbetskedjan.
+        - generic [ref=e97]:
+          - generic [ref=e98]:
+            - generic [ref=e99]: Dränering
+            - generic [ref=e100]: Mur
+            - generic [ref=e101]: Fuktskydd
+          - link "Läs mer" [ref=e102] [cursor=pointer]:
+            - /url: /dranering/
+            - text: Läs mer
+            - img [ref=e103]
+      - generic [ref=e105]:
+        - generic [ref=e106]:
+          - heading "Trädgårdsplanering" [level=3] [ref=e107]
+          - paragraph [ref=e108]: Tomt- och trädgårdsplanering som binder ihop höjder, ytor, planteringar och praktisk användning.
+        - generic [ref=e109]:
+          - generic [ref=e110]:
+            - generic [ref=e111]: Tomtplanering
+            - generic [ref=e112]: Utemiljö
+            - generic [ref=e113]: Finish
+          - link "Läs mer" [ref=e114] [cursor=pointer]:
+            - /url: /tradgardsplanering/
+            - text: Läs mer
+            - img [ref=e115]
+  - generic [ref=e118]:
+    - generic [ref=e119]:
+      - paragraph [ref=e120]: Arbetsprocess
+      - heading "Från första kontakt till slutfört arbete" [level=2] [ref=e121]
+      - paragraph [ref=e122]: Källsidan beskriver processen i fyra steg. Här är samma väg översatt till en tydlig statisk kundresa.
+    - generic [ref=e123]:
+      - generic [ref=e124]:
+        - generic [ref=e125]: "1"
+        - heading "Första kontakt" [level=3] [ref=e126]
+        - paragraph [ref=e127]: Behov, plats och tidsbild samlas in så rätt kompetens kan kopplas på från start.
+      - generic [ref=e128]:
+        - generic [ref=e129]: "2"
+        - heading "Genomgång" [level=3] [ref=e130]
+        - paragraph [ref=e131]: Projektet gås igenom på plats med förutsättningar, ansvar och offertunderlag.
+      - generic [ref=e132]:
+        - generic [ref=e133]: "3"
+        - heading "Utförande" [level=3] [ref=e134]
+        - paragraph [ref=e135]: Certifierade team genomför mark-, bygg- eller anläggningsarbetet med löpande avstämning.
+      - generic [ref=e136]:
+        - generic [ref=e137]: "4"
+        - heading "Slutfört arbete" [level=3] [ref=e138]
+        - paragraph [ref=e139]: Arbetet lämnas över med fokus på kvalitet, miljö och en nöjd kund.
+  - generic [ref=e140]:
+    - generic [ref=e141]:
+      - paragraph [ref=e142]: Varför välja oss
+      - heading "Trygghetssignalerna från startsidan" [level=2] [ref=e143]
+      - paragraph [ref=e144]: Garantier, certifieringar och bred erfarenhet är centrala delar av källans förtroendeyta.
+    - generic [ref=e145]:
+      - generic [ref=e146]:
+        - img [ref=e147]
+        - heading "Allt inom mark & anläggning" [level=3] [ref=e150]
+        - paragraph [ref=e151]: Husgrunder, stensättning, stenmurar, enskilt avlopp, VA, dräneringar, poolgrävning och relaterade markjobb samlas under samma kompetens.
+      - generic [ref=e152]:
+        - img [ref=e153]
+        - heading "Noggrant utförande" [level=3] [ref=e156]
+        - paragraph [ref=e157]: Kvalitet, noggrannhet och pålitlighet är självklara delar från första genomgång till färdigt resultat.
+      - generic [ref=e158]:
+        - img [ref=e159]
+        - heading "Mångårig erfarenhet" [level=3] [ref=e162]
+        - paragraph [ref=e163]: Teamen beskrivs som certifierade och erfarna, med bred kompetens som används för att hålla hög standard i varje uppdrag.
+  - generic [ref=e165]:
+    - generic [ref=e167]:
+      - paragraph [ref=e168]: Samarbetspartner
+      - heading "Samarbetspartner" [level=2] [ref=e169]
+      - paragraph [ref=e170]: Partnerfältet är uppdaterat enligt ägarens önskemål och visar endast aktuell samarbetspartner.
+    - generic [ref=e172]:
+      - img [ref=e173]
+      - paragraph [ref=e178]: Eriksson & Svärd AB
+      - paragraph [ref=e179]: Samarbetspartner
+  - generic [ref=e181]:
+    - generic [ref=e182]:
+      - paragraph [ref=e183]: Kontakt
+      - heading "Kontakta oss för offert" [level=2] [ref=e184]
+      - paragraph [ref=e185]: Skicka en förfrågan om ditt projekt så återkommer Svärd Entreprenad med nästa steg.
+      - generic [ref=e186]:
+        - img [ref=e187]
+        - text: Boka ett kostnadsfritt besök eller be om offert
+      - generic [ref=e191]:
+        - link "E-post kontakt@svardentreprenad.se" [ref=e192] [cursor=pointer]:
+          - /url: mailto:kontakt@svardentreprenad.se
+          - generic [ref=e193]:
+            - img [ref=e194]
+            - text: E-post
+          - generic [ref=e198]: kontakt@svardentreprenad.se
+        - link "Källa Eriksson & Svärd" [ref=e199] [cursor=pointer]:
+          - /url: https://www.erikssonsvard.se/kontakt/
+          - generic [ref=e200]:
+            - img [ref=e201]
+            - text: Källa
+          - generic [ref=e205]: Eriksson & Svärd
+    - form "Offertförfrågan via e-post" [ref=e206]:
+      - generic [ref=e207]:
+        - text: Namn
+        - textbox "Namn" [ref=e208]:
+          - /placeholder: Ditt namn
+      - generic [ref=e209]:
+        - generic [ref=e210]:
+          - text: Kundtyp
+          - combobox "Kundtyp" [ref=e211]:
+            - option "Privatperson" [selected]
+            - option "Företag"
+            - option "BRF eller fastighetsägare"
+        - generic [ref=e212]:
+          - text: Tjänst
+          - combobox "Tjänst" [ref=e213]:
+            - option "Stensättning" [selected]
+            - option "Markarbete"
+            - option "Grävjobb"
+            - option "Dränering"
+            - option "Trädgårdsplanering"
+            - option "Annat"
+      - generic [ref=e214]:
+        - text: Meddelande
+        - textbox "Meddelande" [ref=e215]:
+          - /placeholder: Beskriv projektet, platsen och önskad tid.
+      - button "Skicka offertförfrågan" [ref=e216] [cursor=pointer]:
+        - img [ref=e217]
+        - text: Skicka offertförfrågan
+        - img [ref=e220]
+  - generic [ref=e224]:
+    - paragraph [ref=e225]: Svärd Entreprenad
+    - link "kontakt@svardentreprenad.se" [ref=e226] [cursor=pointer]:
+      - /url: mailto:kontakt@svardentreprenad.se
+      - img [ref=e227]
+      - text: kontakt@svardentreprenad.se
