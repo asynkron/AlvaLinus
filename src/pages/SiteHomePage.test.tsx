@@ -45,10 +45,11 @@ describe("SiteHomePage", () => {
     expect(screen.queryByRole("link", { name: "Referensobjekt" })).not.toBeInTheDocument();
   });
 
-  it("documents the updated route decision in the rendered page", () => {
+  it("presents the updated route decision as customer-facing service guidance", () => {
     render(<SiteHomePage initialState={{ status: "ready", content }} />);
 
-    expect(screen.getByText(/58 publika sid-URL:er kontrollerade/)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Tydliga vägar för rätt uppdrag" })).toBeInTheDocument();
+    expect(screen.getByText(/Hitta snabbt till företagets viktigaste information/)).toBeInTheDocument();
     expect(screen.getByText(/Pool och referensjobb är borttagna som egna ytor/)).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: "Om oss" })[0]).toHaveAttribute("href", "/om-oss/");
   });
@@ -88,11 +89,12 @@ describe("SiteHomePage", () => {
     expect(screen.getByText("Poolgrävning")).toBeInTheDocument();
   });
 
-  it("renders a dedicated service page for a sitemap path", () => {
+  it("renders a dedicated service page with customer-facing guidance", () => {
     render(<SiteHomePage currentPath="/stensattning/" initialState={{ status: "ready", content }} />);
 
     expect(screen.getByRole("heading", { name: "Stensättning", level: 1 })).toBeInTheDocument();
-    expect(screen.getByText(/egen URL i den statiska strukturen/)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "När tjänsten passar" })).toBeInTheDocument();
+    expect(screen.getByText(/markförutsättningar och nästa steg/)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Visa källsida" })).toHaveAttribute(
       "href",
       "https://www.erikssonsvard.se/stensattning/",
@@ -170,7 +172,8 @@ describe("SiteHomePage", () => {
   it("fails unknown paths gracefully", () => {
     render(<SiteHomePage currentPath="/saknas/" initialState={{ status: "ready", content }} />);
 
-    expect(screen.getByRole("heading", { name: /Sidan finns inte/ })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Sidan finns inte" })).toBeInTheDocument();
+    expect(screen.getByText(/matchar ingen aktuell sida/)).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: "Hem" })[0]).toHaveAttribute("href", "/");
   });
 });

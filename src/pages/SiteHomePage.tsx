@@ -234,13 +234,13 @@ function Inventory({ content }: { readonly content: SiteContent }) {
     <section className="mx-auto w-full max-w-7xl px-5 py-10 sm:px-8 lg:px-10">
       <div className="grid gap-6 rounded-lg border bg-card p-5 md:grid-cols-[0.8fr_1.2fr]">
         <div>
-          <p className="text-sm font-semibold text-primary">Källinventering</p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-normal">Sitemap och synliga huvudspår</h2>
+          <p className="text-sm font-semibold text-primary">Tjänsteöversikt</p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-normal">Tydliga vägar för rätt uppdrag</h2>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">{content.inventory.routeDecision}</p>
         </div>
         <div>
           <p className="text-sm text-muted-foreground">
-            {content.inventory.pageCount} publika sid-URL:er kontrollerade från {content.inventory.source}.
+            Hitta snabbt till företagets viktigaste information, tjänster och offertkontakt.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             {content.inventory.primaryRoutes.map((route) => (
@@ -313,10 +313,10 @@ function ServicePage({
           </div>
         </div>
         <aside className="rounded-lg border bg-card p-5">
-          <h2 className="text-xl font-semibold">Sitemap-replik</h2>
+          <h2 className="text-xl font-semibold">När tjänsten passar</h2>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">
-            Den här sidan ger {service.title.toLowerCase()} en egen URL i den statiska strukturen och behåller källans
-            tjänstespår som extern referens.
+            {service.title} passar när du vill ha en tydlig genomgång av behov, markförutsättningar och nästa steg
+            innan arbetet planeras.
           </p>
           <a
             href={service.sourceHref}
@@ -348,9 +348,9 @@ function NotFound({ content, currentPath }: { readonly content: SiteContent; rea
     <section className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
       <div className="rounded-lg border bg-card p-6">
         <p className="text-sm font-semibold uppercase tracking-normal text-primary">Okänd sida</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-normal">Sidan finns inte i den statiska replikens sitemap</h1>
+        <h1 className="mt-2 text-3xl font-semibold tracking-normal">Sidan finns inte</h1>
         <p className="mt-3 leading-7 text-muted-foreground">
-          {currentPath} matchar ingen av de replikerade undersidorna. Välj en publicerad sidväg nedan.
+          {currentPath} matchar ingen aktuell sida. Välj en av genvägarna nedan för att komma vidare.
         </p>
         <div className="mt-6 flex flex-wrap gap-2">
           {content.routes.map((route) => (
@@ -407,7 +407,7 @@ function Services({ content }: { readonly content: SiteContent }) {
       <SectionHeading
         eyebrow="Våra tjänster"
         title="En pålitlig partner inom mark, bygg och anläggning"
-        summary="Startsidan och navigationen lyfter ett brett tjänsteutbud. Den statiska repliken samlar det i skannbara tjänstekort med länkar till källans undersidor."
+        summary="Svärd Entreprenad hjälper privatpersoner, företag och fastighetsägare med markarbeten, dränering, grundläggning, stenläggning och andra anläggningsuppdrag."
       />
       <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {content.services.map((service) => (
@@ -461,7 +461,7 @@ function Process({ content }: { readonly content: SiteContent }) {
         <SectionHeading
           eyebrow="Arbetsprocess"
           title="Från första kontakt till slutfört arbete"
-          summary="Källsidan beskriver processen i fyra steg. Här är samma väg översatt till en tydlig statisk kundresa."
+          summary="Varje uppdrag drivs med tydlig dialog, planering på plats och noggrant utförande hela vägen till färdigt resultat."
         />
         <div className="mt-8 grid gap-4 md:grid-cols-4">
           {content.process.map((step, index) => (
