@@ -3,24 +3,53 @@
 @tailwind utilities;
 
 :root {
-  --background: 42 33% 98%;
-  --foreground: 218 28% 15%;
+  /* Premium warm-neutral services palette — restrained contrast, refined depth. */
+  --background: 40 30% 97%;
+  --foreground: 220 27% 13%;
   --card: 0 0% 100%;
-  --card-foreground: 218 28% 15%;
-  --primary: 177 55% 27%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 42 33% 92%;
-  --secondary-foreground: 218 28% 15%;
-  --muted: 42 25% 90%;
-  --muted-foreground: 218 12% 42%;
-  --accent: 20 74% 55%;
-  --accent-foreground: 0 0% 100%;
+  --card-foreground: 220 27% 13%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 27% 13%;
+  --primary: 176 60% 22%;
+  --primary-foreground: 40 38% 98%;
+  --secondary: 40 28% 93%;
+  --secondary-foreground: 220 27% 16%;
+  --muted: 40 24% 91%;
+  --muted-foreground: 220 12% 40%;
+  --accent: 32 80% 48%;
+  --accent-foreground: 36 45% 99%;
   --destructive: 0 72% 44%;
   --destructive-foreground: 0 0% 100%;
-  --border: 42 20% 84%;
-  --input: 42 20% 84%;
-  --ring: 177 55% 27%;
-  --radius: 0.5rem;
+  --border: 40 18% 86%;
+  --input: 40 18% 86%;
+  --ring: 176 60% 22%;
+  --radius: 0.75rem;
+
+  /* Premium accent surfaces used by custom gradients and elevation. */
+  --brand-glow: 176 60% 22%;
+  --gold-glow: 32 80% 48%;
+}
+
+.dark {
+  --background: 220 28% 8%;
+  --foreground: 40 30% 95%;
+  --card: 220 25% 11%;
+  --card-foreground: 40 30% 95%;
+  --popover: 220 25% 11%;
+  --popover-foreground: 40 30% 95%;
+  --primary: 176 52% 46%;
+  --primary-foreground: 220 28% 8%;
+  --secondary: 220 20% 16%;
+  --secondary-foreground: 40 30% 95%;
+  --muted: 220 18% 16%;
+  --muted-foreground: 220 12% 66%;
+  --accent: 32 78% 54%;
+  --accent-foreground: 220 28% 8%;
+  --destructive: 0 62% 50%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 220 16% 22%;
+  --input: 220 16% 22%;
+  --ring: 176 52% 46%;
 }
 
 * {
@@ -29,17 +58,42 @@
 
 html {
   scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
   margin: 0;
   min-width: 320px;
+  color: hsl(var(--foreground));
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: hsl(var(--background));
+  font-feature-settings: "cv11", "ss01", "ss03";
+  /* Layered premium backdrop: soft brand and gold light pooled behind a warm paper base. */
+  background-color: hsl(var(--background));
+  background-image:
+    radial-gradient(58rem 32rem at 12% -8%, hsl(var(--brand-glow) / 0.08), transparent 60%),
+    radial-gradient(48rem 30rem at 100% 0%, hsl(var(--gold-glow) / 0.07), transparent 55%);
+  background-attachment: fixed;
+}
+
+h1,
+h2,
+h3 {
+  letter-spacing: -0.018em;
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+::selection {
+  background: hsl(var(--primary) / 0.16);
+  color: hsl(var(--foreground));
+}
+
+:focus-visible {
+  outline: none;
 }
