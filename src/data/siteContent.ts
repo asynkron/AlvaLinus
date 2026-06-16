@@ -3,7 +3,7 @@ import type { SiteContent } from "../types/site";
 export const siteContent = {
   inventory: {
     checkedAt: "2026-06-16T10:05:00Z",
-    source: "https://www.erikssonsvard.se/page-sitemap.xml",
+    source: "Current route inventory and owner-approved service structure",
     pageCount: 58,
     routeDecision:
       "Den publika strukturen är uppdaterad efter ägarens önskemål: Hem, Tjänster, Om oss, Dränering och Kontakt är primära vägar. Pool och referensjobb är borttagna som egna ytor.",
@@ -124,7 +124,6 @@ export const siteContent = {
       summary:
         "Planerade stenytor, marksten och murar för entréer, gångar och gårdar där finish och bärighet behöver hålla över tid.",
       href: "/stensattning/",
-      sourceHref: "https://www.erikssonsvard.se/stensattning/",
       tags: ["Marksten Örebro", "Stenmurar", "Finplanering"],
     },
     {
@@ -133,7 +132,6 @@ export const siteContent = {
       summary:
         "Bredden i mark och anläggning samlad i ett erbjudande för privatpersoner, företag och kommunala projekt.",
       href: "/markarbete/",
-      sourceHref: "https://www.erikssonsvard.se/markarbete/",
       tags: ["Schakt", "Tomt", "Anläggning"],
     },
     {
@@ -142,7 +140,6 @@ export const siteContent = {
       summary:
         "Maskin- och grävarbeten för husgrunder, avlopp, VA, tomter och poolgrävning där rätt förarbete avgör slutresultatet.",
       href: "/gravjobb/",
-      sourceHref: "https://www.erikssonsvard.se/gravjobb/",
       tags: ["Grävning", "Husgrund", "Poolgrävning"],
     },
     {
@@ -151,7 +148,6 @@ export const siteContent = {
       summary:
         "Dräneringar och fuktsäkra markarbeten runt hus, murar och tomter med ansvar för hela arbetskedjan.",
       href: "/dranering/",
-      sourceHref: "https://www.erikssonsvard.se/dranering/",
       tags: ["Dränering", "Mur", "Fuktskydd"],
     },
     {
@@ -160,7 +156,6 @@ export const siteContent = {
       summary:
         "Tomt- och trädgårdsplanering som binder ihop höjder, ytor, planteringar och praktisk användning.",
       href: "/tradgardsplanering/",
-      sourceHref: "https://www.erikssonsvard.se/tradgardsplanering/",
       tags: ["Tomtplanering", "Utemiljö", "Finish"],
     },
   ],
@@ -199,7 +194,7 @@ export const siteContent = {
         "Teamen beskrivs som certifierade och erfarna, med bred kompetens som används för att hålla hög standard i varje uppdrag.",
     },
   ],
-  partners: [{ name: "Eriksson & Svärd AB", kind: "Samarbetspartner" }],
+  partners: [],
   contact: {
     title: "Kontakta oss för offert",
     summary: "Skicka en förfrågan om ditt projekt så återkommer Svärd Entreprenad med nästa steg.",
@@ -233,7 +228,6 @@ export const siteContent = {
     },
     items: [
       { label: "E-post", value: "kontakt@svardentreprenad.se", href: "mailto:kontakt@svardentreprenad.se" },
-      { label: "Källa", value: "Eriksson & Svärd", href: "https://www.erikssonsvard.se/kontakt/" },
     ],
   },
 } satisfies SiteContent;

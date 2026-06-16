@@ -11,9 +11,9 @@ Source of truth:
 This inventory covers the current Svard Entreprenad public route surface. The
 site currently uses the shared `/svard-entreprenad-logo.png` asset and does not
 have route-specific photography, project media, maps, before-and-after images,
-or service-detail visual assets for any listed route. Existing Eriksson & Svard
-source links in the UI are current cleanup targets, not a desired retained
-customer-facing pattern.
+or service-detail visual assets for any listed route. Previous external source
+links in the UI are cleanup targets, not a desired retained customer-facing
+pattern.
 
 ## Route Inventory
 

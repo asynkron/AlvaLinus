@@ -19,7 +19,7 @@ describe("SiteHomePage", () => {
     expect(screen.getByRole("heading", { name: "En pålitlig partner inom mark, bygg och anläggning" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Från första kontakt till slutfört arbete" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Trygghetssignalerna från startsidan" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Samarbetspartner" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Samarbetspartner" })).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Kontakta oss för offert" })).toBeInTheDocument();
   });
 
@@ -95,10 +95,7 @@ describe("SiteHomePage", () => {
     expect(screen.getByRole("heading", { name: "Stensättning", level: 1 })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "När tjänsten passar" })).toBeInTheDocument();
     expect(screen.getByText(/markförutsättningar och nästa steg/)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Visa källsida" })).toHaveAttribute(
-      "href",
-      "https://www.erikssonsvard.se/stensattning/",
-    );
+    expect(screen.queryByRole("link", { name: "Visa källsida" })).not.toBeInTheDocument();
   });
 
   it("renders dedicated Dränering and Grävjobb pages", () => {
@@ -106,19 +103,13 @@ describe("SiteHomePage", () => {
 
     expect(screen.getByRole("heading", { name: "Dränering", level: 1 })).toBeInTheDocument();
     expect(screen.getByText(/fuktsäkring runt husgrund/)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Visa källsida" })).toHaveAttribute(
-      "href",
-      "https://www.erikssonsvard.se/dranering/",
-    );
+    expect(screen.queryByRole("link", { name: "Visa källsida" })).not.toBeInTheDocument();
 
     rerender(<SiteHomePage currentPath="/gravjobb/" initialState={{ status: "ready", content }} />);
 
     expect(screen.getByRole("heading", { name: "Grävjobb", level: 1 })).toBeInTheDocument();
     expect(screen.getByText(/poolgrävning där rätt förarbete avgör slutresultatet/)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Visa källsida" })).toHaveAttribute(
-      "href",
-      "https://www.erikssonsvard.se/gravjobb/",
-    );
+    expect(screen.queryByRole("link", { name: "Visa källsida" })).not.toBeInTheDocument();
   });
 
   it("renders dedicated about and contact paths", () => {
@@ -134,10 +125,10 @@ describe("SiteHomePage", () => {
     expect(screen.getByRole("heading", { name: "Kontakta oss för offert" })).toBeInTheDocument();
   });
 
-  it("shows only the requested collaborator and no award/old partner entries", () => {
+  it("hides partner content when no current collaborator is configured", () => {
     render(<SiteHomePage initialState={{ status: "ready", content }} />);
 
-    expect(screen.getByText("Eriksson & Svärd AB")).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Samarbetspartner" })).not.toBeInTheDocument();
     expect(screen.queryByText("UC Brons")).not.toBeInTheDocument();
     expect(screen.queryByText("Benders")).not.toBeInTheDocument();
     expect(screen.queryByText("Ahlsell")).not.toBeInTheDocument();
@@ -166,7 +157,7 @@ describe("SiteHomePage", () => {
       "href",
       "mailto:kontakt@svardentreprenad.se",
     );
-    expect(screen.getByRole("link", { name: /Källa/ })).toHaveAttribute("href", "https://www.erikssonsvard.se/kontakt/");
+    expect(screen.queryByRole("link", { name: /Källa/ })).not.toBeInTheDocument();
   });
 
   it("fails unknown paths gracefully", () => {
