@@ -26,26 +26,38 @@ describe("SiteHomePage", () => {
     render(<SiteHomePage initialState={{ status: "ready", content }} />);
 
     expect(screen.getByText("Mark & anläggning i Örebro")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Dränering" })).toBeInTheDocument();
+    expect(screen.getAllByRole("link", { name: "Dränering" }).length).toBeGreaterThan(0);
     expect(screen.getByRole("heading", { name: "Grävjobb" })).toBeInTheDocument();
     expect(screen.getByText("Trädgårdsplanering")).toBeInTheDocument();
     expect(screen.getByText("Mångårig erfarenhet")).toBeInTheDocument();
+  });
+
+  it("shows the requested primary navigation labels as real route links", () => {
+    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+
+    expect(screen.getAllByRole("link", { name: "Hem" })[0]).toHaveAttribute("href", "/");
+    expect(screen.getAllByRole("link", { name: "Tjänster" })[0]).toHaveAttribute("href", "/tjanster/");
+    expect(screen.getAllByRole("link", { name: "Dränering" })[0]).toHaveAttribute("href", "/dranering/");
+    expect(screen.getAllByRole("link", { name: "Pool" })[0]).toHaveAttribute("href", "/pool/");
+    expect(screen.getAllByRole("link", { name: "Referensobjekt" })[0]).toHaveAttribute("href", "/referenser/");
+    expect(screen.getAllByRole("link", { name: "Kontakt" })[0]).toHaveAttribute("href", "/kontakt/");
   });
 
   it("documents the sitemap inventory and route decision in the rendered page", () => {
     render(<SiteHomePage initialState={{ status: "ready", content }} />);
 
     expect(screen.getByText(/58 publika sid-URL:er kontrollerade/)).toBeInTheDocument();
-    expect(screen.getByText(/flera navigerbara sid-URL:er/)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Referensobjekt" })).toHaveAttribute("href", "/referenser/");
+    expect(screen.getByText(/begärda huvudsidorna/)).toBeInTheDocument();
+    expect(screen.getAllByRole("link", { name: "Referensobjekt" })[0]).toHaveAttribute("href", "/referenser/");
   });
 
-  it("links from the home page to real static subpage paths", () => {
+  it("links from the home page to real requested static subpage paths", () => {
     render(<SiteHomePage initialState={{ status: "ready", content }} />);
 
     expect(screen.getByRole("link", { name: "Våra tjänster" })).toHaveAttribute("href", "/tjanster/");
     expect(screen.getByRole("link", { name: "Kontakta oss för offert" })).toHaveAttribute("href", "/kontakt/");
-    expect(screen.getByRole("link", { name: "Stensättning" })).toHaveAttribute("href", "/stensattning/");
+    expect(screen.getAllByRole("link", { name: "Dränering" })[0]).toHaveAttribute("href", "/dranering/");
+    expect(screen.getAllByRole("link", { name: "Pool" })[0]).toHaveAttribute("href", "/pool/");
   });
 
   it("shows an empty state when static data has no services", () => {
@@ -84,6 +96,26 @@ describe("SiteHomePage", () => {
     );
   });
 
+  it("renders dedicated Dränering and Pool top-level pages", () => {
+    const { rerender } = render(<SiteHomePage currentPath="/dranering/" initialState={{ status: "ready", content }} />);
+
+    expect(screen.getByRole("heading", { name: "Dränering", level: 1 })).toBeInTheDocument();
+    expect(screen.getByText(/fuktsäkring runt husgrund/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Visa källsida" })).toHaveAttribute(
+      "href",
+      "https://www.erikssonsvard.se/dranering/",
+    );
+
+    rerender(<SiteHomePage currentPath="/pool/" initialState={{ status: "ready", content }} />);
+
+    expect(screen.getByRole("heading", { name: "Pool", level: 1 })).toBeInTheDocument();
+    expect(screen.getByText(/mark runt poolmiljön/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Visa källsida" })).toHaveAttribute(
+      "href",
+      "https://www.erikssonsvard.se/pool/",
+    );
+  });
+
   it("renders dedicated references and contact paths", () => {
     const { rerender } = render(<SiteHomePage currentPath="/referenser/" initialState={{ status: "ready", content }} />);
 
@@ -100,6 +132,6 @@ describe("SiteHomePage", () => {
     render(<SiteHomePage currentPath="/saknas/" initialState={{ status: "ready", content }} />);
 
     expect(screen.getByRole("heading", { name: /Sidan finns inte/ })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Startsida" })).toHaveAttribute("href", "/");
+    expect(screen.getAllByRole("link", { name: "Hem" })[0]).toHaveAttribute("href", "/");
   });
 });
