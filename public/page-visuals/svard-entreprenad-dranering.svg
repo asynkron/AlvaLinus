@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc" viewBox="0 0 1200 800">
+  <title id="title">Svärd Entreprenad dränering platshållarbild</title>
+  <desc id="desc">Platshållarbild för dränering med husgrund, dräneringsrör och fuktsäker återfyllnad.</desc>
+  <rect width="1200" height="800" fill="#ecf0ef"/>
+  <path d="M0 500h1200v300H0z" fill="#796653"/>
+  <rect x="165" y="205" width="360" height="285" rx="12" fill="#d5c7b2"/>
+  <path d="M120 230l225-130 225 130z" fill="#46513f"/>
+  <rect x="255" y="350" width="110" height="140" fill="#f8f5ef"/>
+  <path d="M610 560c120-80 230-80 350 0" fill="none" stroke="#5f7c86" stroke-width="36" stroke-linecap="round"/>
+  <path d="M640 600h310" stroke="#d3c4a8" stroke-width="32" stroke-linecap="round" stroke-dasharray="52 36"/>
+  <path d="M560 455h450" stroke="#2f352e" stroke-width="18" stroke-linecap="round"/>
+  <text x="95" y="745" fill="#f8f5ef" font-family="Arial, sans-serif" font-size="42" font-weight="700">Dränering</text>
+</svg>

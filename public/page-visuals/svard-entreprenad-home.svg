@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc" viewBox="0 0 1200 800">
+  <title id="title">Svärd Entreprenad startsida platshållarbild</title>
+  <desc id="desc">Platshållarbild för startsidan med markarbete, stenläggning och offertkontakt samlade i samma vy.</desc>
+  <rect width="1200" height="800" fill="#f4f1ea"/>
+  <path d="M0 560h1200v240H0z" fill="#d9d2c4"/>
+  <path d="M0 630c180-80 330-70 500-10 220 78 420 63 700-47v227H0z" fill="#4d5b43"/>
+  <circle cx="970" cy="150" r="86" fill="#d99c49"/>
+  <rect x="120" y="190" width="360" height="210" rx="18" fill="#3c4438"/>
+  <path d="M165 390h270v75H165z" fill="#b8aa93"/>
+  <path d="M540 420h210l78 80H590z" fill="#8a6f4d"/>
+  <path d="M665 320l74 100H590z" fill="#c7b28c"/>
+  <path d="M120 520h950" stroke="#2f352e" stroke-width="22" stroke-linecap="round"/>
+  <path d="M170 585h210m70 0h180m70 0h250" stroke="#f4f1ea" stroke-width="18" stroke-linecap="round"/>
+  <text x="120" y="720" fill="#2f352e" font-family="Arial, sans-serif" font-size="42" font-weight="700">Startsida</text>
+</svg>

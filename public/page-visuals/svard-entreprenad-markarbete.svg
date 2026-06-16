@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc" viewBox="0 0 1200 800">
+  <title id="title">Svärd Entreprenad markarbete platshållarbild</title>
+  <desc id="desc">Platshållarbild för markarbete med schaktlager, grundberedning och anläggningsyta.</desc>
+  <rect width="1200" height="800" fill="#f2eee6"/>
+  <path d="M0 460h1200v340H0z" fill="#a68960"/>
+  <path d="M0 560h1200v80H0z" fill="#665746"/>
+  <path d="M0 690h1200v110H0z" fill="#3f4a3b"/>
+  <rect x="145" y="270" width="430" height="135" rx="16" fill="#d7c9b2"/>
+  <path d="M630 390h270l120 120H710z" fill="#586a78"/>
+  <path d="M760 300l90 90H670z" fill="#c9914c"/>
+  <circle cx="755" cy="515" r="42" fill="#2f352e"/>
+  <circle cx="930" cy="515" r="42" fill="#2f352e"/>
+  <path d="M150 470h370" stroke="#f8f5ef" stroke-width="22" stroke-linecap="round"/>
+  <text x="95" y="745" fill="#f8f5ef" font-family="Arial, sans-serif" font-size="42" font-weight="700">Markarbete</text>
+</svg>

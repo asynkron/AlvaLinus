@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc" viewBox="0 0 1200 800">
+  <title id="title">Svärd Entreprenad trädgårdsplanering platshållarbild</title>
+  <desc id="desc">Platshållarbild för trädgårdsplanering med tomtytor, gångar, planteringar och nivåer.</desc>
+  <rect width="1200" height="800" fill="#f2efe7"/>
+  <path d="M120 155h960v455H120z" fill="#d4c8b3"/>
+  <path d="M170 560c150-120 260-155 420-85 135 60 245 45 440-65" fill="none" stroke="#f8f5ef" stroke-width="54" stroke-linecap="round"/>
+  <rect x="190" y="205" width="230" height="150" rx="20" fill="#617056"/>
+  <rect x="465" y="205" width="250" height="150" rx="20" fill="#8fa178"/>
+  <rect x="760" y="205" width="250" height="150" rx="20" fill="#6d8061"/>
+  <circle cx="330" cy="465" r="50" fill="#3f4a3b"/>
+  <circle cx="815" cy="490" r="62" fill="#46513f"/>
+  <path d="M300 315h620" stroke="#8b6f4e" stroke-width="16" stroke-linecap="round" stroke-dasharray="24 28"/>
+  <text x="95" y="720" fill="#2f352e" font-family="Arial, sans-serif" font-size="42" font-weight="700">Trädgårdsplanering</text>
+</svg>
