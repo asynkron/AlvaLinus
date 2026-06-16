@@ -243,8 +243,35 @@ export const siteContent = {
   contact: {
     title: "Kontakta oss för offert",
     summary:
-      "Den inventerade startsidan avslutar med en tydlig offertväg. Den här statiska ytan gör samma kontaktsteg synligt utan att bygga ett formulär eller backendflöde.",
+      "Den inventerade startsidan avslutar med en tydlig offertväg. Den här statiska ytan samlar uppgifter för en första förfrågan och lämnar över den via besökarens e-postklient.",
     offertLabel: "Boka ett kostnadsfritt besök eller be om offert",
+    form: {
+      ariaLabel: "Offertförfrågan via e-post",
+      recipientEmail: "kontakt@alvalinus.example",
+      subject: "Offertförfrågan från alvalinus.se",
+      submitLabel: "Skicka offertförfrågan",
+      nameField: {
+        label: "Namn",
+        name: "name",
+        placeholder: "Ditt namn",
+      },
+      customerTypeField: {
+        label: "Kundtyp",
+        name: "customerType",
+        options: ["Privatperson", "Företag", "BRF eller fastighetsägare"],
+      },
+      serviceField: {
+        label: "Tjänst",
+        name: "service",
+        options: ["Stensättning", "Markarbete", "Grävjobb", "Dränering", "Pool", "Trädgårdsplanering", "Annat"],
+      },
+      messageField: {
+        label: "Meddelande",
+        name: "message",
+        placeholder: "Beskriv projektet, platsen och önskad tid.",
+        rows: 5,
+      },
+    },
     items: [
       { label: "Kontaktsida", value: "Gå till kontakt", href: "/kontakt/" },
       { label: "Källa", value: "Eriksson & Svärd", href: "https://www.erikssonsvard.se/kontakt/" },
