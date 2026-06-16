@@ -4,8 +4,10 @@ import {
   CheckCircle2,
   ExternalLink,
   Handshake,
+  Mail,
   MapPinned,
   PhoneCall,
+  Send,
   ShieldCheck,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -543,29 +545,91 @@ function References({ content }: { readonly content: SiteContent }) {
 }
 
 function Contact({ content }: { readonly content: SiteContent }) {
+  const form = content.contact.form;
+  const emailAction = `mailto:${form.recipientEmail}?subject=${encodeURIComponent(form.subject)}`;
+
   return (
     <section id="kontakt" className="mx-auto w-full max-w-7xl px-5 py-12 sm:px-8 lg:px-10">
-      <div className="grid gap-8 rounded-lg border bg-card p-6 md:grid-cols-[1fr_0.8fr] md:p-8">
-        <div>
+      <div className="grid gap-8 rounded-lg border bg-card p-6 lg:grid-cols-[0.9fr_1.1fr] md:p-8">
+        <div className="flex flex-col">
           <p className="text-sm font-semibold text-primary">Kontakt</p>
           <h2 className="mt-2 text-3xl font-semibold tracking-normal">{content.contact.title}</h2>
           <p className="mt-4 leading-7 text-muted-foreground">{content.contact.summary}</p>
-          <div className="mt-6 inline-flex items-center rounded-md bg-accent px-4 py-3 text-sm font-medium text-accent-foreground">
+          <div className="mt-6 inline-flex max-w-max items-center rounded-md bg-accent px-4 py-3 text-sm font-medium text-accent-foreground">
             <MapPinned className="mr-2 h-4 w-4" aria-hidden="true" />
             {content.contact.offertLabel}
           </div>
+          <div className="mt-6 grid gap-3">
+            {content.contact.items.map((item) => (
+              <a key={item.label} href={item.href} className="rounded-lg border bg-background p-4 hover:border-primary">
+                <span className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <PhoneCall className="h-4 w-4 text-primary" aria-hidden="true" />
+                  {item.label}
+                </span>
+                <span className="mt-2 block font-medium">{item.value}</span>
+              </a>
+            ))}
+          </div>
         </div>
-        <div className="grid gap-3">
-          {content.contact.items.map((item) => (
-            <a key={item.label} href={item.href} className="rounded-lg border bg-background p-4 hover:border-primary">
-              <span className="flex items-center gap-2 text-sm text-muted-foreground">
-                <PhoneCall className="h-4 w-4 text-primary" aria-hidden="true" />
-                {item.label}
-              </span>
-              <span className="mt-2 block font-medium">{item.value}</span>
-            </a>
-          ))}
-        </div>
+        <form
+          aria-label={form.ariaLabel}
+          action={emailAction}
+          method="post"
+          encType="text/plain"
+          className="grid gap-4 rounded-lg border bg-background p-5"
+        >
+          <input type="hidden" name="subject" value={form.subject} />
+          <label className="grid gap-2 text-sm font-medium text-foreground">
+            {form.nameField.label}
+            <input
+              name={form.nameField.name}
+              placeholder={form.nameField.placeholder}
+              required
+              className="min-h-11 rounded-md border bg-card px-3 py-2 text-base font-normal text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary sm:text-sm"
+            />
+          </label>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="grid gap-2 text-sm font-medium text-foreground">
+              {form.customerTypeField.label}
+              <select
+                name={form.customerTypeField.name}
+                required
+                className="min-h-11 rounded-md border bg-card px-3 py-2 text-base font-normal text-foreground outline-none transition-colors focus:border-primary sm:text-sm"
+              >
+                {form.customerTypeField.options.map((option) => (
+                  <option key={option}>{option}</option>
+                ))}
+              </select>
+            </label>
+            <label className="grid gap-2 text-sm font-medium text-foreground">
+              {form.serviceField.label}
+              <select
+                name={form.serviceField.name}
+                required
+                className="min-h-11 rounded-md border bg-card px-3 py-2 text-base font-normal text-foreground outline-none transition-colors focus:border-primary sm:text-sm"
+              >
+                {form.serviceField.options.map((option) => (
+                  <option key={option}>{option}</option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <label className="grid gap-2 text-sm font-medium text-foreground">
+            {form.messageField.label}
+            <textarea
+              name={form.messageField.name}
+              placeholder={form.messageField.placeholder}
+              required
+              rows={form.messageField.rows}
+              className="min-h-32 resize-y rounded-md border bg-card px-3 py-2 text-base font-normal text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary sm:text-sm"
+            />
+          </label>
+          <Button type="submit" className="justify-self-start">
+            <Mail className="mr-2 h-4 w-4" aria-hidden="true" />
+            {form.submitLabel}
+            <Send className="ml-2 h-4 w-4" aria-hidden="true" />
+          </Button>
+        </form>
       </div>
     </section>
   );

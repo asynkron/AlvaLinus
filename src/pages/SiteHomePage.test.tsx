@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 
 import { siteContent } from "../data/siteContent";
 import type { SiteContent } from "../types/site";
@@ -28,7 +28,7 @@ describe("SiteHomePage", () => {
     expect(screen.getByText("Mark & anläggning i Örebro")).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: "Dränering" }).length).toBeGreaterThan(0);
     expect(screen.getByRole("heading", { name: "Grävjobb" })).toBeInTheDocument();
-    expect(screen.getByText("Trädgårdsplanering")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Trädgårdsplanering" })).toBeInTheDocument();
     expect(screen.getByText("Mångårig erfarenhet")).toBeInTheDocument();
   });
 
@@ -126,6 +126,27 @@ describe("SiteHomePage", () => {
 
     expect(screen.getByRole("heading", { name: "Kontakt", level: 1 })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Kontakta oss för offert" })).toBeInTheDocument();
+  });
+
+  it("renders a static email handoff form on the dedicated contact route", () => {
+    render(<SiteHomePage currentPath="/kontakt/" initialState={{ status: "ready", content }} />);
+
+    const form = screen.getByRole("form", { name: "Offertförfrågan via e-post" });
+    const formScope = within(form);
+
+    expect(form).toHaveAttribute("method", "post");
+    expect(form).toHaveAttribute(
+      "action",
+      `mailto:${content.contact.form.recipientEmail}?subject=${encodeURIComponent(content.contact.form.subject)}`,
+    );
+    expect(form).toHaveAttribute("enctype", "text/plain");
+    expect(formScope.getByLabelText("Namn")).toHaveAttribute("name", "name");
+    expect(formScope.getByLabelText("Kundtyp")).toHaveAttribute("name", "customerType");
+    expect(formScope.getByLabelText("Tjänst")).toHaveAttribute("name", "service");
+    expect(formScope.getByLabelText("Meddelande")).toHaveAttribute("name", "message");
+    expect(formScope.getByRole("button", { name: "Skicka offertförfrågan" })).toHaveAttribute("type", "submit");
+    expect(formScope.getByRole("option", { name: "Dränering" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Källa/ })).toHaveAttribute("href", "https://www.erikssonsvard.se/kontakt/");
   });
 
   it("fails unknown paths gracefully", () => {

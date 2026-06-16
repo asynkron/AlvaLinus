@@ -54,6 +54,31 @@ export type ContactItem = {
   readonly href: string;
 };
 
+export type ContactSelectField = {
+  readonly label: string;
+  readonly name: string;
+  readonly options: readonly string[];
+};
+
+export type ContactTextField = {
+  readonly label: string;
+  readonly name: string;
+  readonly placeholder: string;
+};
+
+export type ContactForm = {
+  readonly ariaLabel: string;
+  readonly recipientEmail: string;
+  readonly subject: string;
+  readonly submitLabel: string;
+  readonly nameField: ContactTextField;
+  readonly customerTypeField: ContactSelectField;
+  readonly serviceField: ContactSelectField;
+  readonly messageField: ContactTextField & {
+    readonly rows: number;
+  };
+};
+
 export type SiteContent = {
   readonly inventory: {
     readonly checkedAt: string;
@@ -80,6 +105,7 @@ export type SiteContent = {
     readonly title: string;
     readonly summary: string;
     readonly offertLabel: string;
+    readonly form: ContactForm;
     readonly items: readonly ContactItem[];
   };
 };
