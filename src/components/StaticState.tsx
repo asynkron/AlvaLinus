@@ -22,7 +22,7 @@ type StaticStateProps =
 export function StaticState(props: StaticStateProps) {
   if (props.state === "loading") {
     return (
-      <Card aria-label="Laddar innehall">
+      <Card aria-label="Laddar innehåll">
         <CardContent className="space-y-4 pt-6">
           <Skeleton className="h-5 w-40" />
           <Skeleton className="h-4 w-full" />
