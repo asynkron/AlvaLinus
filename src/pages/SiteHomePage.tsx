@@ -479,7 +479,7 @@ function Trust({ content }: { readonly content: SiteContent }) {
       <SectionHeading
         eyebrow="Varför välja oss"
         title="Trygghetssignalerna från startsidan"
-        summary="Garantier, certifieringar och bred erfarenhet är centrala delar av källans förtroendeyta."
+        summary="Garantier, certifieringar och bred erfarenhet är centrala delar av företagets förtroendeyta."
       />
       <div className="mt-8 grid gap-4 md:grid-cols-3">
         {content.trust.map((item, index) => {
