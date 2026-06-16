@@ -1,6 +1,7 @@
 node_modules/
 dist/
 artifacts/
+.playwright-mcp/
 *.tsbuildinfo
 src/**/*.js
 vite.config.js
