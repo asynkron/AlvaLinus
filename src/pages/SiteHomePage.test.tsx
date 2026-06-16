@@ -64,6 +64,30 @@ describe("SiteHomePage", () => {
     expect(content.routes.map((route) => route.href)).not.toContain("/referenser/");
   });
 
+  it("keeps every current route aligned with a page-specific visual asset", () => {
+    const expectedVisualsByRoute = new Map([
+      ["home", "/page-visuals/svard-entreprenad-home.svg"],
+      ["services", "/page-visuals/svard-entreprenad-services.svg"],
+      ["about", "/page-visuals/svard-entreprenad-about.svg"],
+      ["stensattning", "/page-visuals/svard-entreprenad-stensattning.svg"],
+      ["markarbete", "/page-visuals/svard-entreprenad-markarbete.svg"],
+      ["gravjobb", "/page-visuals/svard-entreprenad-gravjobb.svg"],
+      ["dranering", "/page-visuals/svard-entreprenad-dranering.svg"],
+      ["tradgard", "/page-visuals/svard-entreprenad-tradgardsplanering.svg"],
+      ["contact", "/page-visuals/svard-entreprenad-contact.svg"],
+    ]);
+
+    expect(content.routes).toHaveLength(9);
+
+    for (const route of content.routes) {
+      expect(route.visual.assetPath).toBe(expectedVisualsByRoute.get(route.id));
+      expect(route.visual.alt.trim()).not.toHaveLength(0);
+      expect(route.visual.intent.trim()).not.toHaveLength(0);
+      expect(route.visual.alt).not.toMatch(/Alva|Linus|Svärdlinus/i);
+      expect(route.visual.intent).not.toMatch(/Alva|Linus|Svärdlinus/i);
+    }
+  });
+
   it("shows an empty state when static data has no services", () => {
     render(<SiteHomePage initialState={{ status: "ready", content: { ...content, services: [] } }} />);
 

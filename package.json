@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "postbuild": "node scripts/assert-static-routes.mjs",
+    "postbuild": "node scripts/assert-static-routes.mjs && node scripts/assert-route-visual-assets.mjs",
     "preview": "vite preview",
     "test": "vitest run",
     "typecheck": "tsc -b",
