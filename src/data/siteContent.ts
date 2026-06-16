@@ -6,11 +6,10 @@ export const siteContent = {
     source: "https://www.erikssonsvard.se/page-sitemap.xml",
     pageCount: 58,
     routeDecision:
-      "Sitemappen visar många publika undersidor. Den här statiska repliken återskapar flera navigerbara sid-URL:er för startsida, tjänster, referenser och kontakt.",
+      "Sitemappen visar många publika undersidor. Den här statiska repliken gör de begärda huvudsidorna till primär struktur: Hem, Tjänster, Dränering, Pool, Referensobjekt och Kontakt.",
     primaryRoutes: [
-      { label: "Stensättning", href: "/stensattning/" },
-      { label: "Markarbete", href: "/markarbete/" },
-      { label: "Grävjobb", href: "/gravjobb/" },
+      { label: "Hem", href: "/" },
+      { label: "Tjänster", href: "/tjanster/" },
       { label: "Dränering", href: "/dranering/" },
       { label: "Pool", href: "/pool/" },
       { label: "Referensobjekt", href: "/referenser/" },
@@ -21,9 +20,9 @@ export const siteContent = {
     {
       id: "home",
       kind: "home",
-      label: "Startsida",
+      label: "Hem",
       href: "/",
-      summary: "Översikt över tjänster, process, referenser och offertkontakt.",
+      summary: "Startsida med översikt över tjänster, process, referensobjekt och offertkontakt.",
     },
     {
       id: "services",
@@ -62,7 +61,8 @@ export const siteContent = {
       sourceId: "dranering",
       label: "Dränering",
       href: "/dranering/",
-      summary: "Egen tjänstesida för dränering och fuktsäkra markarbeten.",
+      summary:
+        "Toppsida för dränering med fuktsäkra markarbeten, schakt, återfyllnad och trygg hantering runt husgrund och mur.",
     },
     {
       id: "pool",
@@ -70,7 +70,8 @@ export const siteContent = {
       sourceId: "pool",
       label: "Pool",
       href: "/pool/",
-      summary: "Egen tjänstesida för poolprojekt och markförberedelser.",
+      summary:
+        "Toppsida för poolprojekt med markförberedelser, installation, glasfiberpool, thermopool och samordnad utemiljö.",
     },
     {
       id: "tradgard",
@@ -85,14 +86,14 @@ export const siteContent = {
       kind: "references",
       label: "Referensobjekt",
       href: "/referenser/",
-      summary: "Egen sida för referensprojekt från den inventerade sitemappen.",
+      summary: "Egen sida för referensobjekt från dränering, pool, markarbete och större entreprenaduppdrag.",
     },
     {
       id: "contact",
       kind: "contact",
       label: "Kontakt",
       href: "/kontakt/",
-      summary: "Egen kontaktsida för offertvägen.",
+      summary: "Egen kontaktsida för offertförfrågningar, platsbesök och nästa steg.",
     },
   ],
   hero: {

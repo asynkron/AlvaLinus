@@ -81,14 +81,20 @@ function Header() {
           aria-label="Huvudnavigation"
           className="hidden items-center gap-5 text-sm text-muted-foreground md:flex"
         >
+          <a className="transition-colors hover:text-foreground" href="/">
+            Hem
+          </a>
           <a className="transition-colors hover:text-foreground" href="/tjanster/">
             Tjänster
           </a>
-          <a className="transition-colors hover:text-foreground" href="/#process">
-            Process
+          <a className="transition-colors hover:text-foreground" href="/dranering/">
+            Dränering
+          </a>
+          <a className="transition-colors hover:text-foreground" href="/pool/">
+            Pool
           </a>
           <a className="transition-colors hover:text-foreground" href="/referenser/">
-            Referenser
+            Referensobjekt
           </a>
           <a className="transition-colors hover:text-foreground" href="/kontakt/">
             Kontakt
@@ -281,6 +287,18 @@ function ServicePage({
           <p className="text-sm font-semibold uppercase tracking-normal text-primary">Tjänstesida</p>
           <h2 className="mt-2 text-4xl font-semibold tracking-normal text-foreground">{service.title}</h2>
           <p className="mt-4 text-lg leading-8 text-muted-foreground">{service.summary}</p>
+          {service.id === "dranering" ? (
+            <p className="mt-4 leading-7 text-muted-foreground">
+              Dräneringssidan är en egen toppnivå för besökare som behöver fuktsäkring runt husgrund, mur eller
+              källarvägg. Innehållet lyfter helheten från bedömning och grävning till återställning.
+            </p>
+          ) : null}
+          {service.id === "pool" ? (
+            <p className="mt-4 leading-7 text-muted-foreground">
+              Poolsidan är en egen toppnivå för besökare som planerar pool och mark runt poolmiljön. Innehållet samlar
+              markarbete, installation och val av pooltyp i samma kundresa.
+            </p>
+          ) : null}
           <div className="mt-6 flex flex-wrap gap-2">
             {service.tags.map((tag) => (
               <span key={tag} className="rounded-full bg-secondary px-3 py-1 text-sm text-secondary-foreground">
