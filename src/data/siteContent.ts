@@ -22,6 +22,11 @@ export const siteContent = {
       label: "Hem",
       href: "/",
       summary: "Startsida med översikt över tjänster, arbetsprocess och offertkontakt.",
+      visual: {
+        assetPath: "/page-visuals/svard-entreprenad-home.svg",
+        alt: "Entreprenadmaskin vid färdigplanerad tomt för Svärd Entreprenads startsida",
+        intent: "Etablerar helhetsintrycket för mark- och anläggningsarbeten i Örebro.",
+      },
     },
     {
       id: "services",
@@ -29,6 +34,11 @@ export const siteContent = {
       label: "Tjänster",
       href: "/tjanster/",
       summary: "Samlad sida för de huvudsakliga mark-, bygg- och anläggningstjänsterna.",
+      visual: {
+        assetPath: "/page-visuals/svard-entreprenad-services.svg",
+        alt: "Samlad vy över markarbeten, stensättning och dräneringstjänster",
+        intent: "Visar bredden i tjänsteutbudet utan att prioritera en enskild kategori.",
+      },
     },
     {
       id: "about",
@@ -37,6 +47,11 @@ export const siteContent = {
       href: "/om-oss/",
       summary:
         "Läs om Svärd Entreprenads arbetssätt, erfarenhet och ansvar från första spadtag till färdigt resultat.",
+      visual: {
+        assetPath: "/page-visuals/svard-entreprenad-about.svg",
+        alt: "Arbetslag som planerar ett markprojekt vid arbetsplatsen",
+        intent: "Stärker berättelsen om ansvar, erfarenhet och tydlig arbetsprocess.",
+      },
     },
     {
       id: "stensattning",
@@ -45,6 +60,11 @@ export const siteContent = {
       label: "Stensättning",
       href: "/stensattning/",
       summary: "Egen tjänstesida för stensättning, marksten och stenmurar.",
+      visual: {
+        assetPath: "/page-visuals/svard-entreprenad-stensattning.svg",
+        alt: "Noggrant lagd marksten och låg stenmur vid entré",
+        intent: "Lyfter precision, finish och hållbara stenytor för stensättningssidan.",
+      },
     },
     {
       id: "markarbete",
@@ -53,6 +73,11 @@ export const siteContent = {
       label: "Markarbete",
       href: "/markarbete/",
       summary: "Egen tjänstesida för mark och anläggning.",
+      visual: {
+        assetPath: "/page-visuals/svard-entreprenad-markarbete.svg",
+        alt: "Schaktad tomt med maskin och förberedd markbädd",
+        intent: "Förankrar sidan i breda mark- och anläggningsarbeten från grund till yta.",
+      },
     },
     {
       id: "gravjobb",
@@ -61,6 +86,11 @@ export const siteContent = {
       label: "Grävjobb",
       href: "/gravjobb/",
       summary: "Egen tjänstesida för maskin- och grävarbeten, inklusive poolgrävning.",
+      visual: {
+        assetPath: "/page-visuals/svard-entreprenad-gravjobb.svg",
+        alt: "Grävmaskin som utför schaktning för husgrund och tomtarbete",
+        intent: "Kommunicerar maskinkapacitet och korrekt förarbete för grävsidan.",
+      },
     },
     {
       id: "dranering",
@@ -70,6 +100,11 @@ export const siteContent = {
       href: "/dranering/",
       summary:
         "Toppsida för dränering med fuktsäkra markarbeten, schakt, återfyllnad och trygg hantering runt husgrund och mur.",
+      visual: {
+        assetPath: "/page-visuals/svard-entreprenad-dranering.svg",
+        alt: "Dräneringsschakt intill husgrund med rör och återfyllnad",
+        intent: "Gör fuktskydd, schakt och trygg grundhantering visuellt tydligt.",
+      },
     },
     {
       id: "tradgard",
@@ -78,6 +113,11 @@ export const siteContent = {
       label: "Trädgårdsplanering",
       href: "/tradgardsplanering/",
       summary: "Egen tjänstesida för tomt- och trädgårdsplanering.",
+      visual: {
+        assetPath: "/page-visuals/svard-entreprenad-tradgardsplanering.svg",
+        alt: "Planerad trädgård med nivåer, gångar och färdiga utemiljöer",
+        intent: "Visar hur tomtplanering binder ihop höjder, planteringar och användbara ytor.",
+      },
     },
     {
       id: "contact",
@@ -85,6 +125,11 @@ export const siteContent = {
       label: "Kontakt",
       href: "/kontakt/",
       summary: "Egen kontaktsida för offertförfrågningar, platsbesök och nästa steg.",
+      visual: {
+        assetPath: "/page-visuals/svard-entreprenad-contact.svg",
+        alt: "Anteckningar och offertunderlag inför platsbesök för markprojekt",
+        intent: "Sätter kontaktflödet i ett konkret offert- och platsbesökssammanhang.",
+      },
     },
   ],
   hero: {

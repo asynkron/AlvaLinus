@@ -5,11 +5,18 @@ export type SiteLink = {
 
 export type SiteRouteKind = "home" | "services" | "about" | "service" | "contact";
 
+export type SiteRouteVisual = {
+  readonly assetPath: string;
+  readonly alt: string;
+  readonly intent: string;
+};
+
 export type SiteRoute = SiteLink & {
   readonly id: string;
   readonly kind: SiteRouteKind;
   readonly sourceId?: string;
   readonly summary: string;
+  readonly visual: SiteRouteVisual;
 };
 
 export type SiteStat = {
