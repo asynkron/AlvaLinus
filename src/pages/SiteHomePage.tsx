@@ -20,10 +20,28 @@ import type { ServiceArea, SiteContent, SiteRoute } from "../types/site";
 const BRAND_NAME = "Svärd Entreprenad";
 const BRAND_LOGO_SRC = "/svard-entreprenad-logo.png";
 const HERO_PHOTO_SRC = "/page-visuals/hero-photo.webp";
+
+// Real photographs used in the presentation layer. Keys are service ids.
+// Files that are not present yet fall back to the SVG placeholder via onError.
 const SERVICE_PHOTOS: Record<string, string> = {
   stensattning: "/page-visuals/stensattning-photo.webp",
   markarbete: "/page-visuals/markarbete-photo.webp",
   dranering: "/page-visuals/dranering-photo.webp",
+  gravjobb: "/page-visuals/gravjobb-photo.webp",
+  tradgard: "/page-visuals/tradgard-photo.webp",
+};
+
+// Background photo for each subpage hero, keyed by route id. Missing files
+// degrade gracefully to the plain navy hero (the <img> hides on error).
+const PAGE_HERO_PHOTOS: Record<string, string> = {
+  services: "/page-visuals/services-hero.webp",
+  about: "/page-visuals/about-hero.webp",
+  contact: "/page-visuals/contact-hero.webp",
+  stensattning: "/page-visuals/stensattning-photo.webp",
+  markarbete: "/page-visuals/markarbete-photo.webp",
+  gravjobb: "/page-visuals/gravjobb-photo.webp",
+  dranering: "/page-visuals/dranering-photo.webp",
+  tradgard: "/page-visuals/tradgard-photo.webp",
 };
 
 type LoadState =
@@ -290,11 +308,12 @@ function Inventory({ content }: { readonly content: SiteContent }) {
 function ServicesIndexPage({ content, route }: { readonly content: SiteContent; readonly route: SiteRoute }) {
   return (
     <>
-      <PageHero title={route.label} summary={route.summary} />
+      <PageHero title={route.label} summary={route.summary} imageSrc={PAGE_HERO_PHOTOS[route.id]} />
       <Services content={content} />
       <Trust content={content} />
       <Partners content={content} />
       <ContactLinkBand content={content} />
+      <Footer content={content} />
     </>
   );
 }
@@ -302,9 +321,10 @@ function ServicesIndexPage({ content, route }: { readonly content: SiteContent; 
 function AboutPage({ content, route }: { readonly content: SiteContent; readonly route: SiteRoute }) {
   return (
     <>
-      <PageHero title={route.label} summary={route.summary} />
+      <PageHero title={route.label} summary={route.summary} imageSrc={PAGE_HERO_PHOTOS[route.id]} />
       <About content={content} />
       <ContactLinkBand content={content} />
+      <Footer content={content} />
     </>
   );
 }
@@ -320,12 +340,15 @@ function ServicePage({
 }) {
   return (
     <>
-      <PageHero title={service.title} summary={route.summary} />
-      <section className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-12 sm:px-8 lg:grid-cols-[1fr_0.72fr] lg:px-10">
+      <PageHero
+        title={service.title}
+        summary={route.summary}
+        eyebrow="Tjänst"
+        imageSrc={PAGE_HERO_PHOTOS[route.id]}
+      />
+      <section className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-14 sm:px-8 lg:grid-cols-[1fr_0.72fr] lg:px-10">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-normal text-primary">Tjänstesida</p>
-          <h2 className="mt-2 text-4xl font-semibold tracking-normal text-foreground">{service.title}</h2>
-          <p className="mt-4 text-lg leading-8 text-muted-foreground">{service.summary}</p>
+          <p className="text-lg leading-8 text-foreground">{service.summary}</p>
           {service.id === "dranering" ? (
             <p className="mt-4 leading-7 text-muted-foreground">
               Dräneringssidan är en egen toppnivå för besökare som behöver fuktsäkring runt husgrund, mur eller
@@ -340,7 +363,7 @@ function ServicePage({
             ))}
           </div>
         </div>
-        <aside className="rounded-lg border bg-card p-5">
+        <aside className="rounded-lg border bg-card p-5 shadow-soft">
           <h2 className="text-xl font-semibold">När tjänsten passar</h2>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">
             {service.title} passar när du vill ha en tydlig genomgång av behov, markförutsättningar och nästa steg
@@ -350,6 +373,7 @@ function ServicePage({
       </section>
       <Process content={content} />
       <ContactLinkBand content={content} />
+      <Footer content={content} />
     </>
   );
 }
@@ -357,7 +381,7 @@ function ServicePage({
 function ContactPage({ content, route }: { readonly content: SiteContent; readonly route: SiteRoute }) {
   return (
     <>
-      <PageHero title={route.label} summary={route.summary} />
+      <PageHero title={route.label} summary={route.summary} imageSrc={PAGE_HERO_PHOTOS[route.id]} />
       <Contact content={content} />
       <Footer content={content} />
     </>
@@ -389,15 +413,49 @@ function NotFound({ content, currentPath }: { readonly content: SiteContent; rea
   );
 }
 
-function PageHero({ title, summary }: { readonly title: string; readonly summary: string }) {
+function PageHero({
+  title,
+  summary,
+  eyebrow,
+  imageSrc,
+}: {
+  readonly title: string;
+  readonly summary: string;
+  readonly eyebrow?: string;
+  readonly imageSrc?: string;
+}) {
   return (
-    <section className="border-b bg-secondary/50">
-      <div className="mx-auto w-full max-w-7xl px-5 py-12 sm:px-8 lg:px-10">
-        <a href="/" className="text-sm font-medium text-primary hover:text-foreground">
-          Startsida
-        </a>
-        <h1 className="mt-4 text-4xl font-semibold leading-tight tracking-normal text-foreground sm:text-5xl">{title}</h1>
-        <p className="mt-4 max-w-3xl text-lg leading-8 text-muted-foreground">{summary}</p>
+    <section className="relative isolate overflow-hidden border-b border-background/10 bg-foreground text-background">
+      {imageSrc ? (
+        <img
+          src={imageSrc}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 h-full w-full object-cover"
+          onError={(event) => {
+            event.currentTarget.style.display = "none";
+          }}
+        />
+      ) : null}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 bg-gradient-to-r from-foreground via-foreground/92 to-foreground/60"
+      />
+      <div className="mx-auto w-full max-w-7xl px-5 py-14 sm:px-8 lg:px-10 lg:py-20">
+        <nav aria-label="Brödsmulor" className="text-sm font-medium text-background/70">
+          <a href="/" className="transition-colors hover:text-primary">
+            Hem
+          </a>
+          <span className="mx-2 text-background/40" aria-hidden="true">
+            /
+          </span>
+          <span className="text-primary">{title}</span>
+        </nav>
+        {eyebrow ? (
+          <p className="mt-6 text-sm font-semibold uppercase tracking-[0.18em] text-primary">{eyebrow}</p>
+        ) : null}
+        <h1 className="mt-3 text-4xl font-bold leading-tight tracking-tight text-background sm:text-5xl">{title}</h1>
+        <p className="mt-4 max-w-3xl text-lg leading-8 text-background/80">{summary}</p>
       </div>
     </section>
   );
@@ -405,13 +463,14 @@ function PageHero({ title, summary }: { readonly title: string; readonly summary
 
 function ContactLinkBand({ content }: { readonly content: SiteContent }) {
   return (
-    <section className="border-t bg-secondary/50">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-5 py-10 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-10">
+    <section className="border-y bg-secondary">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-5 py-12 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-10">
         <div>
-          <p className="text-sm font-semibold text-primary">Nästa steg</p>
-          <h2 className="mt-1 text-2xl font-semibold tracking-normal">{content.contact.title}</h2>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Nästa steg</p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">{content.contact.title}</h2>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">{content.contact.summary}</p>
         </div>
-        <Button asChild>
+        <Button asChild size="lg" className="shrink-0">
           <a href="/kontakt/">
             Kontakta oss
             <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
@@ -436,6 +495,7 @@ function Services({ content }: { readonly content: SiteContent }) {
             (route) => route.kind === "service" && route.sourceId === service.id,
           )?.visual;
           const photo = SERVICE_PHOTOS[service.id] ?? visual?.assetPath;
+          const fallback = visual?.assetPath;
 
           return (
             <Card key={service.id} id={service.id} className="flex flex-col overflow-hidden">
@@ -445,6 +505,14 @@ function Services({ content }: { readonly content: SiteContent }) {
                   alt={visual?.alt ?? service.title}
                   className="aspect-[16/10] w-full border-b object-cover"
                   loading="lazy"
+                  onError={(event) => {
+                    const img = event.currentTarget;
+
+                    if (fallback && !img.dataset.fellBack) {
+                      img.dataset.fellBack = "true";
+                      img.src = fallback;
+                    }
+                  }}
                 />
               ) : null}
               <CardHeader>
@@ -476,15 +544,15 @@ function Services({ content }: { readonly content: SiteContent }) {
 }
 
 function About({ content }: { readonly content: SiteContent }) {
+  const [lead, ...rest] = content.about.body;
+
   return (
-    <section id="om-oss" className="mx-auto w-full max-w-7xl px-5 py-12 sm:px-8 lg:px-10">
-      <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
-        <SectionHeading eyebrow="Om oss" title={content.about.title} summary={content.about.summary} />
-        <div className="grid gap-5 text-base leading-8 text-muted-foreground">
-          {content.about.body.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
-          ))}
-        </div>
+    <section id="om-oss" className="mx-auto w-full max-w-3xl px-5 py-14 sm:px-8 lg:px-10">
+      {lead ? <p className="text-xl leading-8 text-foreground">{lead}</p> : null}
+      <div className="mt-6 grid gap-5 text-base leading-8 text-muted-foreground">
+        {rest.map((paragraph) => (
+          <p key={paragraph}>{paragraph}</p>
+        ))}
       </div>
     </section>
   );
@@ -588,13 +656,41 @@ function Footer({ content }: { readonly content: SiteContent }) {
   const email = content.contact.form.recipientEmail;
 
   return (
-    <footer className="border-t bg-foreground text-background">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-5 py-8 text-sm sm:px-8 md:flex-row md:items-center md:justify-between lg:px-10">
-        <p className="font-medium">{BRAND_NAME}</p>
-        <a href={`mailto:${email}`} className="inline-flex items-center gap-2 hover:text-primary">
-          <Mail className="h-4 w-4" aria-hidden="true" />
-          {email}
-        </a>
+    <footer className="border-t border-background/10 bg-foreground text-background">
+      <div className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-12 sm:px-8 md:grid-cols-[1.4fr_1fr_1fr] lg:px-10">
+        <div className="max-w-sm">
+          <p className="text-lg font-bold uppercase tracking-tight text-background">{BRAND_NAME}</p>
+          <p className="mt-3 text-sm leading-6 text-background/65">
+            Din lokala partner för mark, schakt, dränering och anläggning.
+          </p>
+        </div>
+        <nav aria-label="Sidfotsnavigation" className="text-sm">
+          <p className="font-semibold text-background">Sidor</p>
+          <ul className="mt-3 grid gap-2">
+            {content.inventory.primaryRoutes.map((route) => (
+              <li key={route.href}>
+                <a href={route.href} className="text-background/70 transition-colors hover:text-primary">
+                  {route.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <div className="text-sm">
+          <p className="font-semibold text-background">Kontakt</p>
+          <a
+            href={`mailto:${email}`}
+            className="mt-3 inline-flex items-center gap-2 text-background/70 transition-colors hover:text-primary"
+          >
+            <Mail className="h-4 w-4" aria-hidden="true" />
+            {email}
+          </a>
+        </div>
+      </div>
+      <div className="border-t border-background/10">
+        <div className="mx-auto w-full max-w-7xl px-5 py-5 text-xs text-background/50 sm:px-8 lg:px-10">
+          © {BRAND_NAME}
+        </div>
       </div>
     </footer>
   );
