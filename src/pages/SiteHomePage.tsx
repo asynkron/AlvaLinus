@@ -5,9 +5,11 @@ import {
   Handshake,
   Mail,
   MapPinned,
+  Menu,
   PhoneCall,
   Send,
   ShieldCheck,
+  X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -90,41 +92,38 @@ export function SiteHomePage({ currentPath = "/", initialState }: SiteHomePagePr
   );
 }
 
+const NAV_LINKS = [
+  { label: "Hem", href: "/" },
+  { label: "Tjänster", href: "/tjanster/" },
+  { label: "Om oss", href: "/om-oss/" },
+  { label: "Dränering", href: "/dranering/" },
+  { label: "Kontakt", href: "/kontakt/" },
+];
+
 function Header({ currentPath = "/" }: { readonly currentPath?: string }) {
-  const navLinks = [
-    { label: "Hem", href: "/" },
-    { label: "Tjänster", href: "/tjanster/" },
-    { label: "Om oss", href: "/om-oss/" },
-    { label: "Dränering", href: "/dranering/" },
-    { label: "Kontakt", href: "/kontakt/" },
-  ];
+  const [menuOpen, setMenuOpen] = useState(false);
   const active = normalizePath(currentPath);
 
   return (
-    <header className="sticky top-0 z-20 bg-foreground text-background shadow-sm">
+    <header className="sticky top-0 z-30 bg-foreground text-background shadow-sm">
       <div className="mx-auto flex min-h-16 w-full max-w-7xl items-center justify-between gap-4 px-5 sm:px-8 lg:px-10">
         <a href="/" className="flex min-w-0 items-center gap-3" aria-label={`${BRAND_NAME} startsida`}>
           <img
             src={BRAND_LOGO_SRC}
             alt={`${BRAND_NAME} logotyp`}
-            className="h-9 w-auto max-w-[11rem] object-contain sm:h-10 sm:max-w-[14rem]"
+            className="h-9 w-auto max-w-[11rem] object-contain brightness-0 invert sm:h-10 sm:max-w-[14rem]"
           />
           <span className="sr-only">{BRAND_NAME}</span>
         </a>
-        <nav
-          aria-label="Huvudnavigation"
-          className="hidden items-center gap-6 text-sm font-medium md:flex"
-        >
-          {navLinks.map((link) => {
+        <nav aria-label="Huvudnavigation" className="hidden items-center gap-6 text-sm font-medium md:flex">
+          {NAV_LINKS.map((link) => {
             const isActive = normalizePath(link.href) === active;
 
             return (
               <a
                 key={link.href}
                 className={
-                  isActive
-                    ? "text-primary"
-                    : "text-background/75 transition-colors hover:text-primary"
+                  isActive ? "text-primary" : "text-background/75 transition-colors hover:text-primary"
                 }
                 aria-current={isActive ? "page" : undefined}
                 href={link.href}
@@ -134,7 +133,41 @@ function Header({ currentPath = "/" }: { readonly currentPath?: string }) {
             );
           })}
         </nav>
+        <button
+          type="button"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-md text-background transition-colors hover:bg-background/10 md:hidden"
+          aria-label={menuOpen ? "Stäng meny" : "Öppna meny"}
+          aria-expanded={menuOpen}
+          aria-controls="mobil-meny"
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          {menuOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
+        </button>
       </div>
+      {menuOpen ? (
+        <nav
+          id="mobil-meny"
+          aria-label="Mobilnavigation"
+          className="border-t border-background/10 px-5 pb-4 pt-2 sm:px-8 md:hidden"
+        >
+          {NAV_LINKS.map((link) => {
+            const isActive = normalizePath(link.href) === active;
+
+            return (
+              <a
+                key={link.href}
+                className={`block rounded-md px-3 py-3 text-base font-medium transition-colors ${
+                  isActive ? "bg-background/10 text-primary" : "text-background/80 hover:bg-background/10"
+                }`}
+                aria-current={isActive ? "page" : undefined}
+                href={link.href}
+              >
+                {link.label}
+              </a>
+            );
+          })}
+        </nav>
+      ) : null}
     </header>
   );
 }
@@ -390,26 +423,28 @@ function ContactPage({ content, route }: { readonly content: SiteContent; readon
 
 function NotFound({ content, currentPath }: { readonly content: SiteContent; readonly currentPath: string }) {
   return (
-    <section className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
-      <div className="rounded-lg border bg-card p-6">
-        <p className="text-sm font-semibold uppercase tracking-normal text-primary">Okänd sida</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-normal">Sidan finns inte</h1>
-        <p className="mt-3 leading-7 text-muted-foreground">
-          {currentPath} matchar ingen aktuell sida. Välj en av genvägarna nedan för att komma vidare.
-        </p>
-        <div className="mt-6 flex flex-wrap gap-2">
+    <>
+      <PageHero
+        title="Sidan finns inte"
+        eyebrow="Okänd sida"
+        summary={`${currentPath} matchar ingen aktuell sida. Välj en av genvägarna nedan för att komma vidare.`}
+      />
+      <section className="mx-auto w-full max-w-7xl px-5 py-14 sm:px-8 lg:px-10">
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Genvägar</p>
+        <div className="mt-4 flex flex-wrap gap-2">
           {content.routes.map((route) => (
             <a
               key={route.id}
               href={route.href}
-              className="rounded-full border bg-background px-3 py-1 text-sm text-foreground transition-colors hover:border-primary"
+              className="rounded-full border bg-card px-4 py-2 text-sm text-foreground transition-colors hover:border-primary hover:text-primary"
             >
               {route.label}
             </a>
           ))}
         </div>
-      </div>
-    </section>
+      </section>
+      <Footer content={content} />
+    </>
   );
 }
 
