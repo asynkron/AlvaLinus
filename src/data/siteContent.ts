@@ -6,7 +6,7 @@ export const siteContent = {
     source: "Current route inventory and owner-approved service structure",
     pageCount: 58,
     routeDecision:
-      "Den publika strukturen är uppdaterad efter ägarens önskemål: Hem, Tjänster, Om oss, Dränering och Kontakt är primära vägar. Pool och referensjobb är borttagna som egna ytor.",
+      "Mark, schakt, dränering, grundläggning och tomtplanering – vi hjälper dig hela vägen från första kontakt till färdigt resultat. Använd genvägarna för att hitta rätt tjänst eller begära en offert.",
     primaryRoutes: [
       { label: "Hem", href: "/" },
       { label: "Tjänster", href: "/tjanster/" },

@@ -18,7 +18,7 @@ describe("SiteHomePage", () => {
     expect(screen.getAllByText("Våra tjänster").length).toBeGreaterThan(0);
     expect(screen.getByRole("heading", { name: "En pålitlig partner inom mark, bygg och anläggning" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Från första kontakt till slutfört arbete" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Trygghetssignalerna från startsidan" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Därför väljer kunder oss" })).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Samarbetspartner" })).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Kontakta oss för offert" })).toBeInTheDocument();
   });
@@ -50,7 +50,7 @@ describe("SiteHomePage", () => {
 
     expect(screen.getByRole("heading", { name: "Tydliga vägar för rätt uppdrag" })).toBeInTheDocument();
     expect(screen.getByText(/Hitta snabbt till företagets viktigaste information/)).toBeInTheDocument();
-    expect(screen.getByText(/Pool och referensjobb är borttagna som egna ytor/)).toBeInTheDocument();
+    expect(screen.getByText(/från första kontakt till färdigt resultat/)).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: "Om oss" })[0]).toHaveAttribute("href", "/om-oss/");
   });
 

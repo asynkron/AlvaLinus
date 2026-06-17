@@ -720,10 +720,10 @@ function Trust({ content }: { readonly content: SiteContent }) {
       <div className="mx-auto max-w-3xl text-center">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Varför välja oss</p>
         <h2 className="mt-2 font-display text-4xl font-bold tracking-wide text-foreground">
-          Trygghetssignalerna från startsidan
+          Därför väljer kunder oss
         </h2>
         <p className="mt-3 leading-7 text-muted-foreground">
-          Garantier, certifieringar och bred erfarenhet är centrala delar av företagets förtroendeyta.
+          Garantier, certifieringar och bred erfarenhet ligger bakom varje uppdrag vi tar oss an.
         </p>
       </div>
       <div className="mt-12 grid gap-10 md:grid-cols-3">
