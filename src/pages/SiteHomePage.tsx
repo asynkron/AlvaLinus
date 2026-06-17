@@ -272,7 +272,7 @@ function Hero({ content }: { readonly content: SiteContent }) {
       <div className="mx-auto w-full max-w-7xl px-5 py-20 sm:px-8 lg:px-10 lg:py-28">
         <div className="max-w-2xl">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{content.hero.eyebrow}</p>
-          <h1 className="mt-4 text-5xl font-bold uppercase leading-[1.05] tracking-tight text-background sm:text-6xl">
+          <h1 className="mt-4 font-display text-6xl uppercase leading-[0.95] tracking-wide text-background sm:text-7xl">
             {content.hero.title}
           </h1>
           <p className="mt-6 whitespace-pre-line text-lg leading-8 text-background/85 sm:text-xl">
@@ -314,7 +314,7 @@ function Inventory({ content }: { readonly content: SiteContent }) {
       <div className="grid gap-6 rounded-lg border bg-card p-5 md:grid-cols-[0.8fr_1.2fr]">
         <div>
           <p className="text-sm font-semibold text-primary">Tjänsteöversikt</p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-normal">Tydliga vägar för rätt uppdrag</h2>
+          <h2 className="mt-2 font-display text-2xl font-normal tracking-wide">Tydliga vägar för rätt uppdrag</h2>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">{content.inventory.routeDecision}</p>
         </div>
         <div>
@@ -489,7 +489,7 @@ function PageHero({
         {eyebrow ? (
           <p className="mt-6 text-sm font-semibold uppercase tracking-[0.18em] text-primary">{eyebrow}</p>
         ) : null}
-        <h1 className="mt-3 text-4xl font-bold leading-tight tracking-tight text-background sm:text-5xl">{title}</h1>
+        <h1 className="mt-3 font-display text-5xl font-normal uppercase leading-[0.95] tracking-wide text-background sm:text-6xl">{title}</h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-background/80">{summary}</p>
       </div>
     </section>
@@ -502,7 +502,7 @@ function ContactLinkBand({ content }: { readonly content: SiteContent }) {
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-5 py-12 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-10">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Nästa steg</p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">{content.contact.title}</h2>
+          <h2 className="mt-2 font-display text-2xl font-normal tracking-wide text-foreground">{content.contact.title}</h2>
           <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">{content.contact.summary}</p>
         </div>
         <Button asChild size="lg" className="shrink-0">
@@ -551,7 +551,7 @@ function Services({ content }: { readonly content: SiteContent }) {
                 />
               ) : null}
               <CardHeader>
-                <CardTitle>{service.title}</CardTitle>
+                <CardTitle className="font-display text-xl font-normal tracking-wide">{service.title}</CardTitle>
                 <CardDescription>{service.summary}</CardDescription>
               </CardHeader>
               <CardContent className="mt-auto grid gap-4">
@@ -599,7 +599,7 @@ function Process({ content }: { readonly content: SiteContent }) {
       <div className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
         <div className="max-w-3xl">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Arbetsprocess</p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-background">
+          <h2 className="mt-2 font-display text-4xl font-normal tracking-wide text-background">
             Från första kontakt till slutfört arbete
           </h2>
           <p className="mt-3 leading-7 text-background/70">
@@ -632,7 +632,7 @@ function Trust({ content }: { readonly content: SiteContent }) {
     <section className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
       <div className="mx-auto max-w-3xl text-center">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Varför välja oss</p>
-        <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
+        <h2 className="mt-2 font-display text-4xl font-normal tracking-wide text-foreground">
           Trygghetssignalerna från startsidan
         </h2>
         <p className="mt-3 leading-7 text-muted-foreground">
@@ -694,7 +694,7 @@ function Footer({ content }: { readonly content: SiteContent }) {
     <footer className="border-t border-background/10 bg-foreground text-background">
       <div className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-12 sm:px-8 md:grid-cols-[1.4fr_1fr_1fr] lg:px-10">
         <div className="max-w-sm">
-          <p className="text-lg font-bold uppercase tracking-tight text-background">{BRAND_NAME}</p>
+          <p className="font-display text-2xl uppercase tracking-wide text-background">{BRAND_NAME}</p>
           <p className="mt-3 text-sm leading-6 text-background/65">
             Din lokala partner för mark, schakt, dränering och anläggning.
           </p>
@@ -740,7 +740,7 @@ function Contact({ content }: { readonly content: SiteContent }) {
       <div className="mx-auto grid w-full max-w-7xl gap-10 px-5 py-16 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:px-10">
         <div className="flex flex-col">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Kontakt</p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-background">{content.contact.title}</h2>
+          <h2 className="mt-2 font-display text-4xl font-normal tracking-wide text-background">{content.contact.title}</h2>
           <p className="mt-4 leading-7 text-background/75">{content.contact.summary}</p>
           <div className="mt-6 inline-flex max-w-max items-center rounded-md bg-primary/15 px-4 py-3 text-sm font-medium text-primary">
             <MapPinned className="mr-2 h-4 w-4" aria-hidden="true" />
@@ -838,7 +838,7 @@ function SectionHeading({
   return (
     <div className="max-w-3xl">
       <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{eyebrow}</p>
-      <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">{title}</h2>
+      <h2 className="mt-2 font-display text-4xl font-normal tracking-wide text-foreground">{title}</h2>
       <p className="mt-3 leading-7 text-muted-foreground">{summary}</p>
     </div>
   );
