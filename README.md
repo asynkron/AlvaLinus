@@ -50,3 +50,10 @@ toolchain independently of the application's TypeScript compiler.
 
 Publish the generated `dist/` directory to any static hosting platform. The app
 does not require a Node.js process after `npm run build`.
+
+For revision-traceable releases, follow the
+[static release and rollback runbook](docs/release-runbook.md): it connects an
+accepted source revision and quality receipt to a complete `dist/` artifact,
+walks through publication via the hosting owner's supported procedure,
+post-publication direct-route and asset checks, and restoring a previously
+accepted artifact.
