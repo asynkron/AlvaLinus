@@ -12,7 +12,7 @@ import {
   ShieldCheck,
   X,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { StaticState } from "../components/StaticState";
 import { Button } from "../components/ui/button";
@@ -105,6 +105,7 @@ const SERVICE_PATHS = new Set([...SERVICE_NAV.map((link) => normalizePath(link.h
 
 function Header({ currentPath = "/" }: { readonly currentPath?: string }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuToggleRef = useRef<HTMLButtonElement>(null);
   const active = normalizePath(currentPath);
   const servicesActive = SERVICE_PATHS.has(active);
 
@@ -183,6 +184,7 @@ function Header({ currentPath = "/" }: { readonly currentPath?: string }) {
           </a>
         </nav>
         <button
+          ref={menuToggleRef}
           type="button"
           className="inline-flex h-10 w-10 items-center justify-center rounded-md text-background transition-colors hover:bg-background/10 md:hidden"
           aria-label={menuOpen ? "Stäng meny" : "Öppna meny"}
@@ -198,6 +200,13 @@ function Header({ currentPath = "/" }: { readonly currentPath?: string }) {
           id="mobil-meny"
           aria-label="Mobilnavigation"
           className="border-t border-background/10 px-5 pb-4 pt-2 sm:px-8 md:hidden"
+          onKeyDown={(event) => {
+            if (event.key === "Escape") {
+              event.preventDefault();
+              setMenuOpen(false);
+              menuToggleRef.current?.focus();
+            }
+          }}
         >
           <a
             className={`block rounded-md px-3 py-3 text-base font-medium transition-colors ${
