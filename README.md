@@ -4,6 +4,9 @@ AlvaLinus is a static React, TypeScript, Vite, and Shadcn-style website foundati
 It has no backend runtime, API server, database, authentication, or serverless
 functions. The production output is static assets in `dist/`.
 
+See the [product and operation roadmap](docs/roadmap.md) for current capabilities,
+known limitations, priorities, and tracked next steps.
+
 ## Commands
 
 Use Node.js 24 or newer. The same commands work on macOS/Linux with `make` and
@@ -47,3 +50,10 @@ toolchain independently of the application's TypeScript compiler.
 
 Publish the generated `dist/` directory to any static hosting platform. The app
 does not require a Node.js process after `npm run build`.
+
+For revision-traceable releases, follow the
+[static release and rollback runbook](docs/release-runbook.md): it connects an
+accepted source revision and quality receipt to a complete `dist/` artifact,
+walks through publication via the hosting owner's supported procedure,
+post-publication direct-route and asset checks, and restoring a previously
+accepted artifact.
