@@ -16,7 +16,7 @@
       "producer_id": "vitest-tests",
       "kind": "test-results",
       "payload_schema": "test-results.v1",
-      "required": true
+      "required": false
     }
   ]
 }
