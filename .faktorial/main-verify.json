@@ -1,0 +1,17 @@
+{
+  "schema_version": "main-verify.v2",
+  "name": "Frontend quality",
+  "commands": [
+    "node ./scripts/make.js quality"
+  ],
+  "timeout": "15m",
+  "evidence": [
+    {
+      "command": "node ./scripts/make.js quality",
+      "producer_id": "vitest-tests",
+      "kind": "test-results",
+      "payload_schema": "test-results.v1",
+      "required": true
+    }
+  ]
+}

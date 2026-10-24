@@ -1,0 +1,22 @@
+{
+  "schema_version": "coverage-evidence.v1",
+  "command": "node ./scripts/make.js coverage",
+  "evidence": [
+    {
+      "producer_id": "vitest-coverage",
+      "kind": "coverage",
+      "payload_schema": "coverage.v1",
+      "required": true,
+      "native_format": "istanbul",
+      "native_file": "coverage-final.json"
+    }
+  ],
+  "test_evidence": [
+    {
+      "producer_id": "vitest-tests",
+      "kind": "test-results",
+      "payload_schema": "test-results.v1",
+      "required": true
+    }
+  ]
+}

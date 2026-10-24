@@ -5,12 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "postbuild": "node scripts/assert-static-routes.mjs && node scripts/assert-route-visual-assets.mjs",
+    "build": "node scripts/make.js build",
     "preview": "vite preview",
-    "test": "vitest run",
     "typecheck": "tsc -b",
-    "lint": "npm run typecheck"
+    "lint": "node scripts/make.js lint"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
@@ -24,18 +22,23 @@
     "tailwind-merge": "^2.6.0"
   },
   "devDependencies": {
+    "@asynkron/astwalker-typescript": "npm:typescript@7.0.2",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
     "@types/node": "^22.10.2",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
     "@vitejs/plugin-react": "^6.0.2",
+    "@vitest/coverage-v8": "4.1.9",
     "autoprefixer": "^10.4.20",
     "jsdom": "^29.1.1",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.16",
     "typescript": "^6.0.3",
     "vite": "^8.0.16",
-    "vitest": "^4.1.9"
+    "vitest": "4.1.9"
+  },
+  "engines": {
+    "node": ">=24"
   }
 }

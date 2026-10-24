@@ -45,5 +45,12 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: ["./src/test/setup.ts"],
+    coverage: {
+      provider: "v8",
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: ["src/**/*.test.*", "src/test/**", "src/vite-env.d.ts"],
+      reporter: ["text", "json"],
+      reportsDirectory: path.resolve(process.env.FAKTORIAL_COVERAGE_OUTPUT_DIR || "coverage", "coverage-native"),
+    },
   },
 });

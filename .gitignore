@@ -5,3 +5,9 @@ artifacts/
 *.tsbuildinfo
 src/**/*.js
 vite.config.js
+
+# Faktorial declarations are source; generated state and reports are local.
+.faktorial/*
+!.faktorial/main-verify.json
+coverage/
+.vitest/
