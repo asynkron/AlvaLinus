@@ -1,0 +1,141 @@
+{
+  "schema_version": "docs.features.v2",
+  "generated_from": "docs/features/README.md",
+  "features": [
+    {
+      "name": "Choose a suitable groundworks service",
+      "description": "Visitors compare the five service areas and read dedicated guidance before discussing a project.",
+      "document": "docs/features/service-selection.md",
+      "route_scope": "/, /tjanster/, /stensattning/, /markarbete/, /gravjobb/, /dranering/, /tradgardsplanering/",
+      "routes": [
+        "/",
+        "/tjanster/",
+        "/stensattning/",
+        "/markarbete/",
+        "/gravjobb/",
+        "/dranering/",
+        "/tradgardsplanering/"
+      ],
+      "code_paths": [
+        {
+          "path": "src/data/siteContent.ts",
+          "description": "Typed route registry, service records and Swedish product content."
+        },
+        {
+          "path": "src/pages/SiteHomePage.tsx",
+          "description": "Route rendering, visible subsections and shared page behavior."
+        },
+        {
+          "path": "src/types/site.ts",
+          "description": "Static content and route contracts."
+        }
+      ],
+      "reviewed_against_source": "2026-10-24",
+      "slice_refs": [],
+      "entry_point_refs": []
+    },
+    {
+      "name": "Assess the company and working approach",
+      "description": "Visitors read the company's approach, trust statements and four-step process to decide whether to discuss a project.",
+      "document": "docs/features/company-confidence.md",
+      "route_scope": "/, /tjanster/, /om-oss/, /stensattning/, /markarbete/, /gravjobb/, /dranering/, /tradgardsplanering/",
+      "routes": [
+        "/",
+        "/tjanster/",
+        "/om-oss/",
+        "/stensattning/",
+        "/markarbete/",
+        "/gravjobb/",
+        "/dranering/",
+        "/tradgardsplanering/"
+      ],
+      "code_paths": [
+        {
+          "path": "src/data/siteContent.ts",
+          "description": "Typed route registry, service records and Swedish product content."
+        },
+        {
+          "path": "src/pages/SiteHomePage.tsx",
+          "description": "Route rendering, visible subsections and shared page behavior."
+        },
+        {
+          "path": "src/types/site.ts",
+          "description": "Static content and route contracts."
+        }
+      ],
+      "reviewed_against_source": "2026-10-24",
+      "slice_refs": [],
+      "entry_point_refs": []
+    },
+    {
+      "name": "Prepare an initial project inquiry",
+      "description": "Visitors collect initial project details and initiate a static email handoff or use the visible contact address.",
+      "document": "docs/features/project-inquiry.md",
+      "route_scope": "/, /kontakt/",
+      "routes": [
+        "/",
+        "/kontakt/"
+      ],
+      "code_paths": [
+        {
+          "path": "src/data/siteContent.ts",
+          "description": "Typed route registry, service records and Swedish product content."
+        },
+        {
+          "path": "src/pages/SiteHomePage.tsx",
+          "description": "Route rendering, visible subsections and shared page behavior."
+        },
+        {
+          "path": "src/types/site.ts",
+          "description": "Static content and route contracts."
+        }
+      ],
+      "reviewed_against_source": "2026-10-24",
+      "slice_refs": [],
+      "entry_point_refs": []
+    },
+    {
+      "name": "Home, navigation and route recovery",
+      "description": "Shared home orientation, header, footer, breadcrumbs and static route states help visitors reach the three customer outcomes.",
+      "document": "docs/features/navigation-and-recovery.md",
+      "route_scope": "/, /tjanster/, /om-oss/, /stensattning/, /markarbete/, /gravjobb/, /dranering/, /tradgardsplanering/, /kontakt/",
+      "routes": [
+        "/",
+        "/tjanster/",
+        "/om-oss/",
+        "/stensattning/",
+        "/markarbete/",
+        "/gravjobb/",
+        "/dranering/",
+        "/tradgardsplanering/",
+        "/kontakt/"
+      ],
+      "code_paths": [
+        {
+          "path": "src/data/siteContent.ts",
+          "description": "Typed route registry, service records and Swedish product content."
+        },
+        {
+          "path": "src/pages/SiteHomePage.tsx",
+          "description": "Route rendering, visible subsections and shared page behavior."
+        },
+        {
+          "path": "src/types/site.ts",
+          "description": "Static content and route contracts."
+        },
+        {
+          "path": "src/lib/site-content.ts",
+          "description": "Asynchronous local content loader; no network call."
+        },
+        {
+          "path": "vite.config.ts",
+          "description": "Emits static HTML entry artifacts for declared subpages."
+        }
+      ],
+      "reviewed_against_source": "2026-10-24",
+      "slice_refs": [],
+      "entry_point_refs": []
+    }
+  ]
+}
+

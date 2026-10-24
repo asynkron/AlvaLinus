@@ -1,0 +1,709 @@
+{
+  "schema_version": "docs.feature-user-stories.v2",
+  "generated_from": "docs/features/features.json",
+  "identity_policy": "Feature and story IDs are immutable after publication; removed IDs stay absent and are never reused.",
+  "features": [
+    {
+      "id": "F1",
+      "document": "docs/features/service-selection.md",
+      "capability": {
+        "classification": "ui",
+        "roles": [
+          "Project visitor"
+        ],
+        "entry_points": [
+          "/",
+          "/tjanster/",
+          "/stensattning/",
+          "/markarbete/",
+          "/gravjobb/",
+          "/dranering/",
+          "/tradgardsplanering/"
+        ],
+        "principal_states": [
+          "Home overview",
+          "Services index",
+          "Five dedicated service pages",
+          "Missing service resolves to not-found",
+          "Global loading/error/empty states"
+        ],
+        "current_limitations": "Service detail pages share a generic suitability aside and process; Markarbete and Trädgårdsplanering have no dedicated rendered-page test mapping.",
+        "failure_behavior": "A missing service record yields not-found. An empty services list replaces every route body with the empty state.",
+        "recovery": "Use a declared route or restore the missing typed content and redeploy; the page has no content-editing interface.",
+        "runtime_owners": [
+          "src/pages/SiteHomePage.tsx",
+          "src/data/siteContent.ts"
+        ],
+        "background_component_relations": [],
+        "product_role": "customer_outcome",
+        "supports_feature_ids": [],
+        "customer_outcome": "Visitors identify which offered service fits their project and can reach the inquiry route.",
+        "outcome_signals": [
+          "In an observed task, a visitor selects the service matching a stated project need.",
+          "A visitor can reach /kontakt/ from the selected service page."
+        ]
+      },
+      "user_stories": [
+        {
+          "id": "F1-US1",
+          "title": "Compare the offered service areas",
+          "status": "current",
+          "role": "Project visitor",
+          "action": "compare service summaries and tags",
+          "benefit": "find the relevant area before reading details",
+          "source_anchors": [
+            "src/data/siteContent.ts",
+            "src/pages/SiteHomePage.tsx"
+          ],
+          "test_references": [
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "renders owner-approved home content, service, process, partner, and contact areas",
+              "evidence_type": "direct",
+              "supports": "Checks the home service and process areas, not the services-index rendering."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "renders representative service tags including pool digging under Grävjobb",
+              "evidence_type": "direct",
+              "supports": "Checks representative service tags on home."
+            }
+          ],
+          "entry_point_refs": [],
+          "preconditions": [
+            "Static content has at least one service."
+          ],
+          "flow": [
+            "Open / or /tjanster/.",
+            "Compare Stensättning, Markarbete, Grävjobb, Dränering and Trädgårdsplanering.",
+            "Follow Läs mer to the appropriate detail route."
+          ],
+          "variants": [
+            "Home adds hero, route shortcuts and process.",
+            "The services index adds trust content and an inquiry link band.",
+            "Service card photos fall back to route SVGs on image error."
+          ],
+          "expected_outcome": "A matching service route can be selected from the five cards.",
+          "failure_behavior": "No services shows Inget innehåll ännu instead of the route body.",
+          "recovery": "Reload after a content deployment; use the header links to choose a route."
+        },
+        {
+          "id": "F1-US2",
+          "title": "Assess paving, stone surfaces and walls",
+          "status": "current",
+          "role": "Project visitor",
+          "action": "read the Stensättning service page",
+          "benefit": "plan an entrance, path or courtyard with suitable finish and load-bearing preparation",
+          "source_anchors": [
+            "src/data/siteContent.ts",
+            "src/pages/SiteHomePage.tsx"
+          ],
+          "test_references": [
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "renders a dedicated service page with customer-facing guidance",
+              "evidence_type": "direct",
+              "supports": "Checks the Stensättning heading, suitability aside and next-step guidance."
+            }
+          ],
+          "entry_point_refs": [],
+          "preconditions": [
+            "The matching route and its sourceId service record exist."
+          ],
+          "flow": [
+            "Open /stensattning/.",
+            "Read the route introduction, service summary and tags: Marksten Örebro, Stenmurar, Finplanering.",
+            "Read När tjänsten passar and the four process steps.",
+            "Follow Kontakta oss to /kontakt/."
+          ],
+          "variants": [
+            "The suitability aside and process are shared across service pages.",
+            "The page hero hides a failed photo, keeping its text on the dark background."
+          ],
+          "expected_outcome": "The visitor can describe how Stensättning relates to the project and reach inquiry preparation.",
+          "failure_behavior": "A route without its service record shows Sidan finns inte; no automatic inquiry or quote is created.",
+          "recovery": "Choose another declared service or contact the company from the footer."
+        },
+        {
+          "id": "F1-US3",
+          "title": "Scope groundwork and site preparation",
+          "status": "current",
+          "role": "Project visitor",
+          "action": "read the Markarbete service page",
+          "benefit": "identify a broad groundwork offer for a private, business or municipal project",
+          "source_anchors": [
+            "src/data/siteContent.ts",
+            "src/pages/SiteHomePage.tsx"
+          ],
+          "test_references": [],
+          "entry_point_refs": [],
+          "preconditions": [
+            "The matching route and its sourceId service record exist."
+          ],
+          "flow": [
+            "Open /markarbete/.",
+            "Read the route introduction, service summary and tags: Schakt, Tomt, Anläggning.",
+            "Read När tjänsten passar and the four process steps.",
+            "Follow Kontakta oss to /kontakt/."
+          ],
+          "variants": [
+            "The suitability aside and process are shared across service pages.",
+            "The page hero hides a failed photo, keeping its text on the dark background."
+          ],
+          "expected_outcome": "The visitor can describe how Markarbete relates to the project and reach inquiry preparation.",
+          "failure_behavior": "A route without its service record shows Sidan finns inte; no automatic inquiry or quote is created.",
+          "recovery": "Choose another declared service or contact the company from the footer."
+        },
+        {
+          "id": "F1-US4",
+          "title": "Locate excavation for foundations, utilities or a pool",
+          "status": "current",
+          "role": "Project visitor",
+          "action": "read the Grävjobb service page",
+          "benefit": "place pool excavation within the excavation service rather than seek a separate pool page",
+          "source_anchors": [
+            "src/data/siteContent.ts",
+            "src/pages/SiteHomePage.tsx"
+          ],
+          "test_references": [
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "renders dedicated Dränering and Grävjobb pages",
+              "evidence_type": "direct",
+              "supports": "Checks the dedicated Grävjobb heading and pool-excavation summary."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "renders representative service tags including pool digging under Grävjobb",
+              "evidence_type": "direct",
+              "supports": "Checks Poolgrävning on the home service overview; does not exercise every detail-page tag."
+            }
+          ],
+          "entry_point_refs": [],
+          "preconditions": [
+            "The matching route and its sourceId service record exist."
+          ],
+          "flow": [
+            "Open /gravjobb/.",
+            "Read the route introduction, service summary and tags: Grävning, Husgrund, Poolgrävning.",
+            "Read När tjänsten passar and the four process steps.",
+            "Follow Kontakta oss to /kontakt/."
+          ],
+          "variants": [
+            "The suitability aside and process are shared across service pages.",
+            "The page hero hides a failed photo, keeping its text on the dark background."
+          ],
+          "expected_outcome": "The visitor can describe how Grävjobb relates to the project and reach inquiry preparation.",
+          "failure_behavior": "A route without its service record shows Sidan finns inte; no automatic inquiry or quote is created.",
+          "recovery": "Choose another declared service or contact the company from the footer."
+        },
+        {
+          "id": "F1-US5",
+          "title": "Understand moisture protection around a foundation",
+          "status": "current",
+          "role": "Project visitor",
+          "action": "read the Dränering service page",
+          "benefit": "recognize drainage work covering assessment, excavation and restoration around a foundation, wall or basement",
+          "source_anchors": [
+            "src/data/siteContent.ts",
+            "src/pages/SiteHomePage.tsx"
+          ],
+          "test_references": [
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "renders dedicated Dränering and Grävjobb pages",
+              "evidence_type": "direct",
+              "supports": "Checks the dedicated Dränering heading and foundation moisture-protection paragraph."
+            }
+          ],
+          "entry_point_refs": [],
+          "preconditions": [
+            "The matching route and its sourceId service record exist."
+          ],
+          "flow": [
+            "Open /dranering/.",
+            "Read the route introduction, service summary and tags: Dränering, Mur, Fuktskydd.",
+            "Read När tjänsten passar and the four process steps.",
+            "Follow Kontakta oss to /kontakt/."
+          ],
+          "variants": [
+            "The drainage page adds a paragraph on moisture protection around foundations, walls and basements.",
+            "The page hero hides a failed photo, keeping its text on the dark background."
+          ],
+          "expected_outcome": "The visitor can describe how Dränering relates to the project and reach inquiry preparation.",
+          "failure_behavior": "A route without its service record shows Sidan finns inte; no automatic inquiry or quote is created.",
+          "recovery": "Choose another declared service or contact the company from the footer."
+        },
+        {
+          "id": "F1-US6",
+          "title": "Connect garden levels, surfaces and planting",
+          "status": "current",
+          "role": "Project visitor",
+          "action": "read the Trädgårdsplanering service page",
+          "benefit": "identify plot and garden planning that connects practical outdoor use with levels and planting",
+          "source_anchors": [
+            "src/data/siteContent.ts",
+            "src/pages/SiteHomePage.tsx"
+          ],
+          "test_references": [],
+          "entry_point_refs": [],
+          "preconditions": [
+            "The matching route and its sourceId service record exist."
+          ],
+          "flow": [
+            "Open /tradgardsplanering/.",
+            "Read the route introduction, service summary and tags: Tomtplanering, Utemiljö, Finish.",
+            "Read När tjänsten passar and the four process steps.",
+            "Follow Kontakta oss to /kontakt/."
+          ],
+          "variants": [
+            "The suitability aside and process are shared across service pages.",
+            "The page hero hides a failed photo, keeping its text on the dark background."
+          ],
+          "expected_outcome": "The visitor can describe how Trädgårdsplanering relates to the project and reach inquiry preparation.",
+          "failure_behavior": "A route without its service record shows Sidan finns inte; no automatic inquiry or quote is created.",
+          "recovery": "Choose another declared service or contact the company from the footer."
+        }
+      ],
+      "user_story_documents": [
+        "docs/features/user-stories/F1/F1-US1.md",
+        "docs/features/user-stories/F1/F1-US2.md",
+        "docs/features/user-stories/F1/F1-US3.md",
+        "docs/features/user-stories/F1/F1-US4.md",
+        "docs/features/user-stories/F1/F1-US5.md",
+        "docs/features/user-stories/F1/F1-US6.md"
+      ]
+    },
+    {
+      "id": "F2",
+      "document": "docs/features/company-confidence.md",
+      "capability": {
+        "classification": "ui",
+        "roles": [
+          "Prospective customer"
+        ],
+        "entry_points": [
+          "/",
+          "/tjanster/",
+          "/om-oss/",
+          "/stensattning/",
+          "/markarbete/",
+          "/gravjobb/",
+          "/dranering/",
+          "/tradgardsplanering/"
+        ],
+        "principal_states": [
+          "About page",
+          "Home trust and process sections",
+          "Services-index trust section",
+          "Service-detail process sections",
+          "Partners omitted for the current empty list"
+        ],
+        "current_limitations": "Trust statements describe experience, certification and guarantees without linked supporting credentials or project case studies in these sections.",
+        "failure_behavior": "About shares the global load/error/empty handling; an empty partner list intentionally renders no partner section.",
+        "recovery": "Reload for transient loading problems; maintainers must correct missing content through a static deployment.",
+        "runtime_owners": [
+          "src/pages/SiteHomePage.tsx",
+          "src/data/siteContent.ts"
+        ],
+        "background_component_relations": [],
+        "product_role": "customer_outcome",
+        "supports_feature_ids": [],
+        "customer_outcome": "Visitors understand the stated working approach and can make an informed decision to start a discussion.",
+        "outcome_signals": [
+          "In an observed task, a visitor can describe the four stated process steps.",
+          "A visitor can find the company description and then the contact route."
+        ]
+      },
+      "user_stories": [
+        {
+          "id": "F2-US1",
+          "title": "Read the company approach before making contact",
+          "status": "current",
+          "role": "Prospective customer",
+          "action": "read the company description",
+          "benefit": "decide whether its stated approach fits the project",
+          "source_anchors": [
+            "src/data/siteContent.ts",
+            "src/pages/SiteHomePage.tsx"
+          ],
+          "test_references": [
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "renders dedicated about and contact paths",
+              "evidence_type": "direct",
+              "supports": "Checks the about heading and specific company paragraphs."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "hides partner content when no current collaborator is configured",
+              "evidence_type": "direct",
+              "supports": "Checks that unconfigured collaborator names and section are absent."
+            }
+          ],
+          "entry_point_refs": [],
+          "preconditions": [
+            "The /om-oss/ route and about paragraphs are configured."
+          ],
+          "flow": [
+            "Open Om oss.",
+            "Read the paragraphs on experience, equipment, communication and responsibility.",
+            "Follow the contact link band."
+          ],
+          "variants": [
+            "The home and services-index trust cards summarize breadth, care and experience.",
+            "The current empty partners array suppresses collaborator claims."
+          ],
+          "expected_outcome": "The visitor can find the stated approach and a contact next step.",
+          "failure_behavior": "Missing content is not evidence of certification; the UI does not verify credentials.",
+          "recovery": "Use the contact email to ask for project-specific evidence."
+        },
+        {
+          "id": "F2-US2",
+          "title": "Understand the proposed project sequence",
+          "status": "current",
+          "role": "Prospective customer",
+          "action": "read the four process steps",
+          "benefit": "know what the company says happens after first contact",
+          "source_anchors": [
+            "src/data/siteContent.ts",
+            "src/pages/SiteHomePage.tsx"
+          ],
+          "test_references": [
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "renders owner-approved home content, service, process, partner, and contact areas",
+              "evidence_type": "direct",
+              "supports": "Checks the home process heading only; does not verify business execution or every step."
+            }
+          ],
+          "entry_point_refs": [],
+          "preconditions": [
+            "Home or a configured service detail route is available."
+          ],
+          "flow": [
+            "Open / or a service detail page.",
+            "Read Första kontakt, Genomgång, Utförande and Slutfört arbete.",
+            "Prepare questions for the initial discussion."
+          ],
+          "variants": [
+            "The same static process appears on each service detail page.",
+            "No booking, project status or live progress is shown."
+          ],
+          "expected_outcome": "The stated sequence is available as information; no work order is scheduled.",
+          "failure_behavior": "The site cannot report actual execution status or confirm a site visit.",
+          "recovery": "Discuss project timing and commitments directly with the company."
+        }
+      ],
+      "user_story_documents": [
+        "docs/features/user-stories/F2/F2-US1.md",
+        "docs/features/user-stories/F2/F2-US2.md"
+      ]
+    },
+    {
+      "id": "F3",
+      "document": "docs/features/project-inquiry.md",
+      "capability": {
+        "classification": "ui",
+        "roles": [
+          "Property owner or project representative",
+          "Project visitor"
+        ],
+        "entry_points": [
+          "/",
+          "/kontakt/"
+        ],
+        "principal_states": [
+          "Contact section on home",
+          "Dedicated contact page",
+          "Native required-field validation",
+          "Mail-client handoff",
+          "Visible email fallback"
+        ],
+        "current_limitations": "A configured mail client is required. The site stores no inquiry, tracks no delivery and displays no confirmed-send state; no email or phone field is collected.",
+        "failure_behavior": "Browser validation can block blank required fields; a missing or incompatible mail client can prevent handoff without a site error receipt.",
+        "recovery": "Use the displayed email address in a working mail client. Retype or copy details; the site offers no persistent draft recovery.",
+        "runtime_owners": [
+          "src/pages/SiteHomePage.tsx",
+          "src/data/siteContent.ts"
+        ],
+        "background_component_relations": [],
+        "product_role": "customer_outcome",
+        "supports_feature_ids": [],
+        "customer_outcome": "Visitors can prepare an inquiry addressed to the company with their project details.",
+        "outcome_signals": [
+          "In an observed browser task, name, customer type, service and message controls can be located.",
+          "The form exposes the configured mailto recipient and subject; actual sending is confirmed outside the site."
+        ]
+      },
+      "user_stories": [
+        {
+          "id": "F3-US1",
+          "title": "Prepare a quote or site-visit inquiry",
+          "status": "current",
+          "role": "Property owner or project representative",
+          "action": "enter initial project details in the inquiry form",
+          "benefit": "prepare a useful first discussion",
+          "source_anchors": [
+            "src/data/siteContent.ts",
+            "src/pages/SiteHomePage.tsx"
+          ],
+          "test_references": [
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "renders a static email handoff form and footer contact email",
+              "evidence_type": "direct",
+              "supports": "Checks form method, mailto action, text/plain encoding, named controls, submit button and email link; does not send mail or exercise native validation."
+            }
+          ],
+          "entry_point_refs": [],
+          "preconditions": [
+            "Home or /kontakt/ has loaded.",
+            "A mail client is configured for the handoff."
+          ],
+          "flow": [
+            "Find Kontakta oss för offert.",
+            "Enter Namn, choose Kundtyp and Tjänst, and describe the project, place and desired timing in Meddelande.",
+            "Select Skicka offertförfrågan.",
+            "Review and send in the external mail client if it opens."
+          ],
+          "variants": [
+            "Customer types are Privatperson, Företag, and BRF eller fastighetsägare.",
+            "Services include the five offered areas and Annat.",
+            "Pool excavation is part of Grävjobb, not a separate Pool option.",
+            "Required fields use browser-native validation; the site has no custom submit handler."
+          ],
+          "expected_outcome": "The form requests a plain-text mail-client handoff to kontakt@svardentreprenad.se with the configured subject; delivery is not established.",
+          "failure_behavior": "The mail handler may fail to open; the page cannot confirm acceptance or sending.",
+          "recovery": "Use the visible email address and include project details manually."
+        },
+        {
+          "id": "F3-US2",
+          "title": "Use the contact address without the form",
+          "status": "current",
+          "role": "Project visitor",
+          "action": "find the visible company email address",
+          "benefit": "make contact with a working email tool",
+          "source_anchors": [
+            "src/data/siteContent.ts",
+            "src/pages/SiteHomePage.tsx"
+          ],
+          "test_references": [
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "renders a static email handoff form and footer contact email",
+              "evidence_type": "direct",
+              "supports": "Checks the visible contact-address link points to the configured mailto address."
+            }
+          ],
+          "entry_point_refs": [],
+          "preconditions": [
+            "The page has loaded enough to render the contact section or footer."
+          ],
+          "flow": [
+            "Read kontakt@svardentreprenad.se in the contact section or footer.",
+            "Use its email link or copy the address into an email tool.",
+            "Describe the project and a way to reply."
+          ],
+          "variants": [
+            "Footer contact is available on every ready routed page and not-found.",
+            "ContactLinkBand on about, index and service pages leads to /kontakt/ rather than embedding another form."
+          ],
+          "expected_outcome": "The visitor has the company email address; no website receipt is implied.",
+          "failure_behavior": "The mailto link still depends on the user's email handler.",
+          "recovery": "Copy the address into a working client or webmail; the site supplies no alternative transport."
+        }
+      ],
+      "user_story_documents": [
+        "docs/features/user-stories/F3/F3-US1.md",
+        "docs/features/user-stories/F3/F3-US2.md"
+      ]
+    },
+    {
+      "id": "F4",
+      "document": "docs/features/navigation-and-recovery.md",
+      "capability": {
+        "classification": "ui",
+        "roles": [
+          "Site visitor"
+        ],
+        "entry_points": [
+          "/",
+          "/tjanster/",
+          "/om-oss/",
+          "/stensattning/",
+          "/markarbete/",
+          "/gravjobb/",
+          "/dranering/",
+          "/tradgardsplanering/",
+          "/kontakt/"
+        ],
+        "principal_states": [
+          "Loading",
+          "Load error",
+          "Empty services",
+          "Ready known route",
+          "Unknown route",
+          "Mobile menu closed/open"
+        ],
+        "current_limitations": "Navigation destinations are repeated in Header/SERVICE_NAV, Footer and the typed inventory. Empty services suppresses even about and contact route bodies. Hosting may reject unknown paths before React can display not-found.",
+        "failure_behavior": "Load errors show an alert without a retry control; unknown in-app paths show declared-route shortcuts. Loading/error/empty states retain the header but have no footer.",
+        "recovery": "Use header links or reload; unknown ready routes provide all registered shortcuts. Static-host handling remains a deployment concern.",
+        "runtime_owners": [
+          "src/pages/SiteHomePage.tsx",
+          "src/data/siteContent.ts",
+          "src/lib/site-content.ts",
+          "src/components/StaticState.tsx"
+        ],
+        "background_component_relations": [],
+        "product_role": "surface",
+        "supports_feature_ids": [
+          "F1",
+          "F2",
+          "F3"
+        ],
+        "customer_outcome": "",
+        "outcome_signals": []
+      },
+      "user_stories": [
+        {
+          "id": "F4-US1",
+          "title": "Move from home orientation to a useful page",
+          "status": "current",
+          "role": "Site visitor",
+          "action": "use route navigation",
+          "benefit": "reach service selection, company information or inquiry preparation",
+          "source_anchors": [
+            "src/data/siteContent.ts",
+            "src/pages/SiteHomePage.tsx"
+          ],
+          "test_references": [
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "shows the requested primary navigation labels as real route links",
+              "evidence_type": "direct",
+              "supports": "Checks route-link destinations, not mobile-menu or dropdown interaction."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "links from the home page to active static subpage paths only",
+              "evidence_type": "direct",
+              "supports": "Checks home CTA destinations and excludes retired routes."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "preserves Swedish UTF-8 characters in representative user-facing copy",
+              "evidence_type": "direct",
+              "supports": "Checks representative Swedish labels remain readable."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "keeps every current route aligned with a page-specific visual asset",
+              "evidence_type": "technical",
+              "supports": "Checks nine declared visual metadata mappings, not rendered photos or onError fallbacks."
+            }
+          ],
+          "entry_point_refs": [],
+          "preconditions": [
+            "The static entry document is served."
+          ],
+          "flow": [
+            "Open /.",
+            "Read the hero's service and quote actions and Tydliga vägar för rätt uppdrag shortcuts.",
+            "Use the desktop services dropdown, mobile menu or footer links.",
+            "On subpages use the Hem breadcrumb to return."
+          ],
+          "variants": [
+            "Header services links expose all five detail routes.",
+            "inventory.primaryRoutes has five shortcuts; it is not the full nine-route registry.",
+            "Subpage heroes and the home hero use decorative photos; service-card images have route alt text."
+          ],
+          "expected_outcome": "A declared static route can be selected for F1, F2 or F3.",
+          "failure_behavior": "A missing host artifact can fail before React mounts; this catalog does not claim host-level fallback.",
+          "recovery": "Use a known route or the home URL; repair/redeploy static route artifacts if missing."
+        },
+        {
+          "id": "F4-US2",
+          "title": "Recognize unavailable content and recover to a known route",
+          "status": "current",
+          "role": "Site visitor",
+          "action": "interpret loading, error, empty and unknown-route feedback",
+          "benefit": "avoid mistaking missing content for a successful page",
+          "source_anchors": [
+            "src/data/siteContent.ts",
+            "src/pages/SiteHomePage.tsx"
+          ],
+          "test_references": [
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "starts with a loading state before static content resolves",
+              "evidence_type": "direct",
+              "supports": "Checks the initial loading label."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "shows an error state",
+              "evidence_type": "direct",
+              "supports": "Checks the error alert text."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "shows an empty state when static data has no services",
+              "evidence_type": "direct",
+              "supports": "Checks the empty-state heading."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "fails unknown paths gracefully",
+              "evidence_type": "direct",
+              "supports": "Checks not-found guidance and a home recovery link."
+            }
+          ],
+          "entry_point_refs": [],
+          "preconditions": [
+            "React has mounted.",
+            "For not-found, content is ready and services is nonempty."
+          ],
+          "flow": [
+            "Wait while Laddar innehåll is displayed.",
+            "If loading fails, read the error alert.",
+            "If services is empty, recognize Inget innehåll ännu.",
+            "For an unknown ready path, use a Sidan finns inte shortcut to a registered route."
+          ],
+          "variants": [
+            "Query/hash suffixes are removed and a missing trailing slash is normalized by the renderer.",
+            "A service route with no matching service record uses not-found.",
+            "Normal content is loaded asynchronously from a bundled module, without network I/O."
+          ],
+          "expected_outcome": "The rendered state identifies content availability and provides route recovery when ready.",
+          "failure_behavior": "Error and empty states have no inline retry; the empty-services guard applies to all route kinds.",
+          "recovery": "Reload for a fresh load or use header navigation; a content defect needs a corrected static deployment."
+        }
+      ],
+      "user_story_documents": [
+        "docs/features/user-stories/F4/F4-US1.md",
+        "docs/features/user-stories/F4/F4-US2.md"
+      ]
+    }
+  ]
+}
+
