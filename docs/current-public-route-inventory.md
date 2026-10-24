@@ -1,6 +1,6 @@
 # Current Public Route Inventory
 
-Checked: 2026-06-16
+Checked: 2026-10-24
 
 Source of truth:
 
@@ -11,9 +11,12 @@ Source of truth:
 This inventory covers the current Svard Entreprenad public route surface. The
 site now has typed page-specific placeholder visual metadata for every listed
 route in `src/data/siteContent.ts`, with matching generated SVG assets under
-`public/page-visuals/`. The renderer still uses the shared
-`/svard-entreprenad-logo.png` asset in the current UI; the route-specific
-visuals are ready for a later UI wiring pass. Previous external source links
+`public/page-visuals/`. The renderer uses the shared
+`/svard-entreprenad-logo.png` logo, a decorative home hero photograph,
+service-card photographs with the route SVGs as image-error fallbacks, and
+subpage hero photographs that hide on error while retaining the text. The
+table below names the canonical typed SVG metadata assets, not the preferred
+photographs displayed by the renderer. Previous external source links
 have been removed from the public UI and are not a desired retained
 customer-facing pattern.
 
@@ -33,7 +36,8 @@ customer-facing pattern.
 
 ## Follow-up Notes
 
-- `/dranering/` is both a primary navigation route and a `service` route; the
+- `/dranering/` is an inventory shortcut and a `service` route, exposed within
+  the header's Tjänster links rather than as its own top-level header item; the
   renderer treats it as a dedicated service page with one drainage-specific
   explanatory paragraph.
 - Service pages no longer render external source links, and the contact page no
@@ -43,3 +47,8 @@ customer-facing pattern.
 - Future visual refinement work can use this inventory as the baseline for
   replacing generated placeholders with unique photography, project examples,
   maps, or service-specific diagrams without changing the route-content model.
+- Partners is conditionally available on home and the services index but is
+  currently omitted because the configured list is empty. Both ready pages
+  include the shared footer; the services index also has a breadcrumb hero.
+- The source-backed [feature catalog](features/README.md) maps these nine
+  routes, their shared states and subsections to visitor outcomes and stories.
