@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 
 import { siteContent } from "../data/siteContent";
 import type { SiteContent } from "../types/site";
@@ -7,6 +7,40 @@ import { SiteHomePage } from "./SiteHomePage";
 const content: SiteContent = siteContent;
 
 describe("SiteHomePage", () => {
+  it("dismisses mobile navigation with Escape, restores focus, and allows reopening", () => {
+    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+
+    const toggle = screen.getByRole("button", { name: "Öppna meny" });
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByRole("navigation", { name: "Mobilnavigation" })).not.toBeInTheDocument();
+
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAccessibleName("Stäng meny");
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+    const navigation = screen.getByRole("navigation", { name: "Mobilnavigation" });
+    const link = within(navigation).getByRole("link", { name: "Hem" });
+    link.focus();
+    expect(link).toHaveFocus();
+
+    fireEvent.keyDown(link, { key: "ArrowDown" });
+    expect(navigation).toBeInTheDocument();
+    expect(link).toHaveFocus();
+
+    fireEvent.keyDown(link, { key: "Escape" });
+    expect(screen.queryByRole("navigation", { name: "Mobilnavigation" })).not.toBeInTheDocument();
+    expect(toggle).toHaveAccessibleName("Öppna meny");
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(toggle).toHaveFocus();
+
+    fireEvent.click(toggle);
+    expect(screen.getByRole("navigation", { name: "Mobilnavigation" })).toBeInTheDocument();
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+    fireEvent.click(toggle);
+    expect(screen.queryByRole("navigation", { name: "Mobilnavigation" })).not.toBeInTheDocument();
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(toggle).toHaveFocus();
+  });
+
   it("renders owner-approved home content, service, process, partner, and contact areas", () => {
     render(<SiteHomePage initialState={{ status: "ready", content }} />);
 
