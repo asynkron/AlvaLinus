@@ -35,7 +35,7 @@ handlers. See [route inventory](../current-public-route-inventory.md).
 | Empty services | Header plus Inget innehåll ännu | Applies to every route kind, including about/contact; route selection cannot bypass this guard. |
 | Ready known route | Typed route view plus footer | Missing joined service record goes to not-found. |
 | Ready unknown route | Sidan finns inte, route shortcuts and footer | Follow a declared shortcut. A static host may return its own error before React mounts, so this is an in-app guarantee only. |
-| Photo error | Service card switches once to route SVG; subpage hero hides its image | Text remains. Home hero has no equivalent explicit onError handler. |
+| Photo error | Service card switches to the route SVG; if that fallback also errors, the card image is removed with no retry loop. Subpage hero hides its image. | Title, summary and Läs mer link remain. Home hero has no equivalent explicit onError handler. |
 
 The header stays during loading/error/empty, but the footer does not. Partners
 is omitted independently when its list is empty. These are current behaviors,
@@ -53,8 +53,10 @@ artifacts; existing route and visual scripts check deployable paths.
 
 Story documents carry reviewed Vitest declarations for links, loading, error,
 empty and not-found feedback. Swedish-character assertions protect representative
-UTF-8 text. The route visual test is technical metadata evidence, not proof of
-image-error behavior. Mobile-menu interaction, keyboard dropdown interaction,
+UTF-8 text. The route visual test is technical metadata evidence; rendered
+service-card image-error behavior, including the terminal fallback failure, is
+covered by deterministic in-memory tests in the home page test file.
+Mobile-menu interaction, keyboard dropdown interaction,
 normalization variants and production-host fallback are source-reviewed or
 unmapped, not claimed as executed acceptance. No new duplicate tests are added.
 

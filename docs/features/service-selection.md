@@ -24,8 +24,10 @@ currently absent because the list is empty.
 [F1-US1](user-stories/F1/F1-US1.md) covers comparing these offers on home/index.
 Every detail view has a page hero, summary, tags, När tjänsten passar aside,
 four-step process, contact link band and footer. Service cards use photographs
-with typed route SVG fallback; page hero photograph errors hide the image and
-retain text. These decorative backgrounds are not project case-study evidence.
+with typed route SVG fallback; if the fallback SVG also errors, the card image
+is removed with no retry loop while title, summary and Läs mer remain. Page hero
+photograph errors hide the image and retain text. These decorative backgrounds
+are not project case-study evidence.
 
 ## Outcome and support
 
@@ -52,7 +54,9 @@ Stensättning guidance and Dränering/Grävjobb detail text. The six story docum
 and identity manifest carry exact names and the limited assertion scope.
 No dedicated Markarbete or Trädgårdsplanering render test is mapped.
 The services-index view is source-reviewed, not established by a dedicated
-existing rendered test. Metadata tests do not prove displayed image fallbacks.
+existing rendered test. Metadata tests do not prove displayed image fallbacks;
+deterministic rendered image-error tests now cover the home service-card
+photo→SVG fallback and its terminal removal.
 
 ## What Works Less Well
 
