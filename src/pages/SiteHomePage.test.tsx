@@ -35,6 +35,14 @@ describe("SiteHomePage", () => {
     fireEvent.click(toggle);
     expect(screen.getByRole("navigation", { name: "Mobilnavigation" })).toBeInTheDocument();
     expect(toggle).toHaveAttribute("aria-expanded", "true");
+    fireEvent.keyDown(toggle, { key: "Escape" });
+    expect(screen.queryByRole("navigation", { name: "Mobilnavigation" })).not.toBeInTheDocument();
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(toggle).toHaveFocus();
+
+    fireEvent.click(toggle);
+    expect(screen.getByRole("navigation", { name: "Mobilnavigation" })).toBeInTheDocument();
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
     fireEvent.click(toggle);
     expect(screen.queryByRole("navigation", { name: "Mobilnavigation" })).not.toBeInTheDocument();
     expect(toggle).toHaveAttribute("aria-expanded", "false");
