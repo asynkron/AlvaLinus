@@ -1,161 +1,165 @@
 # Product and operation roadmap
 
-Reviewed: 2026-10-24. Source baseline:
-`a79c151c5eaf9be865985c85dcbc64acc29badf5` (fk3).
+Reviewed: 2026-10-25 (fk24), source baseline
+`9481400d0e0d3a57a79c64ea0c4293f44fe15f54`.
 
-This roadmap connects the current Svärd Entreprenad website to the longer-term
-goal of operating a product with minimal human intervention. Current capabilities
-below are source observations, not claims of successful production operation.
-Goals are proposed work until their owning issues are delivered and verified.
+This roadmap connects the Swedish Svärd Entreprenad website to operating a
+product with minimal human intervention. Source capability, task delivery and
+verified production operation are separate evidence. Goals are proposed work,
+not implemented capabilities or permission to expand the site's runtime.
 
 ## Where we are
 
-AlvaLinus delivers a Swedish static React/TypeScript site. The nine declared
-routes cover home, services, about, contact and five service detail pages:
+AlvaLinus is a static React/TypeScript/Vite site with nine routes:
 `/`, `/tjanster/`, `/om-oss/`, `/kontakt/`, `/stensattning/`, `/markarbete/`,
-`/gravjobb/`, `/dranering/`, and `/tradgardsplanering/`.
-[Typed site content](../src/data/siteContent.ts) and
-[shared contracts](../src/types/site.ts) describe the route/content model;
-[SiteHomePage](../src/pages/SiteHomePage.tsx) renders the public surfaces.
-[The loader](../src/lib/site-content.ts) returns imported static data.
+`/gravjobb/`, `/dranering/` and `/tradgardsplanering/`.
+[Typed content](../src/data/siteContent.ts), [contracts](../src/types/site.ts),
+[the renderer](../src/pages/SiteHomePage.tsx) and
+[the local loader](../src/lib/site-content.ts) own the product behavior.
+There is no application backend, database, authentication or serverless runtime
+([ADR 0001](adrs/0001-static-react-frontend-foundation.md)).
 
-The site has no application backend, database, authentication or serverless
-runtime. [ADR 0001](adrs/0001-static-react-frontend-foundation.md) and
-[ADR 0004](adrs/0004-static-subpage-artifacts.md) establish this boundary.
-[Vite](../vite.config.ts) copies the root HTML to each declared subpage directory
-so direct subpage requests have physical files in `dist/`; React selects the
-page content. This is a deployable artifact design, not proof of the production
-host's current configuration.
+[Vite](../vite.config.ts) emits physical subpage HTML from the route registry
+under [ADR 0004](adrs/0004-static-subpage-artifacts.md). This supports direct
+static URLs; it does not prove how production currently serves them.
+The [feature catalog](features/README.md) now maps services, company information,
+project inquiry and navigation to visitor outcomes, routes and twelve stories.
 
-### What works well in the implementation
+### What works well
 
-- Typed content and reusable UI primitives provide a small, understandable
-  change surface. Existing [DOM cases](../src/pages/SiteHomePage.test.tsx) cover
-  public content, route links, page states and contact controls.
-- Recent June changes added a Tjänster service dropdown, photographic heroes
-  and service cards, self-hosted fonts, and updated page metadata. The current
-  renderer contains the photo maps and fallback behavior; this supersedes the
-  older inventory's shared-logo-only description.
-- The October 24 changes (`abe2c8d`, then `a79c151`) establish cross-platform,
-  locked-dependency commands, ordinary quality and separate native Istanbul
-  coverage. [README](../README.md) and [the runner](../scripts/make.js) define
-  Node.js 24+, Windows `make.cmd`, strict TypeScript, static builds, route/visual
-  assertions and one Vitest session. Test evidence is produced from that same
-  session by [quality-evidence.mjs](../scripts/quality-evidence.mjs).
-- The form's limited delivery semantics are explicit in
-  [ADR 0006](adrs/0006-static-email-contact-handoff.md): it hands information to
-  a configured mail client, with fallback contact links and no operational
-  secrets or inquiry storage in the site.
-
-These checks and tests exist in source. This roadmap update has not executed
-them or established a current passing receipt; native verification follows the
-committed delivery.
+- Typed content and shared components keep changes bounded. Existing
+  [DOM tests](../src/pages/SiteHomePage.test.tsx) cover content, routes, states,
+  contact controls and mobile navigation Escape/focus behavior. Source review
+  establishes those declarations, not their current execution.
+- The header exposes five services through Tjänster. Photos and self-hosted
+  fonts support the presentation. The [route inventory](current-public-route-inventory.md)
+  now distinguishes typed SVG metadata from preferred photographs and describes
+  the dropdown. The prior roadmap's shared-logo-only/navigation-drift finding
+  is superseded by delivered source corrections, not retained as an open defect.
+- [README](../README.md) and [the runner](../scripts/make.js) define Node 24+,
+  locked dependencies, cross-platform commands, strict TypeScript, static
+  artifact checks and one Vitest session. Coverage remains separate.
+- [Reporter normalization](../scripts/quality-evidence.mjs) now rejects
+  unsupported statuses and malformed/empty reports and treats invalid durations
+  as unknown. Its [in-memory tests](../scripts/quality-evidence.test.mjs) mock
+  filesystem I/O. Process exit remains the gate authority.
+- The [release/rollback runbook](release-runbook.md) connects source, accepted
+  quality, artifact and publication identities. It covers direct-route/asset
+  checks and conditional rollback without inventing a hosting provider.
+- [ADR 0006](adrs/0006-static-email-contact-handoff.md) bounds contact to a
+  native mail-client handoff with fallback links and no stored inquiries.
 
 ### What works less well and what to improve
 
-- The [public route inventory](current-public-route-inventory.md), dated June
-  16, still describes shared-logo-only rendering and Dränering as a primary
-  navigation item. The renderer now uses photos and a service dropdown, while
-  `siteContent.inventory.primaryRoutes` still lists the older primary menu.
-  Maintenance decisions must reconcile those sources rather than repeat the
-  inventory as current rendered truth. Keep this reconciliation within the
-  existing feature-documentation work, not another overlapping follow-up.
-- Only four WebP photos are present in `public/page-visuals/`. The renderer
-  references five additional paths with deliberate fallbacks. The
-  [image requests](image-requests.md) describe those gaps; no new photography
-  or approval is inferred here.
-- Contact capture cannot prove that an inquiry was sent or received. There is
-  no source-backed delivery or conversion signal. Guaranteed delivery would
-  require an explicit service/runtime decision under ADR 0006.
-- The new evidence adapter maps all non-passed/non-failed statuses to skipped,
-  accepts finite negative durations, and labels nonempty observations complete.
-  That leaves unsupported reporter inputs insufficiently distinguished from
-  valid evidence. The runner separately retains Vitest's nonzero exit; this
-  observation does not show that a failing gate currently passes.
-- Publishing is documented only as uploading `dist/` to static hosting. No
-  tracked release/rollback runbook identifies how to connect the accepted
-  revision to the published artifact or recover a prior version. The actual
-  production host and retention arrangements remain unknown.
+- Four WebP photos exist; five referenced photos remain absent per
+  [image requests](image-requests.md) and the checkout. Service cards attempt
+  SVG fallback on the first image error, but leave the failed image in place
+  if that also fails. Subpage decorative heroes instead hide failed images.
+  Improve service-card terminal failure under **Next 1**. This is a source
+  resilience gap, not a measured production incident. Missing-image acquisition
+  and approval remain separate editorial work.
+- [HTML assertions](../scripts/assert-static-routes.mjs) copy eight subpage
+  paths; [visual assertions](../scripts/assert-route-visual-assets.mjs) scan
+  source text and expect exactly nine paths. Vite derives output from typed
+  routes. Today's expectations agree, but future changes can drift between
+  owners. **Next 2** makes artifact checks follow the registry automatically.
+- Contact capture cannot prove sent/received inquiries, conversion or customer
+  satisfaction. Marketing/certification statements are authored content, not
+  measured metrics or compliance verification. Delivery, tracking or persistence
+  requirements need an explicit decision including privacy/consent needs.
+- Production host, publishing access and artifact retention remain unknown.
+  A runbook is delivered; automated publication, measured recovery time and
+  demonstrated rollback are not established.
+
+## Delivered work and ownership reconciliation
+
+Current owning `get_task` records and open/closed `list_tasks` membership were
+read on 2026-10-25 before selecting follow-ups. Git history and source at the
+baseline above were checked. Investigation began at `a79c151`; later merges
+explain why its missing-roadmap/runbook and unhardened-reporter findings no
+longer describe this checkout.
+
+| Work | Current record and source | Disposition |
+| --- | --- | --- |
+| [fk3](https://app.faktorial.ai/projects/alvalinus/tasks/fk3), prior roadmap | Closed, stage done; merge receipt `0ca6430`, PR #47. Roadmap and README link present. | Refresh existing roadmap. Original follow-ups were fk10/fk11; do not recreate them. |
+| [fk10](https://app.faktorial.ai/projects/alvalinus/tasks/fk10), reporter hardening | Closed, stage done; merge receipt `4d630bd`, PR #51; retained quality pass for head `5dc3221`. Code/tests present. | Retire old reporter gap because requested behavior shipped. New artifact work concerns different inputs/owners. |
+| [fk11](https://app.faktorial.ai/projects/alvalinus/tasks/fk11), release runbook | Closed, stage done; merge receipt `1b2a922`, PR #50. Runbook/README link present; closeout names unavailable revision-bound quality evidence. | Retire missing-runbook gap. Host, publication and retention remain unknown; closure does not prove live operation. |
+| [fk5](https://app.faktorial.ai/projects/alvalinus/tasks/fk5), mobile menu | Closed, stage done; merge receipt `106b46e`, PR #46, retained quality pass for head `c8aec6c`. Link-origin Escape/focus coverage present. | Source delivered; focused-toggle dismissal subsequently delivered by fk23 below. |
+| [fk23](https://app.faktorial.ai/projects/alvalinus/tasks/fk23), focused-toggle menu dismissal | Closed, stage done; merge receipt `9481400`, PR #53; retained quality pass for head `fd86865`. Toggle-origin Escape, expanded state and reopening coverage present. | Supersedes this run's earlier open-navigation priority: the fix is now in the source baseline. No replacement task needed. |
+| [fk8](https://app.faktorial.ai/projects/alvalinus/tasks/fk8), dependency maintenance | Closed, stage done; merge receipt `27af405`, PR #49, retained quality pass for head `9d2ca2c`. Testing Library update present. | Bounded update delivered; no broader dependency-health claim. |
+| [fk9](https://app.faktorial.ai/projects/alvalinus/tasks/fk9), feature catalog | Record/list says closed, but lifecycle projection still says active/build with proof-preflight failure. PR #48 merge is baseline `d1bd013`; catalog and route corrections present. | Source delivered, lifecycle closeout inconsistent. Do not infer clean acceptance or replace its catalog/platform recovery work. Neither follow-up takes that ownership. |
+
+Prior quality results apply only to their named heads, not this roadmap
+candidate or deployment. This update ran no tests, typechecks or builds.
 
 ## Short-term priorities and issue ownership
 
-Current task records were checked through Faktorial's owning API on October 24,
-before selecting follow-ups. fk5, fk8 and fk9 were all open and active in
-Investigation. Their unresolved scope blocks duplicate work; none is treated as
-Done, retired or replaced. No earlier roadmap existed, so there are no
-Done-derived decisions to reconcile in this update. Recheck owning records
-before future reuse, retirement or new follow-up creation.
-
-| Priority | Work and intended result | Ownership and scope boundary |
+| Priority | Outcome and observable acceptance | Owner and scope |
 | --- | --- | --- |
-| Existing | Improve one concrete visible frontend workflow; use source-backed findings to select it. Photo completion and menu/content consistency remain candidates, not new assignments here. | [fk5](https://app.faktorial.ai/projects/alvalinus/api/tasks/fk5): frontend performance, accessibility, responsiveness or usability. Do not create another visible-workflow issue before its selected scope is known. |
-| Existing | Review dependency drift and choose one safe update or cleanup. | [fk8](https://app.faktorial.ai/projects/alvalinus/api/tasks/fk8): dependency maintenance; this roadmap makes no package upgrade recommendation. |
-| Existing | Establish source-backed feature documentation and inventory; reconcile stale route/navigation descriptions with current code. | [fk9](https://app.faktorial.ai/projects/alvalinus/api/tasks/fk9): feature docs/manifests and per-feature roadmaps. The central roadmap does not replace those artifacts. |
-| Next 1 | Harden the reporter-to-evidence boundary: distinguish supported terminal states from unknown/malformed input, handle invalid duration evidence explicitly, and protect normalization with deterministic in-memory fixtures. | Newly created [fk10 — quality-evidence normalization](https://app.faktorial.ai/projects/alvalinus/api/tasks/fk10), read back open. Bounded build-tool evidence work; no frontend changes, dependency update or feature manifest. Keep the existing process exit authoritative. |
-| Next 2 | Document static release and rollback: connect accepted revision/quality identity to the complete artifact, direct-route/asset checks and recovery prerequisites. | Newly created [fk11 — static release and rollback](https://app.faktorial.ai/projects/alvalinus/api/tasks/fk11), read back open. Operations documentation only; no provider choice, deployment automation, feature-inventory rewrite or publication. |
+| Next 1 | Attempt the service SVG fallback once; if that also fails, hide/remove the broken image while retaining title, summary and correct service link. Prove errors deterministically in memory. | Newly created [fk25 — service image failure recovery](https://app.faktorial.ai/projects/alvalinus/tasks/fk25), independently read back open and active in build. Service-card behavior/tests only; no mobile menu, hero redesign, image acquisition or dependencies. |
+| Next 2 | Derive HTML/visual artifact expectations from typed routes. Added/removed fixture routes change expectations automatically; missing/mismatched HTML and invalid/missing/duplicate visuals still fail. | Newly created [fk26 — registry-driven artifact checks](https://app.faktorial.ai/projects/alvalinus/tasks/fk26), independently read back open and active in build. Build assertions and in-memory mocked-I/O tests only; no reporter, native orchestration, hosting or catalog rewrite. |
 
-The links above address the canonical authenticated task records. Exactly two
-new issues were created by this roadmap update: fk10 and fk11. Their scope is
-distinct from the unresolved work above. They are not completed by this document.
-Their task bodies carry concrete acceptance criteria and exclusions.
+Exactly two new follow-ups were created by **fk24**: fk25 and fk26. Their task
+records carry bounded outcomes, exclusions and observable acceptance. They are
+distinct from fk23 and the delivered fk3 follow-ups, and remain unimplemented
+by this documentation update. Recheck owning records before execution or new
+task creation; unresolved overlapping work blocks replacement even when an
+older roadmap calls it Done.
 
 ## Long-term goals
 
-1. **Trustworthy autonomous development.** Use immutable source revisions,
-   deterministic owner-boundary proofs and native quality receipts to decide
-   whether changes are ready. Treat missing or partial evidence as unknown.
-   fk10 strengthens one existing boundary; it does not establish a complete
-   autonomous code factory. Track whether proposed changes reach an accepted
-   gate, and retain failure/recovery context rather than inferring success from
-   an agent's prose.
-2. **Repeatable product operation.** Start with fk11's release provenance and
-   rollback prerequisites. Once the actual hosting and artifact-retention
-   ownership are known, assess bounded deployment automation separately, with
-   its required architecture decision and access controls. A useful outcome is
-   a published revision that can be traced to accepted evidence and restored
-   from an identified prior artifact; that capability is not established today.
-3. **Maintainable content and intentional customer outcomes.** Keep the route,
-   navigation, feature and asset descriptions aligned through fk9 and later
-   source reviews. Assess whether customers can find the appropriate service
-   and contact route. If inquiry delivery or conversion becomes a requirement,
-   first define the desired signal and privacy/consent needs with the operator;
-   make the runtime/service decision explicitly. Do not add a database or
-   tracking endpoint to the static site to satisfy an abstract autonomy goal.
-4. **Evidence-led cross-product learning.** Compare practices with booking and
-   Asynkron.JsEngine only when their actual repositories and operational
-   evidence are available. Transfer a demonstrated pattern with clear ownership
-   and a bounded issue, rather than extrapolating from this site's architecture.
+1. **Trustworthy autonomous development.** Connect proposals to immutable source,
+   deterministic behavior proofs and native quality receipts. Reporter hardening
+   is delivered; registry-driven assertions are a bounded next step. Distinguish
+   task state from acceptance, especially when lifecycle projections conflict.
+   Missing/partial evidence stays unknown.
+2. **Repeatable product operation.** Apply the runbook once the actual host,
+   publishing access and retention facts are supplied. Target a publication
+   traceable to accepted source and a restorable prior artifact. Consider
+   deployment automation separately after those prerequisites and explicit
+   architecture/access decisions; this roadmap does not implement it.
+3. **Maintainable content and intentional customer outcomes.** Align feature/story
+   docs, typed routes, navigation and assets. First preserve service selection
+   despite image failures. Assess usability through explicit checks; define
+   inquiry signals and privacy needs before delivery guarantees or telemetry.
+   Preserve the static boundary instead of adding a speculative database.
+4. **Evidence-led cross-product learning.** Compare booking and Asynkron.JsEngine
+   only when their repositories and operational evidence are available. Transfer
+   demonstrated practices with bounded ownership rather than inferred capabilities.
 
 ## Evidence boundaries and update triggers
 
-- Recent commits, README, the named source files, ADRs 0001/0004/0006, the route
-  inventory and image requests were reviewed. The latest docs/runner changes
-  were checked before editing; `docs/roadmap.md` was still absent at the task
-  head. Source review and semantic lookup identify the current renderer; no
-  preview or production inspection was performed.
-- `/api/logs/fk3/summary` returned `state=ok`, HTTP 200, but explicitly
-  `source=issue_fallback` with no raw log file. It is task context, not runtime
-  or usage evidence.
-- Faktorial's seven-day tool-usage read at 12:36:52 UTC reported 88 calls across
-  10 reported native runs, 5 incomplete; capture was partial and
-  `window_covered=false`. The top-five response omitted 6 tool keys. This
-  describes reported development activity, with unknown unreported history.
-- The seven-day API-usage read at 12:36:53 UTC reported 1,769 calls across 32
-  endpoints (27 omitted from the top-five response). Task reads and queue
-  reads led the returned rows. Retained reliability was partial, truncated,
-  had unknown sampling and unavailable revision comparability; its observation
-  window began at 12:28:18 UTC. These are hosted Faktorial control-plane
-  observations, not this static site's visitors, conversion or reliability.
-  Do not combine retained reliability samples with durable request totals.
-- No production website traffic, inquiry outcomes or application database
-  evidence was available. A static site has no application database to inspect;
-  Cloud's own database telemetry would not establish customer behavior here.
-- `../booking` and `../Asynkron.JsEngine` were absent relative to this assigned
-  checkout. Investigation also recorded their absence in the supplied host
-  area. No findings about those products are established, and their absence
-  does not block this bounded roadmap delivery.
-- Refresh this document when the owning issues change scope/state, a new
-  accepted quality receipt or publication record becomes available, the host
-  and retention facts are supplied, or the missing adjacent sources become
-  available. Check the owning APIs again before marking work Done. Retain a
-  visible reason whenever superseding or following up prior work.
+- Read the previous roadmap in full, recent commits, README, route inventory,
+  catalog, runbook, image requests, ADRs 0006/0007, renderer/tests, Vite and
+  assertion/reporter scripts. TypeScript semantic lookup returned `state=ok`
+  for Services, PageHero and Header at this baseline. Documentation graph refresh
+  found the existing roadmap without truncation.
+- `/api/logs/fk24/summary` returned HTTP 200, `state=ok`, explicitly an issue
+  fallback without raw logs. The fk3 summary returned HTTP 200, `state=ok`, with
+  bounded delivery-stage log excerpts. Neither establishes website usage.
+- On October 25 at 12:40:42 UTC, one-day Faktorial API usage reported 42,854
+  calls across 28 endpoints; top-three output omitted 25 endpoints. Task reads,
+  canvas context checks and queue reads led those rows. Reliability was partial
+  with incomplete route joins, sampling unknown and revision comparability
+  unavailable; the untruncated retained observations covered only
+  12:39:16–12:40:41 UTC. These are control-plane counts,
+  not visitors. Do not combine retained spans with durable totals into error rates.
+- One-day tool usage at 12:40:42 UTC reported 138 calls across fourteen reported
+  native runs, seven incomplete; capture was partial, `window_covered=false`.
+  Top-three output omitted twelve keys. Historical/unreported execution stays
+  unknown. Counts do not measure product usefulness or autonomous completion.
+- Native worker metrics sampled at 12:40:41.954 UTC, observed at 12:40:42.824 UTC,
+  were fresh (`stale=false`). CPU was platform-unavailable; bounded history was
+  worker-runtime scope, not attributable to this claim. This does not measure
+  website performance or establish a resource defect.
+- No production traffic, inquiry outcomes, hosting logs or application database
+  evidence was available. This static site has no application database; Cloud
+  database telemetry would describe another system, not customer behavior here.
+- `../booking`, `../Asynkron.JsEngine`, `D:/FaktorialAgent/booking` and
+  `D:/FaktorialAgent/Asynkron.JsEngine` were absent on this worker. Cross-project
+  findings stay unavailable. No credentials or platform-state files were sought
+  as substitutes for owning APIs.
+- Refresh when task scopes/states, source contracts, accepted quality or
+  publication records change, or missing host/retention/adjacent-source facts
+  become available. Retain a visible supersession reason; distinguish source
+  delivery, accepted verification and observed live activation.
