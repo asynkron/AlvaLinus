@@ -12,7 +12,7 @@ import {
   ShieldCheck,
   X,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { type KeyboardEvent, useEffect, useRef, useState } from "react";
 
 import { StaticState } from "../components/StaticState";
 import { Button } from "../components/ui/button";
@@ -109,6 +109,14 @@ function Header({ currentPath = "/" }: { readonly currentPath?: string }) {
   const active = normalizePath(currentPath);
   const servicesActive = SERVICE_PATHS.has(active);
 
+  function handleMenuKeyDown(event: KeyboardEvent<HTMLElement>) {
+    if (menuOpen && event.key === "Escape") {
+      event.preventDefault();
+      setMenuOpen(false);
+      menuToggleRef.current?.focus();
+    }
+  }
+
   return (
     <header className="sticky top-0 z-30 bg-foreground text-background shadow-sm">
       <div className="mx-auto flex min-h-16 w-full max-w-7xl items-center justify-between gap-4 px-5 sm:px-8 lg:px-10">
@@ -191,6 +199,7 @@ function Header({ currentPath = "/" }: { readonly currentPath?: string }) {
           aria-expanded={menuOpen}
           aria-controls="mobil-meny"
           onClick={() => setMenuOpen((open) => !open)}
+          onKeyDown={handleMenuKeyDown}
         >
           {menuOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
         </button>
@@ -200,13 +209,7 @@ function Header({ currentPath = "/" }: { readonly currentPath?: string }) {
           id="mobil-meny"
           aria-label="Mobilnavigation"
           className="border-t border-background/10 px-5 pb-4 pt-2 sm:px-8 md:hidden"
-          onKeyDown={(event) => {
-            if (event.key === "Escape") {
-              event.preventDefault();
-              setMenuOpen(false);
-              menuToggleRef.current?.focus();
-            }
-          }}
+          onKeyDown={handleMenuKeyDown}
         >
           <a
             className={`block rounded-md px-3 py-3 text-base font-medium transition-colors ${
