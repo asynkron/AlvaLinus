@@ -6,6 +6,16 @@ import { SiteHomePage } from "./SiteHomePage";
 
 const content: SiteContent = siteContent;
 
+function serviceCard(id: string): HTMLElement {
+  const card = document.getElementById(id);
+
+  if (!card) {
+    throw new Error(`Missing rendered service card #${id}`);
+  }
+
+  return card;
+}
+
 describe("SiteHomePage", () => {
   it("dismisses mobile navigation with Escape, restores focus, and allows reopening", () => {
     render(<SiteHomePage initialState={{ status: "ready", content }} />);
@@ -128,6 +138,59 @@ describe("SiteHomePage", () => {
       expect(route.visual.alt).not.toMatch(/Alva|Linus|Svärdlinus/i);
       expect(route.visual.intent).not.toMatch(/Alva|Linus|Svärdlinus/i);
     }
+  });
+
+  it("falls back to the route SVG on the first photo error and removes the image when the fallback also fails", () => {
+    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+
+    const stensattningCard = within(serviceCard("stensattning"));
+    const fallbackSrc = "/page-visuals/svard-entreprenad-stensattning.svg";
+    const image = stensattningCard.getByRole("img");
+
+    expect(image).toHaveAttribute("src", "/page-visuals/stensattning-photo.webp");
+    expect(image).toHaveAttribute("alt", "Noggrant lagd marksten och låg stenmur vid entré");
+    expect(image).toHaveAttribute("loading", "lazy");
+
+    fireEvent.error(image);
+
+    const fallbackImage = stensattningCard.getByRole("img");
+    expect(fallbackImage).toHaveAttribute("src", fallbackSrc);
+    expect(fallbackImage).toHaveAttribute("alt", "Noggrant lagd marksten och låg stenmur vid entré");
+    expect(fallbackImage).toHaveAttribute("loading", "lazy");
+
+    fireEvent.error(image);
+
+    expect(stensattningCard.queryByRole("img")).not.toBeInTheDocument();
+    expect(stensattningCard.getByRole("heading", { name: "Stensättning" })).toBeInTheDocument();
+    expect(stensattningCard.getByText(/Planerade stenytor/)).toBeInTheDocument();
+    expect(stensattningCard.getByRole("link", { name: "Läs mer" })).toHaveAttribute("href", "/stensattning/");
+
+    fireEvent.error(image);
+
+    expect(stensattningCard.queryByRole("img")).not.toBeInTheDocument();
+    expect(stensattningCard.getByRole("heading", { name: "Stensättning" })).toBeInTheDocument();
+    expect(stensattningCard.getByRole("link", { name: "Läs mer" })).toHaveAttribute("href", "/stensattning/");
+  });
+
+  it("keeps neighboring service cards and their successful images untouched when one card image fails twice", () => {
+    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+
+    const failingCard = within(serviceCard("stensattning"));
+    fireEvent.error(failingCard.getByRole("img"));
+    fireEvent.error(failingCard.getByRole("img"));
+    expect(failingCard.queryByRole("img")).not.toBeInTheDocument();
+
+    const markarbeteCard = within(serviceCard("markarbete"));
+    const markarbeteImage = markarbeteCard.getByRole("img");
+    expect(markarbeteImage).toHaveAttribute("src", "/page-visuals/markarbete-photo.webp");
+    expect(markarbeteImage).toHaveAttribute("alt", "Schaktad tomt med maskin och förberedd markbädd");
+    expect(markarbeteImage).toHaveAttribute("loading", "lazy");
+    expect(markarbeteCard.getByRole("heading", { name: "Markarbete" })).toBeInTheDocument();
+    expect(markarbeteCard.getByRole("link", { name: "Läs mer" })).toHaveAttribute("href", "/markarbete/");
+
+    const gravjobbCard = within(serviceCard("gravjobb"));
+    expect(gravjobbCard.getByRole("img")).toHaveAttribute("src", "/page-visuals/gravjobb-photo.webp");
+    expect(gravjobbCard.getByRole("heading", { name: "Grävjobb" })).toBeInTheDocument();
   });
 
   it("shows an empty state when static data has no services", () => {

@@ -25,7 +25,8 @@ const BRAND_LOGO_SRC = "/svard-entreprenad-logo.png";
 const HERO_PHOTO_SRC = "/page-visuals/hero-photo.webp";
 
 // Real photographs used in the presentation layer. Keys are service ids.
-// Files that are not present yet fall back to the SVG placeholder via onError.
+// Missing or failing photos fall back to the route SVG via onError; a failing
+// SVG removes the service card image instead of leaving a broken frame.
 const SERVICE_PHOTOS: Record<string, string> = {
   stensattning: "/page-visuals/stensattning-photo.webp",
   markarbete: "/page-visuals/markarbete-photo.webp",
@@ -615,6 +616,40 @@ function ContactLinkBand({ content }: { readonly content: SiteContent }) {
   );
 }
 
+type ServiceCardImageStage = "photo" | "fallback" | "hidden";
+
+function ServiceCardImage({
+  photoSrc,
+  fallbackSrc,
+  alt,
+}: {
+  readonly photoSrc: string;
+  readonly fallbackSrc?: string;
+  readonly alt: string;
+}) {
+  const [stage, setStage] = useState<ServiceCardImageStage>("photo");
+
+  if (stage === "hidden") {
+    return null;
+  }
+
+  const src = stage === "photo" || !fallbackSrc ? photoSrc : fallbackSrc;
+
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className="aspect-[16/10] w-full border-b object-cover"
+      loading="lazy"
+      onError={() => {
+        setStage((current) =>
+          current === "photo" && fallbackSrc && fallbackSrc !== photoSrc ? "fallback" : "hidden",
+        );
+      }}
+    />
+  );
+}
+
 function Services({ content }: { readonly content: SiteContent }) {
   return (
     <section id="tjanster" className="mx-auto w-full max-w-7xl px-5 py-12 sm:px-8 lg:px-10">
@@ -629,24 +664,14 @@ function Services({ content }: { readonly content: SiteContent }) {
             (route) => route.kind === "service" && route.sourceId === service.id,
           )?.visual;
           const photo = SERVICE_PHOTOS[service.id] ?? visual?.assetPath;
-          const fallback = visual?.assetPath;
 
           return (
             <Card key={service.id} id={service.id} className="flex flex-col overflow-hidden">
               {photo ? (
-                <img
-                  src={photo}
+                <ServiceCardImage
+                  photoSrc={photo}
+                  fallbackSrc={visual?.assetPath}
                   alt={visual?.alt ?? service.title}
-                  className="aspect-[16/10] w-full border-b object-cover"
-                  loading="lazy"
-                  onError={(event) => {
-                    const img = event.currentTarget;
-
-                    if (fallback && !img.dataset.fellBack) {
-                      img.dataset.fellBack = "true";
-                      img.src = fallback;
-                    }
-                  }}
                 />
               ) : null}
               <CardHeader>
