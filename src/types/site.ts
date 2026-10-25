@@ -3,7 +3,7 @@ export type SiteLink = {
   readonly href: string;
 };
 
-export type SiteRouteKind = "home" | "services" | "about" | "service" | "contact";
+export type SiteRouteKind = "home" | "services" | "about" | "service" | "contact" | "quote";
 
 export type SiteRouteVisual = {
   readonly assetPath: string;

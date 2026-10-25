@@ -1,6 +1,6 @@
 # Current Public Route Inventory
 
-Checked: 2026-10-24
+Checked: 2026-10-25
 
 Source of truth:
 
@@ -24,6 +24,7 @@ customer-facing pattern.
 
 | Route | Page purpose | Visible sections | Current page-specific visual asset |
 | --- | --- | --- | --- |
+| `/offertberakning/` | Preliminary calculator for an asphalt driveway using customer-supplied example prices. | Header; area and load inputs; editable prices; unconfirmed/inclusive/exclusive VAT selector; live breakdown; email handoff; print; footer. | `/page-visuals/svard-entreprenad-quote.svg` for the measured driveway area. |
 | `/` | Startsida with an overview of services, work process, trust signals, and quote contact. | Header; hero; service overview inventory; services cards; process steps; trust signals; contact section; footer. | `/page-visuals/svard-entreprenad-home.svg` for the overall mark and construction first impression. |
 | `/tjanster/` | Services index for the main mark, building, and construction service areas. | Header; page hero; services cards; trust signals; contact link band. | `/page-visuals/svard-entreprenad-services.svg` for the combined services overview. |
 | `/om-oss/` | About page describing work approach, experience, responsibility, and delivery from first dig to finished result. | Header; page hero; about content; contact link band. | `/page-visuals/svard-entreprenad-about.svg` for work planning, responsibility, and process context. |
@@ -50,5 +51,5 @@ customer-facing pattern.
 - Partners is conditionally available on home and the services index but is
   currently omitted because the configured list is empty. Both ready pages
   include the shared footer; the services index also has a breadcrumb hero.
-- The source-backed [feature catalog](features/README.md) maps these nine
+- The source-backed [feature catalog](features/README.md) maps the original nine
   routes, their shared states and subsections to visitor outcomes and stories.

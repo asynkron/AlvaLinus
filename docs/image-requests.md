@@ -1,10 +1,15 @@
 # Image requests — Svärd Entreprenad site
 
-The site uses real photographs in the presentation layer. Four are already in
-place; **five more are needed** to finish the photographic look across every
-page. The two service photos (Grävjobb, Trädgårdsplanering) are the highest
-priority — until they exist, those cards fall back to the abstract SVG
-placeholders.
+The landing page images are synced from the canvas. The original logo and four existing
+photographs are retained from the canvas. The rendered header uses a smaller
+448 × 170 lossless WebP logo; photos also have smaller responsive WebP variants. Grävjobb and Trädgårdsplanering now use the
+canvas's AI-generated illustrations, saved as `gravjobb-generated.webp` and
+`tradgard-generated.webp`. WebP variants at 640, 960 and 1568 pixels wide let the browser select a size
+for service cards or full-width heroes without upscaling the source. Original
+canvas PNGs are excluded from the deployable assets. These also appear on the services index and their
+service-page heroes. They are illustrative images, not photographs of completed
+customer projects. The three general subpage hero photographs below remain
+outstanding; real replacements for the two generated images are optional.
 
 ## How to deliver
 

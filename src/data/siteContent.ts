@@ -8,6 +8,7 @@ export const siteContent = {
     routeDecision:
       "Mark, schakt, dränering, grundläggning och tomtplanering – vi hjälper dig hela vägen från första kontakt till färdigt resultat. Använd genvägarna för att hitta rätt tjänst eller begära en offert.",
     primaryRoutes: [
+      { label: "Offertberäkning", href: "/offertberakning/" },
       { label: "Hem", href: "/" },
       { label: "Tjänster", href: "/tjanster/" },
       { label: "Om oss", href: "/om-oss/" },
@@ -16,6 +17,11 @@ export const siteContent = {
     ],
   },
   routes: [
+    {
+      id: "quote", kind: "quote", label: "Offertberäkning", href: "/offertberakning/",
+      summary: "Preliminär kostnadsberäkning för asfalterad uppfart med redigerbara exempelpriser.",
+      visual: { assetPath: "/page-visuals/svard-entreprenad-quote.svg", alt: "Måttsatt uppfart", intent: "Visar ytan som ligger till grund för kalkylen." },
+    },
     {
       id: "home",
       kind: "home",

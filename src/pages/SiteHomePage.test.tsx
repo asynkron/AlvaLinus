@@ -17,6 +17,22 @@ function serviceCard(id: string): HTMLElement {
 }
 
 describe("SiteHomePage", () => {
+  it("offers responsive card images and clears candidates when falling back", () => {
+    const { container } = render(<SiteHomePage initialState={{ status: "ready", content }} />);
+    const cards = [...container.querySelectorAll<HTMLImageElement>('img[loading="lazy"]')];
+    expect(cards).toHaveLength(content.services.length);
+    for (const image of cards) {
+      expect(image).toHaveAttribute("srcset");
+      expect(image).toHaveAttribute("sizes");
+      expect(image).toHaveAttribute("width");
+      expect(image).toHaveAttribute("height");
+    }
+    const image = cards.find((card) => card.src.includes("gravjobb-generated.webp"))!;
+    fireEvent.error(image);
+    expect(image).not.toHaveAttribute("srcset");
+    expect(image.src).toContain("svard-entreprenad-gravjobb.svg");
+  });
+
   it("dismisses mobile navigation with Escape, restores focus, and allows reopening", () => {
     render(<SiteHomePage initialState={{ status: "ready", content }} />);
 
@@ -118,6 +134,7 @@ describe("SiteHomePage", () => {
 
   it("keeps every current route aligned with a page-specific visual asset", () => {
     const expectedVisualsByRoute = new Map([
+      ["quote", "/page-visuals/svard-entreprenad-quote.svg"],
       ["home", "/page-visuals/svard-entreprenad-home.svg"],
       ["services", "/page-visuals/svard-entreprenad-services.svg"],
       ["about", "/page-visuals/svard-entreprenad-about.svg"],
@@ -129,7 +146,7 @@ describe("SiteHomePage", () => {
       ["contact", "/page-visuals/svard-entreprenad-contact.svg"],
     ]);
 
-    expect(content.routes).toHaveLength(9);
+    expect(content.routes).toHaveLength(10);
 
     for (const route of content.routes) {
       expect(route.visual.assetPath).toBe(expectedVisualsByRoute.get(route.id));
@@ -189,7 +206,7 @@ describe("SiteHomePage", () => {
     expect(markarbeteCard.getByRole("link", { name: "Läs mer" })).toHaveAttribute("href", "/markarbete/");
 
     const gravjobbCard = within(serviceCard("gravjobb"));
-    expect(gravjobbCard.getByRole("img")).toHaveAttribute("src", "/page-visuals/gravjobb-photo.webp");
+    expect(gravjobbCard.getByRole("img")).toHaveAttribute("src", "/page-visuals/gravjobb-generated.webp");
     expect(gravjobbCard.getByRole("heading", { name: "Grävjobb" })).toBeInTheDocument();
   });
 

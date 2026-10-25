@@ -15,6 +15,14 @@ function emitStaticRoutePages(): Plugin {
 
   return {
     name: "emit-static-route-pages",
+    apply: "build",
+    transformIndexHtml: {
+      order: "post",
+      handler(html) {
+        // The document shell contains no whitespace-sensitive body content.
+        return html.replace(/>\s+</g, "><").trim();
+      },
+    },
     configResolved(config: ResolvedConfig) {
       outDir = path.resolve(config.root, config.build.outDir);
     },
