@@ -51,6 +51,10 @@ toolchain independently of the application's TypeScript compiler.
 Publish the generated `dist/` directory to any static hosting platform. The app
 does not require a Node.js process after `npm run build`.
 
+For Netlify, use `npm run build` as the build command and `dist` as the publish
+directory. The root `.nvmrc` selects Node.js 24 for builds, including deploy
+previews.
+
 For revision-traceable releases, follow the
 [static release and rollback runbook](docs/release-runbook.md): it connects an
 accepted source revision and quality receipt to a complete `dist/` artifact,
