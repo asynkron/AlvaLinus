@@ -12,7 +12,7 @@ import {
   ShieldCheck,
   X,
 } from "lucide-react";
-import { type KeyboardEvent, useEffect, useRef, useState } from "react";
+import { type KeyboardEvent, lazy, Suspense, useEffect, useRef, useState } from "react";
 
 import { StaticState } from "../components/StaticState";
 import { Button } from "../components/ui/button";
@@ -20,19 +20,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../co
 import { loadSiteContent } from "../lib/site-content";
 import type { ServiceArea, SiteContent, SiteRoute } from "../types/site";
 
+const QuotePage = lazy(() => import("./QuotePage").then((module) => ({ default: module.QuotePage })));
+
 const BRAND_NAME = "Svärd Entreprenad";
-const BRAND_LOGO_SRC = "/svard-entreprenad-logo.png";
+const BRAND_LOGO_SRC = "/svard-entreprenad-logo.webp";
 const HERO_PHOTO_SRC = "/page-visuals/hero-photo.webp";
 
-// Real photographs used in the presentation layer. Keys are service ids.
-// Missing or failing photos fall back to the route SVG via onError; a failing
-// SVG removes the service card image instead of leaving a broken frame.
+// Canvas-synced service imagery. Grävjobb and Trädgårdsplanering use
+// AI-generated illustrations. Failing photos fall back to the route SVG;
+// a failing SVG removes the image while retaining the card content.
 const SERVICE_PHOTOS: Record<string, string> = {
   stensattning: "/page-visuals/stensattning-photo.webp",
   markarbete: "/page-visuals/markarbete-photo.webp",
   dranering: "/page-visuals/dranering-photo.webp",
-  gravjobb: "/page-visuals/gravjobb-photo.webp",
-  tradgard: "/page-visuals/tradgard-photo.webp",
+  gravjobb: "/page-visuals/gravjobb-generated.webp",
+  tradgard: "/page-visuals/tradgard-generated.webp",
 };
 
 // Background photo for each subpage hero, keyed by route id. Missing files
@@ -43,10 +45,25 @@ const PAGE_HERO_PHOTOS: Record<string, string> = {
   contact: "/page-visuals/contact-hero.webp",
   stensattning: "/page-visuals/stensattning-photo.webp",
   markarbete: "/page-visuals/markarbete-photo.webp",
-  gravjobb: "/page-visuals/gravjobb-photo.webp",
+  gravjobb: "/page-visuals/gravjobb-generated.webp",
   dranering: "/page-visuals/dranering-photo.webp",
-  tradgard: "/page-visuals/tradgard-photo.webp",
+  tradgard: "/page-visuals/tradgard-generated.webp",
 };
+
+function responsiveImageSrcSet(src: string | undefined): string | undefined {
+  if (!src?.endsWith(".webp")) return undefined;
+  const base = src.slice(0, -5);
+  if (src.endsWith("-generated.webp")) {
+    return `${base}-640.webp 640w, ${base}-960.webp 960w, ${src} 1568w`;
+  }
+  if (src === HERO_PHOTO_SRC) {
+    return `${base}-640.webp 640w, ${base}-960.webp 960w, ${src} 1600w`;
+  }
+  if (Object.values(SERVICE_PHOTOS).includes(src)) {
+    return `${base}-400.webp 400w, ${base}-640.webp 640w, ${src} 900w`;
+  }
+  return undefined;
+}
 
 type LoadState =
   | { readonly status: "loading" }
@@ -87,14 +104,16 @@ export function SiteHomePage({ currentPath = "/", initialState }: SiteHomePagePr
   }, [initialState]);
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground">
+      <a href="#main-content" className="skip-link">Hoppa till innehållet</a>
       <Header currentPath={currentPath} />
-      <ContentSurface currentPath={currentPath} state={state} />
-    </main>
+      <main id="main-content" tabIndex={-1}><ContentSurface currentPath={currentPath} state={state} /></main>
+    </div>
   );
 }
 
 const SERVICE_NAV = [
+  { label: "Offertberäkning", href: "/offertberakning/" },
   { label: "Stensättning", href: "/stensattning/" },
   { label: "Markarbete", href: "/markarbete/" },
   { label: "Grävjobb", href: "/gravjobb/" },
@@ -124,6 +143,8 @@ function Header({ currentPath = "/" }: { readonly currentPath?: string }) {
         <a href="/" className="flex min-w-0 items-center gap-3" aria-label={`${BRAND_NAME} startsida`}>
           <img
             src={BRAND_LOGO_SRC}
+            width={448}
+            height={170}
             alt={`${BRAND_NAME} logotyp`}
             className="h-9 w-auto max-w-[11rem] object-contain brightness-0 invert sm:h-10 sm:max-w-[14rem]"
           />
@@ -324,6 +345,9 @@ function normalizePath(path: string) {
 }
 
 function RoutedPage({ content, route }: { readonly content: SiteContent; readonly route: SiteRoute }) {
+  if (route.kind === "quote") {
+    return <><Suspense fallback={<p role="status" className="px-5 py-16">Laddar offertberäkningen…</p>}><QuotePage /></Suspense><Footer content={content} /></>;
+  }
   if (route.kind === "services") {
     return <ServicesIndexPage content={content} route={route} />;
   }
@@ -361,6 +385,11 @@ function Hero({ content }: { readonly content: SiteContent }) {
     <section className="relative isolate overflow-hidden bg-foreground text-background">
       <img
         src={HERO_PHOTO_SRC}
+        srcSet={responsiveImageSrcSet(HERO_PHOTO_SRC)}
+        sizes="100vw"
+        width={1600}
+        height={905}
+        fetchPriority="high"
         alt=""
         aria-hidden="true"
         className="absolute inset-0 -z-10 h-full w-full object-cover"
@@ -564,6 +593,9 @@ function PageHero({
       {imageSrc ? (
         <img
           src={imageSrc}
+          srcSet={responsiveImageSrcSet(imageSrc)}
+          sizes="100vw"
+          fetchPriority="high"
           alt=""
           aria-hidden="true"
           className="absolute inset-0 -z-10 h-full w-full object-cover"
@@ -638,9 +670,14 @@ function ServiceCardImage({
   return (
     <img
       src={src}
+      srcSet={stage === "photo" ? responsiveImageSrcSet(photoSrc) : undefined}
+      sizes="(min-width: 1280px) 384px, (min-width: 1024px) calc((100vw - 128px) / 3), (min-width: 768px) calc((100vw - 88px) / 2), (min-width: 640px) calc(100vw - 64px), calc(100vw - 40px)"
       alt={alt}
       className="aspect-[16/10] w-full border-b object-cover"
       loading="lazy"
+      decoding="async"
+      width={800}
+      height={500}
       onError={() => {
         setStage((current) =>
           current === "photo" && fallbackSrc && fallbackSrc !== photoSrc ? "fallback" : "hidden",

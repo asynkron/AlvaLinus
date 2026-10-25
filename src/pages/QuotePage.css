@@ -1,0 +1,42 @@
+.quote-wrap{max-width:1200px;margin:auto;padding:0 32px}
+.quote-intro{background:hsl(var(--foreground));color:hsl(var(--background));padding:32px 0 48px}
+.quote-intro a,.quote-intro span{font-size:13px;color:#c4ccd6}
+.quote-intro h1{font-family:var(--font-display);font-size:clamp(36px,4vw,56px);line-height:1.12;margin:28px 0 16px;max-width:760px}
+.quote-intro p{max-width:640px;line-height:1.8;color:#d6dce4}
+.quote-layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:64px;padding-top:48px;padding-bottom:72px;align-items:start}
+.quote-layout h2{font-family:var(--font-display);font-size:28px;margin-bottom:8px}
+.quote-form>p,.quote-prices p{color:#526071;font-size:14px;line-height:1.7;margin-bottom:24px}
+.quote-fields{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.quote-field{display:grid;gap:8px;font-size:14px;font-weight:600;margin-bottom:22px;min-width:0}
+.quote-field small{font-weight:400;color:#526071}
+.quote-input{display:flex;align-items:center;background:white;border:1px solid #b5bfcc;border-radius:6px;overflow:hidden}
+.quote-input input{width:100%;min-width:0;padding:13px 12px;font-size:18px;background:transparent;font-variant-numeric:tabular-nums}
+.quote-input>span{padding-right:12px;white-space:nowrap;font-weight:400;color:#526071;font-size:13px}
+.quote-field select,.quote-field textarea{border:1px solid #b5bfcc;background:white;border-radius:6px;padding:12px;width:100%;font-weight:400}
+.quote-field textarea{resize:vertical}
+.quote-layout :is(input,select,textarea,button,a,summary):focus-visible{outline:3px solid #bc4a12;outline-offset:3px}
+.quote-layout input{accent-color:#bf4911;caret-color:#bf4911}
+.quote-layout ::selection{background:#f7c5aa;color:#253247}
+.quote-check{display:flex;gap:12px;align-items:flex-start;margin:0 0 28px;font-weight:600;font-size:15px}
+.quote-check input{width:20px;height:20px;margin-top:2px}
+.quote-help{display:block;font-size:13px;font-weight:400;color:#526071;margin-top:4px}
+.quote-prices{border-top:1px solid #ccd3dc;border-bottom:1px solid #ccd3dc;padding:20px 0;margin-bottom:24px}
+.quote-prices summary{font-weight:600;cursor:pointer;margin-bottom:16px}
+.quote-prices p:last-child{margin:0;font-size:12px}
+.quote-result{background:white;border-radius:12px;padding:30px;box-shadow:0 12px 38px -20px #26354b40;position:sticky;top:88px}
+.quote-result-caption{color:#526071;font-size:13px}
+.quote-lines{margin-top:24px;font-size:14px}
+.quote-lines>div{display:flex;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid #e0e5ea}
+.quote-lines dt small{display:block;color:#526071;font-size:12px;margin-top:4px}
+.quote-lines dd{white-space:nowrap;font-weight:600;font-variant-numeric:tabular-nums}
+.quote-total{display:grid;gap:8px;padding:24px 0;color:#253247;font-size:13px}
+.quote-total strong{font-family:var(--font-display);font-size:44px;line-height:1.2;font-variant-numeric:tabular-nums}
+.quote-disclaimer{font-size:12px;color:#526071;line-height:1.75;margin:8px 0 24px}
+.quote-send{width:100%;gap:10px;background:#bc4811;color:white;white-space:normal;height:auto;min-height:48px;text-align:center}
+.quote-send:hover{background:#9f390b}
+.quote-mail-help{font-size:11px;color:#526071;text-align:center;margin-top:12px;line-height:1.6}
+.quote-reset,.quote-print{display:flex;align-items:center;gap:8px;font-size:13px;min-height:44px;color:#526071;text-decoration:underline;text-underline-offset:4px}
+.quote-print{margin:12px auto 0}.quote-print:disabled{opacity:.5}.quote-error{padding:24px 0;color:#9c2918;line-height:1.7}
+@media(max-width:760px){.quote-wrap{padding-left:20px;padding-right:20px}.quote-layout{grid-template-columns:1fr;gap:32px;padding-top:32px}.quote-result{position:static;padding:24px}.quote-fields{gap:12px}.quote-total strong{font-size:40px}}
+@media print{header,footer,.quote-intro a,.quote-send,.quote-mail-help,.quote-print,.quote-reset{display:none!important}.quote-layout{display:block;padding:20px}.quote-result{position:static;box-shadow:none;break-inside:avoid}.quote-form textarea{min-height:60px}.quote-prices{display:block}.quote-intro{background:white;color:black;padding:0}.quote-intro p{color:black}.quote-result{padding:20px 0}}
+
