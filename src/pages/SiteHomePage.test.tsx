@@ -17,7 +17,7 @@ function serviceCard(id: string): HTMLElement {
 }
 
 describe("SiteHomePage", () => {
-  it("dismisses mobile navigation with Escape, restores focus, and allows reopening", () => {
+  it.each(["link", "toggle"] as const)("dismisses mobile navigation with Escape from its %s and allows reopening", (focusOrigin) => {
     render(<SiteHomePage initialState={{ status: "ready", content }} />);
 
     const toggle = screen.getByRole("button", { name: "Öppna meny" });
@@ -29,14 +29,15 @@ describe("SiteHomePage", () => {
     expect(toggle).toHaveAttribute("aria-expanded", "true");
     const navigation = screen.getByRole("navigation", { name: "Mobilnavigation" });
     const link = within(navigation).getByRole("link", { name: "Hem" });
-    link.focus();
-    expect(link).toHaveFocus();
+    const focusedControl = focusOrigin === "link" ? link : toggle;
+    focusedControl.focus();
+    expect(focusedControl).toHaveFocus();
 
-    fireEvent.keyDown(link, { key: "ArrowDown" });
+    fireEvent.keyDown(focusedControl, { key: "ArrowDown" });
     expect(navigation).toBeInTheDocument();
-    expect(link).toHaveFocus();
+    expect(focusedControl).toHaveFocus();
 
-    fireEvent.keyDown(link, { key: "Escape" });
+    fireEvent.keyDown(focusedControl, { key: "Escape" });
     expect(screen.queryByRole("navigation", { name: "Mobilnavigation" })).not.toBeInTheDocument();
     expect(toggle).toHaveAccessibleName("Öppna meny");
     expect(toggle).toHaveAttribute("aria-expanded", "false");
@@ -45,18 +46,28 @@ describe("SiteHomePage", () => {
     fireEvent.click(toggle);
     expect(screen.getByRole("navigation", { name: "Mobilnavigation" })).toBeInTheDocument();
     expect(toggle).toHaveAttribute("aria-expanded", "true");
-    fireEvent.keyDown(toggle, { key: "Escape" });
+    fireEvent.click(toggle);
     expect(screen.queryByRole("navigation", { name: "Mobilnavigation" })).not.toBeInTheDocument();
     expect(toggle).toHaveAttribute("aria-expanded", "false");
     expect(toggle).toHaveFocus();
+  });
 
+  it("keeps mobile navigation open and preserves focus when Escape is pressed elsewhere in the header", () => {
+    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+
+    const toggle = screen.getByRole("button", { name: "Öppna meny" });
     fireEvent.click(toggle);
-    expect(screen.getByRole("navigation", { name: "Mobilnavigation" })).toBeInTheDocument();
+    const navigation = screen.getByRole("navigation", { name: "Mobilnavigation" });
+    const homeLink = screen.getByRole("link", { name: "Svärd Entreprenad startsida" });
+    homeLink.focus();
+    expect(homeLink).toHaveFocus();
+
+    fireEvent.keyDown(homeLink, { key: "Escape" });
+
+    expect(navigation).toBeInTheDocument();
+    expect(toggle).toHaveAccessibleName("Stäng meny");
     expect(toggle).toHaveAttribute("aria-expanded", "true");
-    fireEvent.click(toggle);
-    expect(screen.queryByRole("navigation", { name: "Mobilnavigation" })).not.toBeInTheDocument();
-    expect(toggle).toHaveAttribute("aria-expanded", "false");
-    expect(toggle).toHaveFocus();
+    expect(homeLink).toHaveFocus();
   });
 
   it("renders owner-approved home content, service, process, partner, and contact areas", () => {
