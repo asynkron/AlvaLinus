@@ -21,7 +21,7 @@ import { loadSiteContent } from "../lib/site-content";
 import type { ServiceArea, SiteContent, SiteRoute } from "../types/site";
 
 const BRAND_NAME = "Svärd Entreprenad";
-const BRAND_LOGO_SRC = "/svard-entreprenad-logo.png";
+const BRAND_LOGO_SRC = "/svard-entreprenad-logo.svg";
 const HERO_PHOTO_SRC = "/page-visuals/hero-photo.webp";
 
 // Real photographs used in the presentation layer. Keys are service ids.

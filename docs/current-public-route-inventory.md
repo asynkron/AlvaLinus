@@ -12,7 +12,7 @@ This inventory covers the current Svard Entreprenad public route surface. The
 site now has typed page-specific placeholder visual metadata for every listed
 route in `src/data/siteContent.ts`, with matching generated SVG assets under
 `public/page-visuals/`. The renderer uses the shared
-`/svard-entreprenad-logo.png` logo, a decorative home hero photograph,
+`/svard-entreprenad-logo.svg` logo, a decorative home hero photograph,
 service-card photographs with the route SVGs as image-error fallbacks, and
 subpage hero photographs that hide on error while retaining the text. The
 table below names the canonical typed SVG metadata assets, not the preferred
