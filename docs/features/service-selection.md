@@ -1,6 +1,6 @@
 # F1: Choose a suitable groundworks service
 
-Reviewed: 2026-10-24. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-10-26. Runtime: `ui`. Product role: `customer_outcome`.
 
 Visitors need to identify which service fits a property or construction project
 before asking for a discussion. The current result is service understanding and
@@ -55,8 +55,11 @@ and identity manifest carry exact names and the limited assertion scope.
 No dedicated Markarbete or Trädgårdsplanering render test is mapped.
 The services-index view is source-reviewed, not established by a dedicated
 existing rendered test. Metadata tests do not prove displayed image fallbacks;
-deterministic rendered image-error tests now cover the home service-card
-photo→SVG fallback and its terminal removal.
+F1-US1 maps deterministic rendered image-error declarations for the home
+service-card photo→SVG fallback, terminal removal with content/link retention,
+and isolation from neighboring cards. These mappings do not establish
+services-index rendering or subpage hero failure behavior, and are not test
+execution receipts.
 
 ## What Works Less Well
 

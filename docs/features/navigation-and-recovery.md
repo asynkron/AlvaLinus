@@ -1,6 +1,6 @@
 # F4: Home, navigation and route recovery
 
-Reviewed: 2026-10-24. Runtime: `ui`. Product role: `surface`.
+Reviewed: 2026-10-26. Runtime: `ui`. Product role: `surface`.
 Supports **F1, F2, F3**, all active customer-outcome features.
 
 Home and shared route handling make the service, company and inquiry outcomes
@@ -11,8 +11,11 @@ a separate customer result because it has tests.
 
 All nine routes listed in the [index](README.md) share Header. Desktop navigation
 links home, services (with five service links), about and contact. The mobile
-button toggles its menu; subpages have a Hem breadcrumb. Footer repeats page and
-service links and the contact email on ready routes, including not-found.
+button toggles its menu. Escape from a menu descendant or the focused toggle
+closes an open menu and returns focus to the toggle; the menu can reopen.
+Other keys do not trigger that dismissal. Subpages have a Hem breadcrumb.
+Footer repeats page and service links and the contact email on ready routes,
+including not-found.
 
 [F4-US1](user-stories/F4/F4-US1.md) covers navigation from the home hero's two
 actions, route shortcuts and shared chrome. The inventory's five shortcuts
@@ -56,9 +59,13 @@ empty and not-found feedback. Swedish-character assertions protect representativ
 UTF-8 text. The route visual test is technical metadata evidence; rendered
 service-card image-error behavior, including the terminal fallback failure, is
 covered by deterministic in-memory tests in the home page test file.
-Mobile-menu interaction, keyboard dropdown interaction,
-normalization variants and production-host fallback are source-reviewed or
-unmapped, not claimed as executed acceptance. No new duplicate tests are added.
+F4-US1 maps the deterministic mobile-menu declaration for expanded state,
+Escape from a link and the toggle, focus restoration, reopening and click
+dismissal. It does not establish responsive CSS or desktop dropdown interaction.
+Keyboard dropdown interaction, normalization variants, subpage hero image
+failure and production-host fallback remain unmapped, not claimed as executed
+acceptance. F1-US1 owns the service-card failure mappings; this supporting
+surface points to F1 rather than duplicating those story references.
 
 No product background module, API, storage, telemetry or report belongs to this
 surface. Outcome measurement stays with F1–F3; there is no standalone conversion
@@ -78,6 +85,7 @@ no inline retry or contact body.
   suppress otherwise valid about/contact content; retain clear service feedback.
 - Fix: reconcile repeated navigation declarations through the existing typed
   route model when changing navigation, preserving link order and accessible labels.
-- Expand: add deterministic menu/keyboard recovery coverage when those flows
-  change, and document the actual production-host unknown-path behavior when known.
+- Expand: protect desktop dropdown keyboard behavior when that flow changes,
+  retaining the existing mobile Escape/focus coverage; document the actual
+  production-host unknown-path behavior when known.
 

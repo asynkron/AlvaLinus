@@ -1,6 +1,6 @@
 # F2: Assess the company and working approach
 
-Reviewed: 2026-10-24. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-10-26. Runtime: `ui`. Product role: `customer_outcome`.
 
 Prospective customers need to understand the stated approach and decide whether
 to discuss a project. This feature presents information; it does not certify

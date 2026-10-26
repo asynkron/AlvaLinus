@@ -1,6 +1,10 @@
 # Feature catalog
 
-Reviewed against source: 2026-10-24, starting at `a79c151c5eaf9be865985c85dcbc64acc29badf5`.
+Reviewed against source: 2026-10-26 at `d8f081d4bf712519f9b1293b26562b6053905536`.
+
+The catalog introduced in `f7b481f` already covers the current route inventory.
+This refresh retains its published identities and reconciles the later mobile
+menu and service-image recovery changes with the story evidence below.
 
 This catalog maps the static Swedish Svärd Entreprenad site to visitor outcomes.
 It is product-development input, not a claim that construction work, email delivery
@@ -74,10 +78,10 @@ does not provide persistence, delivery assurance or a privacy/compliance verdict
   from [stable feature/story identity data](user-stories/features.json).
   [Backend entry points](backend-entry-points.json) records the intentionally
   empty backend boundary.
-- IDs F1–F4 and their twelve story IDs are allocated with this catalog. Retain
+- IDs F1–F4 and their twelve story IDs were allocated in `f7b481f`. Retain
   them and the feature-document joins on future edits; leave removed IDs
   absent forever. No earlier IDs were found in the available checkout/history;
-  this is not proof of historical non-reuse outside that evidence.
+  that initial search is not proof of historical non-reuse outside that evidence.
 - These are maintained Markdown and JSON files. No existing feature generator
   was found in the inspected scripts/package commands; no generator or duplicate
   validator is introduced. Edit corresponding prose and structured data together.
@@ -88,9 +92,14 @@ does not provide persistence, delivery assurance or a privacy/compliance verdict
   [SiteHomePage.test.tsx](../../src/pages/SiteHomePage.test.tsx). `direct` means
   the assertion checks the stated user-visible facet, not every step of a story.
   `technical` checks supporting metadata. No test was executed for this source
-  review. Dedicated Markarbete/Trädgårdsplanering rendering, index rendering,
-  mobile-menu behavior, image failure handling and actual email sending are
-  not established by these references.
+  review. F4-US1 now maps the mobile-menu declaration for Escape from a link
+  or the focused toggle, focus restoration, reopening and click dismissal.
+  F1-US1 maps the home service-card photo/SVG failure and neighboring-card
+  isolation declarations. These are source-reviewed mappings, not execution
+  receipts or proof of responsive layout in a browser. Dedicated
+  Markarbete/Trädgårdsplanering rendering, index rendering, desktop dropdown
+  interaction, subpage hero image failure and actual email sending remain
+  outside the mapped assertions.
 - Required proof: `feature-manifest-integrity`, runner
   `native-feature-validation`, command `validate-features`, terminal `passes`.
   Use Faktorial's native validator for the three manifests; it does not prove
