@@ -5,10 +5,9 @@ import type { Plugin, ResolvedConfig } from "vite";
 import { defineConfig } from "vitest/config";
 
 import { siteContent } from "./src/data/siteContent";
+import { staticSubpagePaths } from "./scripts/route-artifacts.mjs";
 
-const staticRoutePaths = siteContent.routes
-  .map((route) => route.href)
-  .filter((href) => href !== "/" && href.startsWith("/"));
+const staticRoutePaths = staticSubpagePaths(siteContent.routes);
 
 function emitStaticRoutePages(): Plugin {
   let outDir = "dist";

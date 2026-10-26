@@ -100,6 +100,110 @@ describe("requireRouteRegistry", () => {
       assertRouteVisualAssets({ routes: [], publicDir: "public", access: memoryFileSystem().access }),
     ).rejects.toThrow("Route registry must be a non-empty array of declared routes.");
   });
+
+  it("rejects both artifact assertions before filesystem work for an escaping route href", async () => {
+    const escapeRoute = fixtureRoute("escape", "/kontakt/../kontakt/", "/page-visuals/svard-entreprenad-escape.svg");
+    const readFile = vi.fn();
+    const access = vi.fn();
+
+    await expect(
+      assertStaticRouteArtifacts({ routes: [homeRoute, escapeRoute], distDir: "dist", readFile }),
+    ).rejects.toThrow('Route escape must not contain "." or ".." path segments.');
+    await expect(
+      assertRouteVisualAssets({ routes: [homeRoute, escapeRoute], publicDir: "public", access }),
+    ).rejects.toThrow('Route escape must not contain "." or ".." path segments.');
+    expect(readFile).not.toHaveBeenCalled();
+    expect(access).not.toHaveBeenCalled();
+  });
+});
+
+describe("requireRouteRegistry canonical route hrefs", () => {
+  it("accepts the site root and valid nested trailing-slash directory routes", () => {
+    const nestedRoute = fixtureRoute(
+      "nested",
+      "/tjanster/stensattning/",
+      "/page-visuals/svard-entreprenad-stensattning.svg",
+    );
+
+    expect(staticSubpagePaths([homeRoute, nestedRoute, servicesRoute])).toEqual([
+      "/tjanster/stensattning/",
+      "/tjanster/",
+    ]);
+    expect(routeVisualAssetPaths([homeRoute, nestedRoute, servicesRoute])).toEqual([
+      "/page-visuals/svard-entreprenad-home.svg",
+      "/page-visuals/svard-entreprenad-stensattning.svg",
+      "/page-visuals/svard-entreprenad-services.svg",
+    ]);
+  });
+
+  it("rejects dot segments with a diagnostic naming the route", () => {
+    expect(() =>
+      requireRouteRegistry([fixtureRoute("escape", "/kontakt/../kontakt/", "/page-visuals/svard-entreprenad-x.svg")]),
+    ).toThrow('Route escape must not contain "." or ".." path segments.');
+  });
+
+  it("rejects percent-encoded separators and dots", () => {
+    expect(() =>
+      requireRouteRegistry([fixtureRoute("encoded", "/kontakt%2fhidden/", "/page-visuals/svard-entreprenad-x.svg")]),
+    ).toThrow("Route encoded must avoid percent-encoded sequences that can hide separators or dots.");
+    expect(() =>
+      requireRouteRegistry([fixtureRoute("encodedDots", "/%2e%2e/secret/", "/page-visuals/svard-entreprenad-x.svg")]),
+    ).toThrow("Route encodedDots must avoid percent-encoded sequences that can hide separators or dots.");
+  });
+
+  it("rejects backslash separators", () => {
+    expect(() =>
+      requireRouteRegistry([fixtureRoute("windows", "/windows\\kontakt/", "/page-visuals/svard-entreprenad-x.svg")]),
+    ).toThrow('Route windows must use "/" directory separators; backslashes are not canonical route paths.');
+  });
+
+  it("rejects query and fragment forms", () => {
+    expect(() =>
+      requireRouteRegistry([fixtureRoute("query", "/kontakt/?from=nav", "/page-visuals/svard-entreprenad-x.svg")]),
+    ).toThrow("Route query must be a plain directory path without query or fragment text.");
+    expect(() =>
+      requireRouteRegistry([fixtureRoute("fragment", "/kontakt/#top", "/page-visuals/svard-entreprenad-x.svg")]),
+    ).toThrow("Route fragment must be a plain directory path without query or fragment text.");
+  });
+
+  it("rejects repeated separators", () => {
+    expect(() =>
+      requireRouteRegistry([fixtureRoute("leading", "//kontakt/", "/page-visuals/svard-entreprenad-x.svg")]),
+    ).toThrow('Route leading must use single "/" separators without repeated slashes.');
+    expect(() =>
+      requireRouteRegistry([fixtureRoute("trailing", "/kontakt//", "/page-visuals/svard-entreprenad-x.svg")]),
+    ).toThrow('Route trailing must use single "/" separators without repeated slashes.');
+  });
+
+  it("rejects hrefs without the trailing directory slash", () => {
+    expect(() =>
+      requireRouteRegistry([fixtureRoute("bare", "/kontakt", "/page-visuals/svard-entreprenad-x.svg")]),
+    ).toThrow('Route bare must end with "/" so the static build emits a directory index page.');
+  });
+
+  it("rejects two declared routes that emit the same subpage destination", () => {
+    expect(() =>
+      requireRouteRegistry([
+        fixtureRoute("contact", "/kontakt/", "/page-visuals/svard-entreprenad-contact.svg"),
+        fixtureRoute("contact-copy", "/kontakt/", "/page-visuals/svard-entreprenad-copy.svg"),
+      ]),
+    ).toThrow(
+      "Route contact-copy and Route contact both emit dist/kontakt/index.html; " +
+        "routes must declare unique static output destinations.",
+    );
+  });
+
+  it("rejects a second declared route for the site root", () => {
+    expect(() =>
+      requireRouteRegistry([
+        homeRoute,
+        fixtureRoute("home-copy", "/", "/page-visuals/svard-entreprenad-copy.svg"),
+      ]),
+    ).toThrow(
+      "Route home-copy and Route home both emit dist/index.html; " +
+        "routes must declare unique static output destinations.",
+    );
+  });
 });
 
 describe("assertStaticRouteArtifacts", () => {
@@ -258,10 +362,21 @@ describe("assertRouteVisualAssets", () => {
 });
 
 describe("siteContent route registry", () => {
-  it("stays within the shared artifact contract with unique visual assets", () => {
-    expect(requireRouteRegistry(siteContent.routes)).toBe(siteContent.routes);
-    expect(staticSubpagePaths(siteContent.routes)).not.toContain("/");
+  it("declares nine canonical routes with unique subpage destinations and visuals", () => {
+    expect(siteContent.routes).toHaveLength(9);
+    expect(staticSubpagePaths(siteContent.routes)).toEqual([
+      "/tjanster/",
+      "/om-oss/",
+      "/stensattning/",
+      "/markarbete/",
+      "/gravjobb/",
+      "/dranering/",
+      "/tradgardsplanering/",
+      "/kontakt/",
+    ]);
+
     const assetPaths = routeVisualAssetPaths(siteContent.routes);
+    expect(assetPaths).toHaveLength(9);
     expect(new Set(assetPaths).size).toBe(assetPaths.length);
   });
 });
