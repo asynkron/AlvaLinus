@@ -33,7 +33,7 @@ Every release must stay traceable to four identities. Record them as you go
 | --- | --- | --- |
 | Source revision | Full commit SHA of the released checkout | `git rev-parse HEAD` in the prepared checkout |
 | Accepted quality identity | Identifier of the canonical `make quality` session that accepted the revision, plus its `quality-evidence.v1` output written under `FAKTORIAL_QUALITY_EVIDENCE_DIR` (default `.faktorial/quality`, outside Git) | The quality gate that accepted the revision |
-| Artifact identity | A checksum manifest of the exact `dist/` tree that was published | Standard tooling such as `sha256sum` (macOS/Linux) or `Get-FileHash` (Windows) over the published files |
+| Artifact identity | A checksum manifest of the exact `dist/` tree that was published, generated and verified with `scripts/write-artifact-manifest.mjs` and `scripts/verify-artifact-manifest.mjs` | The checksum manifest commands in section 1 |
 | Publication identity | Deployment ID, timestamp, and publisher as the host records them | The hosting owner's supported publication procedure |
 
 Without all four identities, a live artifact cannot be connected back to the
@@ -54,12 +54,57 @@ source that produced it and a rollback cannot prove what it restored.
    directly from the accepted `make quality` session — it builds and
    route-validates the same artifact in one session — or rebuild from the
    accepted commit as above, and record that artifact's checksum manifest as
-   the artifact identity.
+   the artifact identity with
+   `node scripts/write-artifact-manifest.mjs dist artifacts/release.manifest.json`
+   (see [Recording the artifact checksum manifest](#recording-the-artifact-checksum-manifest)).
 
 Faktorial task agents do not run quality themselves; they request verification
 and Faktorial's canonical gate executes `make quality`. Human operators run the
 commands above themselves. The acceptance requirement is the same gate either
 way; do not bypass it to publish.
+
+### Recording the artifact checksum manifest
+
+The artifact identity is a deterministic manifest produced by two Node.js 24
+standard-library commands. Run both from the repository root against an
+already built tree; they never build, typecheck, test, publish, touch the
+network, or read credentials, and they work identically on Windows, macOS, and
+Linux:
+
+```sh
+node scripts/write-artifact-manifest.mjs dist artifacts/release.manifest.json
+node scripts/verify-artifact-manifest.mjs dist artifacts/release.manifest.json
+```
+
+`artifacts/` is ignored by Git: release manifests are operator records kept
+outside the repository, never committed source. The generator refuses to
+write the manifest inside the artifact root.
+
+Checksum semantics:
+
+- Every regular file under the artifact root is hashed with SHA-256 over its
+  raw bytes: the root `index.html`, every nested subpage `index.html`, hashed
+  `/assets/` bundles, self-hosted fonts, page visuals, and the logo. The tree
+  itself is the inventory; no route list is copied into the manifest.
+- Entries are recorded under normalized root-relative paths with `/`
+  separators, sorted, and serialized as stable JSON without timestamps,
+  absolute machine paths, or host facts. The same byte-for-byte tree always
+  produces a byte-for-byte identical manifest on any platform.
+- Generation rejects missing, empty, or non-directory roots and refuses
+  symlinks anywhere in the tree. Verification re-walks the tree under the same
+  rules and fails, listing every missing, added, and byte-changed file. It
+  also rejects malformed manifests: invalid JSON, an unsupported schema or
+  hash algorithm, duplicate paths, escaping or non-normalized paths, and
+  digests that are not 64 lowercase hexadecimal characters.
+
+Boundary: a matching checksum manifest establishes artifact integrity only —
+that two trees contain identical bytes. It does not establish accepted
+quality (the quality identity above), publisher identity (the publication
+identity above), or live activation (whether the host is currently serving
+those bytes; check that with the post-publication requests in section 3).
+Verify the built tree before publication, and verify a retained artifact
+again with `node scripts/verify-artifact-manifest.mjs <artifact-root>
+<manifest-path>` before using it as a rollback candidate.
 
 ## 2. Publish
 
@@ -115,7 +160,9 @@ Prerequisites:
   artifact someone retained deliberately outside the host, because the host's
   own retention capability is unknown.
 - The artifact's provenance is recorded: source revision, accepted quality
-  identity, and checksum manifest.
+  identity, and checksum manifest, with the restored tree rechecked using
+  `node scripts/verify-artifact-manifest.mjs <artifact-root> <manifest-path>`
+  before republishing.
 - Working publication access exists (currently an unknown).
 
 Procedure:
