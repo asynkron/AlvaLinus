@@ -23,7 +23,7 @@ import type { ServiceArea, SiteContent, SiteRoute } from "../types/site";
 const QuotePage = lazy(() => import("./QuotePage").then((module) => ({ default: module.QuotePage })));
 
 const BRAND_NAME = "Svärd Entreprenad";
-const BRAND_LOGO_SRC = "/svard-entreprenad-logo.webp";
+const BRAND_LOGO_SRC = "/svard-entreprenad-logo.svg";
 const HERO_PHOTO_SRC = "/page-visuals/hero-photo.webp";
 
 // Canvas-synced service imagery. Grävjobb and Trädgårdsplanering use
@@ -37,12 +37,10 @@ const SERVICE_PHOTOS: Record<string, string> = {
   tradgard: "/page-visuals/tradgard-generated.webp",
 };
 
-// Background photo for each subpage hero, keyed by route id. Missing files
-// degrade gracefully to the plain navy hero (the <img> hides on error).
+// Only reference supplied subpage photos. About and contact keep
+// the plain navy hero until their requested photographs are delivered.
 const PAGE_HERO_PHOTOS: Record<string, string> = {
   services: "/page-visuals/services-hero.webp",
-  about: "/page-visuals/about-hero.webp",
-  contact: "/page-visuals/contact-hero.webp",
   stensattning: "/page-visuals/stensattning-photo.webp",
   markarbete: "/page-visuals/markarbete-photo.webp",
   gravjobb: "/page-visuals/gravjobb-generated.webp",

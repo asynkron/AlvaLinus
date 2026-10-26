@@ -17,6 +17,20 @@ function serviceCard(id: string): HTMLElement {
 }
 
 describe("SiteHomePage", () => {
+  it("renders the supplied services hero image", () => {
+    render(<SiteHomePage currentPath="/tjanster/" initialState={{ status: "ready", content }} />);
+    const hero = screen.getByRole("heading", { level: 1 }).closest("section");
+    expect(hero?.querySelector("img")).toHaveAttribute("src", "/page-visuals/services-hero.webp");
+  });
+
+  it.each(["/om-oss/", "/kontakt/"])("renders %s without requesting an undelivered hero photo", (currentPath) => {
+    render(<SiteHomePage currentPath={currentPath} initialState={{ status: "ready", content }} />);
+
+    const hero = screen.getByRole("heading", { level: 1 }).closest("section");
+    expect(hero).toHaveClass("bg-foreground");
+    expect(hero?.querySelector("img")).toBeNull();
+  });
+
   it("offers responsive card images and clears candidates when falling back", () => {
     const { container } = render(<SiteHomePage initialState={{ status: "ready", content }} />);
     const cards = [...container.querySelectorAll<HTMLImageElement>('img[loading="lazy"]')];

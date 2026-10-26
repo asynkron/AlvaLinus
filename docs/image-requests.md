@@ -9,13 +9,16 @@ for service cards or full-width heroes without upscaling the source. Original
 canvas PNGs are excluded from the deployable assets. These also appear on the services index and their
 service-page heroes. They are illustrative images, not photographs of completed
 customer projects. The three general subpage hero photographs below remain
-outstanding; real replacements for the two generated images are optional.
+outstanding for About and Contact. The services hero now uses an AI-generated
+groundworks illustration; it does not depict a completed customer project.
+Real replacements for the generated images are optional.
 
 ## How to deliver
 
 - **Drop each file into `public/page-visuals/` using the exact filename below.**
-  The code already references these paths, so a correctly-named file "just
-  works" — no code change needed.
+  Once the three general hero photographs are delivered, add their paths to
+  `PAGE_HERO_PHOTOS` in `src/pages/SiteHomePage.tsx`. Until then, those pages
+  use the plain navy hero without requesting missing files.
 - You can deliver **JPG or PNG** and I will convert + downscale to WebP, or
   deliver **WebP** directly (preferred final format). Target the listed pixel
   size; larger is fine, I'll downscale.
@@ -25,6 +28,12 @@ outstanding; real replacements for the two generated images are optional.
   no visible brand logos or readable license plates.
 
 ## Style anchor (already in place)
+
+Offertberäkning uses `public/page-visuals/quote-hero.png`, created with built-in
+imagegen. Prompt: a wide photorealistic Swedish asphalt driveway with granite
+edging, a Nordic house and birch trees in warm afternoon light; quiet space on
+the left for the heading, no people, vehicles, text or logos. This is an
+AI-generated illustration, not a completed customer project.
 
 | Page use | File | Notes |
 |---|---|---|
@@ -94,10 +103,10 @@ outstanding; real replacements for the two generated images are optional.
 
 - [ ] `public/page-visuals/gravjobb-photo.webp` (3:2)
 - [ ] `public/page-visuals/tradgard-photo.webp` (3:2)
-- [ ] `public/page-visuals/services-hero.webp` (16:9)
+- [x] `public/page-visuals/services-hero.webp` (16:9, AI-generated illustration)
 - [ ] `public/page-visuals/about-hero.webp` (16:9)
 - [ ] `public/page-visuals/contact-hero.webp` (16:9)
 
-Once these land in `public/page-visuals/`, the cards and subpage heroes pick
-them up automatically. The abstract `svard-entreprenad-*.svg` placeholders stay
+Once these land in `public/page-visuals/`, update the corresponding photo maps
+in `src/pages/SiteHomePage.tsx`. The abstract `svard-entreprenad-*.svg` placeholders stay
 as the route-inventory assets and remain the safety fallback.

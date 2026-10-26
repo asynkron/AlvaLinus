@@ -28,7 +28,10 @@ export function QuotePage() {
     return <label className="quote-field" key={key}><span>{label}</span><span className="quote-input"><input type="number" min={key === "area" ? "0.1" : "0"} max={key === "area" || key === "loads" ? "100000" : "10000000"} step={key === "loads" ? "1" : "0.1"} value={values[key]} onChange={event => setValues({ ...values, [key]: event.target.value })} /><span>{unit}</span></span></label>;
   }
   return <>
-    <section className="quote-intro"><div className="quote-wrap"><a href="/">Hem</a><span aria-hidden="true"> / </span><span>Offertberäkning</span><h1>Vad kostar din nya uppfart?</h1><p>Från kvadratmeter till kostnadsbild. Fyll i dina mått och få ett preliminärt underlag att prata vidare om.</p></div></section>
+    <section className="quote-intro">
+      <img className="quote-hero-image" src="/page-visuals/quote-hero.png" alt="" aria-hidden="true" fetchPriority="high" onError={event => { event.currentTarget.style.display = "none"; }} />
+      <div className="quote-wrap"><a href="/">Hem</a><span aria-hidden="true"> / </span><span>Offertberäkning</span><h1>Vad kostar din nya uppfart?</h1><p>Från kvadratmeter till kostnadsbild. Fyll i dina mått och få ett preliminärt underlag att prata vidare om.</p></div>
+    </section>
     <div className="quote-wrap quote-layout">
       <section aria-label="Projektets förutsättningar" className="quote-form">
         <h2>Räkna på ditt projekt</h2><p>Asfalterad uppfart med markarbete och transport.</p>
