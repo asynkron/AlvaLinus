@@ -16,7 +16,81 @@ function serviceCard(id: string): HTMLElement {
   return card;
 }
 
+function contentTarget(): HTMLElement {
+  const target = document.getElementById("content");
+
+  if (!target) {
+    throw new Error("Missing rendered #content target");
+  }
+
+  return target;
+}
+
 describe("SiteHomePage", () => {
+  it("offers a Swedish skip link before header navigation that targets the stable page content", () => {
+    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+
+    const skipLink = screen.getByRole("link", { name: "Hoppa till innehåll" });
+    expect(skipLink).toHaveAttribute("href", "#content");
+
+    const main = screen.getByRole("main");
+    expect(main.firstElementChild).toBe(skipLink);
+
+    const brandLink = screen.getByRole("link", { name: "Svärd Entreprenad startsida" });
+    expect(skipLink.compareDocumentPosition(brandLink) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+
+    const header = screen.getByRole("banner");
+    const target = contentTarget();
+    expect(target).toHaveAttribute("tabindex", "-1");
+    expect(header.compareDocumentPosition(target) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it.each([
+    { focusable: true, label: "ready home", element: <SiteHomePage initialState={{ status: "ready", content }} /> },
+    {
+      focusable: true,
+      label: "ready subpage",
+      element: <SiteHomePage currentPath="/dranering/" initialState={{ status: "ready", content }} />,
+    },
+    {
+      focusable: true,
+      label: "unknown route",
+      element: <SiteHomePage currentPath="/saknas/" initialState={{ status: "ready", content }} />,
+    },
+    { focusable: false, label: "loading", element: <SiteHomePage /> },
+    {
+      focusable: false,
+      label: "error",
+      element: <SiteHomePage initialState={{ status: "error", message: "Kunde inte läsa statisk data." }} />,
+    },
+    {
+      focusable: false,
+      label: "empty",
+      element: <SiteHomePage initialState={{ status: "ready", content: { ...content, services: [] } }} />,
+    },
+  ])(
+    "keeps exactly one stable content target in the $label state",
+    ({ element, focusable }) => {
+      render(element);
+
+      const targets = document.querySelectorAll("#content");
+      expect(targets).toHaveLength(1);
+
+      const target = targets.item(0);
+
+      if (!target) {
+        throw new Error("Missing rendered #content target");
+      }
+
+      const skipLink = screen.getByRole("link", { name: "Hoppa till innehåll" });
+      expect(skipLink).toHaveAttribute("href", `#${target.id}`);
+
+      if (focusable) {
+        expect(target).toHaveAttribute("tabindex", "-1");
+      }
+    },
+  );
+
   it.each(["link", "toggle"] as const)("dismisses mobile navigation with Escape from its %s and allows reopening", (focusOrigin) => {
     render(<SiteHomePage currentPath="/dranering/" initialState={{ status: "ready", content }} />);
 

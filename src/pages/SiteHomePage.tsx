@@ -88,6 +88,12 @@ export function SiteHomePage({ currentPath = "/", initialState }: SiteHomePagePr
 
   return (
     <main className="min-h-screen bg-background text-foreground">
+      <a
+        href="#content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-foreground focus:shadow-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        Hoppa till innehåll
+      </a>
       <Header currentPath={currentPath} />
       <ContentSurface currentPath={currentPath} state={state} />
     </main>
@@ -301,9 +307,9 @@ function ContentSurface({ currentPath, state }: { readonly currentPath: string; 
   }
 
   return (
-    <>
+    <div id="content" tabIndex={-1} className="scroll-mt-20 focus:outline-none">
       {route ? <RoutedPage content={content} route={route} /> : <NotFound content={content} currentPath={currentPath} />}
-    </>
+    </div>
   );
 }
 
