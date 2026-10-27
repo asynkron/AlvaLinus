@@ -1,0 +1,7 @@
+{
+  "directory": ".",
+  "command": [
+    "node",
+    "scripts/live.mjs"
+  ]
+}
