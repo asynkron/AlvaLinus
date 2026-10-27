@@ -20,9 +20,12 @@ Required controls use native browser validation.
 
 The form uses `method="post"`, `encType="text/plain"` and a `mailto:` action
 with an encoded subject. It has no custom submit handler, stored draft,
-confirmation screen or backend receipt. The visitor must review/send in their
-email software. [F3-US2](user-stories/F3/F3-US2.md) covers using the visible
-address directly.
+confirmation screen or backend receipt. A typed note beside the submit action
+explains that the visitor reviews and sends the inquiry in their own email
+software, that the website cannot confirm delivery, and links the configured
+address directly from the form for a failed handoff. The note is associated
+with the form through `aria-describedby`. [F3-US2](user-stories/F3/F3-US2.md)
+covers using the visible address directly.
 
 ## Outcome and support
 
@@ -42,9 +45,10 @@ runtime boundary: no server, third-party form endpoint, database, secrets,
 authentication or spam-control workflow.
 
 The existing declaration `renders a static email handoff form and footer contact email`
-checks the actual form attributes, named controls, submit button and email link.
-It does not execute sending, native required-field validation or email software.
-The about/contact route declaration checks the dedicated contact heading.
+checks the actual form attributes, named controls, submit button, handoff-note
+association and in-form fallback link. It does not execute sending, native
+required-field validation or email software. The about/contact route
+declaration checks the dedicated contact heading.
 
 Global load/error/empty states apply here too. A mail handler can fail without
 a website error state. Recovery is copying the displayed address and details
@@ -54,17 +58,15 @@ handoff; this catalog makes no privacy-law or compliance assurance claim.
 
 ## What Works Less Well
 
-A visitor without a configured compatible email handler can fill the form and
-still fail to start an inquiry. The button wording can be read as website
-submission, while there is no delivery assurance or site receipt. The visible
-fallback address helps, but still requires external email and manual copying.
-No reply address is collected in the form; contactability depends on the
-external email message and what the visitor includes.
+Sending still depends on a configured compatible email handler; the website
+cannot confirm delivery or receipt by design. The in-form fallback link and
+visible address still require external email and manual copying of project
+details when the handoff fails. No reply address is collected in the form;
+contactability depends on the external email message and what the visitor
+includes.
 
 ## Roadmap
 
-- Fix: explain the mail-client requirement and lack of a website receipt near
-  the form; provide clear instructions for copying the address and project details.
 - Expand: assess reliable submission, reply details, spam handling and
   confirmation only in a separately approved runtime/service decision, as
   required by ADR 0006. Stored inquiries or CRM integration are not implemented here.

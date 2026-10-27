@@ -70,6 +70,7 @@ export type ContactForm = {
   readonly recipientEmail: string;
   readonly subject: string;
   readonly submitLabel: string;
+  readonly handoffNote: string;
   readonly nameField: ContactTextField;
   readonly customerTypeField: ContactSelectField;
   readonly serviceField: ContactSelectField;

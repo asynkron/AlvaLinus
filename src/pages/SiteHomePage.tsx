@@ -911,6 +911,7 @@ function Contact({ content }: { readonly content: SiteContent }) {
         </div>
         <form
           aria-label={form.ariaLabel}
+          aria-describedby="kontakt-handoff-note"
           action={emailAction}
           method="post"
           encType="text/plain"
@@ -962,6 +963,16 @@ function Contact({ content }: { readonly content: SiteContent }) {
               className="min-h-32 resize-y rounded-md border bg-card px-3 py-2 text-base font-normal text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary sm:text-sm"
             />
           </label>
+          <p id="kontakt-handoff-note" className="text-sm leading-6 text-muted-foreground">
+            {form.handoffNote}{" "}
+            <a
+              href={emailAction}
+              className="font-medium text-foreground underline underline-offset-4 transition-colors hover:text-primary"
+            >
+              {form.recipientEmail}
+            </a>
+            .
+          </p>
           <Button type="submit" className="justify-self-start">
             <Mail className="mr-2 h-4 w-4" aria-hidden="true" />
             {form.submitLabel}
