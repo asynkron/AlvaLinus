@@ -298,6 +298,18 @@ describe("SiteHomePage", () => {
     expect(formScope.getByLabelText("Tjänst")).toHaveAttribute("name", "service");
     expect(formScope.getByLabelText("Meddelande")).toHaveAttribute("name", "message");
     expect(formScope.getByRole("button", { name: "Skicka offertförfrågan" })).toHaveAttribute("type", "submit");
+    expect(form).toHaveAttribute("aria-describedby", "kontakt-handoff-note");
+    const note = formScope.getByText(/öppnas i ditt eget e-postprogram/);
+    expect(note).toHaveAttribute("id", "kontakt-handoff-note");
+    expect(note).toHaveTextContent("Webbplatsen kan inte bekräfta att meddelandet har levererats");
+    const fallback = formScope.getByRole("link", { name: content.contact.form.recipientEmail });
+    expect(fallback).toHaveAttribute(
+      "href",
+      `mailto:${content.contact.form.recipientEmail}?subject=${encodeURIComponent(content.contact.form.subject)}`,
+    );
+    const submit = formScope.getByRole("button", { name: "Skicka offertförfrågan" });
+    expect(note.compareDocumentPosition(submit) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(screen.queryByText(/tack för din förfrågan|meddelandet har skickats/i)).not.toBeInTheDocument();
     expect(formScope.queryByRole("option", { name: "Pool" })).not.toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: "kontakt@svardentreprenad.se" })[0]).toHaveAttribute(
       "href",

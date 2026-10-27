@@ -249,6 +249,8 @@ export const siteContent = {
       recipientEmail: "kontakt@svardentreprenad.se",
       subject: "Offertförfrågan från alvalinus.se",
       submitLabel: "Skicka offertförfrågan",
+      handoffNote:
+        "Din förfrågan öppnas i ditt eget e-postprogram för granskning och utskick. Webbplatsen kan inte bekräfta att meddelandet har levererats. Fungerar inte överlämningen når du oss direkt på",
       nameField: {
         label: "Namn",
         name: "name",
