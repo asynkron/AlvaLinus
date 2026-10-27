@@ -1,6 +1,6 @@
 # F3: Prepare an initial project inquiry
 
-Reviewed: 2026-10-26. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-10-27. Runtime: `ui`. Product role: `customer_outcome`.
 
 The current outcome is preparing an addressed inquiry with useful project
 details. The website cannot establish that an email was sent, delivered or read.
@@ -30,7 +30,8 @@ covers using the visible address directly.
 ## Outcome and support
 
 Observable checks are locating the four controls and inspecting the configured
-recipient/subject handoff. An actual send must be confirmed outside the site.
+recipient/subject handoff, and explaining the external send step and fallback
+before submitting. An actual send must be confirmed outside the site.
 No funnel measurement, delivery tracking or response-time metric is installed.
 F4 supplies navigation. Service pages help the visitor choose a service but
 do not preselect the contact form from the referring route.
@@ -67,6 +68,9 @@ includes.
 
 ## Roadmap
 
+- Fix: carry the selected service into inquiry preparation so visitors do not
+  have to choose it again after following a service-page contact link. Preserve
+  the static boundary and keep manual selection available.
 - Expand: assess reliable submission, reply details, spam handling and
   confirmation only in a separately approved runtime/service decision, as
   required by ADR 0006. Stored inquiries or CRM integration are not implemented here.

@@ -1,6 +1,6 @@
 # F4: Home, navigation and route recovery
 
-Reviewed: 2026-10-26. Runtime: `ui`. Product role: `surface`.
+Reviewed: 2026-10-27. Runtime: `ui`. Product role: `surface`.
 Supports **F1, F2, F3**, all active customer-outcome features.
 
 Home and shared route handling make the service, company and inquiry outcomes
@@ -13,7 +13,8 @@ All nine routes listed in the [index](README.md) share Header. Desktop navigatio
 links home, services (with five service links), about and contact. The mobile
 button toggles its menu. Escape from a menu descendant or the focused toggle
 closes an open menu and returns focus to the toggle; the menu can reopen.
-Other keys do not trigger that dismissal. Subpages have a Hem breadcrumb.
+Tab/Shift+Tab events are not cancelled; Escape elsewhere in the header leaves
+both menu and focus unchanged. Subpages have a Hem breadcrumb.
 Footer repeats page and service links and the contact email on ready routes,
 including not-found.
 
@@ -21,6 +22,15 @@ including not-found.
 actions, route shortcuts and shared chrome. The inventory's five shortcuts
 are not the complete registry. Pool and reference-project pages are not active.
 The historical pageCount 58 is not a rendered route count.
+
+[F4-US3](user-stories/F4/F4-US3.md) covers the Swedish Hoppa till innehåll
+link before Header. It is visually hidden until focused and targets one
+`#content` destination in every rendered state. Ready home, subpage and
+not-found bodies use a focusable wrapper (`tabIndex={-1}`) with scroll margin.
+Loading/error/empty sections keep the anchor but have no explicit tabIndex.
+DOM evidence checks order and destination structure; it does not establish
+browser scrolling, anchor focus transfer or focus-only CSS visibility. This
+keyboard aid is not a compliance certification.
 
 The renderer normalizes query/hash suffixes and trailing slashes before matching
 typed routes. Vite emits an HTML entry document per declared subpage; React
@@ -61,7 +71,11 @@ service-card image-error behavior, including the terminal fallback failure, is
 covered by deterministic in-memory tests in the home page test file.
 F4-US1 maps the deterministic mobile-menu declaration for expanded state,
 Escape from a link and the toggle, focus restoration, reopening and click
-dismissal. It does not establish responsive CSS or desktop dropdown interaction.
+dismissal, uncancelled Tab/Shift+Tab events and Escape outside the menu/toggle.
+JSDOM does not move focus on Tab, so those event assertions do not establish
+actual browser tab order. F4-US3 maps the two skip-link declarations separately
+from menu behavior. Neither mapping establishes responsive CSS, browser anchor
+activation or desktop dropdown interaction.
 Keyboard dropdown interaction, normalization variants, subpage hero image
 failure and production-host fallback remain unmapped, not claimed as executed
 acceptance. F1-US1 owns the service-card failure mappings; this supporting

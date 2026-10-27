@@ -1,10 +1,11 @@
 # Feature catalog
 
-Reviewed against source: 2026-10-26 at `d8f081d4bf712519f9b1293b26562b6053905536`.
+Reviewed against source: 2026-10-27 at `4b60d7296bc9b2498bd41f704481a2ffdd38bf3c`.
 
 The catalog introduced in `f7b481f` already covers the current route inventory.
-This refresh retains its published identities and reconciles the later mobile
-menu and service-image recovery changes with the story evidence below.
+This refresh retains its published identities and adds F4-US3 for the shipped
+keyboard bypass. It reconciles mobile keyboard preservation and the explicit
+email-handoff explanation with their source and story evidence.
 
 This catalog maps the static Swedish Svärd Entreprenad site to visitor outcomes.
 It is product-development input, not a claim that construction work, email delivery
@@ -35,6 +36,7 @@ exposes all five service pages. The renderer is the authority for visible sectio
 | `/tradgardsplanering/` | [F1-US6](user-stories/F1/F1-US6.md) | Hero; levels/surfaces/planting summary and tags; suitability aside; process; inquiry band; footer. |
 | `/om-oss/` | [F2-US1](user-stories/F2/F2-US1.md) | Hero and breadcrumb; company paragraphs; contact link band; footer. |
 | `/kontakt/` | [F3-US1](user-stories/F3/F3-US1.md), [F3-US2](user-stories/F3/F3-US2.md) | Hero; quote/site-visit prompt; email address; native form; footer. |
+| Keyboard bypass on all rendered states | [F4-US3](user-stories/F4/F4-US3.md) | Hoppa till innehåll precedes Header and points to one #content target; ready bodies have tabindex=-1, availability sections do not. |
 | Shared loading/error/empty/not-found | [F4-US2](user-stories/F4/F4-US2.md) | Header remains; loading label, error alert or empty message replaces body; ready not-found provides declared-route shortcuts and footer. |
 
 `Partners` is called on home and the services index but currently renders
@@ -78,8 +80,9 @@ does not provide persistence, delivery assurance or a privacy/compliance verdict
   from [stable feature/story identity data](user-stories/features.json).
   [Backend entry points](backend-entry-points.json) records the intentionally
   empty backend boundary.
-- IDs F1–F4 and their twelve story IDs were allocated in `f7b481f`. Retain
-  them and the feature-document joins on future edits; leave removed IDs
+- IDs F1–F4 and their original twelve story IDs were allocated in `f7b481f`.
+  This refresh adds F4-US3 without changing those identities. Retain them and
+  the feature-document joins on future edits; leave removed IDs
   absent forever. No earlier IDs were found in the available checkout/history;
   that initial search is not proof of historical non-reuse outside that evidence.
 - These are maintained Markdown and JSON files. No existing feature generator
@@ -93,7 +96,13 @@ does not provide persistence, delivery assurance or a privacy/compliance verdict
   the assertion checks the stated user-visible facet, not every step of a story.
   `technical` checks supporting metadata. No test was executed for this source
   review. F4-US1 now maps the mobile-menu declaration for Escape from a link
-  or the focused toggle, focus restoration, reopening and click dismissal.
+  or the focused toggle, focus restoration, reopening and click dismissal;
+  Tab/Shift+Tab are not cancelled and Escape elsewhere in the header leaves
+  the menu and focus unchanged. F4-US3 maps the skip-link order and unique
+  destination in ready/loading/error/empty/not-found states. These DOM checks
+  do not establish browser anchor focus, scrolling or focus-only CSS visibility.
+  F3-US1/US2 map the explanation's accessible association, position before the
+  button, lack of a sent confirmation and subject-bearing in-form fallback.
   F1-US1 maps the home service-card photo/SVG failure and neighboring-card
   isolation declarations. These are source-reviewed mappings, not execution
   receipts or proof of responsive layout in a browser. Dedicated
