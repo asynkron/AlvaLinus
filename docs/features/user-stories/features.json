@@ -69,6 +69,20 @@
               "name": "renders representative service tags including pool digging under Grävjobb",
               "evidence_type": "direct",
               "supports": "Checks representative service tags on home."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "falls back to the route SVG on the first photo error and removes the image when the fallback also fails",
+              "evidence_type": "direct",
+              "supports": "Checks the home Stensättning card's photo/SVG failures, retained title, summary and service link, and terminal image removal. Does not render the services index or subpage heroes."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "keeps neighboring service cards and their successful images untouched when one card image fails twice",
+              "evidence_type": "direct",
+              "supports": "Checks that failure of the home Stensättning card leaves Markarbete and Grävjobb images and content available; does not establish dedicated detail-page rendering."
             }
           ],
           "entry_point_refs": [],
@@ -83,7 +97,7 @@
           "variants": [
             "Home adds hero, route shortcuts and process.",
             "The services index adds trust content and an inquiry link band.",
-            "Service card photos fall back to route SVGs on image error."
+            "Service card photos fall back to route SVGs on image error; a failed SVG removes the image while keeping the title, summary and Läs mer link. Neighboring cards retain their own images and content."
           ],
           "expected_outcome": "A matching service route can be selected from the five cards.",
           "failure_behavior": "No services shows Inget innehåll ännu instead of the route body.",
@@ -599,6 +613,13 @@
             {
               "framework": "vitest",
               "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "dismisses mobile navigation with Escape from its %s and allows reopening",
+              "evidence_type": "direct",
+              "supports": "Parameterized link and toggle cases check menu expanded state, Escape from a link and the focused toggle respectively, focus restoration, reopening, click dismissal and a non-dismissal key. Does not establish responsive layout or desktop dropdown interaction."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
               "name": "links from the home page to active static subpage paths only",
               "evidence_type": "direct",
               "supports": "Checks home CTA destinations and excludes retired routes."
@@ -630,6 +651,7 @@
           ],
           "variants": [
             "Header services links expose all five detail routes.",
+            "An open mobile menu closes on Escape from a link or the focused toggle, restores focus to the toggle and can reopen; the toggle also closes it by click. Other keys do not dismiss it.",
             "inventory.primaryRoutes has five shortcuts; it is not the full nine-route registry.",
             "Subpage heroes and the home hero use decorative photos; service-card images have route alt text."
           ],
