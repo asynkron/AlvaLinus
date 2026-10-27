@@ -18,7 +18,7 @@ function serviceCard(id: string): HTMLElement {
 
 describe("SiteHomePage", () => {
   it.each(["link", "toggle"] as const)("dismisses mobile navigation with Escape from its %s and allows reopening", (focusOrigin) => {
-    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+    render(<SiteHomePage currentPath="/dranering/" initialState={{ status: "ready", content }} />);
 
     const toggle = screen.getByRole("button", { name: "Öppna meny" });
     expect(toggle).toHaveAttribute("aria-expanded", "false");
@@ -28,14 +28,17 @@ describe("SiteHomePage", () => {
     expect(toggle).toHaveAccessibleName("Stäng meny");
     expect(toggle).toHaveAttribute("aria-expanded", "true");
     const navigation = screen.getByRole("navigation", { name: "Mobilnavigation" });
-    const link = within(navigation).getByRole("link", { name: "Hem" });
+    const link = within(navigation).getByRole("link", { name: "Dränering" });
     const focusedControl = focusOrigin === "link" ? link : toggle;
     focusedControl.focus();
     expect(focusedControl).toHaveFocus();
 
-    fireEvent.keyDown(focusedControl, { key: "ArrowDown" });
-    expect(navigation).toBeInTheDocument();
-    expect(focusedControl).toHaveFocus();
+    for (const shiftKey of [false, true]) {
+      // JSDOM does not move focus on Tab; check that the browser's default
+      // forward/backward navigation is not cancelled by the menu handler.
+      expect(fireEvent.keyDown(focusedControl, { key: "Tab", shiftKey })).toBe(true);
+      expect(navigation).toBeInTheDocument();
+    }
 
     fireEvent.keyDown(focusedControl, { key: "Escape" });
     expect(screen.queryByRole("navigation", { name: "Mobilnavigation" })).not.toBeInTheDocument();
@@ -44,7 +47,10 @@ describe("SiteHomePage", () => {
     expect(toggle).toHaveFocus();
 
     fireEvent.click(toggle);
-    expect(screen.getByRole("navigation", { name: "Mobilnavigation" })).toBeInTheDocument();
+    const reopenedNavigation = screen.getByRole("navigation", { name: "Mobilnavigation" });
+    const reopenedLink = within(reopenedNavigation).getByRole("link", { name: "Dränering" });
+    expect(reopenedLink).toHaveAttribute("href", "/dranering/");
+    expect(reopenedLink).toHaveAttribute("aria-current", "page");
     expect(toggle).toHaveAttribute("aria-expanded", "true");
     fireEvent.click(toggle);
     expect(screen.queryByRole("navigation", { name: "Mobilnavigation" })).not.toBeInTheDocument();
