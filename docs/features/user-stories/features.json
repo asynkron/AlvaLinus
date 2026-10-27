@@ -441,7 +441,8 @@
           "Dedicated contact page",
           "Native required-field validation",
           "Mail-client handoff",
-          "Visible email fallback"
+          "Visible email fallback",
+          "Handoff explanation associated with the form"
         ],
         "current_limitations": "A configured mail client is required. The site stores no inquiry, tracks no delivery and displays no confirmed-send state; no email or phone field is collected.",
         "failure_behavior": "Browser validation can block blank required fields; a missing or incompatible mail client can prevent handoff without a site error receipt.",
@@ -456,7 +457,8 @@
         "customer_outcome": "Visitors can prepare an inquiry addressed to the company with their project details.",
         "outcome_signals": [
           "In an observed browser task, name, customer type, service and message controls can be located.",
-          "The form exposes the configured mailto recipient and subject; actual sending is confirmed outside the site."
+          "The form exposes the configured mailto recipient and subject; actual sending is confirmed outside the site.",
+          "Before submitting, a visitor can identify the external email step, the delivery limit and the direct-email fallback."
         ]
       },
       "user_stories": [
@@ -477,7 +479,7 @@
               "path": "src/pages/SiteHomePage.test.tsx",
               "name": "renders a static email handoff form and footer contact email",
               "evidence_type": "direct",
-              "supports": "Checks form method, mailto action, text/plain encoding, named controls, submit button and email link; does not send mail or exercise native validation."
+              "supports": "Checks form method, mailto action, text/plain encoding, named controls, submit button, aria-describedby note association, explanation before the button, in-form fallback recipient/subject and absence of a sent confirmation. Does not send mail, exercise native validation or establish a separate home rendering."
             }
           ],
           "entry_point_refs": [],
@@ -488,6 +490,7 @@
           "flow": [
             "Find Kontakta oss för offert.",
             "Enter Namn, choose Kundtyp and Tjänst, and describe the project, place and desired timing in Meddelande.",
+            "Read the explanation before the submit button: review and send in your own email program; the website cannot confirm delivery.",
             "Select Skicka offertförfrågan.",
             "Review and send in the external mail client if it opens."
           ],
@@ -495,11 +498,12 @@
             "Customer types are Privatperson, Företag, and BRF eller fastighetsägare.",
             "Services include the five offered areas and Annat.",
             "Pool excavation is part of Grävjobb, not a separate Pool option.",
-            "Required fields use browser-native validation; the site has no custom submit handler."
+            "Required fields use browser-native validation; the site has no custom submit handler.",
+            "The same typed explanation and subject-bearing fallback email link appear inside the form on home and /kontakt/; aria-describedby associates the note with the form."
           ],
           "expected_outcome": "The form requests a plain-text mail-client handoff to kontakt@svardentreprenad.se with the configured subject; delivery is not established.",
           "failure_behavior": "The mail handler may fail to open; the page cannot confirm acceptance or sending.",
-          "recovery": "Use the visible email address and include project details manually."
+          "recovery": "Use the address linked in the explanation or copy it into working email software and include project details manually; the fallback link still needs an email handler."
         },
         {
           "id": "F3-US2",
@@ -518,7 +522,7 @@
               "path": "src/pages/SiteHomePage.test.tsx",
               "name": "renders a static email handoff form and footer contact email",
               "evidence_type": "direct",
-              "supports": "Checks the visible contact-address link points to the configured mailto address."
+              "supports": "Checks the in-form fallback mailto recipient and subject and the footer's recipient-only email link on /kontakt/; does not exercise email software or copying."
             }
           ],
           "entry_point_refs": [],
@@ -526,13 +530,14 @@
             "The page has loaded enough to render the contact section or footer."
           ],
           "flow": [
-            "Read kontakt@svardentreprenad.se in the contact section or footer.",
+            "Read kontakt@svardentreprenad.se in the contact section, the in-form handoff explanation or footer.",
             "Use its email link or copy the address into an email tool.",
             "Describe the project and a way to reply."
           ],
           "variants": [
             "Footer contact is available on every ready routed page and not-found.",
-            "ContactLinkBand on about, index and service pages leads to /kontakt/ rather than embedding another form."
+            "ContactLinkBand on about, index and service pages leads to /kontakt/ rather than embedding another form.",
+            "The in-form fallback email link includes the configured subject; the footer email link contains only the recipient."
           ],
           "expected_outcome": "The visitor has the company email address; no website receipt is implied.",
           "failure_behavior": "The mailto link still depends on the user's email handler.",
@@ -569,7 +574,8 @@
           "Empty services",
           "Ready known route",
           "Unknown route",
-          "Mobile menu closed/open"
+          "Mobile menu closed/open",
+          "Keyboard bypass to the page body"
         ],
         "current_limitations": "Navigation destinations are repeated in Header/SERVICE_NAV, Footer and the typed inventory. Empty services suppresses even about and contact route bodies. Hosting may reject unknown paths before React can display not-found.",
         "failure_behavior": "Load errors show an alert without a retry control; unknown in-app paths show declared-route shortcuts. Loading/error/empty states retain the header but have no footer.",
@@ -615,7 +621,14 @@
               "path": "src/pages/SiteHomePage.test.tsx",
               "name": "dismisses mobile navigation with Escape from its %s and allows reopening",
               "evidence_type": "direct",
-              "supports": "Parameterized link and toggle cases check menu expanded state, Escape from a link and the focused toggle respectively, focus restoration, reopening, click dismissal and a non-dismissal key. Does not establish responsive layout or desktop dropdown interaction."
+              "supports": "Parameterized link and toggle cases check menu expanded state, Escape dismissal, focus restoration, reopening, click dismissal and uncancelled Tab/Shift+Tab events. JSDOM does not establish actual browser Tab movement, responsive layout or desktop dropdown interaction."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "keeps mobile navigation open and preserves focus when Escape is pressed elsewhere in the header",
+              "evidence_type": "direct",
+              "supports": "Checks that Escape on the brand link outside the menu/toggle leaves the open menu and current focus unchanged."
             },
             {
               "framework": "vitest",
@@ -651,7 +664,7 @@
           ],
           "variants": [
             "Header services links expose all five detail routes.",
-            "An open mobile menu closes on Escape from a link or the focused toggle, restores focus to the toggle and can reopen; the toggle also closes it by click. Other keys do not dismiss it.",
+            "An open mobile menu closes on Escape from a link or the focused toggle, restores focus to the toggle and can reopen; the toggle also closes it by click. Tab and Shift+Tab are not cancelled. Escape elsewhere in the header leaves the menu and focus unchanged.",
             "inventory.primaryRoutes has five shortcuts; it is not the full nine-route registry.",
             "Subpage heroes and the home hero use decorative photos; service-card images have route alt text."
           ],
@@ -719,13 +732,57 @@
           "expected_outcome": "The rendered state identifies content availability and provides route recovery when ready.",
           "failure_behavior": "Error and empty states have no inline retry; the empty-services guard applies to all route kinds.",
           "recovery": "Reload for a fresh load or use header navigation; a content defect needs a corrected static deployment."
+        },
+        {
+          "id": "F4-US3",
+          "title": "Bypass repeated navigation with the keyboard",
+          "status": "current",
+          "role": "Keyboard visitor",
+          "action": "use Hoppa till innehåll before the header links",
+          "benefit": "reach the page body without traversing repeated navigation",
+          "source_anchors": [
+            "src/pages/SiteHomePage.tsx"
+          ],
+          "test_references": [
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "offers a Swedish skip link before header navigation that targets the stable page content",
+              "evidence_type": "direct",
+              "supports": "Checks the Swedish link, #content destination, order before header navigation and focusable ready-page target; does not exercise browser anchor activation or CSS visibility."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "keeps exactly one stable content target in the $label state",
+              "evidence_type": "direct",
+              "supports": "Parameterized ready home, subpage, unknown-route, loading, error and empty cases check one matching target; ready targets have tabindex=-1. Does not assert focusability of availability-state sections or browser scrolling."
+            }
+          ],
+          "entry_point_refs": [],
+          "preconditions": [
+            "React has mounted and the page shell is rendered."
+          ],
+          "flow": [
+            "Reach Hoppa till innehåll before the repeated header navigation.",
+            "Activate the #content link to bypass the header.",
+            "Read the routed body or current availability message."
+          ],
+          "variants": [
+            "The link is visually hidden until focused, when existing focus styles reveal it.",
+            "Ready home, subpage and in-app not-found views share a focusable #content wrapper with scroll margin.",
+            "Loading, error and empty states retain one #content section but do not give that section tabindex=-1."
+          ],
+          "expected_outcome": "A stable page-body anchor is available before header navigation on all rendered states; ready content has a programmatically focusable destination.",
+          "failure_behavior": "A host error before React mounts cannot offer the link. Availability-state sections have an anchor but no explicit focusability attribute; browser focus/scroll behavior is not established by DOM assertions.",
+          "recovery": "Use ordinary keyboard navigation if anchor behavior is unavailable; a missing static entry document requires host/artifact repair."
         }
       ],
       "user_story_documents": [
         "docs/features/user-stories/F4/F4-US1.md",
-        "docs/features/user-stories/F4/F4-US2.md"
+        "docs/features/user-stories/F4/F4-US2.md",
+        "docs/features/user-stories/F4/F4-US3.md"
       ]
     }
   ]
 }
-
