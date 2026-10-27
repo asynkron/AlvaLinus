@@ -991,7 +991,7 @@ function Contact({ content }: { readonly content: SiteContent }) {
               className="min-h-32 resize-y rounded-md border bg-card px-3 py-2 text-base font-normal text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary sm:text-sm"
             />
           </label>
-          <Button type="submit" className="justify-self-start bg-green-700 text-white hover:bg-green-800">
+          <Button type="submit" className="justify-self-start">
             <Mail className="mr-2 h-4 w-4" aria-hidden="true" />
             {form.submitLabel}
             <Send className="ml-2 h-4 w-4" aria-hidden="true" />
