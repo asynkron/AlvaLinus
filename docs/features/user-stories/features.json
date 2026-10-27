@@ -613,9 +613,9 @@
             {
               "framework": "vitest",
               "path": "src/pages/SiteHomePage.test.tsx",
-              "name": "dismisses mobile navigation with Escape, restores focus, and allows reopening",
+              "name": "dismisses mobile navigation with Escape from its %s and allows reopening",
               "evidence_type": "direct",
-              "supports": "Checks menu expanded state, Escape from a link and the focused toggle, focus restoration, reopening, click dismissal and a non-dismissal key. Does not establish responsive layout or desktop dropdown interaction."
+              "supports": "Parameterized link and toggle cases check menu expanded state, Escape from a link and the focused toggle respectively, focus restoration, reopening, click dismissal and a non-dismissal key. Does not establish responsive layout or desktop dropdown interaction."
             },
             {
               "framework": "vitest",
