@@ -1,13 +1,14 @@
 # Product and operation roadmap
 
-Reviewed: 2026-10-26 (fk35), source baseline
-`d8f081d4bf712519f9b1293b26562b6053905536`.
+Reviewed: 2026-10-27 (fk44), source baseline
+`f730d4d6da104a84e80ba8f3662e2096801610d9`.
 
 This roadmap connects the Swedish Svärd Entreprenad website to operating a
 product with minimal human intervention. Source capability, task delivery,
 accepted quality and observed production operation are separate evidence.
 Goals are proposed work, not authorization to expand the site's runtime.
-This refresh replaces fk24's October 25 assessment while retaining its history.
+This refresh supersedes fk35's October 26 assessment: its two next steps have
+shipped. Earlier assessments remain in Git; their ownership is reconciled below.
 
 ## Where we are
 
@@ -21,172 +22,173 @@ There is no application backend, database, authentication or serverless runtime
 ([ADR 0001](adrs/0001-static-react-frontend-foundation.md)).
 
 [Vite](../vite.config.ts) emits physical subpage HTML from the route registry
-under [ADR 0004](adrs/0004-static-subpage-artifacts.md). Both
-[HTML](../scripts/assert-static-routes.mjs) and
-[visual](../scripts/assert-route-visual-assets.mjs) assertions now consume the
-same registry through [their owner](../scripts/route-artifacts.mjs), without
-a copied route list, source-text extraction or fixed count. This establishes
-source capability, not the behavior of an unobserved production host.
+under [ADR 0004](adrs/0004-static-subpage-artifacts.md).
+[The route artifact owner](../scripts/route-artifacts.mjs) now rejects ambiguous
+paths and collisions before emission. HTML and visual checks consume that same
+registry. The [release runbook](release-runbook.md) now names portable commands
+to generate and check a deterministic SHA-256 manifest of a complete built tree.
+These are implemented source capabilities, not evidence of live publication.
 
 The [feature catalog](features/README.md) maps service selection, company
 confidence, project inquiry and supporting navigation to four stable feature
-IDs and twelve stories. Active fk32 owns maintenance; existing files do not
-establish acceptance or passing proof for that new run.
+IDs and twelve stories. fk32's catalog maintenance is now delivered.
+The [Live recipe](../.faktorial/live.json) starts the existing Vite app through
+[scripts/live.mjs](../scripts/live.mjs), using Faktorial's assigned loopback
+host and strict port without secrets or external services. A committed recipe
+does not establish a running preview or production deployment.
 
 ### What works well
 
 - Typed content and shared components keep changes bounded. Existing
   [DOM tests](../src/pages/SiteHomePage.test.tsx) declare route/content,
-  contact, mobile-navigation Escape/focus and service-image failure coverage.
+  contact, mobile Escape/focus and service-image failure coverage.
   This refresh inspected source; it did not execute those tests.
 - Service cards try the route SVG after photo failure and remove the image
-  after terminal failure, retaining text and links. fk25's delivery retires
-  the previous broken-image finding.
-- Header navigation exposes all five services. The approved cleaned SVG logo
-  replaced the PNG in `d8f081d` (PR #59); the
-  [route inventory](current-public-route-inventory.md) reflects its path.
-  Photographs and self-hosted fonts support presentation.
+  after terminal failure, retaining text and links. Decorative subpage photos
+  hide on failure. Missing photographs do not require recreating that recovery.
+- Header navigation exposes all five services. The cleaned SVG logo,
+  photographs and self-hosted fonts support presentation. The
+  [route inventory](current-public-route-inventory.md) correctly describes
+  drainage within Tjänster, rather than as a separate header item.
 - [README](../README.md) and [the runner](../scripts/make.js) define Node 24+,
   locked dependencies, strict TypeScript, static artifact checks and one Vitest
-  session. Coverage remains separate. `.nvmrc` now selects Node 24 for Netlify
-  builds (`f349429`, PR #57); this does not prove a production deployment.
+  session. Coverage remains separate. The Netlify Node setting does not establish
+  which platform actually hosts production.
 - [Reporter normalization](../scripts/quality-evidence.mjs) rejects malformed,
-  empty and unsupported reports; invalid durations remain unknown. Its
-  [tests](../scripts/quality-evidence.test.mjs) mock filesystem I/O. Process
-  exit remains the gate authority.
-- The [release/rollback runbook](release-runbook.md) connects source, accepted
-  quality, artifact and publication identities, direct-route/asset checks and
-  conditional rollback without assuming a host.
+  empty and unsupported reports; invalid durations remain unknown. Its tests
+  mock filesystem I/O. Process exit remains the gate authority.
+- Route validation and checksum tooling now remove the two build/release gaps
+  selected by fk35. Artifact integrity, quality acceptance and publication
+  identity remain separate contracts.
 - [ADR 0006](adrs/0006-static-email-contact-handoff.md) bounds contact to a
-  native mail-client handoff with fallback links and no stored inquiries.
+  native mail-client handoff with a visible fallback address and no stored inquiries.
 
 ### What works less well and what to improve
 
-- Artifact checks now follow the registry, but href validation only requires
-  a leading slash. Vite maps hrefs to filesystem directories separately.
-  Duplicate paths, dot segments and URL query/fragment forms are not rejected
-  as invalid static directory routes. Current authored paths are ordinary
-  valid paths; this is a future-change guardrail gap, not an observed incident.
-  **Next 1** extends fk26's delivered capability at that boundary.
-- The runbook requires an artifact checksum manifest but leaves complete tree
-  traversal, portable paths and comparison to ad hoc shell commands. The
-  runner's dependency-lock hash does not identify a release artifact.
-  **Next 2** makes artifact identity repeatable without hosting credentials.
-- Four WebP photos exist; five referenced photos remain absent per
-  [image requests](image-requests.md) and the checkout. Terminal recovery is
-  delivered, but acquiring/approving suitable photographs remains editorial
-  work. Decorative subpage photos hide on failure. Missing content is distinct
-  from fk25's completed resilience work.
-- Contact handoff cannot prove sent/received inquiries, conversion or customer
-  satisfaction. Marketing/certification statements are authored content, not
-  measured metrics or verified compliance. Delivery, tracking or persistence
-  proposals need explicit product and privacy/consent decisions.
+- Keyboard visitors have no skip link past the repeated header. SiteHomePage
+  wraps Header and ContentSurface inside main; ready routes have no stable
+  content destination, while loading/error/empty sections alone use
+  `id="content"`. **Next 1** provides a consistent keyboard bypass.
+  This is separate from mobile-menu dismissal owned by fk43.
+- The quote form says “Skicka offertförfrågan” without explaining beside the
+  action that it requires compatible email software and that the visitor sends
+  the message there. The site cannot confirm sending or receipt.
+  [F3's catalog](features/project-inquiry.md) identifies this concrete ambiguity.
+  **Next 2** clarifies the existing handoff and direct-email recovery.
+- Four WebP photographs are present; five requested photographs remain absent
+  ([image requests](image-requests.md)). Acquisition and approval remain editorial
+  work, distinct from delivered image-failure resilience.
+- [F4's catalog](features/navigation-and-recovery.md) identifies a global
+  empty-services guard that also hides available about/contact bodies, and
+  repeated navigation declarations that can drift. These are later candidates,
+  not additional issues created by this refresh.
 - Production host, publication access and artifact retention are unestablished.
-  A runbook and a Netlify Node setting do not establish automated publication,
-  measured recovery time or a demonstrated rollback.
+  A runbook and checksum tools cannot demonstrate rollback or recovery time.
+- Inquiry conversion, delivery and satisfaction are unmeasured. Marketing and
+  certification statements are authored copy, not verified compliance evidence.
+  Telemetry, persistence or submission-service proposals need explicit product
+  and privacy decisions before changing the static boundary.
 
 ## Delivered work and ownership reconciliation
 
-Current owning `get_task` records were read on October 26, together with complete
-open `list_tasks` membership (three tasks before this run's two creations).
-The assigned checkout advanced from investigation's `a79c151` to the baseline
-above, including the previously missing roadmap and later fixes. Missing files
-in the old checkout were not treated as grounds to recreate delivered work.
+Current owning get_task records and complete open/closed list_tasks membership
+were read on October 27. Immediately before creating follow-ups, only fk43 and
+fk44 were open (2 open, 38 closed). The checkout has advanced from investigation's
+`a79c151`: the roadmap and suspected route-inventory repair already exist.
+Neither is recreated as missing work.
 
-| Work | Current record and source | Disposition |
+| Work | Current owning evidence | Disposition |
 | --- | --- | --- |
-| [fk3](https://app.faktorial.ai/projects/alvalinus/tasks/fk3), first roadmap | Closed/done; merge `0ca6430`, PR #47. | Historical foundation; its fk10/fk11 follow-ups shipped. |
-| [fk10](https://app.faktorial.ai/projects/alvalinus/tasks/fk10), reporter hardening | Closed/done; merge `4d630bd`, PR #51; retained quality pass at `5dc3221`. Source/tests present. | Retire old reporter gap; artifact identity is a different owner/contract. |
-| [fk11](https://app.faktorial.ai/projects/alvalinus/tasks/fk11), release runbook | Closed/done; merge `1b2a922`, PR #50. Runbook present; revision-bound quality evidence unavailable in its closeout. | Retire missing-runbook gap. Next 2 explicitly extends its manual checksum step; no live-operation claim. |
-| [fk5](https://app.faktorial.ai/projects/alvalinus/tasks/fk5), mobile menu | Closed/done; merge `106b46e`, PR #46; retained quality pass at `c8aec6c`. | Delivered; toggle-origin dismissal subsequently completed by fk23. |
-| [fk23](https://app.faktorial.ai/projects/alvalinus/tasks/fk23), focused-toggle dismissal | Closed/done; merge `9481400`, PR #53; retained quality pass at `fd86865`. Source/tests present. | Retire old navigation defect; do not replace active fk34's overlapping scope. |
-| [fk8](https://app.faktorial.ai/projects/alvalinus/tasks/fk8), dependency maintenance | Closed/done; merge `27af405`, PR #49; retained quality pass at `9d2ca2c`. Further dependency merges appear in current history. | Bounded deliveries, not a general dependency-health or current quality claim. |
-| [fk9](https://app.faktorial.ai/projects/alvalinus/tasks/fk9), feature catalog | Record/list closed; lifecycle still active/build with feature-manifest proof-preflight failure. PR #48 merge `d1bd013` and catalog present. | Source delivered; acceptance/lifecycle discrepancy unresolved. Do not replace catalog/platform recovery ownership or infer a clean closeout. |
-| [fk24](https://app.faktorial.ai/projects/alvalinus/tasks/fk24), previous roadmap | Closed/done; merge `75c6d6e`, PR #54; previous roadmap read in full. | Refresh assessment; preserve its exactly two historical follow-ups fk25/fk26. |
-| [fk25](https://app.faktorial.ai/projects/alvalinus/tasks/fk25), terminal image recovery | List/lifecycle closed/done; merge `fbbf288`, PR #55; retained quality pass at `71cba15`. ServiceCardImage removes failed fallback. | Retire previous Next 1: shipped. Missing photos are separate editorial work. |
-| [fk26](https://app.faktorial.ai/projects/alvalinus/tasks/fk26), registry artifact assertions | List/lifecycle closed/done; merge `36d4947`, PR #56; retained quality pass at `4633152`. Scripts and in-memory fixtures present. | Retire previous Next 2: shipped. New href validation explicitly extends it rather than recreating registry adoption. |
-| [fk32](https://app.faktorial.ai/projects/alvalinus/tasks/fk32), catalog maintenance | Open/active build; existing catalog present at baseline. | Unresolved ownership blocks overlapping follow-ups. This refresh does not rewrite catalog/manifests or claim acceptance. |
-| [fk34](https://app.faktorial.ai/projects/alvalinus/tasks/fk34), frontend maintenance | Open/active build; current Investigation selects mobile Escape/focus behavior from older `a79c151`. | Current source includes fk5/fk23's delivery. Its worker must reassess that stale gap; no replacement UI task is created here. |
+| [fk35](https://app.faktorial.ai/projects/alvalinus/tasks/fk35), previous roadmap | List/lifecycle closed/done; merge `ac7fc47`, PR #61. Previous document read in full. | Superseded assessment; preserve fk36/fk37 as its historical follow-ups. |
+| [fk36](https://app.faktorial.ai/projects/alvalinus/tasks/fk36), route validation | List/lifecycle closed/done; merge `e670adc`, PR #63; retained quality pass at `434ac18`. Shared validator and fixtures present. | Retire previous Next 1 as shipped; no replacement validation issue. |
+| [fk37](https://app.faktorial.ai/projects/alvalinus/tasks/fk37), artifact checksums | List/lifecycle closed/done; merge `50e3c35`, PR #64; retained quality pass at `76e2a3c`. Commands and runbook present. | Retire previous Next 2 as shipped; live publication remains unknown. |
+| [fk32](https://app.faktorial.ai/projects/alvalinus/tasks/fk32), catalog maintenance | Closed/done; merge `bd770a4`, PR #60; retained quality pass at `a82329c`. | Retire stale active-owner wording. Next 2 implements its documented F3 improvement, not catalog rediscovery. |
+| [fk34](https://app.faktorial.ai/projects/alvalinus/tasks/fk34), mobile tests | List/lifecycle closed/done; merge `bf2b27e`, PR #62; retained quality pass at `53f9106`. | Coverage delivered; preserve it. Skip-link work adds a different visitor capability. |
+| [fk43](https://app.faktorial.ai/projects/alvalinus/tasks/fk43), current frontend run | Open/active build at refresh; mobile Escape/focus behavior and regression coverage. | Unresolved ownership blocks duplicate menu work. This roadmap does not assess its candidate or replace its scope. |
 
-fk25/fk26 retain open issue-document fields while list/lifecycle projections
-say closed/done. Named merge receipts and source establish delivery; this refresh
-reports the discrepancy without editing task policy or acceptance.
-Prior quality passes apply only to their named heads, never to this roadmap
-candidate, current main or deployment. This run executed no quality commands.
+Earlier roadmap references were also refreshed through owning records: fk3/fk24
+(roadmaps), fk10 (reporter), fk11 (runbook), fk5/fk23 (mobile dismissal), fk8
+(dependencies), and fk25/fk26 (image recovery/registry checks) remain list/lifecycle
+closed/done. None is reopened here. fk25/fk26, and now fk36/fk37, retain open
+issue-document fields despite closed/done list/lifecycle projections. Named
+merge receipts and source support delivery; this refresh reports the discrepancy
+without changing task policy.
+
+fk9's record/list is closed; its lifecycle is closed with stage build rather
+than a clean done closeout. This is not treated as active catalog ownership or
+proof of recovered acceptance. No platform-recovery task is derived from it;
+later fk32 maintenance is independently merged. Prior quality passes apply only
+to their named heads, never to this roadmap candidate, current main or deployment.
 
 ## Short-term priorities and issue ownership
 
 | Priority | Outcome and observable acceptance | Owner and scope |
 | --- | --- | --- |
-| Next 1 | Reject ambiguous, escaping or colliding hrefs before emitting static files. Share validation between Vite and artifact assertions; retain valid root/nested paths and prove invalid classes deterministically in memory. | Newly created [fk36 — canonical static route paths](https://app.faktorial.ai/projects/alvalinus/tasks/fk36). Extends delivered fk26; build route validation only, preserving current URLs and visual contracts. |
-| Next 2 | Produce and verify a deterministic SHA-256 manifest of a complete already-built static tree. Detect added, missing and byte-changed files, keep portable paths and generated evidence outside Git, and document exact cross-platform commands. | Newly created [fk37 — release artifact checksum manifest](https://app.faktorial.ai/projects/alvalinus/tasks/fk37). Extends delivered fk11's manual identity step; no build execution, publication automation or hosting decision. |
+| Next 1 | A Swedish skip link precedes repeated navigation, becomes visible on focus, and reaches a stable focusable page-body target across ready/loading/error/empty/not-found states. Preserve routes, assets and menu behavior; protect the owning DOM behavior deterministically. | Newly created [fk45 — keyboard navigation bypass](https://app.faktorial.ai/projects/alvalinus/tasks/fk45). Native HTML and existing styles; no menu redesign, dependencies or compliance certification. |
+| Next 2 | Explain the external mail-client requirement before the form action on home and contact pages, associate the explanation accessibly with the form, and make direct-email fallback identifiable. Preserve native validation, recipient, subject and mailto action; never imply delivery confirmation. | Newly created [fk46 — explain email handoff](https://app.faktorial.ai/projects/alvalinus/tasks/fk46). Reuse typed content; update F3 documentation and shared contact coverage. No backend, new personal-data fields, storage or tracking. |
 
-Exactly two new tasks were created by **fk35**: fk36 and fk37. Independent
-`get_task` readbacks confirmed both open, with exact persisted titles and bodies
-matching submitted outcomes, acceptance and exclusions. They remain unimplemented
-by this documentation refresh. Complete open membership was rechecked immediately
-before creation; fk32/fk34/fk35 were the only open tasks. The new scopes are
-distinct from catalog, frontend and platform recovery work, and independently
-useful. Refresh owning states/source before execution or another roadmap pass;
-unresolved overlap blocks replacement even if older roadmap text says Done.
+Exactly two new issues were created by **fk44**: fk45 and fk46. Independent
+get_task readbacks confirmed both open, with persisted titles and complete bodies
+matching the submitted scope and acceptance. Their links above identify the
+owning project tasks. Their capabilities are not implemented in this documentation
+change. Each solves distinct source-observed friction; neither duplicates
+unresolved fk43. Refresh source and owning states before execution or another
+roadmap pass, even if older text says Done.
 
 ## Long-term goals
 
-1. **Trustworthy autonomous development.** Tie proposals to current source,
-   deterministic owner-boundary proofs and native quality receipts. Reporter
-   hardening and registry-driven checks are delivered; reject invalid route
-   destinations next. Separate task closure, acceptance and source delivery,
-   especially where lifecycle projections conflict. Missing evidence stays unknown.
-2. **Repeatable product operation.** Make artifact identity reproducible first.
-   Apply the runbook when actual host, access and retention facts are supplied.
-   Target a release traceable to accepted source and a restorable prior artifact.
-   Consider host-specific deployment automation only after those facts and
-   explicit architecture/access decisions; this roadmap does not implement it.
-3. **Maintainable content and intentional customer outcomes.** Let fk32 reconcile
-   stable stories with current source and fk34 reassess its selected UI scope.
-   Acquire approved missing photos separately from delivered failure recovery.
-   Define useful inquiry signals and privacy needs before delivery guarantees or
-   telemetry. Preserve the static boundary rather than adding a speculative database.
+1. **Trustworthy autonomous development.** Ground proposals in current source
+   and task ownership, prove behavior at deterministic owner boundaries, and
+   let native quality accept each candidate. Reconcile stale roadmap text before
+   creating work. Separate source delivery, task closure and acceptance;
+   missing evidence stays unknown.
+2. **Repeatable product operation.** Use the delivered checksum commands and
+   release runbook when actual hosting/access/retention facts are available.
+   Target releases traceable to accepted source and restorable prior artifacts.
+   Consider host-specific automation only after those facts and explicit access
+   decisions; do not add speculative infrastructure to the site.
+3. **Intentional customer outcomes.** Improve keyboard access and explain the
+   email handoff first. Later consider independent about/contact recovery,
+   route-driven navigation and approved missing imagery. Define useful inquiry
+   signals and privacy needs before promising delivery guarantees or telemetry.
 4. **Evidence-led cross-product learning.** Compare booking and Asynkron.JsEngine
-   only when their repositories and operational evidence are available. Transfer
-   demonstrated practices with explicit ownership rather than inferred capabilities.
+   when their repositories and operational evidence are available. Transfer
+   demonstrated practices with explicit owners. The autonomous factory operates
+   around this static product; it is not an application backend to install here.
 
 ## Evidence boundaries and update triggers
 
-- Read the previous roadmap in full, recent code/documentation changes, README,
-  route inventory, catalog README, runbook, image requests, route emission,
-  artifact assertion owners/tests and service-image implementation. Document
-  graph refresh imported 34 documents with no errors and returned the roadmap
-  without truncation. Worker-local TypeScript lookup of Services returned
-  `state=ok` at baseline. JavaScript-language semantic lookup of
-  requireRouteRegistry was unsupported; no semantic absence claim follows.
-- `/api/logs/fk35/summary` returned HTTP 200, `state=ok`, explicitly
-  `source=issue_fallback` with no raw log. This is task context, not traffic.
-- At 12:40:35 UTC on October 26, one-day Faktorial API usage reported 47,713
-  calls across 23 endpoints; top-three output omitted 20 endpoints. Canvas
-  context checks and task reads led. Independent reliability was partial:
-  retained spans truncated, route joins incomplete, sampling unknown, revision
-  comparability unavailable. Matched spans covered 12:34:06–12:40:31 UTC,
-  not the requested day. These are control-plane counts, not website visitors
-  or autonomous product outcomes. Do not combine retained spans with durable
-  totals into error rates.
-- Tool usage at 12:40:35 UTC reported 1,258 calls across 118 reported native
-  runs, two incomplete; capture partial, `window_covered=false`. Top-three
-  output omitted fourteen keys. Historical/unreported execution stays unknown.
-- Worker metrics sampled 12:40:10.397 UTC, observed 12:40:15.006 UTC, were
-  fresh (`stale=false`); CPU was platform-unavailable. At most twenty retained
-  history points describe the worker runtime, unattributed to this claim.
-  They do not measure website speed or establish a resource defect.
-- Website traffic, inquiry outcomes and production logs were unavailable.
-  The application has no database; Cloud database telemetry would describe
-  another system and was not substituted for website evidence. No new
-  compliance or privacy verdict is claimed.
-- `../booking`, `../Asynkron.JsEngine`, `D:/FaktorialAgent/booking` and
-  `D:/FaktorialAgent/Asynkron.JsEngine` remain absent on this worker.
-  Investigation also checked AlvaLinus project-root locations. Cross-project
-  findings stay unavailable; credentials or platform-state files were not
-  sought as substitutes.
-- Refresh on changes to source, task scope/state, accepted quality or publication
-  records, or when host/retention/adjacent-source facts become available. Preserve
-  supersession reasons and ownership. Ordinary native quality and review assess
-  this candidate; this document is not a passing receipt.
+- Read the previous roadmap in full, README, route inventory, rules index,
+  F3/F4 catalog documents, image requests, release runbook, recent commit changes,
+  renderer, typed content, route validator and relevant DOM declarations.
+  TypeScript LSP resolved SiteHomePage and Contact with state=ok at the baseline.
+  Focused search in src found no skip/autocomplete/mail-client explanation matches;
+  output was untruncated, enrichment suppressed. Source inspection grounds the
+  two findings; no runtime defect or compliance assessment is claimed.
+- /api/logs/fk44/summary returned HTTP 200, state=ok, explicitly
+  source=issue_fallback with no raw log. This is task context, not traffic.
+  The queue at 12:42:45 UTC showed fk43/fk44 active and CI signals disabled;
+  it did not demonstrate a website or quality failure.
+- At 12:42:45 UTC on October 27, one-day Faktorial API usage reported 63,072
+  calls across 18 endpoints; top-three output omitted 15 endpoints.
+  Canvas context checks and task reads led. Independent reliability was partial:
+  truncated retained spans, incomplete route joins, unknown sampling and
+  unavailable revision comparability. Matched spans covered 12:37:33–12:42:41 UTC,
+  not the requested day. These are control-plane counts, not website visitors or
+  autonomous product outcomes. No error rate combines the two populations.
+- Worker metrics sampled 12:42:44.296 UTC, observed 12:42:45.655 UTC, were fresh
+  (stale=false); CPU was platform-unavailable. Twenty retained history points
+  were unattributed to this claim. They do not measure website speed.
+- Website traffic, inquiry outcomes and production logs remain unavailable.
+  The application has no database; Cloud serving-process database telemetry
+  would describe another system and was not substituted for product data.
+  No new privacy or compliance verdict is claimed.
+- Exact ../booking, ../Asynkron.JsEngine, D:/FaktorialAgent/booking and
+  D:/FaktorialAgent/Asynkron.JsEngine paths were checked and are absent on this
+  worker. Other locations remain unknown. No cross-repository inspection is
+  claimed; credentials and platform-state files were not used as substitutes.
+- Refresh when source, task scope/state, accepted quality, publication records
+  or adjacent-source availability changes. Preserve supersession reasons and
+  ownership. No tests, typechecks, builds or quality commands ran in this agent
+  session. Ordinary native quality and review assess the committed candidate;
+  this document is not a passing receipt.
