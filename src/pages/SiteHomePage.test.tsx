@@ -311,9 +311,11 @@ describe("SiteHomePage", () => {
     expect(note.compareDocumentPosition(submit) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(screen.queryByText(/tack för din förfrågan|meddelandet har skickats/i)).not.toBeInTheDocument();
     expect(formScope.queryByRole("option", { name: "Pool" })).not.toBeInTheDocument();
-    expect(screen.getAllByRole("link", { name: "kontakt@svardentreprenad.se" })[0]).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: content.contact.form.recipientEmail })).toHaveLength(2);
+    const footerScope = within(screen.getByRole("contentinfo"));
+    expect(footerScope.getByRole("link", { name: content.contact.form.recipientEmail })).toHaveAttribute(
       "href",
-      "mailto:kontakt@svardentreprenad.se",
+      `mailto:${content.contact.form.recipientEmail}`,
     );
     expect(screen.queryByRole("link", { name: /Källa/ })).not.toBeInTheDocument();
   });
