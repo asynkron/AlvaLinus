@@ -208,6 +208,16 @@ describe("SiteHomePage", () => {
     expect(content.routes.map((route) => route.href)).not.toContain("/referenser/");
   });
 
+  it.each(["/", "/tjanster/"])("names every service-card link by its destination on %s", (currentPath) => {
+    render(<SiteHomePage currentPath={currentPath} initialState={{ status: "ready", content }} />);
+
+    for (const service of content.services) {
+      const link = screen.getByRole("link", { name: `Läs mer om ${service.title}` });
+      expect(link).toHaveAttribute("href", service.href);
+      expect(link).toHaveTextContent(/^Läs mer$/);
+    }
+  });
+
   it("keeps every current route aligned with a page-specific visual asset", () => {
     const expectedVisualsByRoute = new Map([
       ["home", "/page-visuals/svard-entreprenad-home.svg"],
@@ -255,13 +265,13 @@ describe("SiteHomePage", () => {
     expect(stensattningCard.queryByRole("img")).not.toBeInTheDocument();
     expect(stensattningCard.getByRole("heading", { name: "Stensättning" })).toBeInTheDocument();
     expect(stensattningCard.getByText(/Planerade stenytor/)).toBeInTheDocument();
-    expect(stensattningCard.getByRole("link", { name: "Läs mer" })).toHaveAttribute("href", "/stensattning/");
+    expect(stensattningCard.getByRole("link", { name: "Läs mer om Stensättning" })).toHaveAttribute("href", "/stensattning/");
 
     fireEvent.error(image);
 
     expect(stensattningCard.queryByRole("img")).not.toBeInTheDocument();
     expect(stensattningCard.getByRole("heading", { name: "Stensättning" })).toBeInTheDocument();
-    expect(stensattningCard.getByRole("link", { name: "Läs mer" })).toHaveAttribute("href", "/stensattning/");
+    expect(stensattningCard.getByRole("link", { name: "Läs mer om Stensättning" })).toHaveAttribute("href", "/stensattning/");
   });
 
   it("keeps neighboring service cards and their successful images untouched when one card image fails twice", () => {
@@ -278,7 +288,7 @@ describe("SiteHomePage", () => {
     expect(markarbeteImage).toHaveAttribute("alt", "Schaktad tomt med maskin och förberedd markbädd");
     expect(markarbeteImage).toHaveAttribute("loading", "lazy");
     expect(markarbeteCard.getByRole("heading", { name: "Markarbete" })).toBeInTheDocument();
-    expect(markarbeteCard.getByRole("link", { name: "Läs mer" })).toHaveAttribute("href", "/markarbete/");
+    expect(markarbeteCard.getByRole("link", { name: "Läs mer om Markarbete" })).toHaveAttribute("href", "/markarbete/");
 
     const gravjobbCard = within(serviceCard("gravjobb"));
     expect(gravjobbCard.getByRole("img")).toHaveAttribute("src", "/page-visuals/gravjobb-photo.webp");
