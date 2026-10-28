@@ -1,6 +1,6 @@
 # Feature catalog
 
-Reviewed against source: 2026-10-27 at `4b60d7296bc9b2498bd41f704481a2ffdd38bf3c`.
+Reviewed against source: 2026-10-28.
 
 The catalog introduced in `f7b481f` already covers the current route inventory.
 This refresh retains its published identities and adds F4-US3 for the shipped
@@ -37,7 +37,7 @@ exposes all five service pages. The renderer is the authority for visible sectio
 | `/om-oss/` | [F2-US1](user-stories/F2/F2-US1.md) | Hero and breadcrumb; company paragraphs; contact link band; footer. |
 | `/kontakt/` | [F3-US1](user-stories/F3/F3-US1.md), [F3-US2](user-stories/F3/F3-US2.md) | Hero; quote/site-visit prompt; email address; native form; footer. |
 | Keyboard bypass on all rendered states | [F4-US3](user-stories/F4/F4-US3.md) | Hoppa till innehåll precedes Header and points to one #content target; ready bodies have tabindex=-1, availability sections do not. |
-| Shared loading/error/empty/not-found | [F4-US2](user-stories/F4/F4-US2.md) | Header remains; loading label, error alert or empty message replaces body; ready not-found provides declared-route shortcuts and footer. |
+| Shared loading/error/empty/not-found | [F4-US2](user-stories/F4/F4-US2.md) | Header remains; loading label, error alert or empty-services message replaces the service-dependent home/index bodies; ready not-found provides declared-route shortcuts and footer. |
 
 `Partners` is called on home and the services index but currently renders
 nothing because `partners` is empty. About copy is on the dedicated about page;

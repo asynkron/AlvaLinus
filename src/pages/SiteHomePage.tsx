@@ -298,7 +298,7 @@ function ContentSurface({ currentPath, state }: { readonly currentPath: string; 
   const { content } = state;
   const route = getRouteForPath(content, currentPath);
 
-  if (content.services.length === 0) {
+  if (routeDependsOnServices(route) && content.services.length === 0) {
     return (
       <section id="content" className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
         <StaticState state="empty" title="Inget innehåll ännu" message="Lägg till statiska dataposter i src/data." />
@@ -317,6 +317,10 @@ function getRouteForPath(content: SiteContent, currentPath: string): SiteRoute |
   const normalizedPath = normalizePath(currentPath);
 
   return content.routes.find((route) => normalizePath(route.href) === normalizedPath);
+}
+
+function routeDependsOnServices(route: SiteRoute | undefined): boolean {
+  return route?.kind === "home" || route?.kind === "services";
 }
 
 function normalizePath(path: string) {

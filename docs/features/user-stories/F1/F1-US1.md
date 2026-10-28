@@ -2,7 +2,7 @@
 
 Feature: [F1 — Choose a suitable groundworks service](../../service-selection.md)  
 Status: current  
-Reviewed: 2026-10-26
+Reviewed: 2026-10-28
 
 As a project visitor, I want to compare service summaries and tags so I can find the relevant area before reading details.
 
@@ -28,7 +28,7 @@ A matching service route can be selected from the five cards.
 
 ## Failure and recovery
 
-No services shows Inget innehåll ännu instead of the route body.
+No services shows Inget innehåll ännu on home and the services index instead of the service body.
 
 Reload after a content deployment; use the header links to choose a route.
 
