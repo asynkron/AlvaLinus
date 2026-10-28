@@ -523,12 +523,14 @@ describe("SiteHomePage", () => {
       );
 
       const form = screen.getByRole("form", { name: "Offertförfrågan via e-post" });
-      const formScope = within(form);
+      const serviceSelect = within(form).getByLabelText("Tjänst");
 
-      expect(formScope.getByLabelText("Tjänst")).toHaveValue(content.contact.form.serviceField.options[0]);
-      expect(formScope.getAllByRole("option").map((option) => option.textContent)).toEqual([
-        ...content.contact.form.serviceField.options,
-      ]);
+      expect(serviceSelect).toHaveValue(content.contact.form.serviceField.options[0]);
+      expect(
+        within(serviceSelect)
+          .getAllByRole("option")
+          .map((option) => option.textContent),
+      ).toEqual([...content.contact.form.serviceField.options]);
       expect(form.querySelectorAll("script")).toHaveLength(0);
     },
   );
@@ -553,10 +555,14 @@ describe("SiteHomePage", () => {
     );
 
     const form = screen.getByRole("form", { name: "Offertförfrågan via e-post" });
-    const formScope = within(form);
+    const serviceSelect = within(form).getByLabelText("Tjänst");
 
-    expect(formScope.getByLabelText("Tjänst")).toHaveValue(content.contact.form.serviceField.options[0]);
-    expect(formScope.getAllByRole("option").map((option) => option.textContent)).toEqual(optionsWithoutDrainage);
+    expect(serviceSelect).toHaveValue(content.contact.form.serviceField.options[0]);
+    expect(
+      within(serviceSelect)
+        .getAllByRole("option")
+        .map((option) => option.textContent),
+    ).toEqual(optionsWithoutDrainage);
   });
 
   it("fails unknown paths gracefully", () => {
