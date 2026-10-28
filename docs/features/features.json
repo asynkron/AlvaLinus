@@ -30,7 +30,7 @@
           "description": "Static content and route contracts."
         }
       ],
-      "reviewed_against_source": "2026-10-26",
+      "reviewed_against_source": "2026-10-28",
       "slice_refs": [],
       "entry_point_refs": []
     },
@@ -63,7 +63,7 @@
           "description": "Static content and route contracts."
         }
       ],
-      "reviewed_against_source": "2026-10-26",
+      "reviewed_against_source": "2026-10-28",
       "slice_refs": [],
       "entry_point_refs": []
     },
@@ -136,7 +136,7 @@
           "description": "Emits static HTML entry artifacts for declared subpages."
         }
       ],
-      "reviewed_against_source": "2026-10-27",
+      "reviewed_against_source": "2026-10-28",
       "slice_refs": [],
       "entry_point_refs": []
     }

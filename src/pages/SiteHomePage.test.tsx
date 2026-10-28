@@ -5,6 +5,7 @@ import type { SiteContent } from "../types/site";
 import { SiteHomePage } from "./SiteHomePage";
 
 const content: SiteContent = siteContent;
+const emptyServicesContent: SiteContent = { ...content, services: [] };
 
 function serviceCard(id: string): HTMLElement {
   const card = document.getElementById(id);
@@ -66,7 +67,7 @@ describe("SiteHomePage", () => {
     {
       focusable: false,
       label: "empty",
-      element: <SiteHomePage initialState={{ status: "ready", content: { ...content, services: [] } }} />,
+      element: <SiteHomePage initialState={{ status: "ready", content: emptyServicesContent }} />,
     },
   ])(
     "keeps exactly one stable content target in the $label state",
@@ -284,10 +285,60 @@ describe("SiteHomePage", () => {
     expect(gravjobbCard.getByRole("heading", { name: "Grävjobb" })).toBeInTheDocument();
   });
 
-  it("shows an empty state when static data has no services", () => {
-    render(<SiteHomePage initialState={{ status: "ready", content: { ...content, services: [] } }} />);
+  it.each([
+    { label: "home", path: "/" },
+    { label: "services index", path: "/tjanster/" },
+  ])("keeps $label empty-services feedback when services are empty", ({ path }) => {
+    render(<SiteHomePage currentPath={path} initialState={{ status: "ready", content: emptyServicesContent }} />);
 
     expect(screen.getByRole("heading", { name: "Inget innehåll ännu" })).toBeInTheDocument();
+    expect(screen.queryByRole("form", { name: "Offertförfrågan via e-post" })).not.toBeInTheDocument();
+  });
+
+  it("keeps about and contact bodies available when services are empty", () => {
+    const { rerender } = render(
+      <SiteHomePage currentPath="/om-oss/" initialState={{ status: "ready", content: emptyServicesContent }} />,
+    );
+
+    expect(screen.getByRole("heading", { name: "Om oss", level: 1 })).toBeInTheDocument();
+    expect(screen.getAllByText(/På Svärd Entreprenad brinner vi/).length).toBeGreaterThan(0);
+    expect(screen.getByRole("banner")).toBeInTheDocument();
+    expect(screen.getByRole("contentinfo")).toBeInTheDocument();
+    expect(document.querySelectorAll("#content")).toHaveLength(1);
+    expect(contentTarget()).toHaveAttribute("tabindex", "-1");
+
+    rerender(<SiteHomePage currentPath="/kontakt/" initialState={{ status: "ready", content: emptyServicesContent }} />);
+
+    expect(screen.getByRole("heading", { name: "Kontakt", level: 1 })).toBeInTheDocument();
+    const form = screen.getByRole("form", { name: "Offertförfrågan via e-post" });
+    const formScope = within(form);
+    expect(formScope.getByLabelText("Namn")).toHaveAttribute("name", "name");
+    const note = formScope.getByText(/öppnas i ditt eget e-postprogram/);
+    expect(note).toHaveAttribute("id", "kontakt-handoff-note");
+    expect(formScope.getByRole("link", { name: content.contact.form.recipientEmail })).toHaveAttribute(
+      "href",
+      `mailto:${content.contact.form.recipientEmail}?subject=${encodeURIComponent(content.contact.form.subject)}`,
+    );
+    expect(screen.getByRole("contentinfo")).toBeInTheDocument();
+    expect(document.querySelectorAll("#content")).toHaveLength(1);
+  });
+
+  it("keeps service and unknown routes on not-found recovery when services are empty", () => {
+    const { rerender } = render(
+      <SiteHomePage currentPath="/stensattning/" initialState={{ status: "ready", content: emptyServicesContent }} />,
+    );
+
+    expect(screen.getByRole("heading", { name: "Sidan finns inte" })).toBeInTheDocument();
+    expect(screen.getByText(/matchar ingen aktuell sida/)).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Inget innehåll ännu" })).not.toBeInTheDocument();
+
+    rerender(
+      <SiteHomePage currentPath="/saknas/" initialState={{ status: "ready", content: emptyServicesContent }} />,
+    );
+
+    expect(screen.getByRole("heading", { name: "Sidan finns inte" })).toBeInTheDocument();
+    expect(screen.getByText(/matchar ingen aktuell sida/)).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Inget innehåll ännu" })).not.toBeInTheDocument();
   });
 
   it("shows an error state", () => {

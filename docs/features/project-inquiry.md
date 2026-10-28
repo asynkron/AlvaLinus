@@ -71,7 +71,8 @@ a manual change. The missing-context, unrecognized-context and
 recognized-service-without-option declarations check default retention and
 that context text never becomes a new option or form content.
 
-Global load/error/empty states apply here too. A mail handler can fail without
+Global load/error states apply here too; the contact body stays available when
+the services list is empty. A mail handler can fail without
 a website error state. Recovery is copying the displayed address and details
 into a working email tool. There is no persistent draft recovery or alternate
 submission channel. Project details leave through the visitor's external mail

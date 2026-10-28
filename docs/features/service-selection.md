@@ -49,7 +49,8 @@ ServicesIndexPage, Services, ServicePage and the route branching.
 [Types](../../src/types/site.ts) define the content contract.
 
 A missing service for a known service route renders not-found. An empty
-services list blocks every route body. Loading/error/empty/not-found handling
+services list blocks the home and services-index bodies with the empty state.
+Loading/error/empty/not-found handling
 and recovery ceilings are described in [F4](navigation-and-recovery.md).
 A content defect requires source correction and static redeployment.
 
