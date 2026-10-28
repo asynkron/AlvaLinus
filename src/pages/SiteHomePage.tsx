@@ -698,6 +698,7 @@ function Services({ content }: { readonly content: SiteContent }) {
                 </div>
                 <a
                   href={service.href}
+                  aria-label={`Läs mer om ${service.title}`}
                   className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary/80"
                 >
                   Läs mer
