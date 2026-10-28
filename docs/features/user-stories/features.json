@@ -40,7 +40,7 @@
         "customer_outcome": "Visitors identify which offered service fits their project and can reach the inquiry route.",
         "outcome_signals": [
           "In an observed task, a visitor selects the service matching a stated project need.",
-          "A visitor can reach /kontakt/ from the selected service page."
+          "A visitor can reach /kontakt/ from the selected service page with that service preselected in the inquiry form."
         ]
       },
       "user_stories": [
@@ -131,7 +131,7 @@
             "Open /stensattning/.",
             "Read the route introduction, service summary and tags: Marksten Örebro, Stenmurar, Finplanering.",
             "Read När tjänsten passar and the four process steps.",
-            "Follow Kontakta oss to /kontakt/."
+            "Follow Kontakta oss to /kontakt/?tjanst=stensattning with Stensättning preselected and still changeable."
           ],
           "variants": [
             "The suitability aside and process are shared across service pages.",
@@ -161,7 +161,7 @@
             "Open /markarbete/.",
             "Read the route introduction, service summary and tags: Schakt, Tomt, Anläggning.",
             "Read När tjänsten passar and the four process steps.",
-            "Follow Kontakta oss to /kontakt/."
+            "Follow Kontakta oss to /kontakt/?tjanst=markarbete with Markarbete preselected and still changeable."
           ],
           "variants": [
             "The suitability aside and process are shared across service pages.",
@@ -206,7 +206,7 @@
             "Open /gravjobb/.",
             "Read the route introduction, service summary and tags: Grävning, Husgrund, Poolgrävning.",
             "Read När tjänsten passar and the four process steps.",
-            "Follow Kontakta oss to /kontakt/."
+            "Follow Kontakta oss to /kontakt/?tjanst=gravjobb with Grävjobb preselected and still changeable."
           ],
           "variants": [
             "The suitability aside and process are shared across service pages.",
@@ -244,7 +244,7 @@
             "Open /dranering/.",
             "Read the route introduction, service summary and tags: Dränering, Mur, Fuktskydd.",
             "Read När tjänsten passar and the four process steps.",
-            "Follow Kontakta oss to /kontakt/."
+            "Follow Kontakta oss to /kontakt/?tjanst=dranering with Dränering preselected and still changeable."
           ],
           "variants": [
             "The drainage page adds a paragraph on moisture protection around foundations, walls and basements.",
@@ -274,7 +274,7 @@
             "Open /tradgardsplanering/.",
             "Read the route introduction, service summary and tags: Tomtplanering, Utemiljö, Finish.",
             "Read När tjänsten passar and the four process steps.",
-            "Follow Kontakta oss to /kontakt/."
+            "Follow Kontakta oss to /kontakt/?tjanst=tradgard with Trädgårdsplanering preselected and still changeable."
           ],
           "variants": [
             "The suitability aside and process are shared across service pages.",
@@ -439,6 +439,7 @@
         "principal_states": [
           "Contact section on home",
           "Dedicated contact page",
+          "Service preselected from a service-page inquiry action",
           "Native required-field validation",
           "Mail-client handoff",
           "Visible email fallback",
@@ -458,6 +459,7 @@
         "outcome_signals": [
           "In an observed browser task, name, customer type, service and message controls can be located.",
           "The form exposes the configured mailto recipient and subject; actual sending is confirmed outside the site.",
+          "A service-page inquiry action preselects that service in the Tjänst select, and the visitor can change it before the handoff.",
           "Before submitting, a visitor can identify the external email step, the delivery limit and the direct-email fallback."
         ]
       },
@@ -480,6 +482,41 @@
               "name": "renders a static email handoff form and footer contact email",
               "evidence_type": "direct",
               "supports": "Checks form method, mailto action, text/plain encoding, named controls, submit button, aria-describedby note association, explanation before the button, in-form fallback recipient/subject and absence of a sent confirmation. Does not send mail, exercise native validation or establish a separate home rendering."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "carries the stable $id service identity in the $path inquiry action",
+              "evidence_type": "direct",
+              "supports": "Parameterized over the five service pages; checks each rendered band link's /kontakt/?tjanst=<service id> destination against the typed service id."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "follows a service page inquiry action into contact, selects that service and preserves a later manual change",
+              "evidence_type": "direct",
+              "supports": "Follows the rendered link's URL into /kontakt/, checks the recognized Dränering preselection in the named service select and a manual change to Annat. Does not send mail."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "keeps the typed default service selection on home and direct contact without inquiry context",
+              "evidence_type": "direct",
+              "supports": "Checks the first typed option without context on home and /kontakt/."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "retains the default service selection for unrecognized inquiry context $context",
+              "evidence_type": "direct",
+              "supports": "Parameterized unknown, label-like and malformed contexts; checks default retention, the unchanged typed option list and that context text never becomes an option, element or script content."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "retains the default service selection when a recognized service has no matching typed option",
+              "evidence_type": "direct",
+              "supports": "Checks that a recognized service id without a matching configured option retains the first option and the unchanged option list."
             }
           ],
           "entry_point_refs": [],
@@ -488,8 +525,8 @@
             "A mail client is configured for the handoff."
           ],
           "flow": [
-            "Find Kontakta oss för offert.",
-            "Enter Namn, choose Kundtyp and Tjänst, and describe the project, place and desired timing in Meddelande.",
+            "Find Kontakta oss för offert; from a service page its inquiry action opens /kontakt/ with that service preselected in Tjänst.",
+            "Enter Namn, confirm or change Kundtyp and Tjänst, and describe the project, place and desired timing in Meddelande.",
             "Read the explanation before the submit button: review and send in your own email program; the website cannot confirm delivery.",
             "Select Skicka offertförfrågan.",
             "Review and send in the external mail client if it opens."
@@ -498,10 +535,11 @@
             "Customer types are Privatperson, Företag, and BRF eller fastighetsägare.",
             "Services include the five offered areas and Annat.",
             "Pool excavation is part of Grävjobb, not a separate Pool option.",
+            "Service-page inquiry actions target /kontakt/?tjanst=<service id> using the typed service record id; contact preselects the matching typed option and keeps manual change available, while direct /kontakt/ and home /#kontakt without context and unknown or malformed context keep the first option without creating new options.",
             "Required fields use browser-native validation; the site has no custom submit handler.",
             "The same typed explanation and subject-bearing fallback email link appear inside the form on home and /kontakt/; aria-describedby associates the note with the form."
           ],
-          "expected_outcome": "The form requests a plain-text mail-client handoff to kontakt@svardentreprenad.se with the configured subject; delivery is not established.",
+          "expected_outcome": "The form requests a plain-text mail-client handoff to kontakt@svardentreprenad.se with the configured subject and the actually selected Tjänst option; delivery is not established.",
           "failure_behavior": "The mail handler may fail to open; the page cannot confirm acceptance or sending.",
           "recovery": "Use the address linked in the explanation or copy it into working email software and include project details manually; the fallback link still needs an email handler."
         },
@@ -523,6 +561,13 @@
               "name": "renders a static email handoff form and footer contact email",
               "evidence_type": "direct",
               "supports": "Checks the in-form fallback mailto recipient and subject and the footer's recipient-only email link on /kontakt/; does not exercise email software or copying."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "keeps the index and about inquiry actions generic while service pages carry service identity",
+              "evidence_type": "direct",
+              "supports": "Checks that index and about band links keep the generic /kontakt/ destination; service-page destinations are mapped under F3-US1."
             }
           ],
           "entry_point_refs": [],
@@ -536,7 +581,7 @@
           ],
           "variants": [
             "Footer contact is available on every ready routed page and not-found.",
-            "ContactLinkBand on about, index and service pages leads to /kontakt/ rather than embedding another form.",
+            "ContactLinkBand on about and index leads to /kontakt/ and on service pages to /kontakt/?tjanst=<service id>, rather than embedding another form.",
             "The in-form fallback email link includes the configured subject; the footer email link contains only the recipient."
           ],
           "expected_outcome": "The visitor has the company email address; no website receipt is implied.",

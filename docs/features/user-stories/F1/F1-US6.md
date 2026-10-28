@@ -2,7 +2,7 @@
 
 Feature: [F1 — Choose a suitable groundworks service](../../service-selection.md)  
 Status: current  
-Reviewed: 2026-10-24
+Reviewed: 2026-10-28
 
 As a project visitor, I want to read the Trädgårdsplanering service page so I can identify plot and garden planning that connects practical outdoor use with levels and planting.
 
@@ -15,7 +15,7 @@ As a project visitor, I want to read the Trädgårdsplanering service page so I 
 1. Open /tradgardsplanering/.
 2. Read the route introduction, service summary and tags: Tomtplanering, Utemiljö, Finish.
 3. Read När tjänsten passar and the four process steps.
-4. Follow Kontakta oss to /kontakt/.
+4. Follow Kontakta oss to /kontakt/?tjanst=tradgard with Trädgårdsplanering preselected and still changeable in the inquiry form.
 
 ## Variants
 

@@ -2,7 +2,7 @@
 
 Feature: [F1 — Choose a suitable groundworks service](../../service-selection.md)  
 Status: current  
-Reviewed: 2026-10-24
+Reviewed: 2026-10-28
 
 As a project visitor, I want to read the Markarbete service page so I can identify a broad groundwork offer for a private, business or municipal project.
 
@@ -15,7 +15,7 @@ As a project visitor, I want to read the Markarbete service page so I can identi
 1. Open /markarbete/.
 2. Read the route introduction, service summary and tags: Schakt, Tomt, Anläggning.
 3. Read När tjänsten passar and the four process steps.
-4. Follow Kontakta oss to /kontakt/.
+4. Follow Kontakta oss to /kontakt/?tjanst=markarbete with Markarbete preselected and still changeable in the inquiry form.
 
 ## Variants
 

@@ -1,6 +1,6 @@
 # F1: Choose a suitable groundworks service
 
-Reviewed: 2026-10-26. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-10-28. Runtime: `ui`. Product role: `customer_outcome`.
 
 Visitors need to identify which service fits a property or construction project
 before asking for a discussion. The current result is service understanding and
@@ -23,7 +23,10 @@ currently absent because the list is empty.
 
 [F1-US1](user-stories/F1/F1-US1.md) covers comparing these offers on home/index.
 Every detail view has a page hero, summary, tags, När tjänsten passar aside,
-four-step process, contact link band and footer. Service cards use photographs
+four-step process, contact link band and footer. Each detail view's band
+inquiry action targets `/kontakt/?tjanst=<service id>` with that view's typed
+service id, so the contact form opens with the matching option preselected
+(F3 owns that resolution and its defaults). Service cards use photographs
 with typed route SVG fallback; if the fallback SVG also errors, the card image
 is removed with no retry loop while title, summary and Läs mer remain. Page hero
 photograph errors hide the image and retain text. These decorative backgrounds
@@ -32,7 +35,8 @@ are not project case-study evidence.
 ## Outcome and support
 
 The visitor can select a matching service for a stated project and reach
-`/kontakt/` from that detail page. Those are observable task checks; no
+`/kontakt/` from that detail page with that service preselected in the
+inquiry form, still changeable. Those are observable task checks; no
 conversion analytics is installed. F4 supplies navigation/recovery. F2 explains
 the shared process and company claims; F3 owns inquiry preparation.
 There are no service APIs, background jobs, automatic estimates or booking records.
@@ -57,7 +61,9 @@ The services-index view is source-reviewed, not established by a dedicated
 existing rendered test. Metadata tests do not prove displayed image fallbacks;
 F1-US1 maps deterministic rendered image-error declarations for the home
 service-card photo→SVG fallback, terminal removal with content/link retention,
-and isolation from neighboring cards. These mappings do not establish
+and isolation from neighboring cards. The five service-page band inquiry
+destinations are each checked by the parameterized F3-US1 declaration listed in
+[project-inquiry.md](project-inquiry.md). These mappings do not establish
 services-index rendering or subpage hero failure behavior, and are not test
 execution receipts.
 

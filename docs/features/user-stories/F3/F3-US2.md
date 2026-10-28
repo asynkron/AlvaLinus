@@ -2,7 +2,7 @@
 
 Feature: [F3 — Prepare an initial project inquiry](../../project-inquiry.md)  
 Status: current  
-Reviewed: 2026-10-27
+Reviewed: 2026-10-28
 
 As a project visitor, I want to find the visible company email address so I can make contact with a working email tool.
 
@@ -19,7 +19,7 @@ As a project visitor, I want to find the visible company email address so I can 
 ## Variants
 
 - Footer contact is available on every ready routed page and not-found.
-- ContactLinkBand on about, index and service pages leads to /kontakt/ rather than embedding another form.
+- ContactLinkBand on about and index leads to /kontakt/ and on service pages to /kontakt/?tjanst=<service id>, rather than embedding another form; neither band submits anything itself.
 - The in-form fallback email link includes the configured subject; the footer email link contains only the recipient.
 
 ## Expected outcome
@@ -38,5 +38,6 @@ Copy the address into a working client or webmail; the site supplies no alternat
 - [src/pages/SiteHomePage.tsx](../../../../src/pages/SiteHomePage.tsx)
 
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `renders a static email handoff form and footer contact email` (direct): Checks the in-form fallback mailto recipient and subject and the footer's recipient-only email link on /kontakt/; does not exercise email software or copying.
+- vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `keeps the index and about inquiry actions generic while service pages carry service identity` (direct): Checks that index and about band links keep the generic /kontakt/ destination.
 
 Backend entry-point references: none (frontend-only). Test mappings were reviewed as source declarations; this document is not an execution receipt.
