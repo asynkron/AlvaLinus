@@ -9,7 +9,9 @@ a route to inquiry preparation, not an instant price or confirmed booking.
 ## Entry points and current behavior
 
 Home `/` and `/tjanster/` list the five typed service records with summaries,
-tags and Läs mer links. Home also supplies hero actions and route shortcuts.
+tags and visible Läs mer links. Each card link has the accessible name
+`Läs mer om <service title>` so its destination is identifiable outside the
+surrounding card on both home and the index. Home also supplies hero actions and route shortcuts.
 The index adds trust cards and a contact link band. Its partners section is
 currently absent because the list is empty.
 
@@ -58,14 +60,17 @@ Existing Vitest declarations directly check representative home tags,
 Stensättning guidance and Dränering/Grävjobb detail text. The six story documents
 and identity manifest carry exact names and the limited assertion scope.
 No dedicated Markarbete or Trädgårdsplanering render test is mapped.
-The services-index view is source-reviewed, not established by a dedicated
-existing rendered test. Metadata tests do not prove displayed image fallbacks;
+The parameterized declaration `names every service-card link by its destination on %s`
+renders both home and the services index and checks all five accessible link
+names, destinations and unchanged visible Läs mer text. It does not establish
+the index hero, trust section, layout or a complete assistive-technology flow.
+Metadata tests do not prove displayed image fallbacks;
 F1-US1 maps deterministic rendered image-error declarations for the home
 service-card photo→SVG fallback, terminal removal with content/link retention,
 and isolation from neighboring cards. The five service-page band inquiry
 destinations are each checked by the parameterized F3-US1 declaration listed in
 [project-inquiry.md](project-inquiry.md). These mappings do not establish
-services-index rendering or subpage hero failure behavior, and are not test
+services-index image fallback or subpage hero failure behavior, and are not test
 execution receipts.
 
 ## What Works Less Well
@@ -83,5 +88,6 @@ little guidance on what to provide before asking for a visit.
 - Expand: add concrete completed-project examples to the appropriate service
   views when approved media and descriptions exist.
 - Coverage: when those pages change, protect the distinct rendered
-  Markarbete/Trädgårdsplanering and index contracts at the page boundary.
+  Markarbete/Trädgårdsplanering and remaining index contracts at the page
+  boundary; retain the existing home/index accessible-link coverage.
 

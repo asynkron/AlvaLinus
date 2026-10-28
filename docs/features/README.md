@@ -3,9 +3,10 @@
 Reviewed against source: 2026-10-28.
 
 The catalog introduced in `f7b481f` already covers the current route inventory.
-This refresh retains its published identities and adds F4-US3 for the shipped
-keyboard bypass. It reconciles mobile keyboard preservation and the explicit
-email-handoff explanation with their source and story evidence.
+The maintained catalog retains its published identities, including F4-US3 for
+the shipped keyboard bypass. This review also reconciles the distinct Swedish
+service-card link names shipped in `8c9af38` with F1-US1 evidence on home and the
+services index.
 
 This catalog maps the static Swedish Svärd Entreprenad site to visitor outcomes.
 It is product-development input, not a claim that construction work, email delivery
@@ -81,7 +82,7 @@ does not provide persistence, delivery assurance or a privacy/compliance verdict
   [Backend entry points](backend-entry-points.json) records the intentionally
   empty backend boundary.
 - IDs F1–F4 and their original twelve story IDs were allocated in `f7b481f`.
-  This refresh adds F4-US3 without changing those identities. Retain them and
+  F4-US3 was subsequently added without changing those identities. Retain them and
   the feature-document joins on future edits; leave removed IDs
   absent forever. No earlier IDs were found in the available checkout/history;
   that initial search is not proof of historical non-reuse outside that evidence.
@@ -105,8 +106,11 @@ does not provide persistence, delivery assurance or a privacy/compliance verdict
   button, lack of a sent confirmation and subject-bearing in-form fallback.
   F1-US1 maps the home service-card photo/SVG failure and neighboring-card
   isolation declarations. These are source-reviewed mappings, not execution
-  receipts or proof of responsive layout in a browser. Dedicated
-  Markarbete/Trädgårdsplanering rendering, index rendering, desktop dropdown
+  receipts or proof of responsive layout in a browser. F1-US1 also maps the
+  parameterized home/index check of all five service-card accessible names,
+  destinations and visible Läs mer labels. This establishes only that link
+  facet of the index. Dedicated Markarbete/Trädgårdsplanering rendering,
+  other index sections, desktop dropdown
   interaction, subpage hero image failure and actual email sending remain
   outside the mapped assertions.
 - Required proof: `feature-manifest-integrity`, runner

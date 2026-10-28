@@ -74,6 +74,13 @@
             {
               "framework": "vitest",
               "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "names every service-card link by its destination on %s",
+              "evidence_type": "direct",
+              "supports": "Parameterized home and services-index cases check all five accessible names, matching hrefs and unchanged visible Läs mer text. Does not establish other index sections, browser layout or a complete assistive-technology flow."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
               "name": "falls back to the route SVG on the first photo error and removes the image when the fallback also fails",
               "evidence_type": "direct",
               "supports": "Checks the home Stensättning card's photo/SVG failures, retained title, summary and service link, and terminal image removal. Does not render the services index or subpage heroes."
@@ -93,12 +100,13 @@
           "flow": [
             "Open / or /tjanster/.",
             "Compare Stensättning, Markarbete, Grävjobb, Dränering and Trädgårdsplanering.",
-            "Follow Läs mer to the appropriate detail route."
+            "Follow the appropriate Läs mer link, whose accessible name includes the service title, to its detail route."
           ],
           "variants": [
             "Home adds hero, route shortcuts and process.",
             "The services index adds trust content and an inquiry link band.",
-            "Service card photos fall back to route SVGs on image error; a failed SVG removes the image while keeping the title, summary and Läs mer link. Neighboring cards retain their own images and content."
+            "Service card photos fall back to route SVGs on image error; a failed SVG removes the image while keeping the title, summary and Läs mer link. Neighboring cards retain their own images and content.",
+            "On both views, visible Läs mer links are named Läs mer om <service title> for assistive technology and link-list navigation."
           ],
           "expected_outcome": "A matching service route can be selected from the five cards.",
           "failure_behavior": "No services shows Inget innehåll ännu on home and the services index instead of the service body.",
