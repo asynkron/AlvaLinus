@@ -1,14 +1,16 @@
 # Product and operation roadmap
 
-Reviewed: 2026-10-27 (fk44), source baseline
-`f730d4d6da104a84e80ba8f3662e2096801610d9`.
+Reviewed: 2026-10-28 (fk54), source baseline
+`d45ec4b788da36340c897e753416015e7f7fb708`.
 
 This roadmap connects the Swedish Svärd Entreprenad website to operating a
 product with minimal human intervention. Source capability, task delivery,
 accepted quality and observed production operation are separate evidence.
 Goals are proposed work, not authorization to expand the site's runtime.
-This refresh supersedes fk35's October 26 assessment: its two next steps have
-shipped. Earlier assessments remain in Git; their ownership is reconciled below.
+This refresh supersedes fk44's October 27 assessment: its two next steps have
+shipped. The previous document was read in full and reconciled with its exact
+merge and current source. Earlier assessments remain in Git; their ownership
+is reconciled below.
 
 ## Where we are
 
@@ -31,7 +33,8 @@ These are implemented source capabilities, not evidence of live publication.
 
 The [feature catalog](features/README.md) maps service selection, company
 confidence, project inquiry and supporting navigation to four stable feature
-IDs and twelve stories. fk32's catalog maintenance is now delivered.
+IDs and thirteen stories, including F4-US3 for keyboard bypass. fk51 reconciled
+the shipped keyboard and email behavior with the catalog.
 The [Live recipe](../.faktorial/live.json) starts the existing Vite app through
 [scripts/live.mjs](../scripts/live.mjs), using Faktorial's assigned loopback
 host and strict port without secrets or external services. A committed recipe
@@ -62,26 +65,31 @@ does not establish a running preview or production deployment.
   identity remain separate contracts.
 - [ADR 0006](adrs/0006-static-email-contact-handoff.md) bounds contact to a
   native mail-client handoff with a visible fallback address and no stored inquiries.
+- The Swedish skip link now precedes repeated navigation and targets one
+  `#content` destination per rendered state. Ready bodies are explicitly
+  focusable; availability sections retain anchors without explicit tabIndex.
+  DOM declarations do not establish browser scrolling, anchor focus transfer
+  or focus-only CSS visibility; see [F4](features/navigation-and-recovery.md).
+- The quote form now explains the external email-program send step and lack
+  of website delivery confirmation. Its accessible description and in-form
+  direct-email fallback preserve the native handoff without storing inquiries.
 
 ### What works less well and what to improve
 
-- Keyboard visitors have no skip link past the repeated header. SiteHomePage
-  wraps Header and ContentSurface inside main; ready routes have no stable
-  content destination, while loading/error/empty sections alone use
-  `id="content"`. **Next 1** provides a consistent keyboard bypass.
-  This is separate from mobile-menu dismissal owned by fk43.
-- The quote form says “Skicka offertförfrågan” without explaining beside the
-  action that it requires compatible email software and that the visitor sends
-  the message there. The site cannot confirm sending or receipt.
-  [F3's catalog](features/project-inquiry.md) identifies this concrete ambiguity.
-  **Next 2** clarifies the existing handoff and direct-email recovery.
+- `ContentSurface` returns the global empty state whenever services are empty,
+  before routing. This hides otherwise valid about/contact content and
+  unknown-route recovery. **Next 1** isolates that unrelated dependency.
+- `ServicePage` renders the generic `ContactLinkBand` pointing to `/kontakt/`.
+  The inquiry form has no initial service context, so visitors must choose
+  again. [F3](features/project-inquiry.md) records this limitation.
+  **Next 2** carries the service choice while preserving manual selection.
 - Four WebP photographs are present; five requested photographs remain absent
   ([image requests](image-requests.md)). Acquisition and approval remain editorial
   work, distinct from delivered image-failure resilience.
-- [F4's catalog](features/navigation-and-recovery.md) identifies a global
-  empty-services guard that also hides available about/contact bodies, and
-  repeated navigation declarations that can drift. These are later candidates,
-  not additional issues created by this refresh.
+- [F4's catalog](features/navigation-and-recovery.md) also identifies repeated
+  navigation declarations that can drift. Reconcile them when navigation changes;
+  no third issue is created here. Error feedback has no inline retry; the loader
+  is local, so a source defect needs a corrected static deployment.
 - Production host, publication access and artifact retention are unestablished.
   A runbook and checksum tools cannot demonstrate rollback or recovery time.
 - Inquiry conversion, delivery and satisfaction are unmeasured. Marketing and
@@ -91,28 +99,28 @@ does not establish a running preview or production deployment.
 
 ## Delivered work and ownership reconciliation
 
-Current owning get_task records and complete open/closed list_tasks membership
-were read on October 27. Immediately before creating follow-ups, only fk43 and
-fk44 were open (2 open, 38 closed). The checkout has advanced from investigation's
-`a79c151`: the roadmap and suspected route-inventory repair already exist.
-Neither is recreated as missing work.
+Authenticated owning task reads and complete one-page open/closed membership
+reads were made on October 28. Before creating follow-ups, only fk53/fk54 were
+open (2 open, 48 closed). The checkout advanced from Investigation's `a79c151`
+to `d45ec4b`: the prior roadmap and its follow-ups are present. Exact Git history
+and current owning records reconcile the apparent missing-roadmap concern.
 
 | Work | Current owning evidence | Disposition |
 | --- | --- | --- |
-| [fk35](https://app.faktorial.ai/projects/alvalinus/tasks/fk35), previous roadmap | List/lifecycle closed/done; merge `ac7fc47`, PR #61. Previous document read in full. | Superseded assessment; preserve fk36/fk37 as its historical follow-ups. |
-| [fk36](https://app.faktorial.ai/projects/alvalinus/tasks/fk36), route validation | List/lifecycle closed/done; merge `e670adc`, PR #63; retained quality pass at `434ac18`. Shared validator and fixtures present. | Retire previous Next 1 as shipped; no replacement validation issue. |
-| [fk37](https://app.faktorial.ai/projects/alvalinus/tasks/fk37), artifact checksums | List/lifecycle closed/done; merge `50e3c35`, PR #64; retained quality pass at `76e2a3c`. Commands and runbook present. | Retire previous Next 2 as shipped; live publication remains unknown. |
-| [fk32](https://app.faktorial.ai/projects/alvalinus/tasks/fk32), catalog maintenance | Closed/done; merge `bd770a4`, PR #60; retained quality pass at `a82329c`. | Retire stale active-owner wording. Next 2 implements its documented F3 improvement, not catalog rediscovery. |
-| [fk34](https://app.faktorial.ai/projects/alvalinus/tasks/fk34), mobile tests | List/lifecycle closed/done; merge `bf2b27e`, PR #62; retained quality pass at `53f9106`. | Coverage delivered; preserve it. Skip-link work adds a different visitor capability. |
-| [fk43](https://app.faktorial.ai/projects/alvalinus/tasks/fk43), current frontend run | Open/active build at refresh; mobile Escape/focus behavior and regression coverage. | Unresolved ownership blocks duplicate menu work. This roadmap does not assess its candidate or replace its scope. |
+| [fk44](https://app.faktorial.ai/projects/alvalinus/tasks/fk44), previous roadmap | Closed/done; PR #67, merge `a813d149`, candidate `277ed6e`. Document read in full. | Superseded assessment; preserve fk45/fk46 as delivered history. |
+| [fk45](https://app.faktorial.ai/projects/alvalinus/tasks/fk45), keyboard bypass | Closed/done; PR #69, merge `5f7d797`; retained native quality pass at `ab82ea8`. Link and targets present. | Previous Next 1 shipped; no duplicate skip-link issue. |
+| [fk46](https://app.faktorial.ai/projects/alvalinus/tasks/fk46), email explanation | Closed/done; PR #68, merge `4b60d72`; retained native quality pass at `86815f8`. Explanation and fallback present. | Previous Next 2 shipped. New Next 2 extends service context, not mail delivery or explanation. |
+| [fk43](https://app.faktorial.ai/projects/alvalinus/tasks/fk43), mobile preservation | Closed/done; PR #66, merge `4aac7aa`; retained native quality pass at `6003b87`. | Preserve delivered menu coverage; no replacement menu task. |
+| [fk51](https://app.faktorial.ai/projects/alvalinus/tasks/fk51), catalog reconciliation | Closed/done; PR #70, merge `d45ec4b`; retained native quality pass at `e014249`. | Current catalog supersedes twelve-story and unexplained-handoff descriptions. |
+| [fk53](https://app.faktorial.ai/projects/alvalinus/tasks/fk53), current frontend run | Open; queue at 12:40:31 UTC shows return to Investigation because the selected mobile capability already exists. Revised scope not yet observed. | Unresolved ownership remains reserved. Recheck revised scope before implementing the two priorities below. |
 
-Earlier roadmap references were also refreshed through owning records: fk3/fk24
-(roadmaps), fk10 (reporter), fk11 (runbook), fk5/fk23 (mobile dismissal), fk8
-(dependencies), and fk25/fk26 (image recovery/registry checks) remain list/lifecycle
-closed/done. None is reopened here. fk25/fk26, and now fk36/fk37, retain open
-issue-document fields despite closed/done list/lifecycle projections. Named
-merge receipts and source support delivery; this refresh reports the discrepancy
-without changing task policy.
+The prior roadmap's older Done references were checked against current owning
+list membership: fk3/fk24/fk35 (roadmaps), fk10 (reporter), fk11 (runbook),
+fk5/fk23/fk34 (mobile), fk8 (dependencies), fk25/fk26 (image/registry recovery),
+fk32 (catalog), and fk36/fk37 (route validation/checksums) remain closed/done.
+None is reopened or recreated. Their earlier merge details remain in fk44's
+Git version; this refresh invents no new acceptance receipts. Historical
+issue-field inconsistencies do not authorize platform recovery or policy changes.
 
 fk9's record/list is closed; its lifecycle is closed with stage build rather
 than a clean done closeout. This is not treated as active catalog ownership or
@@ -124,16 +132,15 @@ to their named heads, never to this roadmap candidate, current main or deploymen
 
 | Priority | Outcome and observable acceptance | Owner and scope |
 | --- | --- | --- |
-| Next 1 | A Swedish skip link precedes repeated navigation, becomes visible on focus, and reaches a stable focusable page-body target across ready/loading/error/empty/not-found states. Preserve routes, assets and menu behavior; protect the owning DOM behavior deterministically. | Newly created [fk45 — keyboard navigation bypass](https://app.faktorial.ai/projects/alvalinus/tasks/fk45). Native HTML and existing styles; no menu redesign, dependencies or compliance certification. |
-| Next 2 | Explain the external mail-client requirement before the form action on home and contact pages, associate the explanation accessibly with the form, and make direct-email fallback identifiable. Preserve native validation, recipient, subject and mailto action; never imply delivery confirmation. | Newly created [fk46 — explain email handoff](https://app.faktorial.ai/projects/alvalinus/tasks/fk46). Reuse typed content; update F3 documentation and shared contact coverage. No backend, new personal-data fields, storage or tracking. |
+| Next 1 | With empty service records, about/contact retain their valid body, form and fallback email; home/services retain clear empty feedback and unknown paths retain meaningful recovery. Preserve skip-link destinations and loading/error behavior; cover the rendered boundary in memory. | Newly created [fk55 — independent about/contact availability](https://app.faktorial.ai/projects/alvalinus/tasks/fk55). Existing typed routes and renderer; no loader, menu or runtime redesign. Update F4's availability contract. |
+| Next 2 | Each service-page inquiry action carries recognized service context into the existing contact select. Visitors can change it; missing/invalid context retains safe defaults. Preserve native mailto semantics, explanation and fallback; cover the link-to-form flow in memory. | Newly created [fk56 — carry service choice into inquiry](https://app.faktorial.ai/projects/alvalinus/tasks/fk56). Native URL mechanism and typed options; no new routes, persistence, personal-data fields or dependencies. Update F3 and affected service stories. |
 
-Exactly two new issues were created by **fk44**: fk45 and fk46. Independent
-get_task readbacks confirmed both open, with persisted titles and complete bodies
-matching the submitted scope and acceptance. Their links above identify the
-owning project tasks. Their capabilities are not implemented in this documentation
-change. Each solves distinct source-observed friction; neither duplicates
-unresolved fk43. Refresh source and owning states before execution or another
-roadmap pass, even if older text says Done.
+Exactly two new issues were created by **fk54**: fk55 and fk56. Independent
+get_task readbacks confirmed both open, with persisted titles and full bodies
+matching the submitted scope and acceptance. These are owner assignments, not
+implemented capabilities. They can ship independently but share a renderer file;
+refresh source and owning states before editing. Neither duplicates fk53's
+retained menu scope; its reassessment must respect these reserved priorities.
 
 ## Long-term goals
 
@@ -147,10 +154,10 @@ roadmap pass, even if older text says Done.
    Target releases traceable to accepted source and restorable prior artifacts.
    Consider host-specific automation only after those facts and explicit access
    decisions; do not add speculative infrastructure to the site.
-3. **Intentional customer outcomes.** Improve keyboard access and explain the
-   email handoff first. Later consider independent about/contact recovery,
-   route-driven navigation and approved missing imagery. Define useful inquiry
-   signals and privacy needs before promising delivery guarantees or telemetry.
+3. **Resilient customer journeys.** Keep company/contact content available
+   independently of services and preserve service intent into inquiry preparation.
+   Improve navigation consistency and approved missing imagery. Define useful
+   inquiry signals and privacy needs before promising delivery or telemetry.
 4. **Evidence-led cross-product learning.** Compare booking and Asynkron.JsEngine
    when their repositories and operational evidence are available. Transfer
    demonstrated practices with explicit owners. The autonomous factory operates
@@ -158,35 +165,30 @@ roadmap pass, even if older text says Done.
 
 ## Evidence boundaries and update triggers
 
-- Read the previous roadmap in full, README, route inventory, rules index,
-  F3/F4 catalog documents, image requests, release runbook, recent commit changes,
-  renderer, typed content, route validator and relevant DOM declarations.
-  TypeScript LSP resolved SiteHomePage and Contact with state=ok at the baseline.
-  Focused search in src found no skip/autocomplete/mail-client explanation matches;
-  output was untruncated, enrichment suppressed. Source inspection grounds the
-  two findings; no runtime defect or compliance assessment is claimed.
-- /api/logs/fk44/summary returned HTTP 200, state=ok, explicitly
-  source=issue_fallback with no raw log. This is task context, not traffic.
-  The queue at 12:42:45 UTC showed fk43/fk44 active and CI signals disabled;
-  it did not demonstrate a website or quality failure.
-- At 12:42:45 UTC on October 27, one-day Faktorial API usage reported 63,072
-  calls across 18 endpoints; top-three output omitted 15 endpoints.
-  Canvas context checks and task reads led. Independent reliability was partial:
-  truncated retained spans, incomplete route joins, unknown sampling and
-  unavailable revision comparability. Matched spans covered 12:37:33–12:42:41 UTC,
-  not the requested day. These are control-plane counts, not website visitors or
-  autonomous product outcomes. No error rate combines the two populations.
-- Worker metrics sampled 12:42:44.296 UTC, observed 12:42:45.655 UTC, were fresh
-  (stale=false); CPU was platform-unavailable. Twenty retained history points
-  were unattributed to this claim. They do not measure website speed.
+- Read the previous roadmap in full, README, rules index, F3/F4 catalog,
+  image requests, release runbook, ADR 0006 and recent Git changes. Current
+  TypeScript LSP resolved ContentSurface, ServicePage and Contact with state=ok
+  at the baseline. Source establishes the two gaps; no production defect,
+  conversion loss or compliance assessment is claimed.
+- Authenticated /api/logs/fk54/summary returned HTTP 200/state=ok with a bounded
+  worker log summary containing truncation. It describes agent work, not traffic.
+  Queue reads are execution projections; disabled CI signals do not establish
+  a website or quality failure.
+- One-day Faktorial API usage at 12:40:42 UTC on October 28 reported 61,601
+  control-plane calls across 12 endpoints; the top-three response omitted nine.
+  Canvas checks and task reads led. Independent reliability was partial:
+  capped retained spans, incomplete joins, unknown sampling and unavailable
+  revision comparability; matched spans covered only 12:36:34–12:40:40 UTC.
+  These populations cannot be combined into a website error rate or demand
+  estimate. Worker resources likewise do not measure website speed.
 - Website traffic, inquiry outcomes and production logs remain unavailable.
   The application has no database; Cloud serving-process database telemetry
   would describe another system and was not substituted for product data.
   No new privacy or compliance verdict is claimed.
-- Exact ../booking, ../Asynkron.JsEngine, D:/FaktorialAgent/booking and
-  D:/FaktorialAgent/Asynkron.JsEngine paths were checked and are absent on this
-  worker. Other locations remain unknown. No cross-repository inspection is
-  claimed; credentials and platform-state files were not used as substitutes.
+- Exact ../booking and ../Asynkron.JsEngine paths are absent in this checkout's
+  parent. Other locations and cross-project operational evidence remain unknown.
+  No sibling source inspection or changes are claimed; credentials and
+  platform-state files were not used as substitutes.
 - Refresh when source, task scope/state, accepted quality, publication records
   or adjacent-source availability changes. Preserve supersession reasons and
   ownership. No tests, typechecks, builds or quality commands ran in this agent
