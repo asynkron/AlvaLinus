@@ -1,6 +1,6 @@
 # F2: Assess the company and working approach
 
-Reviewed: 2026-10-26. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-10-28. Runtime: `ui`. Product role: `customer_outcome`.
 
 Prospective customers need to understand the stated approach and decide whether
 to discuss a project. This feature presents information; it does not certify
@@ -35,8 +35,8 @@ background relations, incoming backend ports or compliance verification services
 [siteContent](../../src/data/siteContent.ts) owns about paragraphs, process,
 trust statements, hero values and the empty partner list.
 [SiteHomePage](../../src/pages/SiteHomePage.tsx) owns AboutPage, About, Process,
-Trust and Partners. About content shares the global error/loading/empty
-behavior; empty services currently suppresses even the about page. Reloading
+Trust and Partners. About content shares the global error/loading behavior
+and keeps its body when the services list is empty. Reloading
 cannot repair a missing deployed record; maintainers must correct the source.
 
 Exact reviewed Vitest mappings are in the story documents and

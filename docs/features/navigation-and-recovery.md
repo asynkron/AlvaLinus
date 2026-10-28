@@ -1,6 +1,6 @@
 # F4: Home, navigation and route recovery
 
-Reviewed: 2026-10-27. Runtime: `ui`. Product role: `surface`.
+Reviewed: 2026-10-28. Runtime: `ui`. Product role: `surface`.
 Supports **F1, F2, F3**, all active customer-outcome features.
 
 Home and shared route handling make the service, company and inquiry outcomes
@@ -45,7 +45,7 @@ handlers. See [route inventory](../current-public-route-inventory.md).
 | --- | --- | --- |
 | Loading | Header plus Laddar innehåll skeleton | Await local asynchronous content resolution; no network request is made by the loader. |
 | Error | Header plus Innehåll kunde inte laddas alert and error message | No inline retry; reload. A deployed source defect needs a new static deployment. |
-| Empty services | Header plus Inget innehåll ännu | Applies to every route kind, including about/contact; route selection cannot bypass this guard. |
+| Empty services | Header plus Inget innehåll ännu | Applies to the service-dependent home and services-index bodies. About and contact keep their own bodies; a service route without its record and an unknown route use not-found recovery. |
 | Ready known route | Typed route view plus footer | Missing joined service record goes to not-found. |
 | Ready unknown route | Sidan finns inte, route shortcuts and footer | Follow a declared shortcut. A static host may return its own error before React mounts, so this is an in-app guarantee only. |
 | Photo error | Service card switches to the route SVG; if that fallback also errors, the card image is removed with no retry loop. Subpage hero hides its image. | Title, summary and Läs mer link remain. Home hero has no equivalent explicit onError handler. |
@@ -87,16 +87,12 @@ claim for the route inventory.
 
 ## What Works Less Well
 
-The global empty-services guard hides the about and contact bodies even when
-their own content is available, removing useful fallback information from those
-routes. Navigation destinations are repeated across SERVICE_NAV, header/footer
+Navigation destinations are repeated across SERVICE_NAV, header/footer
 markup and typed inventory, so route edits can drift. Error feedback provides
 no inline retry or contact body.
 
 ## Roadmap
 
-- Fix: evaluate route-specific empty states so service-content loss does not
-  suppress otherwise valid about/contact content; retain clear service feedback.
 - Fix: reconcile repeated navigation declarations through the existing typed
   route model when changing navigation, preserving link order and accessible labels.
 - Expand: protect desktop dropdown keyboard behavior when that flow changes,

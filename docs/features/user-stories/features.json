@@ -25,10 +25,11 @@
           "Services index",
           "Five dedicated service pages",
           "Missing service resolves to not-found",
-          "Global loading/error/empty states"
+          "Shared loading/error states",
+          "Empty-services feedback on home and the services index"
         ],
         "current_limitations": "Service detail pages share a generic suitability aside and process; Markarbete and Trädgårdsplanering have no dedicated rendered-page test mapping.",
-        "failure_behavior": "A missing service record yields not-found. An empty services list replaces every route body with the empty state.",
+        "failure_behavior": "A missing service record yields not-found. An empty services list replaces the home and services-index bodies with the empty state.",
         "recovery": "Use a declared route or restore the missing typed content and redeploy; the page has no content-editing interface.",
         "runtime_owners": [
           "src/pages/SiteHomePage.tsx",
@@ -100,7 +101,7 @@
             "Service card photos fall back to route SVGs on image error; a failed SVG removes the image while keeping the title, summary and Läs mer link. Neighboring cards retain their own images and content."
           ],
           "expected_outcome": "A matching service route can be selected from the five cards.",
-          "failure_behavior": "No services shows Inget innehåll ännu instead of the route body.",
+          "failure_behavior": "No services shows Inget innehåll ännu on home and the services index instead of the service body.",
           "recovery": "Reload after a content deployment; use the header links to choose a route."
         },
         {
@@ -320,7 +321,7 @@
           "Partners omitted for the current empty list"
         ],
         "current_limitations": "Trust statements describe experience, certification and guarantees without linked supporting credentials or project case studies in these sections.",
-        "failure_behavior": "About shares the global load/error/empty handling; an empty partner list intentionally renders no partner section.",
+        "failure_behavior": "About shares the global load/error handling and keeps its body when services is empty; an empty partner list intentionally renders no partner section.",
         "recovery": "Reload for transient loading problems; maintainers must correct missing content through a static deployment.",
         "runtime_owners": [
           "src/pages/SiteHomePage.tsx",
@@ -577,7 +578,7 @@
           "Mobile menu closed/open",
           "Keyboard bypass to the page body"
         ],
-        "current_limitations": "Navigation destinations are repeated in Header/SERVICE_NAV, Footer and the typed inventory. Empty services suppresses even about and contact route bodies. Hosting may reject unknown paths before React can display not-found.",
+        "current_limitations": "Navigation destinations are repeated in Header/SERVICE_NAV, Footer and the typed inventory. Hosting may reject unknown paths before React can display not-found.",
         "failure_behavior": "Load errors show an alert without a retry control; unknown in-app paths show declared-route shortcuts. Loading/error/empty states retain the header but have no footer.",
         "recovery": "Use header links or reload; unknown ready routes provide all registered shortcuts. Static-host handling remains a deployment concern.",
         "runtime_owners": [
@@ -701,9 +702,23 @@
             {
               "framework": "vitest",
               "path": "src/pages/SiteHomePage.test.tsx",
-              "name": "shows an empty state when static data has no services",
+              "name": "keeps $label empty-services feedback when services are empty",
               "evidence_type": "direct",
-              "supports": "Checks the empty-state heading."
+              "supports": "Parameterized home and services-index cases check the empty-state heading and the absence of other route bodies."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "keeps about and contact bodies available when services are empty",
+              "evidence_type": "direct",
+              "supports": "Checks the about body and the contact form, handoff note and fallback email with one #content target and retained header/footer."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "keeps service and unknown routes on not-found recovery when services are empty",
+              "evidence_type": "direct",
+              "supports": "Checks that a service route without its record and an unknown route use not-found recovery instead of the empty state."
             },
             {
               "framework": "vitest",
@@ -716,12 +731,12 @@
           "entry_point_refs": [],
           "preconditions": [
             "React has mounted.",
-            "For not-found, content is ready and services is nonempty."
+            "For not-found, content is ready."
           ],
           "flow": [
             "Wait while Laddar innehåll is displayed.",
             "If loading fails, read the error alert.",
-            "If services is empty, recognize Inget innehåll ännu.",
+            "If services is empty, recognize Inget innehåll ännu on home and the services index; about and contact keep their bodies.",
             "For an unknown ready path, use a Sidan finns inte shortcut to a registered route."
           ],
           "variants": [
@@ -730,7 +745,7 @@
             "Normal content is loaded asynchronously from a bundled module, without network I/O."
           ],
           "expected_outcome": "The rendered state identifies content availability and provides route recovery when ready.",
-          "failure_behavior": "Error and empty states have no inline retry; the empty-services guard applies to all route kinds.",
+          "failure_behavior": "Error and empty states have no inline retry; the empty-services feedback applies to the service-dependent home and services-index bodies.",
           "recovery": "Reload for a fresh load or use header navigation; a content defect needs a corrected static deployment."
         },
         {
