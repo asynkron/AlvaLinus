@@ -69,7 +69,7 @@
     },
     {
       "name": "Prepare an initial project inquiry",
-      "description": "Visitors collect initial project details and initiate a static email handoff or use the visible contact address.",
+      "description": "Visitors collect initial project details, arrive with the service preselected when coming from a service-page inquiry action, and initiate a static email handoff or use the visible contact address.",
       "document": "docs/features/project-inquiry.md",
       "route_scope": "/, /kontakt/",
       "routes": [
@@ -80,6 +80,10 @@
         {
           "path": "src/data/siteContent.ts",
           "description": "Typed route registry, service records and Swedish product content."
+        },
+        {
+          "path": "src/lib/inquiry-service.ts",
+          "description": "Typed inquiry-service context helpers: contact query destinations, URL parameter read and select-option resolution."
         },
         {
           "path": "src/pages/SiteHomePage.tsx",

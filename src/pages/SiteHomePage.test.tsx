@@ -455,6 +455,126 @@ describe("SiteHomePage", () => {
     expect(screen.queryByRole("link", { name: /Källa/ })).not.toBeInTheDocument();
   });
 
+  it.each([
+    { id: "stensattning", path: "/stensattning/" },
+    { id: "markarbete", path: "/markarbete/" },
+    { id: "gravjobb", path: "/gravjobb/" },
+    { id: "dranering", path: "/dranering/" },
+    { id: "tradgard", path: "/tradgardsplanering/" },
+  ])("carries the stable $id service identity in the $path inquiry action", ({ id, path }) => {
+    render(<SiteHomePage currentPath={path} initialState={{ status: "ready", content }} />);
+
+    expect(screen.getByRole("link", { name: "Kontakta oss" })).toHaveAttribute(
+      "href",
+      `/kontakt/?tjanst=${id}`,
+    );
+  });
+
+  it("keeps the index and about inquiry actions generic while service pages carry service identity", () => {
+    const { rerender } = render(
+      <SiteHomePage currentPath="/tjanster/" initialState={{ status: "ready", content }} />,
+    );
+
+    expect(screen.getByRole("link", { name: "Kontakta oss" })).toHaveAttribute("href", "/kontakt/");
+
+    rerender(<SiteHomePage currentPath="/om-oss/" initialState={{ status: "ready", content }} />);
+
+    expect(screen.getByRole("link", { name: "Kontakta oss" })).toHaveAttribute("href", "/kontakt/");
+  });
+
+  it("follows a service page inquiry action into contact, selects that service and preserves a later manual change", () => {
+    const { rerender } = render(
+      <SiteHomePage currentPath="/dranering/" initialState={{ status: "ready", content }} />,
+    );
+
+    const inquiryHref = screen.getByRole("link", { name: "Kontakta oss" }).getAttribute("href");
+    expect(inquiryHref).not.toBeNull();
+
+    const url = new URL(inquiryHref as string, "https://alvalinus.example");
+    expect(url.pathname).toBe("/kontakt/");
+
+    rerender(
+      <SiteHomePage
+        currentPath={url.pathname}
+        initialState={{ status: "ready", content }}
+        inquiryServiceId={url.searchParams.get("tjanst") ?? undefined}
+      />,
+    );
+
+    const form = screen.getByRole("form", { name: "Offertförfrågan via e-post" });
+    const serviceSelect = within(form).getByLabelText("Tjänst");
+
+    expect(serviceSelect).toHaveAttribute("name", "service");
+    expect(serviceSelect).toHaveValue("Dränering");
+
+    fireEvent.change(serviceSelect, { target: { value: "Annat" } });
+
+    expect(serviceSelect).toHaveValue("Annat");
+    expect(serviceSelect).toHaveDisplayValue("Annat");
+  });
+
+  it("keeps the typed default service selection on home and direct contact without inquiry context", () => {
+    const { rerender } = render(<SiteHomePage initialState={{ status: "ready", content }} />);
+
+    const homeForm = screen.getByRole("form", { name: "Offertförfrågan via e-post" });
+    expect(within(homeForm).getByLabelText("Tjänst")).toHaveValue(content.contact.form.serviceField.options[0]);
+
+    rerender(<SiteHomePage currentPath="/kontakt/" initialState={{ status: "ready", content }} />);
+
+    const contactForm = screen.getByRole("form", { name: "Offertförfrågan via e-post" });
+    expect(within(contactForm).getByLabelText("Tjänst")).toHaveValue(content.contact.form.serviceField.options[0]);
+  });
+
+  it.each(["pool", "Stensättning", "dranering/", "<script>alert(1)</script>"])(
+    "retains the default service selection for unrecognized inquiry context $context",
+    (serviceId) => {
+      render(
+        <SiteHomePage currentPath="/kontakt/" initialState={{ status: "ready", content }} inquiryServiceId={serviceId} />,
+      );
+
+      const form = screen.getByRole("form", { name: "Offertförfrågan via e-post" });
+      const serviceSelect = within(form).getByLabelText("Tjänst");
+
+      expect(serviceSelect).toHaveValue(content.contact.form.serviceField.options[0]);
+      expect(
+        within(serviceSelect)
+          .getAllByRole("option")
+          .map((option) => option.textContent),
+      ).toEqual([...content.contact.form.serviceField.options]);
+      expect(form.querySelectorAll("script")).toHaveLength(0);
+    },
+  );
+
+  it("retains the default service selection when a recognized service has no matching typed option", () => {
+    const optionsWithoutDrainage = content.contact.form.serviceField.options.filter(
+      (option) => option !== "Dränering",
+    );
+    const adjustedContent: SiteContent = {
+      ...content,
+      contact: {
+        ...content.contact,
+        form: {
+          ...content.contact.form,
+          serviceField: { ...content.contact.form.serviceField, options: optionsWithoutDrainage },
+        },
+      },
+    };
+
+    render(
+      <SiteHomePage currentPath="/kontakt/" initialState={{ status: "ready", content: adjustedContent }} inquiryServiceId="dranering" />,
+    );
+
+    const form = screen.getByRole("form", { name: "Offertförfrågan via e-post" });
+    const serviceSelect = within(form).getByLabelText("Tjänst");
+
+    expect(serviceSelect).toHaveValue(content.contact.form.serviceField.options[0]);
+    expect(
+      within(serviceSelect)
+        .getAllByRole("option")
+        .map((option) => option.textContent),
+    ).toEqual(optionsWithoutDrainage);
+  });
+
   it("fails unknown paths gracefully", () => {
     render(<SiteHomePage currentPath="/saknas/" initialState={{ status: "ready", content }} />);
 

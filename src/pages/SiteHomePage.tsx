@@ -17,6 +17,7 @@ import { type KeyboardEvent, useEffect, useRef, useState } from "react";
 import { StaticState } from "../components/StaticState";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { inquiryContactHref, resolveInquiryServiceOption } from "../lib/inquiry-service";
 import { loadSiteContent } from "../lib/site-content";
 import type { ServiceArea, SiteContent, SiteRoute } from "../types/site";
 
@@ -55,10 +56,11 @@ type LoadState =
 
 type SiteHomePageProps = {
   readonly currentPath?: string;
+  readonly inquiryServiceId?: string;
   readonly initialState?: LoadState;
 };
 
-export function SiteHomePage({ currentPath = "/", initialState }: SiteHomePageProps) {
+export function SiteHomePage({ currentPath = "/", inquiryServiceId, initialState }: SiteHomePageProps) {
   const [state, setState] = useState<LoadState>(initialState ?? { status: "loading" });
 
   useEffect(() => {
@@ -95,7 +97,7 @@ export function SiteHomePage({ currentPath = "/", initialState }: SiteHomePagePr
         Hoppa till innehåll
       </a>
       <Header currentPath={currentPath} />
-      <ContentSurface currentPath={currentPath} state={state} />
+      <ContentSurface currentPath={currentPath} inquiryServiceId={inquiryServiceId} state={state} />
     </main>
   );
 }
@@ -278,7 +280,15 @@ function Header({ currentPath = "/" }: { readonly currentPath?: string }) {
   );
 }
 
-function ContentSurface({ currentPath, state }: { readonly currentPath: string; readonly state: LoadState }) {
+function ContentSurface({
+  currentPath,
+  inquiryServiceId,
+  state,
+}: {
+  readonly currentPath: string;
+  readonly inquiryServiceId?: string;
+  readonly state: LoadState;
+}) {
   if (state.status === "loading") {
     return (
       <section id="content" className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
@@ -308,7 +318,11 @@ function ContentSurface({ currentPath, state }: { readonly currentPath: string; 
 
   return (
     <div id="content" tabIndex={-1} className="scroll-mt-20 focus:outline-none">
-      {route ? <RoutedPage content={content} route={route} /> : <NotFound content={content} currentPath={currentPath} />}
+      {route ? (
+        <RoutedPage content={content} inquiryServiceId={inquiryServiceId} route={route} />
+      ) : (
+        <NotFound content={content} currentPath={currentPath} />
+      )}
     </div>
   );
 }
@@ -333,7 +347,15 @@ function normalizePath(path: string) {
   return withoutQuery.endsWith("/") ? withoutQuery : `${withoutQuery}/`;
 }
 
-function RoutedPage({ content, route }: { readonly content: SiteContent; readonly route: SiteRoute }) {
+function RoutedPage({
+  content,
+  inquiryServiceId,
+  route,
+}: {
+  readonly content: SiteContent;
+  readonly inquiryServiceId?: string;
+  readonly route: SiteRoute;
+}) {
   if (route.kind === "services") {
     return <ServicesIndexPage content={content} route={route} />;
   }
@@ -345,11 +367,15 @@ function RoutedPage({ content, route }: { readonly content: SiteContent; readonl
   if (route.kind === "service") {
     const service = content.services.find((item) => item.id === route.sourceId);
 
-    return service ? <ServicePage content={content} route={route} service={service} /> : <NotFound content={content} currentPath={route.href} />;
+    return service ? (
+      <ServicePage content={content} route={route} service={service} />
+    ) : (
+      <NotFound content={content} currentPath={route.href} />
+    );
   }
 
   if (route.kind === "contact") {
-    return <ContactPage content={content} route={route} />;
+    return <ContactPage content={content} inquiryServiceId={inquiryServiceId} route={route} />;
   }
 
   return (
@@ -515,17 +541,25 @@ function ServicePage({
         </aside>
       </section>
       <Process content={content} />
-      <ContactLinkBand content={content} />
+      <ContactLinkBand content={content} serviceId={service.id} />
       <Footer content={content} />
     </>
   );
 }
 
-function ContactPage({ content, route }: { readonly content: SiteContent; readonly route: SiteRoute }) {
+function ContactPage({
+  content,
+  inquiryServiceId,
+  route,
+}: {
+  readonly content: SiteContent;
+  readonly inquiryServiceId?: string;
+  readonly route: SiteRoute;
+}) {
   return (
     <>
       <PageHero title={route.label} summary={route.summary} imageSrc={PAGE_HERO_PHOTOS[route.id]} />
-      <Contact content={content} />
+      <Contact content={content} serviceOption={resolveInquiryServiceOption(content, inquiryServiceId)} />
       <Footer content={content} />
     </>
   );
@@ -606,7 +640,13 @@ function PageHero({
   );
 }
 
-function ContactLinkBand({ content }: { readonly content: SiteContent }) {
+function ContactLinkBand({
+  content,
+  serviceId,
+}: {
+  readonly content: SiteContent;
+  readonly serviceId?: string;
+}) {
   return (
     <section className="border-y bg-secondary">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-5 py-12 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-10">
@@ -616,7 +656,7 @@ function ContactLinkBand({ content }: { readonly content: SiteContent }) {
           <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">{content.contact.summary}</p>
         </div>
         <Button asChild size="lg" className="shrink-0">
-          <a href="/kontakt/">
+          <a href={serviceId ? inquiryContactHref(serviceId) : "/kontakt/"}>
             Kontakta oss
             <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
           </a>
@@ -883,7 +923,13 @@ function Footer({ content }: { readonly content: SiteContent }) {
   );
 }
 
-function Contact({ content }: { readonly content: SiteContent }) {
+function Contact({
+  content,
+  serviceOption,
+}: {
+  readonly content: SiteContent;
+  readonly serviceOption?: string;
+}) {
   const form = content.contact.form;
   const emailAction = `mailto:${form.recipientEmail}?subject=${encodeURIComponent(form.subject)}`;
 
@@ -950,6 +996,7 @@ function Contact({ content }: { readonly content: SiteContent }) {
               <select
                 name={form.serviceField.name}
                 required
+                defaultValue={serviceOption}
                 className="min-h-11 rounded-md border bg-card px-3 py-2 text-base font-normal text-foreground outline-none transition-colors focus:border-primary sm:text-sm"
               >
                 {form.serviceField.options.map((option) => (
