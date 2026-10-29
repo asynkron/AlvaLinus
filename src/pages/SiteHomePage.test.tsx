@@ -27,6 +27,16 @@ function contentTarget(): HTMLElement {
   return target;
 }
 
+function heroImage(src: string): HTMLImageElement {
+  const image = document.querySelector<HTMLImageElement>(`img[src="${src}"]`);
+
+  if (!image) {
+    throw new Error(`Missing rendered hero image ${src}`);
+  }
+
+  return image;
+}
+
 describe("SiteHomePage", () => {
   it("offers a Swedish skip link before header navigation that targets the stable page content", () => {
     render(<SiteHomePage initialState={{ status: "ready", content }} />);
@@ -240,6 +250,30 @@ describe("SiteHomePage", () => {
       expect(route.visual.alt).not.toMatch(/Alva|Linus|Svärdlinus/i);
       expect(route.visual.intent).not.toMatch(/Alva|Linus|Svärdlinus/i);
     }
+  });
+
+  it("fetches above-the-fold hero images at high priority while service card images stay lazy", () => {
+    const { rerender } = render(<SiteHomePage initialState={{ status: "ready", content }} />);
+
+    const homeHero = heroImage("/page-visuals/hero-photo.webp");
+    expect(homeHero).toHaveAttribute("fetchpriority", "high");
+    expect(homeHero).toHaveAttribute("alt", "");
+    expect(homeHero).toHaveAttribute("aria-hidden", "true");
+    expect(homeHero).not.toHaveAttribute("loading");
+
+    const serviceImage = within(serviceCard("stensattning")).getByRole("img");
+    expect(serviceImage).toHaveAttribute("loading", "lazy");
+    expect(serviceImage).not.toHaveAttribute("fetchpriority");
+
+    rerender(<SiteHomePage currentPath="/om-oss/" initialState={{ status: "ready", content }} />);
+
+    const pageHero = heroImage("/page-visuals/about-hero.webp");
+    expect(pageHero).toHaveAttribute("fetchpriority", "high");
+    expect(pageHero).toHaveAttribute("alt", "");
+    expect(pageHero).toHaveAttribute("aria-hidden", "true");
+
+    fireEvent.error(pageHero);
+    expect(pageHero).toHaveStyle({ display: "none" });
   });
 
   it("falls back to the route SVG on the first photo error and removes the image when the fallback also fails", () => {
