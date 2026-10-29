@@ -399,6 +399,7 @@ function Hero({ content }: { readonly content: SiteContent }) {
         src={HERO_PHOTO_SRC}
         alt=""
         aria-hidden="true"
+        fetchPriority="high"
         className="absolute inset-0 -z-10 h-full w-full object-cover"
       />
       <div
@@ -610,6 +611,7 @@ function PageHero({
           src={imageSrc}
           alt=""
           aria-hidden="true"
+          fetchPriority="high"
           className="absolute inset-0 -z-10 h-full w-full object-cover"
           onError={(event) => {
             event.currentTarget.style.display = "none";
