@@ -199,6 +199,42 @@ describe("SiteHomePage", () => {
     expect(screen.queryByRole("link", { name: "Referensobjekt" })).not.toBeInTheDocument();
   });
 
+  it("derives header, mobile menu and footer navigation from the typed route registry", () => {
+    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+
+    const pageRoutes = content.routes.filter((route) => route.kind !== "service");
+    const serviceRoutes = content.routes.filter((route) => route.kind === "service");
+    const headerAndFooterNav = pageRoutes.flatMap((route) =>
+      route.kind === "services"
+        ? [{ label: route.label, href: route.href }, ...serviceRoutes.map((service) => ({ label: service.label, href: service.href }))]
+        : [{ label: route.label, href: route.href }],
+    );
+    const renderedNav = (scope: HTMLElement) =>
+      within(scope)
+        .getAllByRole("link")
+        .map((link) => ({ label: link.textContent?.trim(), href: link.getAttribute("href") }));
+
+    const header = screen.getByRole("banner");
+    expect(renderedNav(within(header).getByRole("navigation", { name: "Huvudnavigation" }))).toEqual(
+      headerAndFooterNav,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Öppna meny" }));
+    expect(renderedNav(screen.getByRole("navigation", { name: "Mobilnavigation" }))).toEqual(headerAndFooterNav);
+
+    const footer = screen.getByRole("contentinfo");
+    expect(
+      renderedNav(within(footer).getByRole("navigation", { name: "Sidfotsnavigation" })),
+    ).toEqual(pageRoutes.map((route) => ({ label: route.label, href: route.href })));
+    expect(renderedNav(within(footer).getByRole("navigation", { name: "Tjänster" }))).toEqual(
+      serviceRoutes.map((route) => ({ label: route.label, href: route.href })),
+    );
+
+    for (const route of [...pageRoutes, ...serviceRoutes]) {
+      expect(screen.getAllByRole("link", { name: route.label }).length).toBeGreaterThan(0);
+    }
+  });
+
   it("presents the updated route decision as customer-facing service guidance", () => {
     render(<SiteHomePage initialState={{ status: "ready", content }} />);
 

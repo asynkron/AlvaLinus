@@ -1,6 +1,6 @@
 # Feature catalog
 
-Reviewed against source: 2026-10-28.
+Reviewed against source: 2026-10-29.
 
 The catalog introduced in `f7b481f` already covers the current route inventory.
 The maintained catalog retains its published identities, including F4-US3 for
@@ -23,8 +23,10 @@ or analytics runs inside the site.
 
 The route registry has **nine** active routes. `inventory.pageCount = 58` is a
 historical inventory number, not a count of active pages. The five
-`inventory.primaryRoutes` shortcuts are a subset; Header's `SERVICE_NAV` also
-exposes all five service pages. The renderer is the authority for visible sections.
+`inventory.primaryRoutes` shortcuts are a subset; header (desktop and mobile)
+and footer navigation derive their page and service links from the same typed
+registry, so all five service pages are exposed there too. The renderer is the
+authority for visible sections.
 
 | Route/view | Outcome documentation and stories | Relevant sections |
 | --- | --- | --- |

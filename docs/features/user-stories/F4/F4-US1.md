@@ -2,7 +2,7 @@
 
 Feature: [F4 — Home, navigation and route recovery](../../navigation-and-recovery.md)  
 Status: current  
-Reviewed: 2026-10-27
+Reviewed: 2026-10-29
 
 As a site visitor, I want to use route navigation so I can reach service selection, company information or inquiry preparation.
 
@@ -20,6 +20,7 @@ As a site visitor, I want to use route navigation so I can reach service selecti
 ## Variants
 
 - Header services links expose all five detail routes.
+- Header (desktop and mobile) and footer page and service links derive their Swedish labels, hrefs and order from the typed route registry, so a route edit is one declaration in `src/data/siteContent.ts` instead of parallel markup edits.
 - An open mobile menu closes on Escape from a link or the focused toggle, restores focus to the toggle and can reopen; the toggle also closes it by click. Tab and Shift+Tab are not cancelled. Escape elsewhere in the header leaves the menu and focus unchanged.
 - inventory.primaryRoutes has five shortcuts; it is not the full nine-route registry.
 - Subpage heroes and the home hero use decorative photos; service-card images have route alt text.
@@ -40,6 +41,7 @@ Use a known route or the home URL; repair/redeploy static route artifacts if mis
 - [src/pages/SiteHomePage.tsx](../../../../src/pages/SiteHomePage.tsx)
 
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `shows the requested primary navigation labels as real route links` (direct): Checks route-link destinations, not mobile-menu or dropdown interaction.
+- vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `derives header, mobile menu and footer navigation from the typed route registry` (direct): Checks desktop, mobile-menu and footer destinations, Swedish labels and link order against `content.routes` as the single declaration source; does not exercise dropdown interaction or responsive layout.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `dismisses mobile navigation with Escape from its %s and allows reopening` (direct): Parameterized link and toggle cases check menu expanded state, Escape dismissal, focus restoration, reopening, click dismissal and uncancelled Tab/Shift+Tab events. JSDOM does not establish actual browser Tab movement, responsive layout or desktop dropdown interaction.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `keeps mobile navigation open and preserves focus when Escape is pressed elsewhere in the header` (direct): Checks that Escape on the brand link outside the menu/toggle leaves the open menu and current focus unchanged.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `links from the home page to active static subpage paths only` (direct): Checks home CTA destinations and excludes retired routes.

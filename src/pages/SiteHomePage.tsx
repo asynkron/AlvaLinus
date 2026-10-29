@@ -12,11 +12,12 @@ import {
   ShieldCheck,
   X,
 } from "lucide-react";
-import { type KeyboardEvent, useEffect, useRef, useState } from "react";
+import { Fragment, type KeyboardEvent, useEffect, useRef, useState } from "react";
 
 import { StaticState } from "../components/StaticState";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { siteContent } from "../data/siteContent";
 import { inquiryContactHref, resolveInquiryServiceOption } from "../lib/inquiry-service";
 import { loadSiteContent } from "../lib/site-content";
 import type { ServiceArea, SiteContent, SiteRoute } from "../types/site";
@@ -102,15 +103,18 @@ export function SiteHomePage({ currentPath = "/", inquiryServiceId, initialState
   );
 }
 
-const SERVICE_NAV = [
-  { label: "Stensättning", href: "/stensattning/" },
-  { label: "Markarbete", href: "/markarbete/" },
-  { label: "Grävjobb", href: "/gravjobb/" },
-  { label: "Dränering", href: "/dranering/" },
-  { label: "Trädgårdsplanering", href: "/tradgardsplanering/" },
-];
+// Header (desktop and mobile) and footer navigation derive from the typed
+// route registry in src/data/siteContent.ts: each destination's Swedish label,
+// href and order is declared once in that registry, and these views select the
+// page-level routes and the service detail routes from it.
+const PAGE_NAV: readonly SiteRoute[] = siteContent.routes.filter((route) => route.kind !== "service");
+const SERVICE_NAV: readonly SiteRoute[] = siteContent.routes.filter((route) => route.kind === "service");
 
-const SERVICE_PATHS = new Set([...SERVICE_NAV.map((link) => normalizePath(link.href)), normalizePath("/tjanster/")]);
+const SERVICE_PATHS = new Set(
+  siteContent.routes
+    .filter((route) => route.kind === "services" || route.kind === "service")
+    .map((route) => normalizePath(route.href)),
+);
 
 function Header({ currentPath = "/" }: { readonly currentPath?: string }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -138,67 +142,61 @@ function Header({ currentPath = "/" }: { readonly currentPath?: string }) {
           <span className="sr-only">{BRAND_NAME}</span>
         </a>
         <nav aria-label="Huvudnavigation" className="hidden items-center gap-6 text-sm font-medium md:flex">
-          <a
-            className={active === "/" ? "text-primary" : "text-background/75 transition-colors hover:text-primary"}
-            aria-current={active === "/" ? "page" : undefined}
-            href="/"
-          >
-            Hem
-          </a>
-          <div className="group relative">
-            <a
-              className={`inline-flex items-center gap-1 ${
-                servicesActive ? "text-primary" : "text-background/75 transition-colors hover:text-primary"
-              }`}
-              aria-current={active === "/tjanster/" ? "page" : undefined}
-              aria-haspopup="true"
-              href="/tjanster/"
-            >
-              Tjänster
-              <ChevronDown
-                className="h-4 w-4 transition-transform group-hover:rotate-180 group-focus-within:rotate-180"
-                aria-hidden="true"
-              />
-            </a>
-            <div className="invisible absolute left-1/2 top-full z-40 w-56 -translate-x-1/2 pt-3 opacity-0 transition-opacity group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-              <div className="overflow-hidden rounded-lg border bg-card py-1 text-foreground shadow-soft">
-                {SERVICE_NAV.map((link) => {
-                  const isActive = normalizePath(link.href) === active;
+          {PAGE_NAV.map((route) => {
+            const isActive = normalizePath(route.href) === active;
 
-                  return (
-                    <a
-                      key={link.href}
-                      className={`block px-4 py-2 text-sm transition-colors hover:bg-secondary ${
-                        isActive ? "font-semibold text-primary" : "text-foreground"
-                      }`}
-                      aria-current={isActive ? "page" : undefined}
-                      href={link.href}
-                    >
-                      {link.label}
-                    </a>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-          <a
-            className={
-              active === "/om-oss/" ? "text-primary" : "text-background/75 transition-colors hover:text-primary"
+            if (route.kind === "services") {
+              return (
+                <div key={route.href} className="group relative">
+                  <a
+                    className={`inline-flex items-center gap-1 ${
+                      servicesActive ? "text-primary" : "text-background/75 transition-colors hover:text-primary"
+                    }`}
+                    aria-current={isActive ? "page" : undefined}
+                    aria-haspopup="true"
+                    href={route.href}
+                  >
+                    {route.label}
+                    <ChevronDown
+                      className="h-4 w-4 transition-transform group-hover:rotate-180 group-focus-within:rotate-180"
+                      aria-hidden="true"
+                    />
+                  </a>
+                  <div className="invisible absolute left-1/2 top-full z-40 w-56 -translate-x-1/2 pt-3 opacity-0 transition-opacity group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                    <div className="overflow-hidden rounded-lg border bg-card py-1 text-foreground shadow-soft">
+                      {SERVICE_NAV.map((service) => {
+                        const serviceActive = normalizePath(service.href) === active;
+
+                        return (
+                          <a
+                            key={service.href}
+                            className={`block px-4 py-2 text-sm transition-colors hover:bg-secondary ${
+                              serviceActive ? "font-semibold text-primary" : "text-foreground"
+                            }`}
+                            aria-current={serviceActive ? "page" : undefined}
+                            href={service.href}
+                          >
+                            {service.label}
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              );
             }
-            aria-current={active === "/om-oss/" ? "page" : undefined}
-            href="/om-oss/"
-          >
-            Om oss
-          </a>
-          <a
-            className={
-              active === "/kontakt/" ? "text-primary" : "text-background/75 transition-colors hover:text-primary"
-            }
-            aria-current={active === "/kontakt/" ? "page" : undefined}
-            href="/kontakt/"
-          >
-            Kontakt
-          </a>
+
+            return (
+              <a
+                key={route.href}
+                className={isActive ? "text-primary" : "text-background/75 transition-colors hover:text-primary"}
+                aria-current={isActive ? "page" : undefined}
+                href={route.href}
+              >
+                {route.label}
+              </a>
+            );
+          })}
         </nav>
         <button
           ref={menuToggleRef}
@@ -220,60 +218,43 @@ function Header({ currentPath = "/" }: { readonly currentPath?: string }) {
           className="border-t border-background/10 px-5 pb-4 pt-2 sm:px-8 md:hidden"
           onKeyDown={handleMenuKeyDown}
         >
-          <a
-            className={`block rounded-md px-3 py-3 text-base font-medium transition-colors ${
-              active === "/" ? "bg-background/10 text-primary" : "text-background/80 hover:bg-background/10"
-            }`}
-            aria-current={active === "/" ? "page" : undefined}
-            href="/"
-          >
-            Hem
-          </a>
-          <a
-            className={`block rounded-md px-3 py-3 text-base font-medium transition-colors ${
-              active === "/tjanster/" ? "bg-background/10 text-primary" : "text-background/80 hover:bg-background/10"
-            }`}
-            aria-current={active === "/tjanster/" ? "page" : undefined}
-            href="/tjanster/"
-          >
-            Tjänster
-          </a>
-          <div className="ml-3 border-l border-background/15 pl-3">
-            {SERVICE_NAV.map((link) => {
-              const isActive = normalizePath(link.href) === active;
+          {PAGE_NAV.map((route) => {
+            const isActive = normalizePath(route.href) === active;
 
-              return (
+            return (
+              <Fragment key={route.href}>
                 <a
-                  key={link.href}
-                  className={`block rounded-md px-3 py-2 text-sm transition-colors ${
-                    isActive ? "bg-background/10 text-primary" : "text-background/70 hover:bg-background/10"
+                  className={`block rounded-md px-3 py-3 text-base font-medium transition-colors ${
+                    isActive ? "bg-background/10 text-primary" : "text-background/80 hover:bg-background/10"
                   }`}
                   aria-current={isActive ? "page" : undefined}
-                  href={link.href}
+                  href={route.href}
                 >
-                  {link.label}
+                  {route.label}
                 </a>
-              );
-            })}
-          </div>
-          <a
-            className={`block rounded-md px-3 py-3 text-base font-medium transition-colors ${
-              active === "/om-oss/" ? "bg-background/10 text-primary" : "text-background/80 hover:bg-background/10"
-            }`}
-            aria-current={active === "/om-oss/" ? "page" : undefined}
-            href="/om-oss/"
-          >
-            Om oss
-          </a>
-          <a
-            className={`block rounded-md px-3 py-3 text-base font-medium transition-colors ${
-              active === "/kontakt/" ? "bg-background/10 text-primary" : "text-background/80 hover:bg-background/10"
-            }`}
-            aria-current={active === "/kontakt/" ? "page" : undefined}
-            href="/kontakt/"
-          >
-            Kontakt
-          </a>
+                {route.kind === "services" ? (
+                  <div className="ml-3 border-l border-background/15 pl-3">
+                    {SERVICE_NAV.map((service) => {
+                      const serviceActive = normalizePath(service.href) === active;
+
+                      return (
+                        <a
+                          key={service.href}
+                          className={`block rounded-md px-3 py-2 text-sm transition-colors ${
+                            serviceActive ? "bg-background/10 text-primary" : "text-background/70 hover:bg-background/10"
+                          }`}
+                          aria-current={serviceActive ? "page" : undefined}
+                          href={service.href}
+                        >
+                          {service.label}
+                        </a>
+                      );
+                    })}
+                  </div>
+                ) : null}
+              </Fragment>
+            );
+          })}
         </nav>
       ) : null}
     </header>
@@ -879,12 +860,7 @@ function Footer({ content }: { readonly content: SiteContent }) {
         <nav aria-label="Sidfotsnavigation" className="text-sm">
           <p className="font-semibold text-background">Sidor</p>
           <ul className="mt-3 grid gap-2">
-            {[
-              { label: "Hem", href: "/" },
-              { label: "Tjänster", href: "/tjanster/" },
-              { label: "Om oss", href: "/om-oss/" },
-              { label: "Kontakt", href: "/kontakt/" },
-            ].map((route) => (
+            {PAGE_NAV.map((route) => (
               <li key={route.href}>
                 <a href={route.href} className="text-background/70 transition-colors hover:text-primary">
                   {route.label}
