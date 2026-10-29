@@ -98,12 +98,14 @@ does not provide persistence, delivery assurance or a privacy/compliance verdict
   [SiteHomePage.test.tsx](../../src/pages/SiteHomePage.test.tsx). `direct` means
   the assertion checks the stated user-visible facet, not every step of a story.
   `technical` checks supporting metadata. No test was executed for this source
-  review. F4-US1 now maps the mobile-menu declaration for Escape from a link
+  review. F4-US1 maps the mobile-menu declaration for Escape from a link
   or the focused toggle, focus restoration, reopening and click dismissal;
   Tab/Shift+Tab are not cancelled and Escape elsewhere in the header leaves
   the menu and focus unchanged. F4-US1 also maps the decorative home hero
   photo's success and failure declarations; a failing photo hides its image
-  without a retry loop while the hero content remains.
+  without a retry loop while the hero content remains. F4-US1 additionally
+  maps the above-the-fold fetch-priority declaration, whose about-hero error
+  case covers subpage hero image hiding.
   F4-US3 maps the skip-link order and unique
   destination in ready/loading/error/empty/not-found states. These DOM checks
   do not establish browser anchor focus, scrolling or focus-only CSS visibility.
@@ -115,9 +117,8 @@ does not provide persistence, delivery assurance or a privacy/compliance verdict
   parameterized home/index check of all five service-card accessible names,
   destinations and visible Läs mer labels. This establishes only that link
   facet of the index. Dedicated Markarbete/Trädgårdsplanering rendering,
-  other index sections, desktop dropdown
-  interaction, subpage hero image failure and actual email sending remain
-  outside the mapped assertions.
+  other index sections, desktop dropdown interaction and actual email sending
+  remain outside the mapped assertions.
 - Required proof: `feature-manifest-integrity`, runner
   `native-feature-validation`, command `validate-features`, terminal `passes`.
   Use Faktorial's native validator for the three manifests; it does not prove

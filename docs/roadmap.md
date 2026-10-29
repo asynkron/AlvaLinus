@@ -1,7 +1,7 @@
 # Product and operation roadmap
 
-Reviewed: 2026-10-29 (fk66), source baseline
-`82da6992144b0696be9c70f28f764df558ea56fa` (HEAD).
+Reviewed: 2026-10-29 (fk66/fk72), source baseline
+`7427cffd8d97e6c3f75215e76f9332f62ad2e151` (HEAD).
 
 This roadmap connects the Swedish Svärd Entreprenad website to operating a
 product with minimal human intervention. Source capability, task delivery,
@@ -36,9 +36,20 @@ option, keeps the visitor's manual choice, and safely retains defaults for
 missing or malformed context, inside
 [ADR 0006](adrs/0006-static-email-contact-handoff.md)'s native mail handoff.
 Service links carry distinct Swedish accessible names. F3 and F4 were
-reconciled to these delivered behaviors (fk60, PR #75, current HEAD), so the
+reconciled to these delivered behaviors (fk60, PR #75), so the
 catalog — four features, thirteen stories — no longer lists the carried
 inquiry context or the availability gap as open work.
+
+Later on October 29, three more deliveries landed on the same static boundary.
+fk65 requested the above-the-fold hero photographs on home and subpages at high
+fetch priority while service-card images stay lazy (PR #76, merge `0eb2a37`).
+fk67 gave the home hero photo the same failure resilience as the other site
+imagery: a failing photo hides without a retry loop while the navy section,
+gradient, headline, actions and stats remain (PR #78, merge `7c11aa4`). fk68
+consolidated desktop, mobile and footer navigation onto the typed route
+registry, so a route edit is one declaration instead of parallel markup
+(PR #79, merge `7427cff`, current HEAD). F4's documentation, the route
+inventory and the feature catalog were updated with each delivery.
 
 [Vite](../vite.config.ts) still emits physical subpage HTML from the route
 registry under [ADR 0004](adrs/0004-static-subpage-artifacts.md), the route
@@ -56,8 +67,10 @@ capabilities, not evidence of live publication.
   service-image failure coverage. This refresh inspected source; it did not
   execute those tests.
 - Image failure resilience is layered: service cards try the route SVG after
-  photo failure and remove the image after terminal failure; subpage heroes
-  hide a failing background photo. Titles, summaries and links always remain.
+  photo failure and remove the image after terminal failure; subpage and home
+  heroes hide a failing background photo. Titles, summaries and links always
+  remain. Above-the-fold heroes request their photographs at high fetch
+  priority while service-card images stay lazy.
 - Header navigation exposes all five services with distinct accessible names,
   and the [route inventory](current-public-route-inventory.md) matches the
   nine-route registry, with drainage inside Tjänster rather than as a separate
@@ -79,16 +92,6 @@ capabilities, not evidence of live publication.
 
 ### What works less well and what to improve
 
-- The home hero photo has no error fallback. `Hero` renders
-  `/page-visuals/hero-photo.webp` without an `onError` handler, unlike
-  subpage heroes and service cards; [F4's](features/navigation-and-recovery.md)
-  state table records the gap. The photo exists today, so this is resilience
-  against asset loss, not a current rendering bug. **Next 1** extends the
-  existing pattern.
-- Navigation destinations are declared repeatedly: `SERVICE_NAV`, hard-coded
-  desktop and mobile header anchors, the footer page-link array and the typed
-  inventory can drift on route edits. **Next 2** consolidates them through the
-  existing typed route model.
 - Content-error feedback has no inline retry; the loader is local, so a source
   defect needs a corrected static deployment.
 - Four WebP photographs are present; five requested photographs remain absent
@@ -103,12 +106,17 @@ capabilities, not evidence of live publication.
 
 ## Delivered work and ownership reconciliation
 
-Authenticated owning task reads and open/closed membership reads were made on
-October 29. Before this refresh there were four open records: fk65 (in build,
-hero-image fetch priority), fk66 (this task) and fk63/fk64 (an operator
-question wait about a live chat session; platform ownership, not site work) —
-and 58 closed. The checkout advanced from fk54's `d45ec4b` to `82da699`: the
-fk55, fk56 and fk53 merges plus fk60's catalog reconciliation are all present.
+Authenticated owning task reads were made on October 29, during fk66's refresh
+and again during fk72's catalog reconciliation. fk65, fk67 and fk68 are all
+closed/done with merge receipts and passed native quality runs: fk65 (PR #76,
+merge `0eb2a37`), fk67 (PR #78, merge `7c11aa4`) and fk68 (PR #79, merge
+`7427cff`). The checkout advanced from fk54's `d45ec4b` to `7427cff`: the
+fk55, fk56 and fk53 merges, fk60's catalog reconciliation and the three
+October 29 deliveries above are all present. During the second read the open
+records were this task (fk72), four delivery-notice records (fk69, fk70, fk71
+and fk73) and fk63/fk64 (an operator question wait about a live chat session;
+platform ownership, not site work) — no open record owns site work from the
+previous refresh's list.
 
 | Work | Current owning evidence | Disposition |
 | --- | --- | --- |
@@ -116,8 +124,10 @@ fk55, fk56 and fk53 merges plus fk60's catalog reconciliation are all present.
 | [fk55](https://app.faktorial.ai/projects/alvalinus/tasks/fk55), availability isolation | Closed/done; PR #72, merge `a9e7bb2`; retained native quality pass at head `0c3464e`. Verified in source: `routeDependsOnServices` gates only home and the services index. | Delivered. No duplicate availability work. |
 | [fk56](https://app.faktorial.ai/projects/alvalinus/tasks/fk56), inquiry context | Closed/done; PR #73, merge `eaa1138`; retained native quality pass at head `17713ab`. Verified in source: `inquiry-service.ts` and `App.tsx` wiring. | Delivered. F3 documents the behavior; no duplicate context work. |
 | [fk53](https://app.faktorial.ai/projects/alvalinus/tasks/fk53), accessible service-link names | Closed/done; PR #74, merge `8c9af38`; retained native quality pass at head `917d296`. Its scheduling projection reports `record_state=missing` while the owning record is closed/done; the projection does not reopen it. | Delivered. fk54's "unresolved mobile-menu ownership" description was inaccurate; no menu work is reserved on fk53's behalf. |
-| [fk60](https://app.faktorial.ai/projects/alvalinus/tasks/fk60), catalog reconciliation | Closed/done; PR #75, merge `82da699` (current HEAD); retained native quality pass. | Current F3/F4 documentation; supersedes stale-gap descriptions. |
-| [fk65](https://app.faktorial.ai/projects/alvalinus/tasks/fk65), hero fetch priority | Open, in build (2026-10-29 recurring child). | Shared-file neighbor of Next 1 in SiteHomePage.tsx; a coordination note, not an ownership conflict. |
+| [fk60](https://app.faktorial.ai/projects/alvalinus/tasks/fk60), catalog reconciliation | Closed/done; PR #75, merge `82da699`; retained native quality pass. | Current F3/F4 documentation at that baseline; supersedes stale-gap descriptions. |
+| [fk65](https://app.faktorial.ai/projects/alvalinus/tasks/fk65), hero fetch priority | Closed/done; PR #76, merge `0eb2a37`; retained native quality pass. Verified in source: `Hero` and `PageHero` images carry `fetchPriority="high"` without a lazy-loading attribute; `ServiceCardImage` stays lazy. | Delivered. Mapped once through F4-US1; F1/F4 prose and the route inventory record the priority split. |
+| [fk67](https://app.faktorial.ai/projects/alvalinus/tasks/fk67), home hero photo failure resilience | Closed/done; PR #78, merge `7c11aa4`; retained native quality pass. Verified in source: `Hero` hides the photo on error and F4-US1 maps both hero declarations. | Delivered. F4's state table and the route inventory describe the behavior; the former Next 1 gap is closed. |
+| [fk68](https://app.faktorial.ai/projects/alvalinus/tasks/fk68), navigation consolidation | Closed/done; PR #79, merge `7427cff` (current HEAD); retained native quality pass. Verified in source: `PAGE_NAV`/`SERVICE_NAV` filter `siteContent.routes`; header, mobile menu and footer render from them. | Delivered. F4 and the catalog README describe the single declaration source; the former Next 2 gap is closed. |
 
 The prior roadmap's older Done references were checked against current owning
 membership on October 29: fk3/fk24/fk35 (roadmaps), fk10 (reporter), fk11
@@ -132,17 +142,18 @@ current main or any deployment.
 
 ## Short-term priorities and issue ownership
 
-| Priority | Outcome and observable acceptance | Owner and scope |
-| --- | --- | --- |
-| Next 1 | A failing home hero photo removes the image without a retry loop, preserving the navy hero, gradient, headline, actions and stats; a working photo renders exactly as today. Deterministic in-memory coverage at the existing page boundary; update F4. | Newly created [fk67 — home hero photo failure resilience](https://app.faktorial.ai/projects/alvalinus/tasks/fk67). Existing `Hero` and image-error patterns in SiteHomePage.tsx; no new dependencies, routes or runtime; coordinate with fk65's fetch-priority edit of the same file. |
-| Next 2 | Header (desktop and mobile) and footer navigation derive destinations from the existing typed route model with today's Swedish labels, order and active states, so a route edit is one declaration instead of parallel markup. | Newly created [fk68 — consolidate navigation declarations](https://app.faktorial.ai/projects/alvalinus/tasks/fk68). Renderer/typed-content consolidation only; no new routes, router dependency or URLs; preserve the fk45 skip link and fk53 accessible names. |
-
-Exactly two new issues were created by **fk66**: fk67 and fk68. Independent
-get_task readbacks confirmed both open, with persisted titles and full bodies
-matching the submitted scope and acceptance. They can ship independently but
-share SiteHomePage.tsx; refresh source and owning states before editing and
-keep fk65's fetch-priority change separate. Neither duplicates fk65's
-performance scope.
+The two short-term priorities created by fk66 both shipped on October 29 with
+passed native quality runs: **Next 1** delivered home-hero photo failure
+resilience as [fk67](https://app.faktorial.ai/projects/alvalinus/tasks/fk67)
+(PR #78, merge `7c11aa4`) and **Next 2** delivered the typed-registry
+navigation consolidation as [fk68](https://app.faktorial.ai/projects/alvalinus/tasks/fk68)
+(PR #79, merge `7427cff`). Their ownership rows above carry the verified
+source facts. fk65's fetch-priority delivery (PR #76) landed between them and
+is mapped through F4-US1, so the shared-file coordination notes from the
+previous refresh are resolved. This documentation reconciliation (fk72) creates
+no new site-work issue; remaining improvement candidates stay in the feature
+roadmaps: content-error retry, service-specific guidance depth and the
+approved missing photographs.
 
 ## Long-term goals
 
@@ -157,9 +168,9 @@ performance scope.
    Target releases traceable to accepted source and restorable prior
    artifacts. Consider host-specific automation only after those facts and
    explicit access decisions; do not add speculative infrastructure.
-3. **Resilient customer journeys.** Availability isolation and inquiry
-   context are delivered; remaining work is the hero failure fallback (Next
-   1), navigation consistency (Next 2) and approved missing imagery. Define
+3. **Resilient customer journeys.** Availability isolation, inquiry context,
+   hero failure resilience and navigation consistency are delivered; remaining
+   work is approved missing imagery. Define
    useful inquiry signals and privacy needs before promising delivery or
    telemetry.
 4. **Evidence-led cross-product learning.** Compare booking and
@@ -178,6 +189,15 @@ performance scope.
   `public/page-visuals` listing (four WebP photos present); and the checkout
   parent (only the fk65/fk66 worktrees). Unchanged structural claims carried
   from the October 28 review keep that provenance.
+- Reads made during fk72's reconciliation, also on October 29: the
+  `0eb2a37..7427cff` Git log and docs/test diff (fk65/fk67/fk68 deliveries,
+  including their own F4/README/route-inventory edits); the four feature
+  documents, F4-US1 and both feature manifests, and
+  `src/pages/SiteHomePage.test.tsx` at HEAD; a fresh `public/page-visuals`
+  listing (still four WebP photos present, five requested photographs absent);
+  and owning `get_task`/membership reads confirming fk65, fk67 and fk68
+  closed/done with PRs #76/#78/#79. fk63/fk64 remain in their operator
+  question wait.
 - Authenticated owning reads: `get_task` on fk53, fk54, fk55 and fk56 with
   exact merge receipts (PRs #71–#74), fk60 found through a closed-task search
   (PR #75), and an open-membership read (4 open, 58 closed).

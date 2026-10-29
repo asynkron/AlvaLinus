@@ -30,7 +30,7 @@
           "description": "Static content and route contracts."
         }
       ],
-      "reviewed_against_source": "2026-10-28",
+      "reviewed_against_source": "2026-10-29",
       "slice_refs": [],
       "entry_point_refs": []
     },
