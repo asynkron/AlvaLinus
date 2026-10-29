@@ -631,7 +631,7 @@
           "Mobile menu closed/open",
           "Keyboard bypass to the page body"
         ],
-          "current_limitations": "Header, mobile-menu and footer navigation derive their destinations from the typed route registry, whose five inventory shortcuts remain a display subset; desktop dropdown keyboard interaction is unmapped. Hosting may reject unknown paths before React can display not-found.",
+        "current_limitations": "Header, mobile-menu and footer navigation derive their destinations from the typed route registry, whose five inventory shortcuts remain a display subset; desktop dropdown keyboard interaction is unmapped. Hosting may reject unknown paths before React can display not-found.",
         "failure_behavior": "Load errors show an alert without a retry control; unknown in-app paths show declared-route shortcuts. Loading/error/empty states retain the header but have no footer.",
         "recovery": "Use header links or reload; unknown ready routes provide all registered shortcuts. Static-host handling remains a deployment concern.",
         "runtime_owners": [
@@ -711,6 +711,27 @@
               "name": "keeps every current route aligned with a page-specific visual asset",
               "evidence_type": "technical",
               "supports": "Checks nine declared visual metadata mappings, not rendered photos or onError fallbacks."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "fetches above-the-fold hero images at high priority while service card images stay lazy",
+              "evidence_type": "direct",
+              "supports": "Checks fetchpriority=high, decorative alt/aria-hidden and no lazy-loading attribute on the home and about heroes, lazy service-card images without fetchpriority, and that a failing about-hero photo hides via display:none. DOM-attribute evidence only; it does not establish real network scheduling or an LCP improvement."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "keeps the decorative home hero photo on the success path",
+              "evidence_type": "direct",
+              "supports": "Checks the home hero photo's src and its empty decorative alt/aria-hidden treatment."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "hides a failing home hero photo without a retry loop and keeps the hero intact",
+              "evidence_type": "direct",
+              "supports": "Checks display:none hiding across repeated image errors while the headline, intro, actions and stats remain. Does not establish browser image loading or CSS visibility."
             }
           ],
           "entry_point_refs": [],
@@ -728,7 +749,7 @@
             "Header (desktop and mobile) and footer page and service links derive their Swedish labels, hrefs and order from the typed route registry, so a route edit is one declaration in src/data/siteContent.ts instead of parallel markup edits.",
             "An open mobile menu closes on Escape from a link or the focused toggle, restores focus to the toggle and can reopen; the toggle also closes it by click. Tab and Shift+Tab are not cancelled. Escape elsewhere in the header leaves the menu and focus unchanged.",
             "inventory.primaryRoutes has five shortcuts; it is not the full nine-route registry.",
-            "Subpage heroes and the home hero use decorative photos; service-card images have route alt text."
+            "Subpage heroes and the home hero use decorative photos requested at high fetch priority while service-card images stay lazy; a failing home hero photo hides its image without a retry loop while the hero content remains. Service-card images have route alt text."
           ],
           "expected_outcome": "A declared static route can be selected for F1, F2 or F3.",
           "failure_behavior": "A missing host artifact can fail before React mounts; this catalog does not claim host-level fallback.",

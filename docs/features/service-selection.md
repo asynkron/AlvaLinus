@@ -1,6 +1,6 @@
 # F1: Choose a suitable groundworks service
 
-Reviewed: 2026-10-28. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-10-29. Runtime: `ui`. Product role: `customer_outcome`.
 
 Visitors need to identify which service fits a property or construction project
 before asking for a discussion. The current result is service understanding and
@@ -31,8 +31,9 @@ service id, so the contact form opens with the matching option preselected
 (F3 owns that resolution and its defaults). Service cards use photographs
 with typed route SVG fallback; if the fallback SVG also errors, the card image
 is removed with no retry loop while title, summary and Läs mer remain. Page hero
-photograph errors hide the image and retain text. These decorative backgrounds
-are not project case-study evidence.
+photographs are requested at high fetch priority while service-card images stay
+lazy, and photograph errors hide the image and retain text. These decorative
+backgrounds are not project case-study evidence.
 
 ## Outcome and support
 
@@ -70,8 +71,9 @@ service-card photo→SVG fallback, terminal removal with content/link retention,
 and isolation from neighboring cards. The five service-page band inquiry
 destinations are each checked by the parameterized F3-US1 declaration listed in
 [project-inquiry.md](project-inquiry.md). These mappings do not establish
-services-index image fallback or subpage hero failure behavior, and are not test
-execution receipts.
+services-index image fallback behavior and are not test execution receipts;
+above-the-fold hero fetch priority and subpage-hero image hiding are mapped
+once through [F4-US1](user-stories/F4/F4-US1.md).
 
 ## What Works Less Well
 

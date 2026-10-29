@@ -26,6 +26,10 @@ there updates every header and footer link without parallel markup edits. The
 registry order is the link order; the renderer only groups the five service
 detail routes under the Tjänster entry.
 
+The decorative hero photographs on home and subpages are requested at high
+fetch priority without a lazy-loading attribute, so above-the-fold rendering is
+not deferred behind below-the-fold imagery; service-card images stay lazy.
+
 [F4-US1](user-stories/F4/F4-US1.md) covers navigation from the home hero's two
 actions, route shortcuts and shared chrome. The inventory's five shortcuts
 are not the complete registry. Pool and reference-project pages are not active.
@@ -83,13 +87,15 @@ deterministic in-memory tests in the home page test file.
 F4-US1 maps the deterministic mobile-menu declaration for expanded state,
 Escape from a link and the toggle, focus restoration, reopening and click
 dismissal, uncancelled Tab/Shift+Tab events and Escape outside the menu/toggle,
-plus the decorative home hero photo's success and failure declarations.
+plus the decorative home hero photo's success and failure declarations and the
+above-the-fold fetch-priority declaration whose about-hero error case also
+covers subpage hero image hiding.
 JSDOM does not move focus on Tab, so those event assertions do not establish
 actual browser tab order. F4-US3 maps the two skip-link declarations separately
 from menu behavior. Neither mapping establishes responsive CSS, browser anchor
 activation or desktop dropdown interaction.
-Keyboard dropdown interaction, normalization variants, subpage hero image
-failure and production-host fallback remain unmapped, not claimed as executed
+Keyboard dropdown interaction, normalization variants
+and production-host fallback remain unmapped, not claimed as executed
 acceptance. F1-US1 owns the service-card failure mappings; this supporting
 surface points to F1 rather than duplicating those story references.
 
