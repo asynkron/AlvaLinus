@@ -18,6 +18,14 @@ both menu and focus unchanged. Subpages have a Hem breadcrumb.
 Footer repeats page and service links and the contact email on ready routes,
 including not-found.
 
+Desktop and mobile header navigation and the footer's page and service lists
+derive from the typed route registry: each page or service destination's
+Swedish label, href and link order is declared once in
+[typed content](../../src/data/siteContent.ts), and adding or renaming a route
+there updates every header and footer link without parallel markup edits. The
+registry order is the link order; the renderer only groups the five service
+detail routes under the Tjänster entry.
+
 [F4-US1](user-stories/F4/F4-US1.md) covers navigation from the home hero's two
 actions, route shortcuts and shared chrome. The inventory's five shortcuts
 are not the complete registry. Pool and reference-project pages are not active.
@@ -56,11 +64,13 @@ not new error recovery mechanisms.
 
 ## Sources and evidence
 
-[SiteHomePage](../../src/pages/SiteHomePage.tsx) owns Header, SERVICE_NAV,
-ContentSurface, route normalization, NotFound and Footer.
-[Typed content](../../src/data/siteContent.ts) owns the registry and inventory
-shortcuts; [local loader](../../src/lib/site-content.ts) returns that bundled
-content asynchronously. [StaticState](../../src/components/StaticState.tsx)
+[SiteHomePage](../../src/pages/SiteHomePage.tsx) owns Header, ContentSurface,
+route normalization, NotFound and Footer; its desktop, mobile and footer
+navigation derive page and service links from the typed registry instead of
+parallel markup arrays. [Typed content](../../src/data/siteContent.ts) owns the
+registry and inventory shortcuts and is the single declaration source for
+navigation destinations; [local loader](../../src/lib/site-content.ts) returns
+that bundled content asynchronously. [StaticState](../../src/components/StaticState.tsx)
 renders availability states. [Vite config](../../vite.config.ts) emits route
 artifacts; existing route and visual scripts check deployable paths.
 
@@ -89,14 +99,11 @@ claim for the route inventory.
 
 ## What Works Less Well
 
-Navigation destinations are repeated across SERVICE_NAV, header/footer
-markup and typed inventory, so route edits can drift. Error feedback provides
-no inline retry or contact body.
+Error feedback provides no inline retry or contact body. Desktop dropdown
+keyboard interaction remains unmapped (see the roadmap's expand item).
 
 ## Roadmap
 
-- Fix: reconcile repeated navigation declarations through the existing typed
-  route model when changing navigation, preserving link order and accessible labels.
 - Expand: protect desktop dropdown keyboard behavior when that flow changes,
   retaining the existing mobile Escape/focus coverage; document the actual
   production-host unknown-path behavior when known.
