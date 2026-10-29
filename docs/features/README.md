@@ -99,7 +99,10 @@ does not provide persistence, delivery assurance or a privacy/compliance verdict
   review. F4-US1 now maps the mobile-menu declaration for Escape from a link
   or the focused toggle, focus restoration, reopening and click dismissal;
   Tab/Shift+Tab are not cancelled and Escape elsewhere in the header leaves
-  the menu and focus unchanged. F4-US3 maps the skip-link order and unique
+  the menu and focus unchanged. F4-US1 also maps the decorative home hero
+  photo's success and failure declarations; a failing photo hides its image
+  without a retry loop while the hero content remains.
+  F4-US3 maps the skip-link order and unique
   destination in ready/loading/error/empty/not-found states. These DOM checks
   do not establish browser anchor focus, scrolling or focus-only CSS visibility.
   F3-US1/US2 map the explanation's accessible association, position before the

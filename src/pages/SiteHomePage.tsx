@@ -401,6 +401,9 @@ function Hero({ content }: { readonly content: SiteContent }) {
         aria-hidden="true"
         fetchPriority="high"
         className="absolute inset-0 -z-10 h-full w-full object-cover"
+        onError={(event) => {
+          event.currentTarget.style.display = "none";
+        }}
       />
       <div
         aria-hidden="true"

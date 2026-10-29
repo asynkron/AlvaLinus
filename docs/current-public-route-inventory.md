@@ -1,6 +1,6 @@
 # Current Public Route Inventory
 
-Checked: 2026-10-24
+Checked: 2026-10-29
 
 Source of truth:
 
@@ -14,7 +14,7 @@ route in `src/data/siteContent.ts`, with matching generated SVG assets under
 `public/page-visuals/`. The renderer uses the shared
 `/svard-entreprenad-logo.svg` logo, a decorative home hero photograph,
 service-card photographs with the route SVGs as image-error fallbacks, and
-subpage hero photographs that hide on error while retaining the text. The
+home and subpage hero photographs that hide on error while retaining the text. The
 table below names the canonical typed SVG metadata assets, not the preferred
 photographs displayed by the renderer. Previous external source links
 have been removed from the public UI and are not a desired retained

@@ -2,7 +2,7 @@
 
 Feature: [F4 — Home, navigation and route recovery](../../navigation-and-recovery.md)  
 Status: current  
-Reviewed: 2026-10-27
+Reviewed: 2026-10-29
 
 As a site visitor, I want to use route navigation so I can reach service selection, company information or inquiry preparation.
 
@@ -22,7 +22,7 @@ As a site visitor, I want to use route navigation so I can reach service selecti
 - Header services links expose all five detail routes.
 - An open mobile menu closes on Escape from a link or the focused toggle, restores focus to the toggle and can reopen; the toggle also closes it by click. Tab and Shift+Tab are not cancelled. Escape elsewhere in the header leaves the menu and focus unchanged.
 - inventory.primaryRoutes has five shortcuts; it is not the full nine-route registry.
-- Subpage heroes and the home hero use decorative photos; service-card images have route alt text.
+- Subpage heroes and the home hero use decorative photos; a failing home hero photo hides its image without a retry loop while the hero content remains. Service-card images have route alt text.
 
 ## Expected outcome
 
@@ -45,5 +45,7 @@ Use a known route or the home URL; repair/redeploy static route artifacts if mis
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `links from the home page to active static subpage paths only` (direct): Checks home CTA destinations and excludes retired routes.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `preserves Swedish UTF-8 characters in representative user-facing copy` (direct): Checks representative Swedish labels remain readable.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `keeps every current route aligned with a page-specific visual asset` (technical): Checks nine declared visual metadata mappings, not rendered photos or onError fallbacks.
+- vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `keeps the decorative home hero photo on the success path` (direct): Checks the home hero photo's src and its empty decorative alt/aria-hidden treatment.
+- vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `hides a failing home hero photo without a retry loop and keeps the hero intact` (direct): Checks display:none hiding across repeated image errors while the headline, intro, actions and stats remain. Does not establish browser image loading or CSS visibility.
 
 Backend entry-point references: none (frontend-only). Test mappings were reviewed as source declarations; this document is not an execution receipt.

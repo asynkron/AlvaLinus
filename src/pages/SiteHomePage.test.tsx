@@ -329,6 +329,38 @@ describe("SiteHomePage", () => {
     expect(gravjobbCard.getByRole("heading", { name: "Grävjobb" })).toBeInTheDocument();
   });
 
+  it("keeps the decorative home hero photo on the success path", () => {
+    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+
+    const image = heroImage("/page-visuals/hero-photo.webp");
+
+    expect(image).toHaveAttribute("src", "/page-visuals/hero-photo.webp");
+    expect(image).toHaveAttribute("alt", "");
+    expect(image).toHaveAttribute("aria-hidden", "true");
+    expect(image.style.display).not.toBe("none");
+  });
+
+  it("hides a failing home hero photo without a retry loop and keeps the hero intact", () => {
+    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+
+    const image = heroImage("/page-visuals/hero-photo.webp");
+
+    fireEvent.error(image);
+
+    expect(image).toHaveStyle({ display: "none" });
+    expect(document.querySelectorAll("img[alt='']")).toHaveLength(1);
+
+    fireEvent.error(image);
+
+    expect(image).toHaveStyle({ display: "none" });
+    expect(document.querySelectorAll("img[alt='']")).toHaveLength(1);
+    expect(screen.getByRole("heading", { name: "Svärd Entreprenad", level: 1 })).toBeInTheDocument();
+    expect(screen.getByText(/Välkommen till Svärd Entreprenad/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Våra tjänster" })).toHaveAttribute("href", "/tjanster/");
+    expect(screen.getByRole("link", { name: "Kontakta oss för offert" })).toHaveAttribute("href", "/kontakt/");
+    expect(screen.getByText("noggrant utförda markarbeten")).toBeInTheDocument();
+  });
+
   it.each([
     { label: "home", path: "/" },
     { label: "services index", path: "/tjanster/" },

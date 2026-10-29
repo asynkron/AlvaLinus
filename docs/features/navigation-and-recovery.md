@@ -1,6 +1,6 @@
 # F4: Home, navigation and route recovery
 
-Reviewed: 2026-10-28. Runtime: `ui`. Product role: `surface`.
+Reviewed: 2026-10-29. Runtime: `ui`. Product role: `surface`.
 Supports **F1, F2, F3**, all active customer-outcome features.
 
 Home and shared route handling make the service, company and inquiry outcomes
@@ -48,7 +48,7 @@ handlers. See [route inventory](../current-public-route-inventory.md).
 | Empty services | Header plus Inget innehåll ännu | Applies to the service-dependent home and services-index bodies. About and contact keep their own bodies; a service route without its record and an unknown route use not-found recovery. |
 | Ready known route | Typed route view plus footer | Missing joined service record goes to not-found. |
 | Ready unknown route | Sidan finns inte, route shortcuts and footer | Follow a declared shortcut. A static host may return its own error before React mounts, so this is an in-app guarantee only. |
-| Photo error | Service card switches to the route SVG; if that fallback also errors, the card image is removed with no retry loop. Subpage hero hides its image. | Title, summary and Läs mer link remain. Home hero has no equivalent explicit onError handler. |
+| Photo error | Service card switches to the route SVG; if that fallback also errors, the card image is removed with no retry loop. Subpage hero and home hero hide their images. | Title, summary and Läs mer link remain. A hidden home hero keeps the navy section, gradient overlay, headline, intro, actions and stats. |
 
 The header stays during loading/error/empty, but the footer does not. Partners
 is omitted independently when its list is empty. These are current behaviors,
@@ -67,11 +67,13 @@ artifacts; existing route and visual scripts check deployable paths.
 Story documents carry reviewed Vitest declarations for links, loading, error,
 empty and not-found feedback. Swedish-character assertions protect representative
 UTF-8 text. The route visual test is technical metadata evidence; rendered
-service-card image-error behavior, including the terminal fallback failure, is
-covered by deterministic in-memory tests in the home page test file.
+service-card image-error behavior, including the terminal fallback failure, and
+the home hero photo's success and failure declarations are covered by
+deterministic in-memory tests in the home page test file.
 F4-US1 maps the deterministic mobile-menu declaration for expanded state,
 Escape from a link and the toggle, focus restoration, reopening and click
-dismissal, uncancelled Tab/Shift+Tab events and Escape outside the menu/toggle.
+dismissal, uncancelled Tab/Shift+Tab events and Escape outside the menu/toggle,
+plus the decorative home hero photo's success and failure declarations.
 JSDOM does not move focus on Tab, so those event assertions do not establish
 actual browser tab order. F4-US3 maps the two skip-link declarations separately
 from menu behavior. Neither mapping establishes responsive CSS, browser anchor
