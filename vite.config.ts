@@ -5,9 +5,16 @@ import type { Plugin, ResolvedConfig } from "vite";
 import { defineConfig } from "vitest/config";
 
 import { siteContent } from "./src/data/siteContent";
-import { staticSubpagePaths } from "./scripts/route-artifacts.mjs";
+import {
+  applyRouteDocumentMetadata,
+  routePageMetadata,
+  staticSubpageRoutes,
+} from "./scripts/route-artifacts.mjs";
 
-const staticRoutePaths = staticSubpagePaths(siteContent.routes);
+const staticRoutePages = staticSubpageRoutes(siteContent.routes).map((route) => ({
+  href: route.href,
+  metadata: routePageMetadata(route),
+}));
 
 function emitStaticRoutePages(): Plugin {
   let outDir = "dist";
@@ -22,11 +29,12 @@ function emitStaticRoutePages(): Plugin {
       const html = await fs.readFile(sourceHtml, "utf8");
 
       await Promise.all(
-        staticRoutePaths.map(async (routePath) => {
-          const routeDir = path.join(outDir, routePath.replace(/^\/+|\/+$/g, ""));
+        staticRoutePages.map(async (routePage) => {
+          const routeDir = path.join(outDir, routePage.href.replace(/^\/+|\/+$/g, ""));
+          const routeHtml = applyRouteDocumentMetadata(html, routePage.metadata);
 
           await fs.mkdir(routeDir, { recursive: true });
-          await fs.writeFile(path.join(routeDir, "index.html"), html);
+          await fs.writeFile(path.join(routeDir, "index.html"), routeHtml);
         }),
       );
     },

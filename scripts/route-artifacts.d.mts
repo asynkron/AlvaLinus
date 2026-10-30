@@ -1,11 +1,24 @@
 export type RouteRegistryRoute = {
   readonly href: string;
+  readonly label: string;
+  readonly summary: string;
   readonly visual?: { readonly assetPath: string };
+};
+
+export type RoutePageMetadata = {
+  readonly title: string;
+  readonly description: string;
 };
 
 export declare function requireRouteRegistry(routes: readonly RouteRegistryRoute[]): readonly RouteRegistryRoute[];
 
+export declare function staticSubpageRoutes(routes: readonly RouteRegistryRoute[]): RouteRegistryRoute[];
+
 export declare function staticSubpagePaths(routes: readonly RouteRegistryRoute[]): string[];
+
+export declare function routePageMetadata(route: RouteRegistryRoute): RoutePageMetadata;
+
+export declare function applyRouteDocumentMetadata(document: string, metadata: RoutePageMetadata): string;
 
 export declare function routeVisualAssetPaths(routes: readonly RouteRegistryRoute[]): string[];
 
