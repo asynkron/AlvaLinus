@@ -4,11 +4,14 @@ import { describe, expect, it, vi } from "vitest";
 
 import { siteContent } from "../src/data/siteContent.ts";
 import {
+  applyRouteDocumentMetadata,
   assertRouteVisualAssets,
   assertStaticRouteArtifacts,
   requireRouteRegistry,
+  routePageMetadata,
   routeVisualAssetPaths,
   staticSubpagePaths,
+  staticSubpageRoutes,
 } from "./route-artifacts.mjs";
 
 function fixtureRoute(id, href, assetPath) {
@@ -28,7 +31,16 @@ const contactRoute = fixtureRoute("contact", "/kontakt/", "/page-visuals/svard-e
 const addedRoute = fixtureRoute("nyheter", "/nyheter/", "/page-visuals/svard-entreprenad-nyheter.svg");
 const fixtureRoutes = [homeRoute, servicesRoute, contactRoute];
 
-const rootHtml = '<!doctype html><html lang="sv"><body>Svard Entreprenad</body></html>';
+const rootHtml =
+  '<!doctype html><html lang="sv"><head><title>Svärd Entreprenad – Mark & anläggning i Örebro</title>' +
+  '<meta name="description" content="Svärd Entreprenad utför professionella mark- och anläggningsarbeten i Örebro.">' +
+  '</head><body>Svard Entreprenad</body></html>';
+
+const rootDocumentWithoutMetadata = '<!doctype html><html lang="sv"><body>Svard Entreprenad</body></html>';
+
+function emittedSubpageHtml(route) {
+  return applyRouteDocumentMetadata(rootHtml, routePageMetadata(route));
+}
 
 function subpageArtifactPath(distDir, href) {
   return path.join(distDir, href.replace(/^\/+|\/+$/g, ""), "index.html");
@@ -59,8 +71,8 @@ function distEntries(routes, { omit = [], mismatched = [] } = {}) {
   for (const route of routes) {
     if (route.href === "/" || omit.includes(route.href)) continue;
     entries[subpageArtifactPath("dist", route.href)] = mismatched.includes(route.href)
-      ? `${rootHtml}<!-- stale artifact -->`
-      : rootHtml;
+      ? rootHtml
+      : emittedSubpageHtml(route);
   }
   return entries;
 }
@@ -207,7 +219,7 @@ describe("requireRouteRegistry canonical route hrefs", () => {
 });
 
 describe("assertStaticRouteArtifacts", () => {
-  it("requires every declared non-root route artifact to exist and match the root HTML", async () => {
+  it("requires every declared non-root route artifact to carry its registry-derived title and description", async () => {
     const fileSystem = memoryFileSystem(distEntries(fixtureRoutes));
 
     await expect(
@@ -240,7 +252,7 @@ describe("assertStaticRouteArtifacts", () => {
     expect(fileSystem.readFile).not.toHaveBeenCalledWith(subpageArtifactPath("dist", "/kontakt/"), "utf8");
   });
 
-  it("fails descriptively when a declared route artifact differs from the root HTML", async () => {
+  it("fails descriptively when a declared route artifact carries the root title or description instead of the route metadata", async () => {
     await expect(
       assertStaticRouteArtifacts({
         routes: fixtureRoutes,
@@ -248,6 +260,90 @@ describe("assertStaticRouteArtifacts", () => {
         readFile: memoryFileSystem(distEntries(fixtureRoutes, { mismatched: ["/kontakt/"] })).readFile,
       }),
     ).rejects.toThrow("Static route artifact check failed (mismatched: /kontakt/).");
+  });
+
+  it("fails when an artifact carries the expected title but a stale description", async () => {
+    const staleDescription = { ...servicesRoute, summary: "Föråldrad tjänstesammanfattning." };
+    const entries = distEntries(fixtureRoutes);
+    entries[subpageArtifactPath("dist", "/tjanster/")] = emittedSubpageHtml(staleDescription);
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: fixtureRoutes,
+        distDir: "dist",
+        readFile: memoryFileSystem(entries).readFile,
+      }),
+    ).rejects.toThrow("Static route artifact check failed (mismatched: /tjanster/).");
+  });
+
+  it("validates metadata that required HTML attribute escaping in the emitted document", async () => {
+    const specialRoute = {
+      ...fixtureRoute("special", "/special/", "/page-visuals/svard-entreprenad-special.svg"),
+      label: 'Mark & "tryggt" hantverk',
+      summary: 'Sida med & tecken, <huggning> och "citat" i sammanfattningen.',
+    };
+    const entries = { [path.join("dist", "index.html")]: rootHtml };
+    entries[subpageArtifactPath("dist", specialRoute.href)] = emittedSubpageHtml(specialRoute);
+
+    const emitted = entries[subpageArtifactPath("dist", specialRoute.href)];
+    expect(emitted).toContain(
+      "<title>Mark &amp; &quot;tryggt&quot; hantverk – Svärd Entreprenad</title>",
+    );
+    expect(emitted).toContain(
+      '<meta name="description" content="Sida med &amp; tecken, &lt;huggning&gt; och &quot;citat&quot; i sammanfattningen.">',
+    );
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: [homeRoute, specialRoute],
+        distDir: "dist",
+        readFile: memoryFileSystem(entries).readFile,
+      }),
+    ).resolves.toEqual([specialRoute.href]);
+  });
+
+  it("requires the root document to keep a title and a description meta", async () => {
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: fixtureRoutes,
+        distDir: "dist",
+        readFile: memoryFileSystem({ [path.join("dist", "index.html")]: rootDocumentWithoutMetadata }).readFile,
+      }),
+    ).rejects.toThrow(
+      "Static route artifact check failed: the root document must keep a <title> element and a nonempty description meta content attribute.",
+    );
+
+    const rootWithoutDescription =
+      '<!doctype html><html lang="sv"><head><title>Svärd Entreprenad</title></head><body>Svard Entreprenad</body></html>';
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: fixtureRoutes,
+        distDir: "dist",
+        readFile: memoryFileSystem({ [path.join("dist", "index.html")]: rootWithoutDescription }).readFile,
+      }),
+    ).rejects.toThrow(
+      "Static route artifact check failed: the root document must keep a <title> element and a nonempty description meta content attribute.",
+    );
+  });
+
+  it("fails for a declared route without page metadata fields before reading artifacts", async () => {
+    const unlabeledRoute = {
+      id: "unlabeled",
+      kind: "service",
+      href: "/unlabeled/",
+      visual: { assetPath: "/page-visuals/svard-entreprenad-unlabeled.svg" },
+    };
+    const readFile = vi.fn();
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: [homeRoute, unlabeledRoute],
+        distDir: "dist",
+        readFile,
+      }),
+    ).rejects.toThrow("Route unlabeled must declare a nonempty label string for page metadata.");
+    expect(readFile).not.toHaveBeenCalled();
   });
 
   it("reports missing and mismatched routes together in declared route order", async () => {
@@ -273,6 +369,63 @@ describe("assertStaticRouteArtifacts", () => {
     await expect(
       assertStaticRouteArtifacts({ routes: fixtureRoutes, distDir: "dist", readFile }),
     ).rejects.toThrow(denied);
+  });
+});
+
+describe("routePageMetadata", () => {
+  it("composes the declared Swedish title and the registry summary verbatim", () => {
+    expect(routePageMetadata(servicesRoute)).toEqual({
+      title: "services – Svärd Entreprenad",
+      description: "services summary",
+    });
+  });
+
+  it("rejects routes without a nonempty label or summary", () => {
+    expect(() => routePageMetadata({ id: "broken", href: "/broken/" })).toThrow(
+      "Route broken must declare a nonempty label string for page metadata.",
+    );
+    expect(() => routePageMetadata({ id: "broken", href: "/broken/", label: "Broken" })).toThrow(
+      "Route broken must declare a nonempty summary string for page metadata.",
+    );
+    expect(() => routePageMetadata({ id: "broken", href: "/broken/", label: "  " })).toThrow(
+      "Route broken must declare a nonempty label string for page metadata.",
+    );
+  });
+});
+
+describe("applyRouteDocumentMetadata", () => {
+  it("replaces the root title and description while preserving the rest of the document", () => {
+    const emitted = applyRouteDocumentMetadata(rootHtml, routePageMetadata(contactRoute));
+
+    expect(emitted).toContain("<title>contact – Svärd Entreprenad</title>");
+    expect(emitted).toContain('<meta name="description" content="contact summary">');
+    expect(emitted).not.toContain("Svärd Entreprenad – Mark & anläggning i Örebro");
+    expect(emitted).toContain("<body>Svard Entreprenad</body>");
+    expect(emitted).toMatch(/^<!doctype html>/);
+  });
+
+  it("rejects a document without a title element or a description meta", () => {
+    expect(() =>
+      applyRouteDocumentMetadata("<html><body>inga metadatataggar</body></html>", {
+        title: "Titel",
+        description: "Beskrivning",
+      }),
+    ).toThrow("Route document must contain a <title> element to replace.");
+    expect(() =>
+      applyRouteDocumentMetadata("<html><head><title>Titel</title></head></html>", {
+        title: "Titel",
+        description: "Beskrivning",
+      }),
+    ).toThrow("Route document must contain a description meta tag with a content attribute to replace.");
+  });
+
+  it("rejects metadata without nonempty title and description strings", () => {
+    expect(() => applyRouteDocumentMetadata(rootHtml, { title: "", description: "Beskrivning" })).toThrow(
+      "Route page metadata requires nonempty title and description strings.",
+    );
+    expect(() => applyRouteDocumentMetadata(rootHtml, { title: "Titel", description: "" })).toThrow(
+      "Route page metadata requires nonempty title and description strings.",
+    );
   });
 });
 
@@ -378,5 +531,44 @@ describe("siteContent route registry", () => {
     const assetPaths = routeVisualAssetPaths(siteContent.routes);
     expect(assetPaths).toHaveLength(9);
     expect(new Set(assetPaths).size).toBe(assetPaths.length);
+  });
+
+  it("derives page metadata from every declared subpage's Swedish label and summary", () => {
+    for (const route of staticSubpageRoutes(siteContent.routes)) {
+      expect(routePageMetadata(route)).toEqual({
+        title: `${route.label} – Svärd Entreprenad`,
+        description: route.summary,
+      });
+    }
+
+    expect(routePageMetadata(siteContent.routes[1])).toEqual({
+      title: "Tjänster – Svärd Entreprenad",
+      description: siteContent.routes[1].summary,
+    });
+  });
+
+  it("validates emitted per-route artifacts for the real route inventory and rejects a stale artifact", async () => {
+    const entries = { [path.join("dist", "index.html")]: rootHtml };
+    for (const route of staticSubpageRoutes(siteContent.routes)) {
+      entries[subpageArtifactPath("dist", route.href)] = applyRouteDocumentMetadata(rootHtml, routePageMetadata(route));
+    }
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: siteContent.routes,
+        distDir: "dist",
+        readFile: memoryFileSystem(entries).readFile,
+      }),
+    ).resolves.toEqual(staticSubpagePaths(siteContent.routes));
+
+    const staleEntries = { ...entries, [subpageArtifactPath("dist", "/kontakt/")]: rootHtml };
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: siteContent.routes,
+        distDir: "dist",
+        readFile: memoryFileSystem(staleEntries).readFile,
+      }),
+    ).rejects.toThrow("Static route artifact check failed (mismatched: /kontakt/).");
   });
 });

@@ -4,8 +4,40 @@ const visualAssetPrefix = "/page-visuals/svard-entreprenad-";
 const visualAssetSuffix = ".svg";
 const percentEscapePattern = /%[0-9a-fA-F]{2}/;
 
+const siteName = "Svärd Entreprenad";
+const titleElementPattern = /<title\b[^>]*>([\s\S]*?)<\/title>/i;
+const descriptionMetaTagPattern = /<meta\b[^>]*\bname=(["'])description\1[^>]*>/i;
+const descriptionContentPattern = /\s+content=(["'])([\s\S]*?)\1/i;
+
 function isMissingEntryError(error) {
   return error instanceof Error && "code" in error && error.code === "ENOENT";
+}
+
+function escapeHtmlText(text) {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function unescapeHtmlText(text) {
+  return text
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&");
+}
+
+function extractDocumentMetadata(document) {
+  const titleMatch = document.match(titleElementPattern);
+  const metaTagMatch = document.match(descriptionMetaTagPattern);
+  const contentMatch = metaTagMatch === null ? null : metaTagMatch[0].match(descriptionContentPattern);
+
+  return {
+    title: titleMatch === null ? null : unescapeHtmlText(titleMatch[1]),
+    description: contentMatch === null ? null : unescapeHtmlText(contentMatch[2]),
+  };
 }
 
 function routeLabel(route, index) {
@@ -104,10 +136,82 @@ export function requireRouteRegistry(routes) {
   return routes;
 }
 
+export function staticSubpageRoutes(routes) {
+  return requireRouteRegistry(routes).filter((route) => route.href !== "/");
+}
+
 export function staticSubpagePaths(routes) {
-  return requireRouteRegistry(routes)
-    .map((route) => route.href)
-    .filter((href) => href !== "/");
+  return staticSubpageRoutes(routes).map((route) => route.href);
+}
+
+/**
+ * Declared page-metadata composition for emitted subpage documents: the title
+ * combines the route's Swedish label with the site name, and the description
+ * is the route's registry summary verbatim. The registry stays the single
+ * owner of the Swedish text; this function only declares how the document
+ * strings are composed from it.
+ */
+export function routePageMetadata(route) {
+  const routeName = typeof route?.id === "string" && route.id.length > 0 ? `Route ${route.id}` : "Route";
+
+  if (typeof route?.label !== "string" || route.label.trim().length === 0) {
+    throw new Error(`${routeName} must declare a nonempty label string for page metadata.`);
+  }
+
+  if (typeof route?.summary !== "string" || route.summary.trim().length === 0) {
+    throw new Error(`${routeName} must declare a nonempty summary string for page metadata.`);
+  }
+
+  return requirePageMetadata({ title: `${route.label} – ${siteName}`, description: route.summary });
+}
+
+function requirePageMetadata(metadata) {
+  if (
+    typeof metadata?.title !== "string" ||
+    metadata.title.length === 0 ||
+    typeof metadata?.description !== "string" ||
+    metadata.description.length === 0
+  ) {
+    throw new Error("Route page metadata requires nonempty title and description strings.");
+  }
+
+  return metadata;
+}
+
+function replaceTitleElement(document, title) {
+  if (!titleElementPattern.test(document)) {
+    throw new Error("Route document must contain a <title> element to replace.");
+  }
+
+  return document.replace(titleElementPattern, () => `<title>${escapeHtmlText(title)}</title>`);
+}
+
+function replaceDescriptionMetaTag(document, description) {
+  const metaTagMatch = document.match(descriptionMetaTagPattern);
+
+  if (metaTagMatch === null || !descriptionContentPattern.test(metaTagMatch[0])) {
+    throw new Error("Route document must contain a description meta tag with a content attribute to replace.");
+  }
+
+  return document.replace(descriptionMetaTagPattern, (tag) =>
+    tag.replace(descriptionContentPattern, () => ` content="${escapeHtmlText(description)}"`),
+  );
+}
+
+export function applyRouteDocumentMetadata(document, metadata) {
+  if (typeof document !== "string" || document.length === 0) {
+    throw new Error("Route document metadata emission requires a nonempty document string.");
+  }
+
+  const pageMetadata = requirePageMetadata(metadata);
+
+  return replaceDescriptionMetaTag(replaceTitleElement(document, pageMetadata.title), pageMetadata.description);
+}
+
+function documentCarriesRouteMetadata(document, metadata) {
+  const extracted = extractDocumentMetadata(document);
+
+  return extracted.title === metadata.title && extracted.description === metadata.description;
 }
 
 export function routeVisualAssetPaths(routes) {
@@ -123,15 +227,34 @@ function isDeclaredVisualAssetPath(assetPath) {
 }
 
 export async function assertStaticRouteArtifacts({ routes, distDir, readFile }) {
-  const expectedRoutes = staticSubpagePaths(routes);
+  const expectedPages = staticSubpageRoutes(routes).map((route) => ({
+    href: route.href,
+    metadata: routePageMetadata(route),
+  }));
+  const expectedRoutes = expectedPages.map((page) => page.href);
   const rootHtml = await readFile(path.join(distDir, "index.html"), "utf8");
 
+  const rootMetadata = extractDocumentMetadata(rootHtml);
+
+  if (
+    rootMetadata.title === null ||
+    rootMetadata.title.length === 0 ||
+    rootMetadata.description === null ||
+    rootMetadata.description.length === 0
+  ) {
+    throw new Error(
+      "Static route artifact check failed: the root document must keep a <title> element and a nonempty description meta content attribute.",
+    );
+  }
+
   const outcomes = await Promise.all(
-    expectedRoutes.map(async (route) => {
-      const routeHtmlPath = path.join(distDir, route.replace(/^\/+|\/+$/g, ""), "index.html");
+    expectedPages.map(async (page) => {
+      const routeHtmlPath = path.join(distDir, page.href.replace(/^\/+|\/+$/g, ""), "index.html");
 
       try {
-        return (await readFile(routeHtmlPath, "utf8")) === rootHtml ? "matched" : "mismatched";
+        const routeHtml = await readFile(routeHtmlPath, "utf8");
+
+        return documentCarriesRouteMetadata(routeHtml, page.metadata) ? "matched" : "mismatched";
       } catch (error) {
         if (isMissingEntryError(error)) return "missing";
 
