@@ -904,6 +904,9 @@ function Footer({ content }: { readonly content: SiteContent }) {
   );
 }
 
+const CONTACT_FIELD_BASE_CLASS =
+  "rounded-md border bg-card px-3 py-2 text-base font-normal text-foreground outline-none transition-colors focus:border-primary focus-visible:ring-2 focus-visible:ring-ring sm:text-sm";
+
 function Contact({
   content,
   serviceOption,
@@ -956,7 +959,7 @@ function Contact({
               name={form.nameField.name}
               placeholder={form.nameField.placeholder}
               required
-              className="min-h-11 rounded-md border bg-card px-3 py-2 text-base font-normal text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary sm:text-sm"
+              className={`min-h-11 ${CONTACT_FIELD_BASE_CLASS} placeholder:text-muted-foreground`}
             />
           </label>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -965,7 +968,7 @@ function Contact({
               <select
                 name={form.customerTypeField.name}
                 required
-                className="min-h-11 rounded-md border bg-card px-3 py-2 text-base font-normal text-foreground outline-none transition-colors focus:border-primary sm:text-sm"
+                className={`min-h-11 ${CONTACT_FIELD_BASE_CLASS}`}
               >
                 {form.customerTypeField.options.map((option) => (
                   <option key={option}>{option}</option>
@@ -978,7 +981,7 @@ function Contact({
                 name={form.serviceField.name}
                 required
                 defaultValue={serviceOption}
-                className="min-h-11 rounded-md border bg-card px-3 py-2 text-base font-normal text-foreground outline-none transition-colors focus:border-primary sm:text-sm"
+                className={`min-h-11 ${CONTACT_FIELD_BASE_CLASS}`}
               >
                 {form.serviceField.options.map((option) => (
                   <option key={option}>{option}</option>
@@ -993,7 +996,7 @@ function Contact({
               placeholder={form.messageField.placeholder}
               required
               rows={form.messageField.rows}
-              className="min-h-32 resize-y rounded-md border bg-card px-3 py-2 text-base font-normal text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary sm:text-sm"
+              className={`min-h-32 resize-y ${CONTACT_FIELD_BASE_CLASS} placeholder:text-muted-foreground`}
             />
           </label>
           <p id="kontakt-handoff-note" className="text-sm leading-6 text-muted-foreground">
