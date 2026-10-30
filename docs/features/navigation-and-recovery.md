@@ -1,6 +1,6 @@
 # F4: Home, navigation and route recovery
 
-Reviewed: 2026-10-29. Runtime: `ui`. Product role: `surface`.
+Reviewed: 2026-10-30. Runtime: `ui`. Product role: `surface`.
 Supports **F1, F2, F3**, all active customer-outcome features.
 
 Home and shared route handling make the service, company and inquiry outcomes
@@ -10,9 +10,13 @@ a separate customer result because it has tests.
 ## Entry points and current behavior
 
 All nine routes listed in the [index](README.md) share Header. Desktop navigation
-links home, services (with five service links), about and contact. The mobile
-button toggles its menu. Escape from a menu descendant or the focused toggle
-closes an open menu and returns focus to the toggle; the menu can reopen.
+links home, services (with five service links), about and contact. The desktop
+Tjänster trigger is a focusable link declared with `aria-haspopup`, and its
+dropdown panel keeps the five service links in registry order; keyboard focus on
+the trigger reveals that panel through the existing `group-focus-within`
+styling. The mobile button toggles its menu. Escape from a menu descendant
+or the focused toggle closes an open menu and returns focus to the toggle;
+the menu can reopen.
 Tab/Shift+Tab events are not cancelled; Escape elsewhere in the header leaves
 both menu and focus unchanged. Subpages have a Hem breadcrumb.
 Footer repeats page and service links and the contact email on ready routes,
@@ -89,15 +93,19 @@ Escape from a link and the toggle, focus restoration, reopening and click
 dismissal, uncancelled Tab/Shift+Tab events and Escape outside the menu/toggle,
 plus the decorative home hero photo's success and failure declarations and the
 above-the-fold fetch-priority declaration whose about-hero error case also
-covers subpage hero image hiding.
+covers subpage hero image hiding. The home page test file also carries the
+deterministic desktop dropdown declaration: the Tjänster trigger keeps its
+`aria-haspopup` declaration and takes focus, its Tab/Shift+Tab events stay
+uncancelled, and the dropdown panel holds the five service links in registry
+order with their distinct Swedish accessible names.
 JSDOM does not move focus on Tab, so those event assertions do not establish
-actual browser tab order. F4-US3 maps the two skip-link declarations separately
-from menu behavior. Neither mapping establishes responsive CSS, browser anchor
-activation or desktop dropdown interaction.
-Keyboard dropdown interaction, normalization variants
-and production-host fallback remain unmapped, not claimed as executed
-acceptance. F1-US1 owns the service-card failure mappings; this supporting
-surface points to F1 rather than duplicating those story references.
+actual browser tab order, and DOM evidence does not establish the panel's
+focus-only CSS reveal. F4-US3 maps the two skip-link declarations separately
+from menu behavior. Neither mapping establishes responsive CSS or browser
+anchor activation. Normalization variants and production-host fallback remain
+unmapped, not claimed as executed acceptance. F1-US1 owns the service-card
+failure mappings; this supporting surface points to F1 rather than duplicating
+those story references.
 
 No product background module, API, storage, telemetry or report belongs to this
 surface. Outcome measurement stays with F1–F3; there is no standalone conversion
@@ -105,12 +113,9 @@ claim for the route inventory.
 
 ## What Works Less Well
 
-Error feedback provides no inline retry or contact body. Desktop dropdown
-keyboard interaction remains unmapped (see the roadmap's expand item).
+Error feedback provides no inline retry or contact body.
 
 ## Roadmap
 
-- Expand: protect desktop dropdown keyboard behavior when that flow changes,
-  retaining the existing mobile Escape/focus coverage; document the actual
-  production-host unknown-path behavior when known.
+- Expand: document the actual production-host unknown-path behavior when known.
 

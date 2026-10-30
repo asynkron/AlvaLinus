@@ -161,6 +161,57 @@ describe("SiteHomePage", () => {
     expect(homeLink).toHaveFocus();
   });
 
+  it("keeps the desktop Tjänster dropdown trigger focusable with its five registry-ordered service links", () => {
+    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+
+    const headerNav = within(screen.getByRole("banner")).getByRole("navigation", { name: "Huvudnavigation" });
+    const serviceRoutes = content.routes.filter((route) => route.kind === "service");
+    const serviceHrefs = new Set(serviceRoutes.map((route) => route.href));
+    const trigger = within(headerNav).getByRole("link", { name: "Tjänster" });
+    const dropdownLinks = within(headerNav)
+      .getAllByRole("link")
+      .filter((link) => serviceHrefs.has(link.getAttribute("href") ?? ""));
+
+    expect(trigger).toHaveAttribute("href", "/tjanster/");
+    expect(trigger).toHaveAttribute("aria-haspopup", "true");
+
+    trigger.focus();
+    expect(trigger).toHaveFocus();
+
+    for (const shiftKey of [false, true]) {
+      // JSDOM does not move focus on Tab; check that the browser's default
+      // forward/backward navigation is not cancelled by the dropdown trigger.
+      expect(fireEvent.keyDown(trigger, { key: "Tab", shiftKey })).toBe(true);
+    }
+    expect(trigger).toHaveFocus();
+
+    expect(dropdownLinks).toHaveLength(serviceRoutes.length);
+    expect(dropdownLinks.map((link) => link.getAttribute("href"))).toEqual(serviceRoutes.map((route) => route.href));
+    expect(new Set(dropdownLinks.map((link) => link.parentElement)).size).toBe(1);
+
+    const group = trigger.parentElement;
+
+    if (!group) {
+      throw new Error("Missing rendered desktop dropdown group wrapper");
+    }
+
+    for (const [index, route] of serviceRoutes.entries()) {
+      const link = dropdownLinks[index];
+      const previous = index > 0 ? dropdownLinks[index - 1] : undefined;
+
+      if (!link || (index > 0 && !previous)) {
+        throw new Error(`Missing rendered desktop dropdown service link for ${route.label}`);
+      }
+
+      expect(group.contains(link)).toBe(true);
+      expect(link).toHaveAccessibleName(route.label);
+
+      if (previous) {
+        expect(previous.compareDocumentPosition(link) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+      }
+    }
+  });
+
   it("renders owner-approved home content, service, process, partner, and contact areas", () => {
     render(<SiteHomePage initialState={{ status: "ready", content }} />);
 
