@@ -8,6 +8,16 @@ const siteName = "Svärd Entreprenad";
 const titleElementPattern = /<title\b[^>]*>([\s\S]*?)<\/title>/i;
 const descriptionMetaTagPattern = /<meta\b[^>]*\bname=(["'])description\1[^>]*>/i;
 const descriptionContentPattern = /\s+content=(["'])([\s\S]*?)\1/i;
+const ogTitleMetaTagPattern = /<meta\b[^>]*\bproperty=(["'])og:title\1[^>]*>/i;
+const ogDescriptionMetaTagPattern = /<meta\b[^>]*\bproperty=(["'])og:description\1[^>]*>/i;
+const twitterTitleMetaTagPattern = /<meta\b[^>]*\bname=(["'])twitter:title\1[^>]*>/i;
+const twitterDescriptionMetaTagPattern = /<meta\b[^>]*\bname=(["'])twitter:description\1[^>]*>/i;
+const socialMetaTagPatterns = [
+  ogTitleMetaTagPattern,
+  ogDescriptionMetaTagPattern,
+  twitterTitleMetaTagPattern,
+  twitterDescriptionMetaTagPattern,
+];
 
 function isMissingEntryError(error) {
   return error instanceof Error && "code" in error && error.code === "ENOENT";
@@ -29,14 +39,23 @@ function unescapeHtmlText(text) {
     .replace(/&amp;/g, "&");
 }
 
+function metaTagContent(document, metaTagPattern) {
+  const metaTagMatch = document.match(metaTagPattern);
+  const contentMatch = metaTagMatch === null ? null : metaTagMatch[0].match(descriptionContentPattern);
+
+  return contentMatch === null ? null : unescapeHtmlText(contentMatch[2]);
+}
+
 function extractDocumentMetadata(document) {
   const titleMatch = document.match(titleElementPattern);
-  const metaTagMatch = document.match(descriptionMetaTagPattern);
-  const contentMatch = metaTagMatch === null ? null : metaTagMatch[0].match(descriptionContentPattern);
 
   return {
     title: titleMatch === null ? null : unescapeHtmlText(titleMatch[1]),
-    description: contentMatch === null ? null : unescapeHtmlText(contentMatch[2]),
+    description: metaTagContent(document, descriptionMetaTagPattern),
+    ogTitle: metaTagContent(document, ogTitleMetaTagPattern),
+    ogDescription: metaTagContent(document, ogDescriptionMetaTagPattern),
+    twitterTitle: metaTagContent(document, twitterTitleMetaTagPattern),
+    twitterDescription: metaTagContent(document, twitterDescriptionMetaTagPattern),
   };
 }
 
@@ -147,9 +166,10 @@ export function staticSubpagePaths(routes) {
 /**
  * Declared page-metadata composition for emitted subpage documents: the title
  * combines the route's Swedish label with the site name, and the description
- * is the route's registry summary verbatim. The registry stays the single
- * owner of the Swedish text; this function only declares how the document
- * strings are composed from it.
+ * is the route's registry summary verbatim. The same composed strings feed the
+ * title element, the description meta and the og/twitter social card tags, so
+ * the registry stays the single owner of the Swedish text; this function only
+ * declares how the document strings are composed from it.
  */
 export function routePageMetadata(route) {
   const routeName = typeof route?.id === "string" && route.id.length > 0 ? `Route ${route.id}` : "Route";
@@ -208,15 +228,39 @@ function replaceTitleElement(document, title) {
   return document.replace(titleElementPattern, () => `<title>${escapeHtmlText(title)}</title>`);
 }
 
-function replaceDescriptionMetaTag(document, description) {
-  const metaTagMatch = document.match(descriptionMetaTagPattern);
+function replaceMetaTagContent(document, metaTagPattern, content, missingDiagnostic) {
+  const metaTagMatch = document.match(metaTagPattern);
 
   if (metaTagMatch === null || !descriptionContentPattern.test(metaTagMatch[0])) {
-    throw new Error("Route document must contain a description meta tag with a content attribute to replace.");
+    throw new Error(missingDiagnostic);
   }
 
-  return document.replace(descriptionMetaTagPattern, (tag) =>
-    tag.replace(descriptionContentPattern, () => ` content="${escapeHtmlText(description)}"`),
+  return document.replace(metaTagPattern, (tag) =>
+    tag.replace(descriptionContentPattern, () => ` content="${escapeHtmlText(content)}"`),
+  );
+}
+
+function replaceDescriptionMetaTag(document, description) {
+  return replaceMetaTagContent(
+    document,
+    descriptionMetaTagPattern,
+    description,
+    "Route document must contain a description meta tag with a content attribute to replace.",
+  );
+}
+
+function replaceSocialMetaTags(document, metadata) {
+  return socialMetaTagPatterns.reduce(
+    (updatedDocument, metaTagPattern) =>
+      replaceMetaTagContent(
+        updatedDocument,
+        metaTagPattern,
+        metaTagPattern === ogTitleMetaTagPattern || metaTagPattern === twitterTitleMetaTagPattern
+          ? metadata.title
+          : metadata.description,
+        "Route document must contain og:title, og:description, twitter:title and twitter:description meta tags with content attributes to replace.",
+      ),
+    document,
   );
 }
 
@@ -226,14 +270,25 @@ export function applyRouteDocumentMetadata(document, metadata) {
   }
 
   const pageMetadata = requirePageMetadata(metadata);
+  const documentWithHeadText = replaceDescriptionMetaTag(
+    replaceTitleElement(document, pageMetadata.title),
+    pageMetadata.description,
+  );
 
-  return replaceDescriptionMetaTag(replaceTitleElement(document, pageMetadata.title), pageMetadata.description);
+  return replaceSocialMetaTags(documentWithHeadText, pageMetadata);
 }
 
 function documentCarriesRouteMetadata(document, metadata) {
   const extracted = extractDocumentMetadata(document);
 
-  return extracted.title === metadata.title && extracted.description === metadata.description;
+  return (
+    extracted.title === metadata.title &&
+    extracted.description === metadata.description &&
+    extracted.ogTitle === metadata.title &&
+    extracted.ogDescription === metadata.description &&
+    extracted.twitterTitle === metadata.title &&
+    extracted.twitterDescription === metadata.description
+  );
 }
 
 export function routeVisualAssetPaths(routes) {

@@ -33,10 +33,46 @@ const contactRoute = fixtureRoute("contact", "/kontakt/", "/page-visuals/svard-e
 const addedRoute = fixtureRoute("nyheter", "/nyheter/", "/page-visuals/svard-entreprenad-nyheter.svg");
 const fixtureRoutes = [homeRoute, servicesRoute, contactRoute];
 
+const rootTitle = "Svärd Entreprenad – Mark & anläggning i Örebro";
+const rootDescription = "Svärd Entreprenad utför professionella mark- och anläggningsarbeten i Örebro.";
 const rootHtml =
-  '<!doctype html><html lang="sv"><head><title>Svärd Entreprenad – Mark & anläggning i Örebro</title>' +
-  '<meta name="description" content="Svärd Entreprenad utför professionella mark- och anläggningsarbeten i Örebro.">' +
-  '</head><body>Svard Entreprenad</body></html>';
+  '<!doctype html><html lang="sv"><head><title>' +
+  rootTitle +
+  "</title>" +
+  '<meta name="description" content="' +
+  rootDescription +
+  '">' +
+  '<meta property="og:type" content="website">' +
+  '<meta property="og:locale" content="sv_SE">' +
+  '<meta property="og:site_name" content="Svärd Entreprenad">' +
+  '<meta property="og:title" content="' +
+  rootTitle +
+  '">' +
+  '<meta\n      property="og:description"\n      content="' +
+  rootDescription +
+  '"\n    >' +
+  '<meta property="og:image" content="/page-visuals/hero-photo.webp">' +
+  '<meta property="og:image:width" content="1600">' +
+  '<meta property="og:image:height" content="905">' +
+  '<meta property="og:image:alt" content="Grävmaskin på en mark- och anläggningsplats i solnedgång">' +
+  '<meta name="twitter:card" content="summary_large_image">' +
+  '<meta name="twitter:title" content="' +
+  rootTitle +
+  '">' +
+  '<meta\n      name="twitter:description"\n      content="' +
+  rootDescription +
+  '"\n    >' +
+  '<meta name="twitter:image" content="/page-visuals/hero-photo.webp">' +
+  "</head><body>Svard Entreprenad</body></html>";
+
+const rootHtmlWithoutSocialTags =
+  '<!doctype html><html lang="sv"><head><title>' +
+  rootTitle +
+  "</title>" +
+  '<meta name="description" content="' +
+  rootDescription +
+  '">' +
+  "</head><body>Svard Entreprenad</body></html>";
 
 const rootDocumentWithoutMetadata = '<!doctype html><html lang="sv"><body>Svard Entreprenad</body></html>';
 
@@ -50,6 +86,22 @@ function notFoundArtifactFile(distDir) {
 
 function emittedNotFoundHtml() {
   return applyRouteDocumentMetadata(rootHtml, notFoundPageMetadata());
+}
+
+function subpageHtmlWithRootSocialTags(route) {
+  const metadata = routePageMetadata(route);
+
+  return rootHtml
+    .replace(`<title>${rootTitle}</title>`, `<title>${metadata.title}</title>`)
+    .replace(`content="${rootDescription}"`, `content="${metadata.description}"`);
+}
+
+function subpageHtmlWithoutSocialTags(route) {
+  const metadata = routePageMetadata(route);
+
+  return rootHtmlWithoutSocialTags
+    .replace(`<title>${rootTitle}</title>`, `<title>${metadata.title}</title>`)
+    .replace(`content="${rootDescription}"`, `content="${metadata.description}"`);
 }
 
 function subpageArtifactPath(distDir, href) {
@@ -278,6 +330,32 @@ describe("assertStaticRouteArtifacts", () => {
     ).rejects.toThrow("Static route artifact check failed (mismatched: /kontakt/).");
   });
 
+  it("rejects a subpage artifact whose social card tags still carry the root text", async () => {
+    const entries = distEntries(fixtureRoutes);
+    entries[subpageArtifactPath("dist", "/tjanster/")] = subpageHtmlWithRootSocialTags(servicesRoute);
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: fixtureRoutes,
+        distDir: "dist",
+        readFile: memoryFileSystem(entries).readFile,
+      }),
+    ).rejects.toThrow("Static route artifact check failed (mismatched: /tjanster/).");
+  });
+
+  it("rejects a subpage artifact missing its social card meta tags", async () => {
+    const entries = distEntries(fixtureRoutes);
+    entries[subpageArtifactPath("dist", "/kontakt/")] = subpageHtmlWithoutSocialTags(contactRoute);
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: fixtureRoutes,
+        distDir: "dist",
+        readFile: memoryFileSystem(entries).readFile,
+      }),
+    ).rejects.toThrow("Static route artifact check failed (mismatched: /kontakt/).");
+  });
+
   it("fails when an artifact carries the expected title but a stale description", async () => {
     const staleDescription = { ...servicesRoute, summary: "Föråldrad tjänstesammanfattning." };
     const entries = distEntries(fixtureRoutes);
@@ -310,6 +388,12 @@ describe("assertStaticRouteArtifacts", () => {
     );
     expect(emitted).toContain(
       '<meta name="description" content="Sida med &amp; tecken, &lt;huggning&gt; och &quot;citat&quot; i sammanfattningen.">',
+    );
+    expect(emitted).toContain(
+      '<meta property="og:title" content="Mark &amp; &quot;tryggt&quot; hantverk – Svärd Entreprenad">',
+    );
+    expect(emitted).toMatch(
+      /property="og:description"\s+content="Sida med &amp; tecken, &lt;huggning&gt; och &quot;citat&quot; i sammanfattningen\."/,
     );
 
     await expect(
@@ -438,12 +522,28 @@ describe("routePageMetadata", () => {
 });
 
 describe("applyRouteDocumentMetadata", () => {
-  it("replaces the root title and description while preserving the rest of the document", () => {
+  it("replaces the root title, description and social card tags while preserving the rest of the document", () => {
     const emitted = applyRouteDocumentMetadata(rootHtml, routePageMetadata(contactRoute));
 
     expect(emitted).toContain("<title>contact – Svärd Entreprenad</title>");
     expect(emitted).toContain('<meta name="description" content="contact summary">');
-    expect(emitted).not.toContain("Svärd Entreprenad – Mark & anläggning i Örebro");
+    expect(emitted).toContain('<meta property="og:title" content="contact – Svärd Entreprenad">');
+    expect(emitted).toMatch(/property="og:description"\s+content="contact summary"/);
+    expect(emitted).toContain('<meta name="twitter:title" content="contact – Svärd Entreprenad">');
+    expect(emitted).toMatch(/name="twitter:description"\s+content="contact summary"/);
+    expect(emitted).not.toContain(rootTitle);
+    expect(emitted).not.toContain(rootDescription);
+    expect(emitted).toContain('<meta property="og:type" content="website">');
+    expect(emitted).toContain('<meta property="og:locale" content="sv_SE">');
+    expect(emitted).toContain('<meta property="og:site_name" content="Svärd Entreprenad">');
+    expect(emitted).toContain('<meta property="og:image" content="/page-visuals/hero-photo.webp">');
+    expect(emitted).toContain('<meta property="og:image:width" content="1600">');
+    expect(emitted).toContain('<meta property="og:image:height" content="905">');
+    expect(emitted).toContain(
+      '<meta property="og:image:alt" content="Grävmaskin på en mark- och anläggningsplats i solnedgång">',
+    );
+    expect(emitted).toContain('<meta name="twitter:card" content="summary_large_image">');
+    expect(emitted).toContain('<meta name="twitter:image" content="/page-visuals/hero-photo.webp">');
     expect(emitted).toContain("<body>Svard Entreprenad</body>");
     expect(emitted).toMatch(/^<!doctype html>/);
   });
@@ -461,6 +561,17 @@ describe("applyRouteDocumentMetadata", () => {
         description: "Beskrivning",
       }),
     ).toThrow("Route document must contain a description meta tag with a content attribute to replace.");
+  });
+
+  it("rejects a document without the global social card meta tags", () => {
+    expect(() =>
+      applyRouteDocumentMetadata(rootHtmlWithoutSocialTags, {
+        title: "Titel",
+        description: "Beskrivning",
+      }),
+    ).toThrow(
+      "Route document must contain og:title, og:description, twitter:title and twitter:description meta tags with content attributes to replace.",
+    );
   });
 
   it("rejects metadata without nonempty title and description strings", () => {
@@ -639,6 +750,19 @@ describe("siteContent route registry", () => {
         readFile: memoryFileSystem(staleEntries).readFile,
       }),
     ).rejects.toThrow("Static route artifact check failed (mismatched: /kontakt/).");
+
+    const staleSocialEntries = {
+      ...entries,
+      [subpageArtifactPath("dist", "/tjanster/")]: subpageHtmlWithRootSocialTags(siteContent.routes[1]),
+    };
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: siteContent.routes,
+        distDir: "dist",
+        readFile: memoryFileSystem(staleSocialEntries).readFile,
+      }),
+    ).rejects.toThrow("Static route artifact check failed (mismatched: /tjanster/).");
   });
 
   it("requires the emitted not-found artifact for the real inventory and rejects a stale or missing one", async () => {
