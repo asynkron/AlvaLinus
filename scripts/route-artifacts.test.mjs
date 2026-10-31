@@ -7,6 +7,8 @@ import {
   applyRouteDocumentMetadata,
   assertRouteVisualAssets,
   assertStaticRouteArtifacts,
+  notFoundArtifactPath,
+  notFoundPageMetadata,
   requireRouteRegistry,
   routePageMetadata,
   routeVisualAssetPaths,
@@ -42,6 +44,14 @@ function emittedSubpageHtml(route) {
   return applyRouteDocumentMetadata(rootHtml, routePageMetadata(route));
 }
 
+function notFoundArtifactFile(distDir) {
+  return path.join(distDir, notFoundArtifactPath);
+}
+
+function emittedNotFoundHtml() {
+  return applyRouteDocumentMetadata(rootHtml, notFoundPageMetadata());
+}
+
 function subpageArtifactPath(distDir, href) {
   return path.join(distDir, href.replace(/^\/+|\/+$/g, ""), "index.html");
 }
@@ -66,7 +76,7 @@ function memoryFileSystem(entries = {}) {
   };
 }
 
-function distEntries(routes, { omit = [], mismatched = [] } = {}) {
+function distEntries(routes, { omit = [], mismatched = [], notFound = "emitted" } = {}) {
   const entries = { [path.join("dist", "index.html")]: rootHtml };
   for (const route of routes) {
     if (route.href === "/" || omit.includes(route.href)) continue;
@@ -74,6 +84,11 @@ function distEntries(routes, { omit = [], mismatched = [] } = {}) {
       ? rootHtml
       : emittedSubpageHtml(route);
   }
+
+  if (notFound !== "omit") {
+    entries[notFoundArtifactFile("dist")] = notFound === "mismatched" ? rootHtml : emittedNotFoundHtml();
+  }
+
   return entries;
 }
 
@@ -227,9 +242,10 @@ describe("assertStaticRouteArtifacts", () => {
     ).resolves.toEqual(["/tjanster/", "/kontakt/"]);
 
     expect(fileSystem.readFile).toHaveBeenCalledWith(path.join("dist", "index.html"), "utf8");
+    expect(fileSystem.readFile).toHaveBeenCalledWith(notFoundArtifactFile("dist"), "utf8");
     expect(fileSystem.readFile).toHaveBeenCalledWith(subpageArtifactPath("dist", "/tjanster/"), "utf8");
     expect(fileSystem.readFile).toHaveBeenCalledWith(subpageArtifactPath("dist", "/kontakt/"), "utf8");
-    expect(fileSystem.readFile).toHaveBeenCalledTimes(3);
+    expect(fileSystem.readFile).toHaveBeenCalledTimes(4);
   });
 
   it("requires the artifact of an added fixture route automatically", async () => {
@@ -282,7 +298,10 @@ describe("assertStaticRouteArtifacts", () => {
       label: 'Mark & "tryggt" hantverk',
       summary: 'Sida med & tecken, <huggning> och "citat" i sammanfattningen.',
     };
-    const entries = { [path.join("dist", "index.html")]: rootHtml };
+    const entries = {
+      [path.join("dist", "index.html")]: rootHtml,
+      [notFoundArtifactFile("dist")]: emittedNotFoundHtml(),
+    };
     entries[subpageArtifactPath("dist", specialRoute.href)] = emittedSubpageHtml(specialRoute);
 
     const emitted = entries[subpageArtifactPath("dist", specialRoute.href)];
@@ -327,6 +346,30 @@ describe("assertStaticRouteArtifacts", () => {
     );
   });
 
+  it("requires the not-found recovery artifact at dist/404.html", async () => {
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: fixtureRoutes,
+        distDir: "dist",
+        readFile: memoryFileSystem(distEntries(fixtureRoutes, { notFound: "omit" })).readFile,
+      }),
+    ).rejects.toThrow(
+      "Static route artifact check failed: the not-found recovery document dist/404.html is missing.",
+    );
+  });
+
+  it("rejects a not-found artifact carrying the root metadata instead of the not-found title and description", async () => {
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: fixtureRoutes,
+        distDir: "dist",
+        readFile: memoryFileSystem(distEntries(fixtureRoutes, { notFound: "mismatched" })).readFile,
+      }),
+    ).rejects.toThrow(
+      "Static route artifact check failed: dist/404.html must carry the not-found title and description instead of the root document metadata.",
+    );
+  });
+
   it("fails for a declared route without page metadata fields before reading artifacts", async () => {
     const unlabeledRoute = {
       id: "unlabeled",
@@ -363,6 +406,7 @@ describe("assertStaticRouteArtifacts", () => {
     const denied = Object.assign(new Error("EACCES: permission denied, open"), { code: "EACCES" });
     const readFile = vi.fn(async (filePath) => {
       if (filePath === subpageArtifactPath("dist", "/kontakt/")) throw denied;
+      if (filePath === notFoundArtifactFile("dist")) return emittedNotFoundHtml();
       return rootHtml;
     });
 
@@ -426,6 +470,28 @@ describe("applyRouteDocumentMetadata", () => {
     expect(() => applyRouteDocumentMetadata(rootHtml, { title: "Titel", description: "" })).toThrow(
       "Route page metadata requires nonempty title and description strings.",
     );
+  });
+});
+
+describe("notFoundPageMetadata", () => {
+  it("composes the Swedish not-found title and description from the site name", () => {
+    expect(notFoundPageMetadata()).toEqual({
+      title: "Sidan finns inte – Svärd Entreprenad",
+      description: "Sidan du sökte matchar ingen aktuell sida. Välj en av genvägarna eller kontakta oss för offert.",
+    });
+  });
+
+  it("emits a valid 404.html document carrying the not-found metadata over the root document", () => {
+    const emitted = applyRouteDocumentMetadata(rootHtml, notFoundPageMetadata());
+
+    expect(emitted.length).toBeGreaterThan(0);
+    expect(emitted).toContain("<title>Sidan finns inte – Svärd Entreprenad</title>");
+    expect(emitted).toContain(
+      '<meta name="description" content="Sidan du sökte matchar ingen aktuell sida. Välj en av genvägarna eller kontakta oss för offert.">',
+    );
+    expect(emitted).not.toContain("Svärd Entreprenad – Mark & anläggning i Örebro");
+    expect(emitted).toContain("<body>Svard Entreprenad</body>");
+    expect(emitted).toMatch(/^<!doctype html>/);
   });
 });
 
@@ -548,7 +614,10 @@ describe("siteContent route registry", () => {
   });
 
   it("validates emitted per-route artifacts for the real route inventory and rejects a stale artifact", async () => {
-    const entries = { [path.join("dist", "index.html")]: rootHtml };
+    const entries = {
+      [path.join("dist", "index.html")]: rootHtml,
+      [notFoundArtifactFile("dist")]: emittedNotFoundHtml(),
+    };
     for (const route of staticSubpageRoutes(siteContent.routes)) {
       entries[subpageArtifactPath("dist", route.href)] = applyRouteDocumentMetadata(rootHtml, routePageMetadata(route));
     }
@@ -570,5 +639,40 @@ describe("siteContent route registry", () => {
         readFile: memoryFileSystem(staleEntries).readFile,
       }),
     ).rejects.toThrow("Static route artifact check failed (mismatched: /kontakt/).");
+  });
+
+  it("requires the emitted not-found artifact for the real inventory and rejects a stale or missing one", async () => {
+    const entries = {
+      [path.join("dist", "index.html")]: rootHtml,
+      [notFoundArtifactFile("dist")]: emittedNotFoundHtml(),
+    };
+    for (const route of staticSubpageRoutes(siteContent.routes)) {
+      entries[subpageArtifactPath("dist", route.href)] = applyRouteDocumentMetadata(rootHtml, routePageMetadata(route));
+    }
+
+    const staleEntries = { ...entries, [notFoundArtifactFile("dist")]: rootHtml };
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: siteContent.routes,
+        distDir: "dist",
+        readFile: memoryFileSystem(staleEntries).readFile,
+      }),
+    ).rejects.toThrow(
+      "Static route artifact check failed: dist/404.html must carry the not-found title and description instead of the root document metadata.",
+    );
+
+    const missingEntries = { ...entries };
+    delete missingEntries[notFoundArtifactFile("dist")];
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: siteContent.routes,
+        distDir: "dist",
+        readFile: memoryFileSystem(missingEntries).readFile,
+      }),
+    ).rejects.toThrow(
+      "Static route artifact check failed: the not-found recovery document dist/404.html is missing.",
+    );
   });
 });

@@ -1,6 +1,6 @@
 # Current Public Route Inventory
 
-Checked: 2026-10-29
+Checked: 2026-10-31
 
 Source of truth:
 
@@ -36,6 +36,13 @@ customer-facing pattern.
 
 ## Follow-up Notes
 
+- Unknown paths are not declared routes and stay outside the inventory. The
+  build also emits a `dist/404.html` recovery artifact carrying the same SPA
+  document with the Swedish not-found title and description, so a static host
+  that serves it at unknown paths boots the app, which renders the existing
+  Sidan finns inte recovery with the requested URL. Whether the production
+  host serves the artifact at unknown paths is a host decision, not part of
+  the route inventory.
 - `/dranering/` is an inventory shortcut and a `service` route, exposed within
   the header's Tjänster links rather than as its own top-level header item; the
   renderer treats it as a dedicated service page with one drainage-specific

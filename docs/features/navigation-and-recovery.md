@@ -49,9 +49,10 @@ browser scrolling, anchor focus transfer or focus-only CSS visibility. This
 keyboard aid is not a compliance certification.
 
 The renderer normalizes query/hash suffixes and trailing slashes before matching
-typed routes. Vite emits an HTML entry document per declared subpage; React
-then selects the route-specific view. Static artifacts are not separate backend
-handlers. See [route inventory](../current-public-route-inventory.md).
+typed routes. Vite emits an HTML entry document per declared subpage plus the
+`dist/404.html` not-found recovery artifact; React then selects the
+route-specific view. Static artifacts are not separate backend handlers. See
+[route inventory](../current-public-route-inventory.md).
 
 ## States, failures and recovery
 
@@ -63,7 +64,7 @@ handlers. See [route inventory](../current-public-route-inventory.md).
 | Error | Header plus Innehåll kunde inte laddas alert and error message | No inline retry; reload. A deployed source defect needs a new static deployment. |
 | Empty services | Header plus Inget innehåll ännu | Applies to the service-dependent home and services-index bodies. About and contact keep their own bodies; a service route without its record and an unknown route use not-found recovery. |
 | Ready known route | Typed route view plus footer | Missing joined service record goes to not-found. |
-| Ready unknown route | Sidan finns inte, route shortcuts and footer | Follow a declared shortcut. A static host may return its own error before React mounts, so this is an in-app guarantee only. |
+| Ready unknown route | Sidan finns inte, route shortcuts and footer | Follow a declared shortcut. The build also emits `dist/404.html` carrying the same SPA document with the Swedish not-found title and description, so a static host that serves it at unknown paths boots the app, which renders this recovery with the requested URL; whether the host does so stays unknown. |
 | Photo error | Service card switches to the route SVG; if that fallback also errors, the card image is removed with no retry loop. Subpage hero and home hero hide their images. | Title, summary and Läs mer link remain. A hidden home hero keeps the navy section, gradient overlay, headline, intro, actions and stats. |
 
 The header stays during loading/error/empty, but the footer does not. Partners

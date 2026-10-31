@@ -18,6 +18,10 @@ export declare function staticSubpagePaths(routes: readonly RouteRegistryRoute[]
 
 export declare function routePageMetadata(route: RouteRegistryRoute): RoutePageMetadata;
 
+export declare const notFoundArtifactPath: "404.html";
+
+export declare function notFoundPageMetadata(): RoutePageMetadata;
+
 export declare function applyRouteDocumentMetadata(document: string, metadata: RoutePageMetadata): string;
 
 export declare function routeVisualAssetPaths(routes: readonly RouteRegistryRoute[]): string[];
