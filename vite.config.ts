@@ -52,6 +52,9 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: ["./src/test/setup.ts"],
+    css: {
+      include: [/styles\.css\?raw/],
+    },
     coverage: {
       provider: "v8",
       include: ["src/**/*.{ts,tsx}"],
