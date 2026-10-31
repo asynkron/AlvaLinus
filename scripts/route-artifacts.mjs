@@ -178,6 +178,28 @@ function requirePageMetadata(metadata) {
   return metadata;
 }
 
+/**
+ * The emitted not-found recovery artifact is a dist-root document, not a
+ * declared route: it must never enter requireRouteRegistry validation or the
+ * route destination map, because registry uniqueness and href semantics
+ * describe declared routes only.
+ */
+export const notFoundArtifactPath = "404.html";
+
+/**
+ * Declared Swedish page metadata for the not-found recovery artifact: the
+ * title combines the in-app "Sidan finns inte" recovery heading with the site
+ * name, and the description mirrors the in-app not-found guidance toward the
+ * route shortcuts. The site name stays the single brand owner; this function
+ * only declares how the document strings are composed from it.
+ */
+export function notFoundPageMetadata() {
+  return requirePageMetadata({
+    title: `Sidan finns inte – ${siteName}`,
+    description: "Sidan du sökte matchar ingen aktuell sida. Välj en av genvägarna eller kontakta oss för offert.",
+  });
+}
+
 function replaceTitleElement(document, title) {
   if (!titleElementPattern.test(document)) {
     throw new Error("Route document must contain a <title> element to replace.");
@@ -244,6 +266,28 @@ export async function assertStaticRouteArtifacts({ routes, distDir, readFile }) 
   ) {
     throw new Error(
       "Static route artifact check failed: the root document must keep a <title> element and a nonempty description meta content attribute.",
+    );
+  }
+
+  const notFoundHtmlPath = path.join(distDir, notFoundArtifactPath);
+
+  let notFoundHtml;
+
+  try {
+    notFoundHtml = await readFile(notFoundHtmlPath, "utf8");
+  } catch (error) {
+    if (isMissingEntryError(error)) {
+      throw new Error(
+        `Static route artifact check failed: the not-found recovery document dist/${notFoundArtifactPath} is missing.`,
+      );
+    }
+
+    throw error;
+  }
+
+  if (!documentCarriesRouteMetadata(notFoundHtml, notFoundPageMetadata())) {
+    throw new Error(
+      `Static route artifact check failed: dist/${notFoundArtifactPath} must carry the not-found title and description instead of the root document metadata.`,
     );
   }
 

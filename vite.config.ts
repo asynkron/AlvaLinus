@@ -7,6 +7,8 @@ import { defineConfig } from "vitest/config";
 import { siteContent } from "./src/data/siteContent";
 import {
   applyRouteDocumentMetadata,
+  notFoundArtifactPath,
+  notFoundPageMetadata,
   routePageMetadata,
   staticSubpageRoutes,
 } from "./scripts/route-artifacts.mjs";
@@ -27,16 +29,18 @@ function emitStaticRoutePages(): Plugin {
     async closeBundle() {
       const sourceHtml = path.join(outDir, "index.html");
       const html = await fs.readFile(sourceHtml, "utf8");
+      const notFoundHtml = applyRouteDocumentMetadata(html, notFoundPageMetadata());
 
-      await Promise.all(
-        staticRoutePages.map(async (routePage) => {
+      await Promise.all([
+        ...staticRoutePages.map(async (routePage) => {
           const routeDir = path.join(outDir, routePage.href.replace(/^\/+|\/+$/g, ""));
           const routeHtml = applyRouteDocumentMetadata(html, routePage.metadata);
 
           await fs.mkdir(routeDir, { recursive: true });
           await fs.writeFile(path.join(routeDir, "index.html"), routeHtml);
         }),
-      );
+        fs.writeFile(path.join(outDir, notFoundArtifactPath), notFoundHtml),
+      ]);
     },
   };
 }
