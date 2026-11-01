@@ -14,6 +14,7 @@ import {
   routeVisualAssetPaths,
   staticSubpagePaths,
   staticSubpageRoutes,
+  stripHomeHeroPreload,
 } from "./route-artifacts.mjs";
 
 function fixtureRoute(id, href, assetPath) {
@@ -35,6 +36,8 @@ const fixtureRoutes = [homeRoute, servicesRoute, contactRoute];
 
 const rootTitle = "Svärd Entreprenad – Mark & anläggning i Örebro";
 const rootDescription = "Svärd Entreprenad utför professionella mark- och anläggningsarbeten i Örebro.";
+const homeHeroPreloadLink =
+  '<link rel="preload" as="image" href="/page-visuals/hero-photo.webp" fetchpriority="high">';
 const rootHtml =
   '<!doctype html><html lang="sv"><head><title>' +
   rootTitle +
@@ -63,6 +66,7 @@ const rootHtml =
   rootDescription +
   '"\n    >' +
   '<meta name="twitter:image" content="/page-visuals/hero-photo.webp">' +
+  homeHeroPreloadLink +
   "</head><body>Svard Entreprenad</body></html>";
 
 const rootHtmlWithoutSocialTags =
@@ -77,7 +81,7 @@ const rootHtmlWithoutSocialTags =
 const rootDocumentWithoutMetadata = '<!doctype html><html lang="sv"><body>Svard Entreprenad</body></html>';
 
 function emittedSubpageHtml(route) {
-  return applyRouteDocumentMetadata(rootHtml, routePageMetadata(route));
+  return stripHomeHeroPreload(applyRouteDocumentMetadata(rootHtml, routePageMetadata(route)));
 }
 
 function notFoundArtifactFile(distDir) {
@@ -85,7 +89,7 @@ function notFoundArtifactFile(distDir) {
 }
 
 function emittedNotFoundHtml() {
-  return applyRouteDocumentMetadata(rootHtml, notFoundPageMetadata());
+  return stripHomeHeroPreload(applyRouteDocumentMetadata(rootHtml, notFoundPageMetadata()));
 }
 
 function subpageHtmlWithRootSocialTags(route) {
@@ -454,6 +458,50 @@ describe("assertStaticRouteArtifacts", () => {
     );
   });
 
+  it("requires the root document to carry the home hero preload link", async () => {
+    const entries = distEntries(fixtureRoutes);
+    entries[path.join("dist", "index.html")] = rootHtml.replace(homeHeroPreloadLink, "");
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: fixtureRoutes,
+        distDir: "dist",
+        readFile: memoryFileSystem(entries).readFile,
+      }),
+    ).rejects.toThrow(
+      "Static route artifact check failed: the root document must carry the home hero preload link for /page-visuals/hero-photo.webp.",
+    );
+  });
+
+  it("rejects a subpage artifact that still carries the home hero preload link", async () => {
+    const entries = distEntries(fixtureRoutes);
+    entries[subpageArtifactPath("dist", "/tjanster/")] = applyRouteDocumentMetadata(
+      rootHtml,
+      routePageMetadata(servicesRoute),
+    );
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: fixtureRoutes,
+        distDir: "dist",
+        readFile: memoryFileSystem(entries).readFile,
+      }),
+    ).rejects.toThrow("Static route artifact check failed (mismatched: /tjanster/).");
+  });
+
+  it("rejects a not-found artifact that still carries the home hero preload link", async () => {
+    const entries = distEntries(fixtureRoutes);
+    entries[notFoundArtifactFile("dist")] = applyRouteDocumentMetadata(rootHtml, notFoundPageMetadata());
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: fixtureRoutes,
+        distDir: "dist",
+        readFile: memoryFileSystem(entries).readFile,
+      }),
+    ).rejects.toThrow("Static route artifact check failed: dist/404.html must not carry the home hero preload link.");
+  });
+
   it("fails for a declared route without page metadata fields before reading artifacts", async () => {
     const unlabeledRoute = {
       id: "unlabeled",
@@ -544,6 +592,7 @@ describe("applyRouteDocumentMetadata", () => {
     );
     expect(emitted).toContain('<meta name="twitter:card" content="summary_large_image">');
     expect(emitted).toContain('<meta name="twitter:image" content="/page-visuals/hero-photo.webp">');
+    expect(emitted).toContain(homeHeroPreloadLink);
     expect(emitted).toContain("<body>Svard Entreprenad</body>");
     expect(emitted).toMatch(/^<!doctype html>/);
   });
@@ -581,6 +630,41 @@ describe("applyRouteDocumentMetadata", () => {
     expect(() => applyRouteDocumentMetadata(rootHtml, { title: "Titel", description: "" })).toThrow(
       "Route page metadata requires nonempty title and description strings.",
     );
+  });
+});
+
+describe("stripHomeHeroPreload", () => {
+  it("removes the home hero preload link and keeps the rest of the document unchanged", () => {
+    const document =
+      '<!doctype html><html lang="sv"><head>' +
+      homeHeroPreloadLink +
+      "<title>Titel</title>" +
+      "</head><body>Svard Entreprenad</body></html>";
+
+    expect(stripHomeHeroPreload(document)).toBe(
+      '<!doctype html><html lang="sv"><head><title>Titel</title></head><body>Svard Entreprenad</body></html>',
+    );
+  });
+
+  it("removes the hero preload link regardless of attribute order or extra attributes", () => {
+    const document =
+      "<html><head>" +
+      '<link href="/page-visuals/hero-photo.webp" rel="preload" as="image" fetchpriority="high" media="all">' +
+      "</head></html>";
+
+    expect(stripHomeHeroPreload(document)).toBe("<html><head></head></html>");
+  });
+
+  it("leaves a document without the home hero preload unchanged, including other preload links", () => {
+    const document =
+      "<html><head>" +
+      '<link rel="preload" as="image" href="/page-visuals/other-photo.webp" fetchpriority="high">' +
+      '<link rel="preload" as="font" href="/fonts/inter.woff2">' +
+      '<link rel="stylesheet" href="/styles.css">' +
+      "</head><body>Svard Entreprenad</body></html>";
+
+    expect(stripHomeHeroPreload(document)).toBe(document);
+    expect(stripHomeHeroPreload("")).toBe("");
   });
 });
 
@@ -730,7 +814,7 @@ describe("siteContent route registry", () => {
       [notFoundArtifactFile("dist")]: emittedNotFoundHtml(),
     };
     for (const route of staticSubpageRoutes(siteContent.routes)) {
-      entries[subpageArtifactPath("dist", route.href)] = applyRouteDocumentMetadata(rootHtml, routePageMetadata(route));
+      entries[subpageArtifactPath("dist", route.href)] = emittedSubpageHtml(route);
     }
 
     await expect(
@@ -771,7 +855,7 @@ describe("siteContent route registry", () => {
       [notFoundArtifactFile("dist")]: emittedNotFoundHtml(),
     };
     for (const route of staticSubpageRoutes(siteContent.routes)) {
-      entries[subpageArtifactPath("dist", route.href)] = applyRouteDocumentMetadata(rootHtml, routePageMetadata(route));
+      entries[subpageArtifactPath("dist", route.href)] = emittedSubpageHtml(route);
     }
 
     const staleEntries = { ...entries, [notFoundArtifactFile("dist")]: rootHtml };

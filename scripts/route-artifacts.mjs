@@ -18,6 +18,9 @@ const socialMetaTagPatterns = [
   twitterTitleMetaTagPattern,
   twitterDescriptionMetaTagPattern,
 ];
+const linkTagPattern = /<link\b[^>]*>/gi;
+const preloadRelPattern = /\brel=(["'])preload\1/i;
+const homeHeroPreloadHrefPattern = /\bhref=(["'])\/page-visuals\/hero-photo\.webp\1/i;
 
 function isMissingEntryError(error) {
   return error instanceof Error && "code" in error && error.code === "ENOENT";
@@ -278,6 +281,31 @@ export function applyRouteDocumentMetadata(document, metadata) {
   return replaceSocialMetaTags(documentWithHeadText, pageMetadata);
 }
 
+function isHomeHeroPreloadLinkTag(linkTag) {
+  return preloadRelPattern.test(linkTag) && homeHeroPreloadHrefPattern.test(linkTag);
+}
+
+function documentCarriesHomeHeroPreload(document) {
+  const linkTags = document.match(linkTagPattern);
+
+  return linkTags !== null && linkTags.some(isHomeHeroPreloadLinkTag);
+}
+
+/**
+ * Absence-tolerant strip for the emitted home-hero preload link: documents
+ * without the link are returned unchanged, so the static route emission can
+ * apply it uniformly to every non-root document regardless of source shape.
+ * Composed separately from applyRouteDocumentMetadata, which owns only the
+ * title, description and social card text.
+ */
+export function stripHomeHeroPreload(document) {
+  if (typeof document !== "string" || document.length === 0) {
+    return document;
+  }
+
+  return document.replace(linkTagPattern, (linkTag) => (isHomeHeroPreloadLinkTag(linkTag) ? "" : linkTag));
+}
+
 function documentCarriesRouteMetadata(document, metadata) {
   const extracted = extractDocumentMetadata(document);
 
@@ -324,6 +352,12 @@ export async function assertStaticRouteArtifacts({ routes, distDir, readFile }) 
     );
   }
 
+  if (!documentCarriesHomeHeroPreload(rootHtml)) {
+    throw new Error(
+      "Static route artifact check failed: the root document must carry the home hero preload link for /page-visuals/hero-photo.webp.",
+    );
+  }
+
   const notFoundHtmlPath = path.join(distDir, notFoundArtifactPath);
 
   let notFoundHtml;
@@ -346,6 +380,12 @@ export async function assertStaticRouteArtifacts({ routes, distDir, readFile }) 
     );
   }
 
+  if (documentCarriesHomeHeroPreload(notFoundHtml)) {
+    throw new Error(
+      `Static route artifact check failed: dist/${notFoundArtifactPath} must not carry the home hero preload link.`,
+    );
+  }
+
   const outcomes = await Promise.all(
     expectedPages.map(async (page) => {
       const routeHtmlPath = path.join(distDir, page.href.replace(/^\/+|\/+$/g, ""), "index.html");
@@ -353,7 +393,9 @@ export async function assertStaticRouteArtifacts({ routes, distDir, readFile }) 
       try {
         const routeHtml = await readFile(routeHtmlPath, "utf8");
 
-        return documentCarriesRouteMetadata(routeHtml, page.metadata) ? "matched" : "mismatched";
+        return documentCarriesRouteMetadata(routeHtml, page.metadata) && !documentCarriesHomeHeroPreload(routeHtml)
+          ? "matched"
+          : "mismatched";
       } catch (error) {
         if (isMissingEntryError(error)) return "missing";
 
