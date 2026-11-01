@@ -28,6 +28,7 @@ export type ServiceArea = {
   readonly id: string;
   readonly title: string;
   readonly summary: string;
+  readonly guidance: string;
   readonly href: string;
   readonly tags: readonly string[];
 };

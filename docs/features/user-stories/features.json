@@ -28,7 +28,7 @@
           "Shared loading/error states",
           "Empty-services feedback on home and the services index"
         ],
-        "current_limitations": "Service detail pages share a generic suitability aside and process; Markarbete and Trädgårdsplanering have no dedicated rendered-page test mapping.",
+        "current_limitations": "Service detail pages share the process section, while each aside carries its own declared suitability guidance; Markarbete and Trädgårdsplanering have no dedicated rendered-page test mapping.",
         "failure_behavior": "A missing service record yields not-found. An empty services list replaces the home and services-index bodies with the empty state.",
         "recovery": "Use a declared route or restore the missing typed content and redeploy; the page has no content-editing interface.",
         "runtime_owners": [
@@ -129,7 +129,7 @@
               "path": "src/pages/SiteHomePage.test.tsx",
               "name": "renders a dedicated service page with customer-facing guidance",
               "evidence_type": "direct",
-              "supports": "Checks the Stensättning heading, suitability aside and next-step guidance."
+              "supports": "Checks the Stensättning heading, the suitability aside heading and its per-service guidance, and that Dränering renders its own distinct guidance without the retired shared template sentence."
             }
           ],
           "entry_point_refs": [],

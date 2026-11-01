@@ -519,10 +519,7 @@ function ServicePage({
         </div>
         <aside className="rounded-lg border bg-card p-5 shadow-soft">
           <h2 className="text-xl font-semibold">När tjänsten passar</h2>
-          <p className="mt-3 text-sm leading-6 text-muted-foreground">
-            {service.title} passar när du vill ha en tydlig genomgång av behov, markförutsättningar och nästa steg
-            innan arbetet planeras.
-          </p>
+          <p className="mt-3 text-sm leading-6 text-muted-foreground">{service.guidance}</p>
         </aside>
       </section>
       <Process content={content} />

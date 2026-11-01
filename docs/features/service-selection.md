@@ -58,7 +58,8 @@ and recovery ceilings are described in [F4](navigation-and-recovery.md).
 A content defect requires source correction and static redeployment.
 
 Existing Vitest declarations directly check representative home tags,
-Stensättning guidance and Dränering/Grävjobb detail text. The six story documents
+Stensättning and Dränering per-service guidance plus the absence of the retired
+shared template sentence, and Dränering/Grävjobb detail text. The six story documents
 and identity manifest carry exact names and the limited assertion scope.
 No dedicated Markarbete or Trädgårdsplanering render test is mapped.
 The parameterized declaration `names every service-card link by its destination on %s`
@@ -77,11 +78,11 @@ once through [F4-US1](user-stories/F4/F4-US1.md).
 
 ## What Works Less Well
 
-Except for the drainage paragraph, detail views largely repeat a summary,
-generic suitability advice and the same process. Visitors cannot compare
-service-specific prerequisites or inspect a completed example here. Grävjobb
-covers several very different needs in one short summary, so a pool owner has
-little guidance on what to provide before asking for a visit.
+Except for the drainage paragraph, detail views repeat a summary, per-service
+suitability guidance and the same process. Visitors cannot inspect a completed
+example here. Grävjobb covers several very different needs in one short
+summary, so a pool owner has little guidance on what to provide before asking
+for a visit.
 
 ## Roadmap
 
