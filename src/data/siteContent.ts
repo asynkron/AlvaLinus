@@ -168,6 +168,8 @@ export const siteContent = {
       title: "Stensättning",
       summary:
         "Planerade stenytor, marksten och murar för entréer, gångar och gårdar där finish och bärighet behöver hålla över tid.",
+      guidance:
+        "Stensättning passar när entréer, gångar eller gårdar ska få stenytor, marksten eller murar med noggrant underarbete, rätt fall och fogar så finish och bärighet håller över tid.",
       href: "/stensattning/",
       tags: ["Marksten Örebro", "Stenmurar", "Finplanering"],
     },
@@ -176,6 +178,8 @@ export const siteContent = {
       title: "Markarbete",
       summary:
         "Bredden i mark och anläggning samlad i ett erbjudande för privatpersoner, företag och kommunala projekt.",
+      guidance:
+        "Markarbete passar när uppdraget samlar flera delar av mark och anläggning, från schakt och tomtförberedelse till kompletterande anläggningsarbeten för privatpersoner, företag och större projekt.",
       href: "/markarbete/",
       tags: ["Schakt", "Tomt", "Anläggning"],
     },
@@ -184,6 +188,8 @@ export const siteContent = {
       title: "Grävjobb",
       summary:
         "Maskin- och grävarbeten för husgrunder, avlopp, VA, tomter och poolgrävning där rätt förarbete avgör slutresultatet.",
+      guidance:
+        "Grävjobb passar när arbetet kräver maskin och schakt, till exempel husgrunder, avlopp och VA, tomter eller poolgrävning, och förarbetet behöver göras rätt direkt på plats.",
       href: "/gravjobb/",
       tags: ["Grävning", "Husgrund", "Poolgrävning"],
     },
@@ -192,6 +198,8 @@ export const siteContent = {
       title: "Dränering",
       summary:
         "Dräneringar och fuktsäkra markarbeten runt hus, murar och tomter med ansvar för hela arbetskedjan.",
+      guidance:
+        "Dränering passar när fukt hotar husgrund, murar eller tomtytor och hela arbetskedjan från bedömning och grävning till återställning ska tas om hand av samma utförare.",
       href: "/dranering/",
       tags: ["Dränering", "Mur", "Fuktskydd"],
     },
@@ -200,6 +208,8 @@ export const siteContent = {
       title: "Trädgårdsplanering",
       summary:
         "Tomt- och trädgårdsplanering som binder ihop höjder, ytor, planteringar och praktisk användning.",
+      guidance:
+        "Trädgårdsplanering passar när tomten behöver en helhet där höjder, ytor, planteringar och praktisk användning planeras ihop innan markarbetet sätts.",
       href: "/tradgardsplanering/",
       tags: ["Tomtplanering", "Utemiljö", "Finish"],
     },

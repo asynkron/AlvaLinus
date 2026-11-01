@@ -524,12 +524,25 @@ describe("SiteHomePage", () => {
   });
 
   it("renders a dedicated service page with customer-facing guidance", () => {
-    render(<SiteHomePage currentPath="/stensattning/" initialState={{ status: "ready", content }} />);
+    const stensattning = content.services.find((service) => service.id === "stensattning")!;
+    const dranering = content.services.find((service) => service.id === "dranering")!;
+    expect(stensattning.guidance).not.toEqual(dranering.guidance);
+
+    const { rerender } = render(
+      <SiteHomePage currentPath="/stensattning/" initialState={{ status: "ready", content }} />,
+    );
 
     expect(screen.getByRole("heading", { name: "Stensättning", level: 1 })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "När tjänsten passar" })).toBeInTheDocument();
-    expect(screen.getByText(/markförutsättningar och nästa steg/)).toBeInTheDocument();
+    expect(screen.getByText(stensattning.guidance)).toBeInTheDocument();
+    expect(screen.queryByText(/markförutsättningar och nästa steg/)).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Visa källsida" })).not.toBeInTheDocument();
+
+    rerender(<SiteHomePage currentPath="/dranering/" initialState={{ status: "ready", content }} />);
+
+    expect(screen.getByRole("heading", { name: "Dränering", level: 1 })).toBeInTheDocument();
+    expect(screen.getByText(dranering.guidance)).toBeInTheDocument();
+    expect(screen.queryByText(/markförutsättningar och nästa steg/)).not.toBeInTheDocument();
   });
 
   it("renders dedicated Dränering and Grävjobb pages", () => {
