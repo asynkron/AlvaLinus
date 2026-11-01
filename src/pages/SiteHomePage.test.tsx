@@ -68,7 +68,7 @@ describe("SiteHomePage", () => {
       label: "unknown route",
       element: <SiteHomePage currentPath="/saknas/" initialState={{ status: "ready", content }} />,
     },
-    { focusable: false, label: "loading", element: <SiteHomePage /> },
+    { focusable: false, label: "loading", element: <SiteHomePage initialState={{ status: "loading" }} /> },
     {
       focusable: false,
       label: "error",
@@ -510,8 +510,17 @@ describe("SiteHomePage", () => {
     expect(screen.getByRole("alert")).toHaveTextContent("Kunde inte läsa statisk data.");
   });
 
-  it("starts with a loading state before static content resolves", () => {
+  it("renders ready bundled content on the first paint without a loading skeleton", () => {
     render(<SiteHomePage />);
+
+    expect(screen.queryByLabelText("Laddar innehåll")).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Svärd Entreprenad", level: 1 })).toBeInTheDocument();
+    expect(screen.getByText(/Välkommen till Svärd Entreprenad/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Våra tjänster" })).toHaveAttribute("href", "/tjanster/");
+  });
+
+  it("renders the Laddar innehåll skeleton for an injected loading state", () => {
+    render(<SiteHomePage initialState={{ status: "loading" }} />);
 
     expect(screen.getByLabelText("Laddar innehåll")).toBeInTheDocument();
   });

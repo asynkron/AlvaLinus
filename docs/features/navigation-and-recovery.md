@@ -60,7 +60,7 @@ route-specific view. Static artifacts are not separate backend handlers. See
 
 | State | Visible behavior | Recovery and ceiling |
 | --- | --- | --- |
-| Loading | Header plus Laddar innehåll skeleton | Await local asynchronous content resolution; no network request is made by the loader. |
+| Loading | Header plus Laddar innehåll skeleton | Deterministic injected state only; the default boot renders bundled ready content on first paint without the skeleton and makes no network request. |
 | Error | Header plus Innehåll kunde inte laddas alert and error message | No inline retry; reload. A deployed source defect needs a new static deployment. |
 | Empty services | Header plus Inget innehåll ännu | Applies to the service-dependent home and services-index bodies. About and contact keep their own bodies; a service route without its record and an unknown route use not-found recovery. |
 | Ready known route | Typed route view plus footer | Missing joined service record goes to not-found. |
@@ -78,8 +78,10 @@ route normalization, NotFound and Footer; its desktop, mobile and footer
 navigation derive page and service links from the typed registry instead of
 parallel markup arrays. [Typed content](../../src/data/siteContent.ts) owns the
 registry and inventory shortcuts and is the single declaration source for
-navigation destinations; [local loader](../../src/lib/site-content.ts) returns
-that bundled content asynchronously. [StaticState](../../src/components/StaticState.tsx)
+navigation destinations; the renderer boots ready content directly from that
+bundled registry on first paint, while [local loader](../../src/lib/site-content.ts)
+keeps its exported async signature for the injected-state contracts.
+[StaticState](../../src/components/StaticState.tsx)
 renders availability states. [Vite config](../../vite.config.ts) emits route
 artifacts; existing route and visual scripts check deployable paths.
 
