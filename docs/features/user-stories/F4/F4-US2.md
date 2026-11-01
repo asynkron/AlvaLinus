@@ -2,7 +2,7 @@
 
 Feature: [F4 — Home, navigation and route recovery](../../navigation-and-recovery.md)  
 Status: current  
-Reviewed: 2026-10-28
+Reviewed: 2026-11-01
 
 As a site visitor, I want to interpret loading, error, empty and unknown-route feedback so I can avoid mistaking missing content for a successful page.
 
@@ -13,7 +13,7 @@ As a site visitor, I want to interpret loading, error, empty and unknown-route f
 
 ## Flow
 
-1. Wait while Laddar innehåll is displayed.
+1. Read the bundled page body directly on the default boot; the Laddar innehåll skeleton appears only for an injected loading state.
 2. If loading fails, read the error alert.
 3. If services is empty, recognize Inget innehåll ännu on home and the services index; about and contact keep their bodies.
 4. For an unknown ready path, use a Sidan finns inte shortcut to a registered route.
@@ -22,7 +22,7 @@ As a site visitor, I want to interpret loading, error, empty and unknown-route f
 
 - Query/hash suffixes are removed and a missing trailing slash is normalized by the renderer.
 - A service route with no matching service record uses not-found.
-- Normal content is loaded asynchronously from a bundled module, without network I/O.
+- The default boot renders bundled content immediately, without network I/O; the loader module keeps its exported async signature for the injected-state contracts.
 
 ## Expected outcome
 
@@ -39,7 +39,8 @@ Reload for a fresh load or use header navigation; a content defect needs a corre
 - [src/data/siteContent.ts](../../../../src/data/siteContent.ts)
 - [src/pages/SiteHomePage.tsx](../../../../src/pages/SiteHomePage.tsx)
 
-- vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `starts with a loading state before static content resolves` (direct): Checks the initial loading label.
+- vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `renders ready bundled content on the first paint without a loading skeleton` (direct): Checks that the default boot renders ready home content with no Laddar innehåll skeleton.
+- vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `renders the Laddar innehåll skeleton for an injected loading state` (direct): Checks the injected loading skeleton label.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `shows an error state` (direct): Checks the error alert text.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `keeps $label empty-services feedback when services are empty` (direct): Parameterized home and services-index cases check the empty-state heading and the absence of other route bodies.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `keeps about and contact bodies available when services are empty` (direct): Checks the about body and the contact form, handoff note and fallback email with one #content target and retained header/footer.

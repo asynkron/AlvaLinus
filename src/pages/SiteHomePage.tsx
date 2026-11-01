@@ -12,14 +12,13 @@ import {
   ShieldCheck,
   X,
 } from "lucide-react";
-import { Fragment, type KeyboardEvent, useEffect, useRef, useState } from "react";
+import { Fragment, type KeyboardEvent, useRef, useState } from "react";
 
 import { StaticState } from "../components/StaticState";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { siteContent } from "../data/siteContent";
 import { inquiryContactHref, resolveInquiryServiceOption } from "../lib/inquiry-service";
-import { loadSiteContent } from "../lib/site-content";
 import type { ServiceArea, SiteContent, SiteRoute } from "../types/site";
 
 const BRAND_NAME = "Svärd Entreprenad";
@@ -62,32 +61,7 @@ type SiteHomePageProps = {
 };
 
 export function SiteHomePage({ currentPath = "/", inquiryServiceId, initialState }: SiteHomePageProps) {
-  const [state, setState] = useState<LoadState>(initialState ?? { status: "loading" });
-
-  useEffect(() => {
-    if (initialState) {
-      return;
-    }
-
-    let cancelled = false;
-
-    loadSiteContent()
-      .then((content) => {
-        if (!cancelled) {
-          setState({ status: "ready", content });
-        }
-      })
-      .catch((error: unknown) => {
-        if (!cancelled) {
-          const message = error instanceof Error ? error.message : "Innehållskällan kunde inte läsas.";
-          setState({ status: "error", message });
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [initialState]);
+  const state: LoadState = initialState ?? { status: "ready", content: siteContent };
 
   return (
     <main className="min-h-screen bg-background text-foreground">
