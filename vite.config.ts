@@ -11,6 +11,7 @@ import {
   notFoundPageMetadata,
   routePageMetadata,
   staticSubpageRoutes,
+  stripHomeHeroPreload,
 } from "./scripts/route-artifacts.mjs";
 
 const staticRoutePages = staticSubpageRoutes(siteContent.routes).map((route) => ({
@@ -29,12 +30,12 @@ function emitStaticRoutePages(): Plugin {
     async closeBundle() {
       const sourceHtml = path.join(outDir, "index.html");
       const html = await fs.readFile(sourceHtml, "utf8");
-      const notFoundHtml = applyRouteDocumentMetadata(html, notFoundPageMetadata());
+      const notFoundHtml = stripHomeHeroPreload(applyRouteDocumentMetadata(html, notFoundPageMetadata()));
 
       await Promise.all([
         ...staticRoutePages.map(async (routePage) => {
           const routeDir = path.join(outDir, routePage.href.replace(/^\/+|\/+$/g, ""));
-          const routeHtml = applyRouteDocumentMetadata(html, routePage.metadata);
+          const routeHtml = stripHomeHeroPreload(applyRouteDocumentMetadata(html, routePage.metadata));
 
           await fs.mkdir(routeDir, { recursive: true });
           await fs.writeFile(path.join(routeDir, "index.html"), routeHtml);

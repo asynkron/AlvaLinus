@@ -24,6 +24,8 @@ export declare function notFoundPageMetadata(): RoutePageMetadata;
 
 export declare function applyRouteDocumentMetadata(document: string, metadata: RoutePageMetadata): string;
 
+export declare function stripHomeHeroPreload(document: string): string;
+
 export declare function routeVisualAssetPaths(routes: readonly RouteRegistryRoute[]): string[];
 
 export declare function assertStaticRouteArtifacts(options: {
