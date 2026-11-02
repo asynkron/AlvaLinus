@@ -481,11 +481,8 @@ function ServicePage({
       <section className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-14 sm:px-8 lg:grid-cols-[1fr_0.72fr] lg:px-10">
         <div>
           <p className="text-lg leading-8 text-foreground">{service.summary}</p>
-          {service.id === "dranering" ? (
-            <p className="mt-4 leading-7 text-muted-foreground">
-              Dräneringssidan är en egen toppnivå för besökare som behöver fuktsäkring runt husgrund, mur eller
-              källarvägg. Innehållet lyfter helheten från bedömning och grävning till återställning.
-            </p>
+          {service.detail ? (
+            <p className="mt-4 leading-7 text-muted-foreground">{service.detail}</p>
           ) : null}
           <div className="mt-6 flex flex-wrap gap-2">
             {service.tags.map((tag) => (

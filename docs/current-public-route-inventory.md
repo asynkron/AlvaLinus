@@ -44,9 +44,9 @@ customer-facing pattern.
   host serves the artifact at unknown paths is a host decision, not part of
   the route inventory.
 - `/dranering/` is an inventory shortcut and a `service` route, exposed within
-  the header's Tjänster links rather than as its own top-level header item; the
-  renderer treats it as a dedicated service page with one drainage-specific
-  explanatory paragraph.
+  the header's Tjänster links rather than as its own top-level header item; it
+  renders as a dedicated service page whose drainage detail paragraph is
+  declared in the service registry like every other service text.
 - Service pages no longer render external source links, and the contact page no
   longer includes a dedicated source-only contact entry. Future source
   references should stay in documentation or editorial tooling rather than

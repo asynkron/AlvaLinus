@@ -551,6 +551,7 @@ describe("SiteHomePage", () => {
     const stensattning = content.services.find((service) => service.id === "stensattning")!;
     const dranering = content.services.find((service) => service.id === "dranering")!;
     expect(stensattning.guidance).not.toEqual(dranering.guidance);
+    expect(stensattning.detail).toBeUndefined();
 
     const { rerender } = render(
       <SiteHomePage currentPath="/stensattning/" initialState={{ status: "ready", content }} />,
@@ -559,6 +560,7 @@ describe("SiteHomePage", () => {
     expect(screen.getByRole("heading", { name: "Stensättning", level: 1 })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "När tjänsten passar" })).toBeInTheDocument();
     expect(screen.getByText(stensattning.guidance)).toBeInTheDocument();
+    expect(screen.queryByText(/fuktsäkring runt husgrund/)).not.toBeInTheDocument();
     expect(screen.queryByText(/markförutsättningar och nästa steg/)).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Visa källsida" })).not.toBeInTheDocument();
 
@@ -570,16 +572,21 @@ describe("SiteHomePage", () => {
   });
 
   it("renders dedicated Dränering and Grävjobb pages", () => {
-    const { rerender } = render(<SiteHomePage currentPath="/dranering/" initialState={{ status: "ready", content }} />);
+    const dranering = content.services.find((service) => service.id === "dranering")!;
+
+    const { rerender } = render(
+      <SiteHomePage currentPath="/dranering/" initialState={{ status: "ready", content }} />,
+    );
 
     expect(screen.getByRole("heading", { name: "Dränering", level: 1 })).toBeInTheDocument();
-    expect(screen.getByText(/fuktsäkring runt husgrund/)).toBeInTheDocument();
+    expect(screen.getByText(dranering.detail!)).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Visa källsida" })).not.toBeInTheDocument();
 
     rerender(<SiteHomePage currentPath="/gravjobb/" initialState={{ status: "ready", content }} />);
 
     expect(screen.getByRole("heading", { name: "Grävjobb", level: 1 })).toBeInTheDocument();
     expect(screen.getByText(/poolgrävning där rätt förarbete avgör slutresultatet/)).toBeInTheDocument();
+    expect(screen.queryByText(dranering.detail!)).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Visa källsida" })).not.toBeInTheDocument();
   });
 

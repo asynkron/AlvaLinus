@@ -198,6 +198,8 @@ export const siteContent = {
       title: "Dränering",
       summary:
         "Dräneringar och fuktsäkra markarbeten runt hus, murar och tomter med ansvar för hela arbetskedjan.",
+      detail:
+        "Dräneringssidan är en egen toppnivå för besökare som behöver fuktsäkring runt husgrund, mur eller källarvägg. Innehållet lyfter helheten från bedömning och grävning till återställning.",
       guidance:
         "Dränering passar när fukt hotar husgrund, murar eller tomtytor och hela arbetskedjan från bedömning och grävning till återställning ska tas om hand av samma utförare.",
       href: "/dranering/",
