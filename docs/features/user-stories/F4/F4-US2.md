@@ -2,9 +2,9 @@
 
 Feature: [F4 — Home, navigation and route recovery](../../navigation-and-recovery.md)  
 Status: current  
-Reviewed: 2026-11-01
+Reviewed: 2026-11-02
 
-As a site visitor, I want to interpret loading, error, empty and unknown-route feedback so I can avoid mistaking missing content for a successful page.
+As a site visitor, I want to interpret empty and unknown-route feedback so I can avoid mistaking missing content for a successful page.
 
 ## Preconditions
 
@@ -13,16 +13,15 @@ As a site visitor, I want to interpret loading, error, empty and unknown-route f
 
 ## Flow
 
-1. Read the bundled page body directly on the default boot; the Laddar innehåll skeleton appears only for an injected loading state.
-2. If loading fails, read the error alert.
-3. If services is empty, recognize Inget innehåll ännu on home and the services index; about and contact keep their bodies.
-4. For an unknown ready path, use a Sidan finns inte shortcut to a registered route.
+1. Read the bundled page body directly on the default boot; the static site boots bundled ready content with no loading skeleton and no network request.
+2. If services is empty, recognize Inget innehåll ännu on home and the services index; about and contact keep their bodies.
+3. For an unknown ready path, use a Sidan finns inte shortcut to a registered route.
 
 ## Variants
 
 - Query/hash suffixes are removed and a missing trailing slash is normalized by the renderer.
 - A service route with no matching service record uses not-found.
-- The default boot renders bundled content immediately, without network I/O; the loader module keeps its exported async signature for the injected-state contracts.
+- The default boot renders bundled content immediately, without network I/O; the page imports the bundled content module directly and no loader module exists.
 
 ## Expected outcome
 
@@ -30,9 +29,9 @@ The rendered state identifies content availability and provides route recovery w
 
 ## Failure and recovery
 
-Error and empty states have no inline retry; the empty-services feedback applies to the service-dependent home and services-index bodies.
+The empty-services state has no inline retry; its feedback applies to the service-dependent home and services-index bodies.
 
-Reload for a fresh load or use header navigation; a content defect needs a corrected static deployment.
+Use header navigation; a content defect needs a corrected static deployment.
 
 ## Source and evidence
 
@@ -40,8 +39,6 @@ Reload for a fresh load or use header navigation; a content defect needs a corre
 - [src/pages/SiteHomePage.tsx](../../../../src/pages/SiteHomePage.tsx)
 
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `renders ready bundled content on the first paint without a loading skeleton` (direct): Checks that the default boot renders ready home content with no Laddar innehåll skeleton.
-- vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `renders the Laddar innehåll skeleton for an injected loading state` (direct): Checks the injected loading skeleton label.
-- vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `shows an error state` (direct): Checks the error alert text.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `keeps $label empty-services feedback when services are empty` (direct): Parameterized home and services-index cases check the empty-state heading and the absence of other route bodies.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `keeps about and contact bodies available when services are empty` (direct): Checks the about body and the contact form, handoff note and fallback email with one #content target and retained header/footer.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `keeps service and unknown routes on not-found recovery when services are empty` (direct): Checks that a service route without its record and an unknown route use not-found recovery instead of the empty state.

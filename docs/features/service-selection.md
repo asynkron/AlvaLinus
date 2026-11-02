@@ -1,6 +1,6 @@
 # F1: Choose a suitable groundworks service
 
-Reviewed: 2026-10-29. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-02. Runtime: `ui`. Product role: `customer_outcome`.
 
 Visitors need to identify which service fits a property or construction project
 before asking for a discussion. The current result is service understanding and
@@ -53,7 +53,7 @@ ServicesIndexPage, Services, ServicePage and the route branching.
 
 A missing service for a known service route renders not-found. An empty
 services list blocks the home and services-index bodies with the empty state.
-Loading/error/empty/not-found handling
+Empty-services and not-found handling
 and recovery ceilings are described in [F4](navigation-and-recovery.md).
 A content defect requires source correction and static redeployment.
 

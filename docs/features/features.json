@@ -128,10 +128,6 @@
           "description": "Static content and route contracts."
         },
         {
-          "path": "src/lib/site-content.ts",
-          "description": "Asynchronous local content loader; no network call."
-        },
-        {
           "path": "vite.config.ts",
           "description": "Emits static HTML entry artifacts for declared subpages."
         }

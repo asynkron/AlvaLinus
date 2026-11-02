@@ -39,7 +39,7 @@ function heroImage(src: string): HTMLImageElement {
 
 describe("SiteHomePage", () => {
   it("offers a Swedish skip link before header navigation that targets the stable page content", () => {
-    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+    render(<SiteHomePage content={content} />);
 
     const skipLink = screen.getByRole("link", { name: "Hoppa till innehåll" });
     expect(skipLink).toHaveAttribute("href", "#content");
@@ -63,27 +63,21 @@ describe("SiteHomePage", () => {
   });
 
   it.each([
-    { focusable: true, label: "ready home", element: <SiteHomePage initialState={{ status: "ready", content }} /> },
+    { focusable: true, label: "ready home", element: <SiteHomePage content={content} /> },
     {
       focusable: true,
       label: "ready subpage",
-      element: <SiteHomePage currentPath="/dranering/" initialState={{ status: "ready", content }} />,
+      element: <SiteHomePage currentPath="/dranering/" content={content} />,
     },
     {
       focusable: true,
       label: "unknown route",
-      element: <SiteHomePage currentPath="/saknas/" initialState={{ status: "ready", content }} />,
-    },
-    { focusable: false, label: "loading", element: <SiteHomePage initialState={{ status: "loading" }} /> },
-    {
-      focusable: false,
-      label: "error",
-      element: <SiteHomePage initialState={{ status: "error", message: "Kunde inte läsa statisk data." }} />,
+      element: <SiteHomePage currentPath="/saknas/" content={content} />,
     },
     {
       focusable: false,
       label: "empty",
-      element: <SiteHomePage initialState={{ status: "ready", content: emptyServicesContent }} />,
+      element: <SiteHomePage content={emptyServicesContent} />,
     },
   ])(
     "keeps exactly one stable content target in the $label state",
@@ -118,7 +112,7 @@ describe("SiteHomePage", () => {
   );
 
   it.each(["link", "toggle"] as const)("dismisses mobile navigation with Escape from its %s and allows reopening", (focusOrigin) => {
-    render(<SiteHomePage currentPath="/dranering/" initialState={{ status: "ready", content }} />);
+    render(<SiteHomePage currentPath="/dranering/" content={content} />);
 
     const toggle = screen.getByRole("button", { name: "Öppna meny" });
     expect(toggle).toHaveAttribute("aria-expanded", "false");
@@ -159,7 +153,7 @@ describe("SiteHomePage", () => {
   });
 
   it("keeps mobile navigation open and preserves focus when Escape is pressed elsewhere in the header", () => {
-    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+    render(<SiteHomePage content={content} />);
 
     const toggle = screen.getByRole("button", { name: "Öppna meny" });
     fireEvent.click(toggle);
@@ -177,7 +171,7 @@ describe("SiteHomePage", () => {
   });
 
   it("keeps the desktop Tjänster dropdown trigger focusable with its five registry-ordered service links", () => {
-    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+    render(<SiteHomePage content={content} />);
 
     const headerNav = within(screen.getByRole("banner")).getByRole("navigation", { name: "Huvudnavigation" });
     const serviceRoutes = content.routes.filter((route) => route.kind === "service");
@@ -228,7 +222,7 @@ describe("SiteHomePage", () => {
   });
 
   it("renders owner-approved home content, service, process, partner, and contact areas", () => {
-    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+    render(<SiteHomePage content={content} />);
 
     expect(screen.getByRole("link", { name: "Svärd Entreprenad startsida" })).toHaveAttribute("href", "/");
     expect(screen.getByRole("img", { name: "Svärd Entreprenad logotyp" })).toBeInTheDocument();
@@ -244,7 +238,7 @@ describe("SiteHomePage", () => {
   });
 
   it("preserves Swedish UTF-8 characters in representative user-facing copy", () => {
-    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+    render(<SiteHomePage content={content} />);
 
     expect(screen.getByText("Mark & anläggning i Örebro")).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: "Dränering" }).length).toBeGreaterThan(0);
@@ -254,7 +248,7 @@ describe("SiteHomePage", () => {
   });
 
   it("shows the requested primary navigation labels as real route links", () => {
-    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+    render(<SiteHomePage content={content} />);
 
     expect(screen.getAllByRole("link", { name: "Hem" })[0]).toHaveAttribute("href", "/");
     expect(screen.getAllByRole("link", { name: "Tjänster" })[0]).toHaveAttribute("href", "/tjanster/");
@@ -266,7 +260,7 @@ describe("SiteHomePage", () => {
   });
 
   it("derives header, mobile menu and footer navigation from the typed route registry", () => {
-    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+    render(<SiteHomePage content={content} />);
 
     const pageRoutes = content.routes.filter((route) => route.kind !== "service");
     const serviceRoutes = content.routes.filter((route) => route.kind === "service");
@@ -302,7 +296,7 @@ describe("SiteHomePage", () => {
   });
 
   it("presents the updated route decision as customer-facing service guidance", () => {
-    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+    render(<SiteHomePage content={content} />);
 
     expect(screen.getByRole("heading", { name: "Tydliga vägar för rätt uppdrag" })).toBeInTheDocument();
     expect(screen.getByText(/Hitta snabbt till företagets viktigaste information/)).toBeInTheDocument();
@@ -311,7 +305,7 @@ describe("SiteHomePage", () => {
   });
 
   it("links from the home page to active static subpage paths only", () => {
-    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+    render(<SiteHomePage content={content} />);
 
     expect(screen.getByRole("link", { name: "Våra tjänster" })).toHaveAttribute("href", "/tjanster/");
     expect(screen.getByRole("link", { name: "Kontakta oss för offert" })).toHaveAttribute("href", "/kontakt/");
@@ -321,7 +315,7 @@ describe("SiteHomePage", () => {
   });
 
   it.each(["/", "/tjanster/"])("names every service-card link by its destination on %s", (currentPath) => {
-    render(<SiteHomePage currentPath={currentPath} initialState={{ status: "ready", content }} />);
+    render(<SiteHomePage currentPath={currentPath} content={content} />);
 
     for (const service of content.services) {
       const link = screen.getByRole("link", { name: `Läs mer om ${service.title}` });
@@ -355,7 +349,7 @@ describe("SiteHomePage", () => {
   });
 
   it("fetches above-the-fold hero images at high priority while service card images stay lazy", () => {
-    const { rerender } = render(<SiteHomePage initialState={{ status: "ready", content }} />);
+    const { rerender } = render(<SiteHomePage content={content} />);
 
     const homeHero = heroImage("/page-visuals/hero-photo.webp");
     expect(homeHero).toHaveAttribute("fetchpriority", "high");
@@ -367,7 +361,7 @@ describe("SiteHomePage", () => {
     expect(serviceImage).toHaveAttribute("loading", "lazy");
     expect(serviceImage).not.toHaveAttribute("fetchpriority");
 
-    rerender(<SiteHomePage currentPath="/om-oss/" initialState={{ status: "ready", content }} />);
+    rerender(<SiteHomePage currentPath="/om-oss/" content={content} />);
 
     const pageHero = heroImage("/page-visuals/about-hero.webp");
     expect(pageHero).toHaveAttribute("fetchpriority", "high");
@@ -379,7 +373,7 @@ describe("SiteHomePage", () => {
   });
 
   it("falls back to the route SVG on the first photo error and removes the image when the fallback also fails", () => {
-    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+    render(<SiteHomePage content={content} />);
 
     const stensattningCard = within(serviceCard("stensattning"));
     const fallbackSrc = "/page-visuals/svard-entreprenad-stensattning.svg";
@@ -411,7 +405,7 @@ describe("SiteHomePage", () => {
   });
 
   it("keeps neighboring service cards and their successful images untouched when one card image fails twice", () => {
-    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+    render(<SiteHomePage content={content} />);
 
     const failingCard = within(serviceCard("stensattning"));
     fireEvent.error(failingCard.getByRole("img"));
@@ -432,7 +426,7 @@ describe("SiteHomePage", () => {
   });
 
   it("keeps the decorative home hero photo on the success path", () => {
-    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+    render(<SiteHomePage content={content} />);
 
     const image = heroImage("/page-visuals/hero-photo.webp");
 
@@ -443,7 +437,7 @@ describe("SiteHomePage", () => {
   });
 
   it("hides a failing home hero photo without a retry loop and keeps the hero intact", () => {
-    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+    render(<SiteHomePage content={content} />);
 
     const image = heroImage("/page-visuals/hero-photo.webp");
 
@@ -467,7 +461,7 @@ describe("SiteHomePage", () => {
     { label: "home", path: "/" },
     { label: "services index", path: "/tjanster/" },
   ])("keeps $label empty-services feedback when services are empty", ({ path }) => {
-    render(<SiteHomePage currentPath={path} initialState={{ status: "ready", content: emptyServicesContent }} />);
+    render(<SiteHomePage currentPath={path} content={emptyServicesContent} />);
 
     expect(screen.getByRole("heading", { name: "Inget innehåll ännu" })).toBeInTheDocument();
     expect(screen.queryByRole("form", { name: "Offertförfrågan via e-post" })).not.toBeInTheDocument();
@@ -475,7 +469,7 @@ describe("SiteHomePage", () => {
 
   it("keeps about and contact bodies available when services are empty", () => {
     const { rerender } = render(
-      <SiteHomePage currentPath="/om-oss/" initialState={{ status: "ready", content: emptyServicesContent }} />,
+      <SiteHomePage currentPath="/om-oss/" content={emptyServicesContent} />,
     );
 
     expect(screen.getByRole("heading", { name: "Om oss", level: 1 })).toBeInTheDocument();
@@ -485,7 +479,7 @@ describe("SiteHomePage", () => {
     expect(document.querySelectorAll("#content")).toHaveLength(1);
     expect(contentTarget()).toHaveAttribute("tabindex", "-1");
 
-    rerender(<SiteHomePage currentPath="/kontakt/" initialState={{ status: "ready", content: emptyServicesContent }} />);
+    rerender(<SiteHomePage currentPath="/kontakt/" content={emptyServicesContent} />);
 
     expect(screen.getByRole("heading", { name: "Kontakt", level: 1 })).toBeInTheDocument();
     const form = screen.getByRole("form", { name: "Offertförfrågan via e-post" });
@@ -503,7 +497,7 @@ describe("SiteHomePage", () => {
 
   it("keeps service and unknown routes on not-found recovery when services are empty", () => {
     const { rerender } = render(
-      <SiteHomePage currentPath="/stensattning/" initialState={{ status: "ready", content: emptyServicesContent }} />,
+      <SiteHomePage currentPath="/stensattning/" content={emptyServicesContent} />,
     );
 
     expect(screen.getByRole("heading", { name: "Sidan finns inte" })).toBeInTheDocument();
@@ -511,18 +505,12 @@ describe("SiteHomePage", () => {
     expect(screen.queryByRole("heading", { name: "Inget innehåll ännu" })).not.toBeInTheDocument();
 
     rerender(
-      <SiteHomePage currentPath="/saknas/" initialState={{ status: "ready", content: emptyServicesContent }} />,
+      <SiteHomePage currentPath="/saknas/" content={emptyServicesContent} />,
     );
 
     expect(screen.getByRole("heading", { name: "Sidan finns inte" })).toBeInTheDocument();
     expect(screen.getByText(/matchar ingen aktuell sida/)).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Inget innehåll ännu" })).not.toBeInTheDocument();
-  });
-
-  it("shows an error state", () => {
-    render(<SiteHomePage initialState={{ status: "error", message: "Kunde inte läsa statisk data." }} />);
-
-    expect(screen.getByRole("alert")).toHaveTextContent("Kunde inte läsa statisk data.");
   });
 
   it("renders ready bundled content on the first paint without a loading skeleton", () => {
@@ -534,14 +522,8 @@ describe("SiteHomePage", () => {
     expect(screen.getByRole("link", { name: "Våra tjänster" })).toHaveAttribute("href", "/tjanster/");
   });
 
-  it("renders the Laddar innehåll skeleton for an injected loading state", () => {
-    render(<SiteHomePage initialState={{ status: "loading" }} />);
-
-    expect(screen.getByLabelText("Laddar innehåll")).toBeInTheDocument();
-  });
-
   it("renders representative service tags including pool digging under Grävjobb", () => {
-    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+    render(<SiteHomePage content={content} />);
 
     expect(screen.getByText("Marksten Örebro")).toBeInTheDocument();
     expect(screen.getByText("Poolgrävning")).toBeInTheDocument();
@@ -554,7 +536,7 @@ describe("SiteHomePage", () => {
     expect(stensattning.detail).toBeUndefined();
 
     const { rerender } = render(
-      <SiteHomePage currentPath="/stensattning/" initialState={{ status: "ready", content }} />,
+      <SiteHomePage currentPath="/stensattning/" content={content} />,
     );
 
     expect(screen.getByRole("heading", { name: "Stensättning", level: 1 })).toBeInTheDocument();
@@ -564,7 +546,7 @@ describe("SiteHomePage", () => {
     expect(screen.queryByText(/markförutsättningar och nästa steg/)).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Visa källsida" })).not.toBeInTheDocument();
 
-    rerender(<SiteHomePage currentPath="/dranering/" initialState={{ status: "ready", content }} />);
+    rerender(<SiteHomePage currentPath="/dranering/" content={content} />);
 
     expect(screen.getByRole("heading", { name: "Dränering", level: 1 })).toBeInTheDocument();
     expect(screen.getByText(dranering.guidance)).toBeInTheDocument();
@@ -574,15 +556,13 @@ describe("SiteHomePage", () => {
   it("renders dedicated Dränering and Grävjobb pages", () => {
     const dranering = content.services.find((service) => service.id === "dranering")!;
 
-    const { rerender } = render(
-      <SiteHomePage currentPath="/dranering/" initialState={{ status: "ready", content }} />,
-    );
+    const { rerender } = render(<SiteHomePage currentPath="/dranering/" content={content} />);
 
     expect(screen.getByRole("heading", { name: "Dränering", level: 1 })).toBeInTheDocument();
     expect(screen.getByText(dranering.detail!)).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Visa källsida" })).not.toBeInTheDocument();
 
-    rerender(<SiteHomePage currentPath="/gravjobb/" initialState={{ status: "ready", content }} />);
+    rerender(<SiteHomePage currentPath="/gravjobb/" content={content} />);
 
     expect(screen.getByRole("heading", { name: "Grävjobb", level: 1 })).toBeInTheDocument();
     expect(screen.getByText(/poolgrävning där rätt förarbete avgör slutresultatet/)).toBeInTheDocument();
@@ -591,20 +571,20 @@ describe("SiteHomePage", () => {
   });
 
   it("renders dedicated about and contact paths", () => {
-    const { rerender } = render(<SiteHomePage currentPath="/om-oss/" initialState={{ status: "ready", content }} />);
+    const { rerender } = render(<SiteHomePage currentPath="/om-oss/" content={content} />);
 
     expect(screen.getByRole("heading", { name: "Om oss", level: 1 })).toBeInTheDocument();
     expect(screen.getAllByText(/På Svärd Entreprenad brinner vi/).length).toBeGreaterThan(0);
     expect(screen.getByText(/modern utrustning med gedigen yrkeskunskap/)).toBeInTheDocument();
 
-    rerender(<SiteHomePage currentPath="/kontakt/" initialState={{ status: "ready", content }} />);
+    rerender(<SiteHomePage currentPath="/kontakt/" content={content} />);
 
     expect(screen.getByRole("heading", { name: "Kontakt", level: 1 })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Kontakta oss för offert" })).toBeInTheDocument();
   });
 
   it("hides partner content when no current collaborator is configured", () => {
-    render(<SiteHomePage initialState={{ status: "ready", content }} />);
+    render(<SiteHomePage content={content} />);
 
     expect(screen.queryByRole("heading", { name: "Samarbetspartner" })).not.toBeInTheDocument();
     expect(screen.queryByText("UC Brons")).not.toBeInTheDocument();
@@ -614,7 +594,7 @@ describe("SiteHomePage", () => {
   });
 
   it("renders a static email handoff form and footer contact email", () => {
-    render(<SiteHomePage currentPath="/kontakt/" initialState={{ status: "ready", content }} />);
+    render(<SiteHomePage currentPath="/kontakt/" content={content} />);
 
     const form = screen.getByRole("form", { name: "Offertförfrågan via e-post" });
     const formScope = within(form);
@@ -659,7 +639,7 @@ describe("SiteHomePage", () => {
     { id: "dranering", path: "/dranering/" },
     { id: "tradgard", path: "/tradgardsplanering/" },
   ])("carries the stable $id service identity in the $path inquiry action", ({ id, path }) => {
-    render(<SiteHomePage currentPath={path} initialState={{ status: "ready", content }} />);
+    render(<SiteHomePage currentPath={path} content={content} />);
 
     expect(screen.getByRole("link", { name: "Kontakta oss" })).toHaveAttribute(
       "href",
@@ -669,19 +649,19 @@ describe("SiteHomePage", () => {
 
   it("keeps the index and about inquiry actions generic while service pages carry service identity", () => {
     const { rerender } = render(
-      <SiteHomePage currentPath="/tjanster/" initialState={{ status: "ready", content }} />,
+      <SiteHomePage currentPath="/tjanster/" content={content} />,
     );
 
     expect(screen.getByRole("link", { name: "Kontakta oss" })).toHaveAttribute("href", "/kontakt/");
 
-    rerender(<SiteHomePage currentPath="/om-oss/" initialState={{ status: "ready", content }} />);
+    rerender(<SiteHomePage currentPath="/om-oss/" content={content} />);
 
     expect(screen.getByRole("link", { name: "Kontakta oss" })).toHaveAttribute("href", "/kontakt/");
   });
 
   it("follows a service page inquiry action into contact, selects that service and preserves a later manual change", () => {
     const { rerender } = render(
-      <SiteHomePage currentPath="/dranering/" initialState={{ status: "ready", content }} />,
+      <SiteHomePage currentPath="/dranering/" content={content} />,
     );
 
     const inquiryHref = screen.getByRole("link", { name: "Kontakta oss" }).getAttribute("href");
@@ -693,7 +673,7 @@ describe("SiteHomePage", () => {
     rerender(
       <SiteHomePage
         currentPath={url.pathname}
-        initialState={{ status: "ready", content }}
+        content={content}
         inquiryServiceId={url.searchParams.get("tjanst") ?? undefined}
       />,
     );
@@ -711,12 +691,12 @@ describe("SiteHomePage", () => {
   });
 
   it("keeps the typed default service selection on home and direct contact without inquiry context", () => {
-    const { rerender } = render(<SiteHomePage initialState={{ status: "ready", content }} />);
+    const { rerender } = render(<SiteHomePage content={content} />);
 
     const homeForm = screen.getByRole("form", { name: "Offertförfrågan via e-post" });
     expect(within(homeForm).getByLabelText("Tjänst")).toHaveValue(content.contact.form.serviceField.options[0]);
 
-    rerender(<SiteHomePage currentPath="/kontakt/" initialState={{ status: "ready", content }} />);
+    rerender(<SiteHomePage currentPath="/kontakt/" content={content} />);
 
     const contactForm = screen.getByRole("form", { name: "Offertförfrågan via e-post" });
     expect(within(contactForm).getByLabelText("Tjänst")).toHaveValue(content.contact.form.serviceField.options[0]);
@@ -726,7 +706,7 @@ describe("SiteHomePage", () => {
     "retains the default service selection for unrecognized inquiry context $context",
     (serviceId) => {
       render(
-        <SiteHomePage currentPath="/kontakt/" initialState={{ status: "ready", content }} inquiryServiceId={serviceId} />,
+        <SiteHomePage currentPath="/kontakt/" content={content} inquiryServiceId={serviceId} />,
       );
 
       const form = screen.getByRole("form", { name: "Offertförfrågan via e-post" });
@@ -758,7 +738,7 @@ describe("SiteHomePage", () => {
     };
 
     render(
-      <SiteHomePage currentPath="/kontakt/" initialState={{ status: "ready", content: adjustedContent }} inquiryServiceId="dranering" />,
+      <SiteHomePage currentPath="/kontakt/" content={adjustedContent} inquiryServiceId="dranering" />,
     );
 
     const form = screen.getByRole("form", { name: "Offertförfrågan via e-post" });
@@ -773,7 +753,7 @@ describe("SiteHomePage", () => {
   });
 
   it("fails unknown paths gracefully", () => {
-    render(<SiteHomePage currentPath="/saknas/" initialState={{ status: "ready", content }} />);
+    render(<SiteHomePage currentPath="/saknas/" content={content} />);
 
     expect(screen.getByRole("heading", { name: "Sidan finns inte" })).toBeInTheDocument();
     expect(screen.getByText(/matchar ingen aktuell sida/)).toBeInTheDocument();

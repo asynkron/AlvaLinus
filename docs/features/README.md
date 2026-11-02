@@ -1,6 +1,6 @@
 # Feature catalog
 
-Reviewed against source: 2026-10-29.
+Reviewed against source: 2026-11-02.
 
 The catalog introduced in `f7b481f` already covers the current route inventory.
 The maintained catalog retains its published identities, including F4-US3 for
@@ -40,7 +40,7 @@ authority for visible sections.
 | `/om-oss/` | [F2-US1](user-stories/F2/F2-US1.md) | Hero and breadcrumb; company paragraphs; contact link band; footer. |
 | `/kontakt/` | [F3-US1](user-stories/F3/F3-US1.md), [F3-US2](user-stories/F3/F3-US2.md) | Hero; quote/site-visit prompt; email address; native form; footer. |
 | Keyboard bypass on all rendered states | [F4-US3](user-stories/F4/F4-US3.md) | Hoppa till innehåll precedes Header and points to one #content target; ready bodies have tabindex=-1, availability sections do not. |
-| Shared loading/error/empty/not-found | [F4-US2](user-stories/F4/F4-US2.md) | Header remains; loading label, error alert or empty-services message replaces the service-dependent home/index bodies; ready not-found provides declared-route shortcuts and footer. |
+| Shared empty/not-found | [F4-US2](user-stories/F4/F4-US2.md) | Header remains; the empty-services message replaces the service-dependent home/index bodies; ready not-found provides declared-route shortcuts and footer. |
 
 `Partners` is called on home and the services index but currently renders
 nothing because `partners` is empty. About copy is on the dedicated about page;
@@ -49,8 +49,8 @@ route is declared.
 
 ## Sources and runtime boundaries
 
-- [Typed routes/content](../../src/data/siteContent.ts), [types](../../src/types/site.ts),
-  [renderer](../../src/pages/SiteHomePage.tsx) and [local loader](../../src/lib/site-content.ts).
+- [Typed routes/content](../../src/data/siteContent.ts), [types](../../src/types/site.ts) and
+  [renderer](../../src/pages/SiteHomePage.tsx).
 - [Route inventory](../current-public-route-inventory.md),
   [static route emission](../../vite.config.ts),
   [static route assertion](../../scripts/assert-static-routes.mjs) and
@@ -107,7 +107,7 @@ does not provide persistence, delivery assurance or a privacy/compliance verdict
   maps the above-the-fold fetch-priority declaration, whose about-hero error
   case covers subpage hero image hiding.
   F4-US3 maps the skip-link order and unique
-  destination in ready/loading/error/empty/not-found states. These DOM checks
+  destination in ready/empty/not-found states. These DOM checks
   do not establish browser anchor focus, scrolling or focus-only CSS visibility.
   F3-US1/US2 map the explanation's accessible association, position before the
   button, lack of a sent confirmation and subject-bearing in-form fallback.

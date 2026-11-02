@@ -1,6 +1,6 @@
 # F4: Home, navigation and route recovery
 
-Reviewed: 2026-10-30. Runtime: `ui`. Product role: `surface`.
+Reviewed: 2026-11-02. Runtime: `ui`. Product role: `surface`.
 Supports **F1, F2, F3**, all active customer-outcome features.
 
 Home and shared route handling make the service, company and inquiry outcomes
@@ -43,7 +43,7 @@ The historical pageCount 58 is not a rendered route count.
 link before Header. It is visually hidden until focused and targets one
 `#content` destination in every rendered state. Ready home, subpage and
 not-found bodies use a focusable wrapper (`tabIndex={-1}`) with scroll margin.
-Loading/error/empty sections keep the anchor but have no explicit tabIndex.
+The empty-services section keeps the anchor but has no explicit tabIndex.
 DOM evidence checks order and destination structure; it does not establish
 browser scrolling, anchor focus transfer or focus-only CSS visibility. This
 keyboard aid is not a compliance certification.
@@ -60,14 +60,12 @@ route-specific view. Static artifacts are not separate backend handlers. See
 
 | State | Visible behavior | Recovery and ceiling |
 | --- | --- | --- |
-| Loading | Header plus Laddar innehåll skeleton | Deterministic injected state only; the default boot renders bundled ready content on first paint without the skeleton and makes no network request. |
-| Error | Header plus Innehåll kunde inte laddas alert and error message | No inline retry; reload. A deployed source defect needs a new static deployment. |
 | Empty services | Header plus Inget innehåll ännu | Applies to the service-dependent home and services-index bodies. About and contact keep their own bodies; a service route without its record and an unknown route use not-found recovery. |
 | Ready known route | Typed route view plus footer | Missing joined service record goes to not-found. |
 | Ready unknown route | Sidan finns inte, route shortcuts and footer | Follow a declared shortcut. The build also emits `dist/404.html` carrying the same SPA document with the Swedish not-found title and description, so a static host that serves it at unknown paths boots the app, which renders this recovery with the requested URL; whether the host does so stays unknown. |
 | Photo error | Service card switches to the route SVG; if that fallback also errors, the card image is removed with no retry loop. Subpage hero and home hero hide their images. | Title, summary and Läs mer link remain. A hidden home hero keeps the navy section, gradient overlay, headline, intro, actions and stats. |
 
-The header stays during loading/error/empty, but the footer does not. Partners
+The header stays during the empty-services state, but the footer does not. Partners
 is omitted independently when its list is empty. These are current behaviors,
 not new error recovery mechanisms.
 
@@ -79,14 +77,13 @@ navigation derive page and service links from the typed registry instead of
 parallel markup arrays. [Typed content](../../src/data/siteContent.ts) owns the
 registry and inventory shortcuts and is the single declaration source for
 navigation destinations; the renderer boots ready content directly from that
-bundled registry on first paint, while [local loader](../../src/lib/site-content.ts)
-keeps its exported async signature for the injected-state contracts.
+bundled registry on first paint, with no separate loader module.
 [StaticState](../../src/components/StaticState.tsx)
-renders availability states. [Vite config](../../vite.config.ts) emits route
+renders the empty-services availability state. [Vite config](../../vite.config.ts) emits route
 artifacts; existing route and visual scripts check deployable paths.
 
-Story documents carry reviewed Vitest declarations for links, loading, error,
-empty and not-found feedback. Swedish-character assertions protect representative
+Story documents carry reviewed Vitest declarations for links, empty and
+not-found feedback. Swedish-character assertions protect representative
 UTF-8 text. The route visual test is technical metadata evidence; rendered
 service-card image-error behavior, including the terminal fallback failure, and
 the home hero photo's success and failure declarations are covered by
@@ -116,7 +113,7 @@ claim for the route inventory.
 
 ## What Works Less Well
 
-Error feedback provides no inline retry or contact body.
+Empty-services feedback provides no inline retry or contact body.
 
 ## Roadmap
 
