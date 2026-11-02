@@ -63,8 +63,12 @@ type SiteHomePageProps = {
 export function SiteHomePage({ currentPath = "/", inquiryServiceId, initialState }: SiteHomePageProps) {
   const state: LoadState = initialState ?? { status: "ready", content: siteContent };
 
+  // The skip link, sticky header and root footer are siblings around the
+  // content main element: descendants of main would lose their banner and
+  // contentinfo landmark roles in browsers (ARIA in HTML main-descendant
+  // suppression), leaving screen readers without page landmarks.
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground">
       <a
         href="#content"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-foreground focus:shadow-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -73,7 +77,7 @@ export function SiteHomePage({ currentPath = "/", inquiryServiceId, initialState
       </a>
       <Header currentPath={currentPath} />
       <ContentSurface currentPath={currentPath} inquiryServiceId={inquiryServiceId} state={state} />
-    </main>
+    </div>
   );
 }
 
@@ -246,17 +250,17 @@ function ContentSurface({
 }) {
   if (state.status === "loading") {
     return (
-      <section id="content" className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
+      <main id="content" className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
         <StaticState state="loading" />
-      </section>
+      </main>
     );
   }
 
   if (state.status === "error") {
     return (
-      <section id="content" className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
+      <main id="content" className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
         <StaticState state="error" title="Innehåll kunde inte laddas" message={state.message} />
-      </section>
+      </main>
     );
   }
 
@@ -265,20 +269,23 @@ function ContentSurface({
 
   if (routeDependsOnServices(route) && content.services.length === 0) {
     return (
-      <section id="content" className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
+      <main id="content" className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
         <StaticState state="empty" title="Inget innehåll ännu" message="Lägg till statiska dataposter i src/data." />
-      </section>
+      </main>
     );
   }
 
   return (
-    <div id="content" tabIndex={-1} className="scroll-mt-20 focus:outline-none">
-      {route ? (
-        <RoutedPage content={content} inquiryServiceId={inquiryServiceId} route={route} />
-      ) : (
-        <NotFound content={content} currentPath={currentPath} />
-      )}
-    </div>
+    <>
+      <main id="content" tabIndex={-1} className="scroll-mt-20 focus:outline-none">
+        {route ? (
+          <RoutedPage content={content} inquiryServiceId={inquiryServiceId} route={route} />
+        ) : (
+          <NotFound content={content} currentPath={currentPath} />
+        )}
+      </main>
+      <Footer content={content} />
+    </>
   );
 }
 
@@ -342,7 +349,6 @@ function RoutedPage({
       <Trust content={content} />
       <Partners content={content} />
       <Contact content={content} />
-      <Footer content={content} />
     </>
   );
 }
@@ -441,7 +447,6 @@ function ServicesIndexPage({ content, route }: { readonly content: SiteContent; 
       <Trust content={content} />
       <Partners content={content} />
       <ContactLinkBand content={content} />
-      <Footer content={content} />
     </>
   );
 }
@@ -452,7 +457,6 @@ function AboutPage({ content, route }: { readonly content: SiteContent; readonly
       <PageHero title={route.label} summary={route.summary} imageSrc={PAGE_HERO_PHOTOS[route.id]} />
       <About content={content} />
       <ContactLinkBand content={content} />
-      <Footer content={content} />
     </>
   );
 }
@@ -498,7 +502,6 @@ function ServicePage({
       </section>
       <Process content={content} />
       <ContactLinkBand content={content} serviceId={service.id} />
-      <Footer content={content} />
     </>
   );
 }
@@ -516,7 +519,6 @@ function ContactPage({
     <>
       <PageHero title={route.label} summary={route.summary} imageSrc={PAGE_HERO_PHOTOS[route.id]} />
       <Contact content={content} serviceOption={resolveInquiryServiceOption(content, inquiryServiceId)} />
-      <Footer content={content} />
     </>
   );
 }
@@ -543,7 +545,6 @@ function NotFound({ content, currentPath }: { readonly content: SiteContent; rea
           ))}
         </div>
       </section>
-      <Footer content={content} />
     </>
   );
 }

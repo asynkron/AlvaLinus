@@ -44,14 +44,20 @@ describe("SiteHomePage", () => {
     const skipLink = screen.getByRole("link", { name: "Hoppa till innehåll" });
     expect(skipLink).toHaveAttribute("href", "#content");
 
-    const main = screen.getByRole("main");
-    expect(main.firstElementChild).toBe(skipLink);
-
-    const brandLink = screen.getByRole("link", { name: "Svärd Entreprenad startsida" });
-    expect(skipLink.compareDocumentPosition(brandLink) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-
     const header = screen.getByRole("banner");
+    const main = screen.getByRole("main");
+    const footer = screen.getByRole("contentinfo");
     const target = contentTarget();
+
+    expect(skipLink.compareDocumentPosition(header) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(header.compareDocumentPosition(main) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+
+    // JSDOM resolves banner/contentinfo roles even inside main, so pin the
+    // browser-visible landmark structure through DOM containment instead.
+    expect(main.contains(header)).toBe(false);
+    expect(main.contains(footer)).toBe(false);
+
+    expect(target).toBe(main);
     expect(target).toHaveAttribute("tabindex", "-1");
     expect(header.compareDocumentPosition(target) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
@@ -95,6 +101,15 @@ describe("SiteHomePage", () => {
 
       const skipLink = screen.getByRole("link", { name: "Hoppa till innehåll" });
       expect(skipLink).toHaveAttribute("href", `#${target.id}`);
+      expect(target).toBe(screen.getByRole("main"));
+
+      const header = screen.getByRole("banner");
+      const footer = screen.queryByRole("contentinfo");
+      expect(target.contains(header)).toBe(false);
+
+      if (footer) {
+        expect(target.contains(footer)).toBe(false);
+      }
 
       if (focusable) {
         expect(target).toHaveAttribute("tabindex", "-1");
