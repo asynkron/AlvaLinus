@@ -25,7 +25,6 @@
           "Services index",
           "Five dedicated service pages",
           "Missing service resolves to not-found",
-          "Shared loading/error states",
           "Empty-services feedback on home and the services index"
         ],
         "current_limitations": "Service detail pages share the process section, while each aside carries its own declared suitability guidance; Markarbete and Trädgårdsplanering have no dedicated rendered-page test mapping.",
@@ -329,8 +328,8 @@
           "Partners omitted for the current empty list"
         ],
         "current_limitations": "Trust statements describe experience, certification and guarantees without linked supporting credentials or project case studies in these sections.",
-        "failure_behavior": "About shares the global load/error handling and keeps its body when services is empty; an empty partner list intentionally renders no partner section.",
-        "recovery": "Reload for transient loading problems; maintainers must correct missing content through a static deployment.",
+        "failure_behavior": "About keeps its body when services is empty; the empty-services feedback applies only to service-dependent routes; an empty partner list intentionally renders no partner section.",
+        "recovery": "Use header navigation; maintainers must correct missing content through a static deployment.",
         "runtime_owners": [
           "src/pages/SiteHomePage.tsx",
           "src/data/siteContent.ts"
@@ -623,8 +622,6 @@
           "/kontakt/"
         ],
         "principal_states": [
-          "Loading",
-          "Load error",
           "Empty services",
           "Ready known route",
           "Unknown route",
@@ -632,12 +629,11 @@
           "Keyboard bypass to the page body"
         ],
         "current_limitations": "Header, mobile-menu and footer navigation derive their destinations from the typed route registry, whose five inventory shortcuts remain a display subset; desktop dropdown keyboard interaction is unmapped. Hosting may reject unknown paths before React can display not-found.",
-        "failure_behavior": "Load errors show an alert without a retry control; unknown in-app paths show declared-route shortcuts. Loading/error/empty states retain the header but have no footer.",
+        "failure_behavior": "Unknown in-app paths show declared-route shortcuts. The empty-services state retains the header but has no footer.",
         "recovery": "Use header links or reload; unknown ready routes provide all registered shortcuts. Static-host handling remains a deployment concern.",
         "runtime_owners": [
           "src/pages/SiteHomePage.tsx",
           "src/data/siteContent.ts",
-          "src/lib/site-content.ts",
           "src/components/StaticState.tsx"
         ],
         "background_component_relations": [],
@@ -760,7 +756,7 @@
           "title": "Recognize unavailable content and recover to a known route",
           "status": "current",
           "role": "Site visitor",
-          "action": "interpret loading, error, empty and unknown-route feedback",
+          "action": "interpret empty and unknown-route feedback",
           "benefit": "avoid mistaking missing content for a successful page",
           "source_anchors": [
             "src/data/siteContent.ts",
@@ -773,20 +769,6 @@
               "name": "renders ready bundled content on the first paint without a loading skeleton",
               "evidence_type": "direct",
               "supports": "Checks that the default boot renders ready home content with no Laddar innehåll skeleton."
-            },
-            {
-              "framework": "vitest",
-              "path": "src/pages/SiteHomePage.test.tsx",
-              "name": "renders the Laddar innehåll skeleton for an injected loading state",
-              "evidence_type": "direct",
-              "supports": "Checks the injected loading skeleton label."
-            },
-            {
-              "framework": "vitest",
-              "path": "src/pages/SiteHomePage.test.tsx",
-              "name": "shows an error state",
-              "evidence_type": "direct",
-              "supports": "Checks the error alert text."
             },
             {
               "framework": "vitest",
@@ -823,19 +805,18 @@
             "For not-found, content is ready."
           ],
           "flow": [
-            "Read the bundled page body directly on the default boot; the Laddar innehåll skeleton appears only for an injected loading state.",
-            "If loading fails, read the error alert.",
+            "Read the bundled page body directly on the default boot; the static site boots bundled ready content with no loading skeleton and no network request.",
             "If services is empty, recognize Inget innehåll ännu on home and the services index; about and contact keep their bodies.",
             "For an unknown ready path, use a Sidan finns inte shortcut to a registered route."
           ],
           "variants": [
             "Query/hash suffixes are removed and a missing trailing slash is normalized by the renderer.",
             "A service route with no matching service record uses not-found.",
-            "The default boot renders bundled content immediately, without network I/O; the loader module keeps its exported async signature for the injected-state contracts."
+            "The default boot renders bundled content immediately, without network I/O; the page imports the bundled content module directly and no loader module exists."
           ],
           "expected_outcome": "The rendered state identifies content availability and provides route recovery when ready.",
-          "failure_behavior": "Error and empty states have no inline retry; the empty-services feedback applies to the service-dependent home and services-index bodies.",
-          "recovery": "Reload for a fresh load or use header navigation; a content defect needs a corrected static deployment."
+          "failure_behavior": "The empty-services state has no inline retry; its feedback applies to the service-dependent home and services-index bodies.",
+          "recovery": "Use header navigation; a content defect needs a corrected static deployment."
         },
         {
           "id": "F4-US3",
@@ -860,7 +841,7 @@
               "path": "src/pages/SiteHomePage.test.tsx",
               "name": "keeps exactly one stable content target in the $label state",
               "evidence_type": "direct",
-              "supports": "Parameterized ready home, subpage, unknown-route, loading, error and empty cases check one matching target; ready targets have tabindex=-1. Does not assert focusability of availability-state sections or browser scrolling."
+              "supports": "Parameterized ready home, subpage, unknown-route and empty cases check one matching target; ready targets have tabindex=-1. Does not assert focusability of the empty-services section or browser scrolling."
             }
           ],
           "entry_point_refs": [],
@@ -875,10 +856,10 @@
           "variants": [
             "The link is visually hidden until focused, when existing focus styles reveal it.",
             "Ready home, subpage and in-app not-found views share a focusable #content wrapper with scroll margin.",
-            "Loading, error and empty states retain one #content section but do not give that section tabindex=-1."
+            "The empty-services state retains one #content section but does not give that section tabindex=-1."
           ],
           "expected_outcome": "A stable page-body anchor is available before header navigation on all rendered states; ready content has a programmatically focusable destination.",
-          "failure_behavior": "A host error before React mounts cannot offer the link. Availability-state sections have an anchor but no explicit focusability attribute; browser focus/scroll behavior is not established by DOM assertions.",
+          "failure_behavior": "A host error before React mounts cannot offer the link. The empty-services section has an anchor but no explicit focusability attribute; browser focus/scroll behavior is not established by DOM assertions.",
           "recovery": "Use ordinary keyboard navigation if anchor behavior is unavailable; a missing static entry document requires host/artifact repair."
         }
       ],

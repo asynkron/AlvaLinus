@@ -49,20 +49,13 @@ const PAGE_HERO_PHOTOS: Record<string, string> = {
   tradgard: "/page-visuals/tradgard-photo.webp",
 };
 
-type LoadState =
-  | { readonly status: "loading" }
-  | { readonly status: "error"; readonly message: string }
-  | { readonly status: "ready"; readonly content: SiteContent };
-
 type SiteHomePageProps = {
   readonly currentPath?: string;
   readonly inquiryServiceId?: string;
-  readonly initialState?: LoadState;
+  readonly content?: SiteContent;
 };
 
-export function SiteHomePage({ currentPath = "/", inquiryServiceId, initialState }: SiteHomePageProps) {
-  const state: LoadState = initialState ?? { status: "ready", content: siteContent };
-
+export function SiteHomePage({ currentPath = "/", inquiryServiceId, content = siteContent }: SiteHomePageProps) {
   // The skip link, sticky header and root footer are siblings around the
   // content main element: descendants of main would lose their banner and
   // contentinfo landmark roles in browsers (ARIA in HTML main-descendant
@@ -76,7 +69,7 @@ export function SiteHomePage({ currentPath = "/", inquiryServiceId, initialState
         Hoppa till innehåll
       </a>
       <Header currentPath={currentPath} />
-      <ContentSurface currentPath={currentPath} inquiryServiceId={inquiryServiceId} state={state} />
+      <ContentSurface currentPath={currentPath} inquiryServiceId={inquiryServiceId} content={content} />
     </div>
   );
 }
@@ -242,35 +235,18 @@ function Header({ currentPath = "/" }: { readonly currentPath?: string }) {
 function ContentSurface({
   currentPath,
   inquiryServiceId,
-  state,
+  content,
 }: {
   readonly currentPath: string;
   readonly inquiryServiceId?: string;
-  readonly state: LoadState;
+  readonly content: SiteContent;
 }) {
-  if (state.status === "loading") {
-    return (
-      <main id="content" className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
-        <StaticState state="loading" />
-      </main>
-    );
-  }
-
-  if (state.status === "error") {
-    return (
-      <main id="content" className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
-        <StaticState state="error" title="Innehåll kunde inte laddas" message={state.message} />
-      </main>
-    );
-  }
-
-  const { content } = state;
   const route = getRouteForPath(content, currentPath);
 
   if (routeDependsOnServices(route) && content.services.length === 0) {
     return (
       <main id="content" className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
-        <StaticState state="empty" title="Inget innehåll ännu" message="Lägg till statiska dataposter i src/data." />
+        <StaticState title="Inget innehåll ännu" message="Lägg till statiska dataposter i src/data." />
       </main>
     );
   }

@@ -18,9 +18,8 @@ remain in Git; their ownership is reconciled below.
 AlvaLinus is a static React/TypeScript/Vite site with nine routes:
 `/`, `/tjanster/`, `/om-oss/`, `/kontakt/`, `/stensattning/`, `/markarbete/`,
 `/gravjobb/`, `/dranering/` and `/tradgardsplanering/`.
-[Typed content](../src/data/siteContent.ts), [contracts](../src/types/site.ts),
-[the renderer](../src/pages/SiteHomePage.tsx) and
-[the local loader](../src/lib/site-content.ts) own product behavior.
+[Typed content](../src/data/siteContent.ts), [contracts](../src/types/site.ts) and
+[the renderer](../src/pages/SiteHomePage.tsx) own product behavior.
 There is no application backend, database, authentication or serverless runtime
 ([ADR 0001](adrs/0001-static-react-frontend-foundation.md)).
 

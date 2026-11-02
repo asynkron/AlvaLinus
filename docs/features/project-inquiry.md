@@ -1,6 +1,6 @@
 # F3: Prepare an initial project inquiry
 
-Reviewed: 2026-10-28. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-02. Runtime: `ui`. Product role: `customer_outcome`.
 
 The current outcome is preparing an addressed inquiry with useful project
 details. The website cannot establish that an email was sent, delivered or read.
@@ -71,7 +71,7 @@ a manual change. The missing-context, unrecognized-context and
 recognized-service-without-option declarations check default retention and
 that context text never becomes a new option or form content.
 
-Global load/error states apply here too; the contact body stays available when
+The contact body stays available when
 the services list is empty. A mail handler can fail without
 a website error state. Recovery is copying the displayed address and details
 into a working email tool. There is no persistent draft recovery or alternate
