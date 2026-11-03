@@ -1,17 +1,17 @@
 # Product and operation roadmap
 
-Reviewed: 2026-11-02 (fk105), source baseline
-`f46ebcc7d85137503ab48f7fa25c5efe3f6db3e8` (HEAD, main tip).
+Reviewed: 2026-11-03 (fk113), source baseline
+`00e1ee13e3a8c596fe7898bf249a9e1a1618bb57` (HEAD, main tip).
 
 This roadmap connects the Swedish Svärd Entreprenad website to operating a
 product with minimal human intervention. Source capability, task delivery,
 accepted quality and observed production operation are separate evidence.
 Goals are proposed work, not authorization to expand the site's runtime.
-This refresh supersedes fk96's November 1 assessment (PR #91, merge
-`982c850`) and continues the ownership chain fk44 → fk54 → fk66 → fk72 →
-fk76 → fk87 → fk96 → fk105: the previous document was read in full and
-reconciled with exact merge receipts and current source. Earlier assessments
-remain in Git; their ownership is reconciled below.
+This refresh supersedes fk105's November 2 assessment (PR #96, merge
+`9ce4989`) and continues the ownership chain fk44 → fk54 → fk66 → fk72 →
+fk76 → fk87 → fk96 → fk105 → fk113: the previous document was read in full
+and reconciled with exact merge receipts and current source. Earlier
+assessments remain in Git; their ownership is reconciled below.
 
 ## Where we are
 
@@ -23,39 +23,44 @@ AlvaLinus is a static React/TypeScript/Vite site with nine routes:
 There is no application backend, database, authentication or serverless runtime
 ([ADR 0001](adrs/0001-static-react-frontend-foundation.md)).
 
-Since the November 1 review, main advanced from `ee4d635` to `f46ebcc`
-(this baseline) with three capability merges on top of the same static
-boundary. fk95's home-hero preload merged (PR #92, merge `216eacf`):
-[index.html](../index.html) preloads the hero photo with
-`fetchpriority="high"`, and the route emission strips that preload link from
-the eight subpage documents and `dist/404.html` while requiring it on the
-root document — an absence-tolerant strip composed in
-[`route-artifacts.mjs`](../scripts/route-artifacts.mjs) and validated by the
-static-artifact assertion. fk97's per-service guidance merged (PR #93, merge
-`7739c7d`): `ServiceArea` now requires a `guidance` field
-([types/site.ts](../src/types/site.ts)), all five service entries declare
-their own Swedish "När tjänsten passar" text in
-[siteContent.ts](../src/data/siteContent.ts), and the ServicePage aside
-renders that field instead of the shared title-interpolated template. fk98's
-first-paint boot merged (PR #94, merge `f46ebcc`): the renderer initializes
-its default state as ready bundled content
-(`initialState ?? { status: "ready", content: siteContent }`),
-so visitors see the actual page body on first load instead of a
-"Laddar innehåll" skeleton; the injected loading/error contracts and the
-loader module remain as fk98's scoped preserve.
+Since the November 2 review, main advanced from `f46ebcc` to `00e1ee1` (this
+baseline) with fk105's own docs merge on top (PR #96, merge `9ce4989`) and
+three capability merges inside the same static boundary. fk104's landmark
+restoration merged (PR #95, merge `c286f5b`): the Swedish skip link, the
+sticky `<header>` banner and the root `<footer>` contentinfo are siblings
+around the content `<main>` element in
+[SiteHomePage.tsx](../src/pages/SiteHomePage.tsx), with an explanatory
+comment, so screen readers keep both page landmarks despite browsers'
+ARIA main-descendant role suppression. fk106's registry-declared service
+detail merged (PR #97, merge `24a140b`): `ServiceArea` gained an optional
+`detail` field ([types/site.ts](../src/types/site.ts)), the Dränering
+paragraph is declared on its registry entry
+([siteContent.ts](../src/data/siteContent.ts)), and the ServicePage body
+renders that field generically below the summary — the renderer has no
+`service.id === "dranering"` conditional left. fk107's dead-contract
+retirement merged (PR #98, merge `00e1ee1`, this baseline): the uncalled
+`loadSiteContent` loader module is deleted, the injected loading/error
+contracts and their test seams are gone, and the renderer's state surface now
+carries only the production-reachable ready content and the empty-services
+guard, with the F4 feature documents and both feature manifests updated in
+the same change.
 
-The visitor-facing baseline is therefore complete on the goals fk96 linked:
-per-route Swedish head and social metadata, the unknown-path recovery
-artifact, reduced-motion scrolling, hero fetch priority and photo-failure
-resilience, per-service guidance depth, and an immediate-ready first paint.
-What remains is dead-weight retirement and registry single-sourcing inside
-the delivered surface (fk106/fk107 below), not new visitor capability.
+The visitor-facing baseline therefore remains complete on the goals fk96 and
+fk105 linked, now on a simpler delivered surface: per-route Swedish head and
+social metadata, the unknown-path recovery artifact, reduced-motion scrolling,
+hero fetch priority and photo-failure resilience, per-service guidance and
+detail depth, an immediate-ready first paint and landmark-complete page
+structure. What remains inside the delivered surface is registry
+single-sourcing of section copy and shared chrome (fk114/fk115 below) and the
+parallel fk112 candidate — not new visitor capability.
 
 Later-context note recorded once:
-[fk104](https://app.faktorial.ai/projects/alvalinus/tasks/fk104) — the
-November 2 Persistent Frontend Optimization automation child — is in flight
-in its own worktree at this same baseline. It is open parallel platform
-work, not part of this baseline.
+[fk112](https://app.faktorial.ai/projects/alvalinus/tasks/fk112) — the
+November 3 Persistent Frontend Optimization automation child — is in flight
+in its own worktree at this same baseline. Its investigation owns stamping
+each emitted subpage document with its own high-priority hero preload through
+the typed route contract. It is open parallel platform work, not part of this
+baseline.
 
 ### What works well
 
@@ -63,20 +68,28 @@ work, not part of this baseline.
   [DOM tests](../src/pages/SiteHomePage.test.tsx) declare route/content,
   contact, mobile Escape/focus, availability-isolation, inquiry-context,
   service-image failure, desktop-dropdown keyboard, per-service guidance and
-  first-paint boot coverage; the route-emission plugin and its assertion are
-  covered by deterministic in-memory fixture tests in
+  registry-declared detail, and first-paint boot coverage; the route-emission
+  plugin and its assertion are covered by deterministic in-memory fixture
+  tests in
   [`route-artifacts.test.mjs`](../scripts/route-artifacts.test.mjs), and the
   reduced-motion override has its own focused stylesheet test. This refresh
   inspected source and owning records; it did not execute those tests.
 - The typed route/service registry is now the declaration source for every
-  page-level Swedish text: per-route `<title>`/description, social card
-  values, navigation labels, service summaries, tags and — since fk97 —
-  each service's own "När tjänsten passar" guidance, all validated against
-  built output at build time without client-side work.
-- Every page boots with real content: the bundled registry renders on first
-  paint, so the delivered page body replaces the former guaranteed skeleton
-  paint; injected loading/error seams stay documented for the deterministic
-  tests that exercise them.
+  page-level and service-level Swedish text: per-route `<title>`/description,
+  social card values, navigation labels, service summaries, tags, each
+  service's "När tjänsten passar" guidance (fk97) and — since fk106 — the
+  Dränering detail paragraph, all validated against built output at build
+  time without client-side work.
+- Every page boots with real content, and the delivered surface now declares
+  only what production can produce: the ready-first boot replaced the
+  guaranteed skeleton paint (fk98), and the fk107 retirement deleted the
+  uncalled loader and the unreachable skeleton/error branches together with
+  the tests that pinned them.
+- Every rendered page exposes a complete landmark structure: the banner
+  header, content main and contentinfo footer survive as siblings (fk104),
+  the Swedish skip link precedes repeated navigation and targets one
+  `#content` destination per rendered state, and contact-form fields carry a
+  visible focus ring.
 - Unknown paths have a deployable recovery artifact: `dist/404.html` carries
   the same SPA document with not-found metadata, so hosts that serve it boot
   the branded Swedish recovery with the visitor's requested URL preserved.
@@ -95,40 +108,37 @@ work, not part of this baseline.
 - Company/contact availability no longer depends on service records, and the
   inquiry form receives the visitor's service choice through a native URL
   parameter without new routes, persistence or personal-data fields. The
-  Swedish skip link precedes repeated navigation and targets one `#content`
-  destination per rendered state, contact-form fields carry a visible focus
-  ring, and the quote form explains the external email-program send step
-  with a visible fallback address.
+  quote form explains the external email-program send step with a visible
+  fallback address.
 - [README](../README.md) and [the runner](../scripts/make.js) define Node 24+,
   locked dependencies, strict TypeScript, static artifact checks and one
   Vitest session. [Reporter normalization](../scripts/quality-evidence.mjs)
   rejects malformed evidence, and invalid durations stay unknown. Process exit
   remains the gate authority.
 - The autonomous factory keeps shipping through reviewed, merge-receipted
-  tasks: this is the seventh consecutive roadmap refresh, each reconciling
+  tasks: this is the eighth consecutive roadmap refresh, each reconciling
   the previous one against owning records before linking new work.
 
 ### What works less well and what to improve
 
-- One service-specific conditional remains in the renderer: ServicePage
-  renders a hardcoded Dränering-only Swedish paragraph behind
-  `service.id === "dranering"`
-  ([SiteHomePage.tsx](../src/pages/SiteHomePage.tsx)), and that text exists
-  nowhere in the typed registry — the single-declaration-source principle
-  fk77/fk88/fk97 established is not yet total.
-  [fk106](https://app.faktorial.ai/projects/alvalinus/tasks/fk106) owns
-  moving it into the registry.
-- The ready-first boot left dead contracts in the delivered surface:
-  `loadSiteContent` in [`site-content.ts`](../src/lib/site-content.ts) has
-  zero callers in the repository, and the `loading`/`error` branches of
-  ContentSurface are reachable only through an injected `initialState` that
-  production never passes — tests pin states no visitor can see.
-  [fk107](https://app.faktorial.ai/projects/alvalinus/tasks/fk107) owns
-  retiring that dead weight explicitly, keeping the empty-services guard.
-- Content-error inline retry stays retired as dead code: with the ready-first
-  boot the error state is even further from production, and a retry
-  affordance would be unreachable UI. A real recovery need would only appear
-  with a network-backed loader, which the static boundary excludes.
+- Renderer-side Swedish copy is now the main single-sourcing debt. The five
+  home sections declare their headings, eyebrows, summaries and "Läs mer"
+  labels in the renderer
+  ([SiteHomePage.tsx](../src/pages/SiteHomePage.tsx): Inventory, Services,
+  Process, Trust and Partners), the shared chrome repeats on every route from
+  renderer constants — the not-found strings, breadcrumb labels, the service
+  aside heading, contact-band labels, footer strings and the brand
+  constants — and the `SERVICE_PHOTOS` map sits beside them.
+  [fk114](https://app.faktorial.ai/projects/alvalinus/tasks/fk114) owns the
+  home-section copy and
+  [fk115](https://app.faktorial.ai/projects/alvalinus/tasks/fk115) owns the
+  chrome strings. `PAGE_HERO_PHOTOS` is deliberately excluded from both:
+  fk112's in-flight investigation owns its migration into the typed route
+  contract.
+- Content-error inline retry stays retired as dead code: the delivered surface
+  has no network-backed loader, so an error-retry affordance would be
+  unreachable UI. A real recovery need would only appear with a network-backed
+  loader, which the static boundary excludes.
 - Four WebP photographs are present; five requested photographs remain absent
   ([image requests](image-requests.md)): Grävjobb, Trädgårdsplanering and the
   services/about/contact heroes. Acquisition and approval remain editorial
@@ -144,23 +154,24 @@ work, not part of this baseline.
 
 Authenticated owning task reads were made on October 29 (fk66's refresh and
 fk72's catalog reconciliation), on October 30 during fk76's refresh, on
-October 31 during fk87's refresh, on November 1 during fk96's refresh, and
-again on November 2 during this fk105 refresh. The checkout advanced from
-fk96's `ee4d635` baseline to `f46ebcc`: the fk95, fk97 and fk98 merges are
-all present, in that order, and `ee4d635` is now reachable from this HEAD
-(resolving the open question recorded during investigation). fk95, fk97 and
-fk98 are all closed/done with merge receipts: fk95 (PR #92, merge
-`216eacf`; native quality pass 137/137 at head `3948fae`), fk97 (PR #93,
-merge `7739c7d`; quality 137/137 at head `2b89fe1`) and fk98 (PR #94, merge
-`f46ebcc`; quality 138/138 at head `43c23ff`). During the November 2 owning
-reads, the open records relevant to this roadmap were this task (fk105),
-fk104 (the November 2 automation child, in flight), the two next-step tasks
-created during this refresh (fk106 and fk107, below), fk83/fk84/fk103
-(platform-owned factory-loop friction, below), fk63/fk64 (the operator
-question wait about the stuck live chat session, unchanged since October 28)
-and the delivery-notice records (fk69–fk71, fk73, fk74, fk79–fk82,
-fk90–fk94, fk99–fk102) — no other open record owned site work at this
-baseline.
+October 31 during fk87's refresh, on November 1 during fk96's refresh, on
+November 2 during fk105's refresh, and again on November 3 during this fk113
+refresh. The checkout advanced from fk105's `f46ebcc` baseline to `00e1ee1`:
+fk105's own docs merge is present (PR #96, merge `9ce4989`), followed by the
+fk104, fk106 and fk107 merges, in that order. fk104, fk105, fk106 and fk107
+are all closed/done with merge receipts: fk104 (PR #95, merge `c286f5b`;
+native quality pass 138/138 at head `064b28b`), fk105 (PR #96, merge
+`9ce4989`), fk106 (PR #97, merge `24a140b`; quality 138/138 at head
+`5f87a15`) and fk107 (PR #98, merge `00e1ee1`; quality 134/134 at head
+`9e416cb`). During the November 3 owning reads, the open records relevant to
+this roadmap were this task (fk113), fk112 (the November 3 automation child,
+in flight), the two next-step tasks created during this refresh (fk114 and
+fk115, below), fk83/fk84/fk103 (platform-owned factory-loop friction, below),
+fk63/fk64 (the operator question wait about the stuck live chat session,
+unchanged since October 28) and the delivery-notice records (fk69–fk71, fk73,
+fk74, fk79–fk82, fk90–fk94, fk99–fk102, fk108–fk111) — an authenticated
+open-task list read returned exactly those 31 open records, and no other open
+record owned site work at this baseline.
 
 | Work | Current owning evidence | Disposition |
 | --- | --- | --- |
@@ -182,13 +193,17 @@ baseline.
 | [fk86](https://app.faktorial.ai/projects/alvalinus/tasks/fk86), reduced-motion scrolling | Closed/done; PR #86, merge `7025d05`; native quality pass 123/123 at head `0a4eef3`. Verified in source at the ee4d635 baseline: the `prefers-reduced-motion` block sets `html { scroll-behavior: auto; }` in [styles.css](../src/styles.css), pinned by [its focused test](../src/styles.reduced-motion.test.ts). Its scheduling projection reports `record_state=missing` while the owning record is closed/done; the projection does not reopen it. | Delivered. fk87's "open and unmerged" description is retired; no reduced-motion work remains. |
 | [fk89](https://app.faktorial.ai/projects/alvalinus/tasks/fk89), Swedish 404 artifact | Closed/done; PR #90, merge `b263666`; quality 128/128 at head `45fb98d`. Verified in source at the ee4d635 baseline: `notFoundArtifactPath`/`notFoundPageMetadata` in [route-artifacts.mjs](../scripts/route-artifacts.mjs), emitted by [vite.config.ts](../vite.config.ts) and required by the static-artifact assertion; F4 and the route inventory describe the artifact and its unknown host behavior. | Delivered. The former "no deployable unknown-path recovery" gap is retired; host-serving behavior stays an operator/host fact. |
 | [fk88](https://app.faktorial.ai/projects/alvalinus/tasks/fk88), per-route social card metadata | Closed/done; PR #89, merge `ee4d635`; quality 131/131 at head `64d2955`. Now reachable from this HEAD (during fk105's investigation it existed only in the local object store). Verified in source: the emission replaces all four `og:`/`twitter:` head values with the registry-composed title/description, the assertion validates subpages against root-text mismatches, and the root document keeps its global values. | Delivered. The former "home-branded social cards on every subpage" gap is retired. |
-| [fk96](https://app.faktorial.ai/projects/alvalinus/tasks/fk96), previous roadmap | Closed/done; PR #91, merge `982c850`. Document read in full during this refresh. | Superseded assessment; its Next 1/Next 2 shipped as fk97/fk98 below, and its in-flight fk95 reservation is delivered. |
-| [fk95](https://app.faktorial.ai/projects/alvalinus/tasks/fk95), home-hero preload | Closed/done; PR #92, merge `216eacf`; quality 137/137 at head `3948fae`. Verified in source at this baseline: [index.html](../index.html) line 31 preloads the hero photo with `fetchpriority="high"`; the emission strips that link from the eight subpage documents and `dist/404.html` and requires it on the root document. | Delivered. fk96's "open parallel frontend work" description is retired; fk95's scheduling projection reports `record_state=missing` while the owning record is closed/done. |
-| [fk97](https://app.faktorial.ai/projects/alvalinus/tasks/fk97), per-service guidance | Closed/done; PR #93, merge `7739c7d`; quality 137/137 at head `2b89fe1`. Verified in source: `ServiceArea.guidance` is required ([types/site.ts](../src/types/site.ts)), five registry declarations exist, and the aside renders `{service.guidance}`; the shared template sentence is gone. | Delivered. The former "same aside five times" gap is retired; the Dränering leftover is fk106's, below. |
-| [fk98](https://app.faktorial.ai/projects/alvalinus/tasks/fk98), first-paint ready boot | Closed/done; PR #94, merge `f46ebcc` (this baseline); quality 138/138 at head `43c23ff`. Verified in source: the default state is `initialState ?? { status: "ready", content: siteContent }`, and the renderer no longer calls the loader; the injected loading/error seams and the uncalled loader remain as fk98's scoped preserve. | Delivered. The former "skeleton paints first" gap is retired; the dead contract remainder is fk107's, below. |
-| [fk104](https://app.faktorial.ai/projects/alvalinus/tasks/fk104), automation child (2026-11-02) | Open; the November 2 Persistent Frontend Optimization child, in flight in its own worktree at this same baseline. | In-flight, owned by fk104. Recorded once here; not duplicated as roadmap work. |
-| [fk106](https://app.faktorial.ai/projects/alvalinus/tasks/fk106), registry-declared Dränering paragraph | Open; created during this refresh and read back open with labels `priority: medium` and `size:medium`. | Open next step, linked from the short-term section below. |
-| [fk107](https://app.faktorial.ai/projects/alvalinus/tasks/fk107), dead content-loading contract retirement | Open; created during this refresh and read back open with labels `priority: medium` and `size:medium`. | Open next step, linked from the short-term section below. |
+| [fk96](https://app.faktorial.ai/projects/alvalinus/tasks/fk96), previous roadmap | Closed/done; PR #91, merge `982c850`. Document read in full during fk105's refresh. | Superseded assessment; its Next 1/Next 2 shipped as fk97/fk98, and its in-flight fk95 reservation is delivered. |
+| [fk95](https://app.faktorial.ai/projects/alvalinus/tasks/fk95), home-hero preload | Closed/done; PR #92, merge `216eacf`; quality 137/137 at head `3948fae`. Verified in source at the f46ebcc baseline: [index.html](../index.html) preloads the hero photo with `fetchpriority="high"`; the emission strips that link from the eight subpage documents and `dist/404.html` and requires it on the root document. Its scheduling projection reports `record_state=missing` while the owning record is closed/done. | Delivered. fk96's "open parallel frontend work" description is retired. |
+| [fk97](https://app.faktorial.ai/projects/alvalinus/tasks/fk97), per-service guidance | Closed/done; PR #93, merge `7739c7d`; quality 137/137 at head `2b89fe1`. Verified in source: `ServiceArea.guidance` is required ([types/site.ts](../src/types/site.ts)), five registry declarations exist, and the aside renders `{service.guidance}`; the shared template sentence is gone. | Delivered. The former "same aside five times" gap is retired; the Dränering leftover shipped as fk106, below. |
+| [fk98](https://app.faktorial.ai/projects/alvalinus/tasks/fk98), first-paint ready boot | Closed/done; PR #94, merge `f46ebcc`; quality 138/138 at head `43c23ff`. Verified in source at the f46ebcc baseline: the default state is `initialState ?? { status: "ready", content: siteContent }`, and the renderer no longer calls the loader. | Delivered. The former "skeleton paints first" gap is retired; the dead contract remainder shipped as fk107, below. |
+| [fk104](https://app.faktorial.ai/projects/alvalinus/tasks/fk104), landmark restoration | Closed/done; PR #95, merge `c286f5b`; quality 138/138 at head `064b28b`. Verified in source at this baseline: the skip link, sticky `<header>` banner and root `<footer>` contentinfo are siblings around the content `<main>` element ([SiteHomePage.tsx](../src/pages/SiteHomePage.tsx)), preserving both landmark roles against main-descendant suppression. Its scheduling projection reports `record_state=missing` while the owning record is closed/done; the projection does not reopen it. | Delivered. fk105's "in-flight automation child" description is retired; no landmark work remains. |
+| [fk105](https://app.faktorial.ai/projects/alvalinus/tasks/fk105), previous roadmap | Closed/done; PR #96, merge `9ce4989`. Document read in full during this refresh. Its scheduling projection reports `record_state=missing` while the owning record is closed/done; the projection does not reopen it. | Superseded assessment; its Next 1/Next 2 shipped as fk106/fk107 below, and its in-flight fk104 reservation is delivered. |
+| [fk106](https://app.faktorial.ai/projects/alvalinus/tasks/fk106), registry-declared service detail | Closed/done; PR #97, merge `24a140b`; quality 138/138 at head `5f87a15`. Verified in source at this baseline: the optional `detail` field on `ServiceArea` ([types/site.ts](../src/types/site.ts)), the Dränering paragraph declared on its registry entry ([siteContent.ts](../src/data/siteContent.ts)), and the generic `{service.detail ? …}` rendering in the same slot — no `service.id === "dranering"` conditional remains. | Delivered. The former "last renderer-side service conditional" gap is retired. |
+| [fk107](https://app.faktorial.ai/projects/alvalinus/tasks/fk107), dead content-loading contract retirement | Closed/done; PR #98, merge `00e1ee1` (this baseline); quality 134/134 at head `9e416cb`. Verified in source at this baseline: `src/lib/site-content.ts` is absent, no `loadSiteContent` reference remains in `src/` or `scripts/`, the renderer's state surface carries only the ready and empty-services contracts, and the skeleton string survives only as fk98's first-paint absence assertion; F4 docs and both feature manifests were updated in the same change. | Delivered. The former "dead content-loading contracts" gap is retired. |
+| [fk112](https://app.faktorial.ai/projects/alvalinus/tasks/fk112), automation child (2026-11-03) | Open; the November 3 Persistent Frontend Optimization child, in flight in its own worktree at this same baseline. Its investigation owns stamping each emitted subpage document with its own high-priority hero preload through a typed route field. | In-flight, owned by fk112. Recorded once here; not duplicated as roadmap work. |
+| [fk114](https://app.faktorial.ai/projects/alvalinus/tasks/fk114), registry-declared home-section copy | Open; created during this refresh and read back open with labels `priority: medium` and `size:medium`. | Open next step, linked from the short-term section below. |
+| [fk115](https://app.faktorial.ai/projects/alvalinus/tasks/fk115), registry-declared shared chrome strings | Open; created during this refresh and read back open with labels `priority: medium` and `size:medium`. | Open next step, linked from the short-term section below. |
 
 The prior roadmap's older Done references were checked against current owning
 membership on October 29, and no row above was reopened or recreated by this
@@ -199,11 +214,12 @@ fk45/fk46 (skip link/email explanation) and fk51 (catalog) remain closed/done.
 fk9's closed-with-build lifecycle note stands. Per-head quality receipts
 (90/92/103/109/110/120 passing at the fk55/fk53/fk56/fk75/fk78/fk77 heads,
 123/128/131 at the fk86/fk89/fk88 heads, 137/137/138 at the fk95/fk97/fk98
-heads) are historical, not current totals, and no acceptance is claimed for
-this roadmap candidate, current main or any deployment.
+heads, 138/138/134 at the fk104/fk106/fk107 heads) are historical, not current
+totals, and no acceptance is claimed for this roadmap candidate, current main
+or any deployment.
 
 Factory-loop friction is platform-owned and recorded here so no agent
-recreates it as site work, rewritten from fresh November 2 owning reads:
+recreates it as site work, rewritten from fresh November 3 owning reads:
 [fk83](https://app.faktorial.ai/projects/alvalinus/tasks/fk83) (a recurring
 feature-refinement child) is open on `waiting.kind=human` since November 1,
 17:08Z — after 134 blocked stage attempts its occurrence escalated to an
@@ -211,9 +227,11 @@ explicit operator decision (question comment `1793552887379264500`, carried
 by notice [fk103](https://app.faktorial.ai/projects/alvalinus/tasks/fk103)):
 repair the automation-run parent record
 (`automation-run:local:feature-refinement:1793366910953132005`, absent from
-Cloud, which rejects the typed task_completion close) or close fk83 manually;
-its product evidence stays green (required `validate-features` proof passing,
-digest `3535d7b5…`, fresh November 1) while the close stays rejected.
+Cloud, which rejects the typed task_completion close) or close fk83 manually.
+Today's read shows the occurrence at stage attempt 135 with the fk103 question
+still unanswered (zero comments, answered time unset); its product evidence
+stays green (required `validate-features` proof passing, digest `3535d7b5…`,
+fresh November 1) while the close stays rejected.
 [fk84](https://app.faktorial.ai/projects/alvalinus/tasks/fk84), the incident
 task, parks on `waiting.kind=issue` for fk83's completion — about 117
 identical rechecks found zero change, the latest 2026-11-01 22:54Z — after
@@ -222,48 +240,50 @@ live-chat operator question is unchanged:
 [fk63](https://app.faktorial.ai/projects/alvalinus/tasks/fk63) and notice
 [fk64](https://app.faktorial.ai/projects/alvalinus/tasks/fk64) still wait on
 the stuck session reset or daemon restart decision, both records' last update
-October 28, 17:00Z, re-read unchanged on November 2. The fk83/fk84/fk63 waits
+October 28, 17:00Z, re-read unchanged on November 3. The fk83/fk84/fk63 waits
 are platform/operator decisions, not agent work; no duplicate record is
 created for any of them, and fk103's existing question is not duplicated.
 
 ## Short-term priorities and issue ownership
 
-fk96's two short-term priorities both shipped with passed native quality
-runs: **Next 1** delivered per-service Swedish "När tjänsten passar"
-guidance as [fk97](https://app.faktorial.ai/projects/alvalinus/tasks/fk97)
-(PR #93, merge `7739c7d`) and **Next 2** delivered the first-paint ready
-boot as [fk98](https://app.faktorial.ai/projects/alvalinus/tasks/fk98)
-(PR #94, merge `f46ebcc`, this baseline); fk95's home-hero preload (PR #92,
-merge `216eacf`) also merged, closing what fk96 recorded as in-flight.
+fk105's two short-term priorities both shipped with passed native quality
+runs: **Next 1** delivered the registry-declared Dränering detail paragraph as
+[fk106](https://app.faktorial.ai/projects/alvalinus/tasks/fk106) (PR #97,
+merge `24a140b`) and **Next 2** retired the dead content-loading contracts as
+[fk107](https://app.faktorial.ai/projects/alvalinus/tasks/fk107) (PR #98,
+merge `00e1ee1`, this baseline); fk104's in-flight landmark candidate also
+merged (PR #95, merge `c286f5b`), closing what fk105 recorded as in flight.
 Their ownership rows above carry the verified source facts.
 
-This refresh creates two new issues, grounded in source inspected at this
-`f46ebcc` baseline and verified open by owning read-backs before linking:
+This refresh creates two new issues, grounded in the renderer scan at this
+`00e1ee1` baseline and verified open by owning read-backs before linking:
 
-1. [fk106](https://app.faktorial.ai/projects/alvalinus/tasks/fk106) —
-   declare the Dränering service detail paragraph in the typed registry:
-   remove the last renderer-side service conditional
-   (`service.id === "dranering"`) so the route/service registry stays the
-   single Swedish declaration source.
-2. [fk107](https://app.faktorial.ai/projects/alvalinus/tasks/fk107) — retire
-   the dead content-loading contracts: delete the uncalled
-   `loadSiteContent` loader, remove the production-unreachable
-   loading/error branches and their test seams, and update the F4
-   documentation, keeping the empty-services guard.
+1. [fk114](https://app.faktorial.ai/projects/alvalinus/tasks/fk114) —
+   declare the home-page section copy in the typed registry: move the
+   Inventory/Services/Process/Trust/Partners headings, eyebrows, summaries
+   and "Läs mer" labels (and the `SERVICE_PHOTOS` map) out of the renderer so
+   the route/service registry stays the single Swedish declaration source for
+   the home surface.
+2. [fk115](https://app.faktorial.ai/projects/alvalinus/tasks/fk115) —
+   declare the shared chrome strings in the typed registry: the not-found
+   page strings, breadcrumb labels, the service aside heading, contact-band
+   labels, footer strings and the brand constants, extending the
+   single-declaration-source principle to the text every page shares.
 
 Remaining candidates were judged and dispositioned above: the content-error
 inline retry stays retired as dead code; the five missing photographs stay
 editorial (`docs/image-requests.md`); hosting, telemetry and
-submission-service work still await explicit operator decisions. fk104's
-in-flight automation child is recorded once in the ownership table and is
-not duplicated here.
+submission-service work still await explicit operator decisions. fk112's
+in-flight automation child is recorded once in the ownership table and is not
+duplicated here; both new tasks deliberately exclude its `PAGE_HERO_PHOTOS`
+scope.
 
 ## Long-term goals
 
 1. **Trustworthy autonomous development.** Ground proposals in current source
    and task ownership, prove behavior at deterministic owner boundaries, and
    let native quality accept each candidate. The fk44 → fk54 → fk66 → fk72 →
-   fk76 → fk87 → fk96 → fk105 refresh chain shows the working loop:
+   fk76 → fk87 → fk96 → fk105 → fk113 refresh chain shows the working loop:
    reconcile, ship, re-verify, retire. Separate source delivery, task closure
    and acceptance; missing evidence stays unknown, and platform-side friction
    such as the fk83/fk84 parent-record incident is reported with owning
@@ -277,54 +297,64 @@ not duplicated here.
    hero failure resilience and fetch priority, navigation consistency,
    keyboard coverage, per-route head and social metadata, the unknown-path
    recovery artifact, reduced-motion scrolling, the contact focus ring,
-   per-service guidance and the first-paint ready boot are delivered; the
-   remaining visitor-visible work is fk106's registry single-sourcing,
-   fk107's dead-contract retirement, the parallel fk104 candidate and
-   approved missing imagery. Define useful inquiry signals and privacy needs
-   before promising delivery or telemetry.
+   landmark-complete page structure, per-service guidance and detail depth,
+   the first-paint ready boot and a simplified delivered surface are
+   delivered; the remaining visitor-visible work is fk114/fk115's registry
+   single-sourcing of section copy and chrome, the parallel fk112 candidate
+   and approved missing imagery. Define useful inquiry signals and privacy
+   needs before promising delivery or telemetry.
 4. **Evidence-led cross-product learning.** Compare booking and
    Asynkron.JsEngine when their repositories and operational evidence are
-   available; both remain absent — re-verified on November 2, this
-   checkout's parent holds only the fk104/fk105 worktrees. Transfer
+   available; both remain absent — re-verified on November 3, this
+   checkout's parent holds only the fk112/fk113 worktrees. Transfer
    demonstrated practices with explicit owners. The autonomous factory
    operates around this static product; it is not an application backend to
    install here.
 
 ## Evidence boundaries and update triggers
 
-- Reads made on November 2 during this fk105 refresh: the previous roadmap in
-  full (fk96's revision, whose committed base text is the `ee4d635` review);
-  the `ee4d635..f46ebcc` Git history after fetching origin (the fk95 PR #92,
-  fk97 PR #93 and fk98 PR #94 merges, with `982c850` fk96's own docs merge);
-  source verification at this HEAD of all three delivered capabilities
-  (`index.html` hero preload with `fetchpriority="high"`;
-  `scripts/route-artifacts.mjs` preload strip patterns, root-required and
-  subpage/404-absent assertions; `src/types/site.ts` required `guidance`
-  field; the five `guidance:` declarations in `src/data/siteContent.ts`; the
-  aside rendering `service.guidance`; the ready-default boot state and the
-  removed loader call in `src/pages/SiteHomePage.tsx`; the surviving
-  Dränering conditional and its registry absence; the test assertion at
-  `SiteHomePage.test.tsx` pinning the hardcoded paragraph); a fresh
-  `public/page-visuals` listing (four WebP photos present, five requested
-  absent); and the checkout parent (only the fk104/fk105 worktrees;
-  `../booking` and `../Asynkron.JsEngine` still absent). Owning `get_task`
-  reads confirmed fk95, fk97 and fk98 closed/done with the receipts above,
-  fk83 open on a human wait with the fk103 question unanswered, fk84 open
-  issue-waiting on fk83's completion, fk63/fk64 unchanged since October 28,
-  and fk104 open in flight. fk106 and fk107 were created during this refresh
-  with independent `get_task` read-backs confirming them open with exact
-  labels before linking, and the open-record inventory (27 records, listed
-  above) came from an authenticated open-task list read. Unchanged
-  structural claims carried from the October 28–November 1 reviews keep that
-  provenance.
-- One-day Faktorial API usage read on November 2 reported 65,268 control-plane
-  calls across 11 endpoints, led by canvas context checks (45,510) and task
-  reads (19,524). Reliability caveats stand: a volatile one-hour span TTL
-  against the one-day window, unknown sampling, truncated retained
-  populations, unmatched server spans and unavailable revision comparability.
-  The serving-process database telemetry read the same day (cumulative since
-  the collector's November 1 reset, about 19.7 hours) covered roughly 3.90
-  million calls and 3.48 million queries with 2 errors. Both populations are
+- Reads made on November 3 during this fk113 refresh: the previous roadmap in
+  full (fk105's revision, whose committed base text is the `f46ebcc` review);
+  the `f46ebcc..00e1ee1` Git history (fk105's docs merge PR #96 `9ce4989`,
+  then fk104 PR #95 merge `c286f5b`, fk106 PR #97 merge `24a140b` and fk107
+  PR #98 merge `00e1ee1`); source verification at this HEAD of all three
+  delivered capabilities (the skip-link/header/footer sibling structure with
+  its landmark-suppression comment in `src/pages/SiteHomePage.tsx`; the
+  optional `detail` field in `src/types/site.ts`, the Dränering declaration in
+  `src/data/siteContent.ts` and the generic detail rendering with no
+  `service.id` conditional; the absent `src/lib/site-content.ts` with zero
+  `loadSiteContent` references in `src/` and `scripts/`); a bounded renderer
+  scan naming the remaining section-copy and chrome strings (Inventory,
+  Services, Process, Trust and Partners headings and eyebrows; not-found,
+  breadcrumb, aside-heading, contact-band and footer strings; the
+  `BRAND_NAME`/`BRAND_LOGO_SRC`, `SERVICE_PHOTOS` and `PAGE_HERO_PHOTOS`
+  declarations); a fresh `public/page-visuals` listing (four WebP photos
+  present, five requested absent); and the checkout parent (only the
+  fk112/fk113 worktrees; `../booking` and `../Asynkron.JsEngine` still
+  absent). Owning `get_task` reads confirmed fk104, fk105, fk106 and fk107
+  closed/done with the receipts above, fk112 open in flight, fk83 open on its
+  human wait with the fk103 question unanswered, fk84 open issue-waiting on
+  fk83's completion, and fk63/fk64 unchanged since October 28. fk114 and
+  fk115 were created during this refresh with independent `get_task`
+  read-backs confirming them open with exact labels before linking, and the
+  open-record inventory (31 records, listed above) came from an authenticated
+  open-task list read. Unchanged structural claims carried from the
+  October 28–November 2 reviews keep that provenance.
+- One-day Faktorial API usage read on November 3 reported 66,151 control-plane
+  calls across 10 endpoints, led by canvas context checks (46,811) and task
+  reads (19,097). Reliability caveats stand, and this read is thinner than
+  the November 2 one: the volatile one-hour in-memory retention TTL retained
+  server spans only from 16:07:23Z to 16:12:33Z against the one-day window,
+  the sampling state is unknown, 294 of 362 retained spans did not join to a
+  durable route identity, the retained population was truncated by a store
+  cap, and revision comparability is unavailable.
+- The serving-process database telemetry read the same day covered a fresh
+  collector: the serving process restarted at 15:38:07Z on November 3, so its
+  cumulative counters span only about 34 minutes at the 16:12Z read — roughly
+  89,600 calls and 77,000 queries with 1 error, led by credential-identity
+  reads (19,200 calls) and task-claim attempts (2,269 calls, 11,345 queries).
+  That window is far shorter than the November 2 read, and cumulative
+  counters are not comparable across collector resets. Both populations are
   Cloud serving-process scope, not this static site, and none can be combined
   into an error rate or demand estimate.
 - Website traffic, inquiry outcomes and production logs remain unavailable;
@@ -336,6 +366,17 @@ not duplicated here.
   document is not a passing receipt. Refresh when source, task scope/state,
   accepted quality, publication records or adjacent-source availability
   changes; preserve supersession reasons and ownership.
+- Owning reads and writes made on November 2 (fk105, retained for
+  provenance): `get_task` confirming fk95, fk97 and fk98 closed/done with
+  receipts, fk83 open on a human wait with the fk103 question unanswered,
+  fk84 open issue-waiting on fk83's completion, fk63/fk64 unchanged since
+  October 28, and fk104 open in flight (at that time); the
+  `ee4d635..f46ebcc` Git history after fetching origin; source verification
+  of the three f46ebcc-baseline capabilities; a fresh `public/page-visuals`
+  listing; the checkout parent (then only the fk104/fk105 worktrees);
+  `create_task`/`get_task` confirming fk106 and fk107 open; and the
+  October 31–November 2 API usage and database telemetry reads under the
+  same serving-process caveats.
 - Owning reads and writes made on November 1 (fk96, retained for
   provenance): `get_task` confirming fk86, fk88 and fk89 closed/done with
   receipts, fk83/fk84 in their platform retry waits with November 1
