@@ -81,6 +81,43 @@ export type ContactForm = {
   };
 };
 
+export type SiteBrand = {
+  readonly name: string;
+  readonly logoSrc: string;
+};
+
+export type SiteBreadcrumb = {
+  readonly ariaLabel: string;
+  readonly homeLabel: string;
+};
+
+export type SiteChrome = {
+  readonly brand: SiteBrand;
+  readonly breadcrumb: SiteBreadcrumb;
+  readonly contactBand: {
+    readonly eyebrow: string;
+    readonly ctaLabel: string;
+  };
+  readonly footer: {
+    readonly tagline: string;
+    readonly pageHeading: string;
+    readonly servicesHeading: string;
+    readonly contactHeading: string;
+    readonly pageNavAriaLabel: string;
+    readonly servicesNavAriaLabel: string;
+  };
+  readonly notFound: {
+    readonly title: string;
+    readonly eyebrow: string;
+    readonly summaryTemplate: string;
+    readonly shortcutsLabel: string;
+  };
+  readonly service: {
+    readonly heroEyebrow: string;
+    readonly guidanceHeading: string;
+  };
+};
+
 export type SiteContent = {
   readonly inventory: {
     readonly checkedAt: string;
@@ -114,4 +151,5 @@ export type SiteContent = {
     readonly form: ContactForm;
     readonly items: readonly ContactItem[];
   };
+  readonly chrome: SiteChrome;
 };
