@@ -25,6 +25,7 @@ export const siteContent = {
       label: "Hem",
       href: "/",
       summary: "Startsida med översikt över tjänster, arbetsprocess och offertkontakt.",
+      heroPhotoAssetPath: "/page-visuals/hero-photo.webp",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-home.svg",
         alt: "Entreprenadmaskin vid färdigplanerad tomt för Svärd Entreprenads startsida",
@@ -37,6 +38,7 @@ export const siteContent = {
       label: "Tjänster",
       href: "/tjanster/",
       summary: "Samlad sida för de huvudsakliga mark-, bygg- och anläggningstjänsterna.",
+      heroPhotoAssetPath: "/page-visuals/services-hero.webp",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-services.svg",
         alt: "Samlad vy över markarbeten, stensättning och dräneringstjänster",
@@ -50,6 +52,7 @@ export const siteContent = {
       href: "/om-oss/",
       summary:
         "Läs om Svärd Entreprenads arbetssätt, erfarenhet och ansvar från första spadtag till färdigt resultat.",
+      heroPhotoAssetPath: "/page-visuals/about-hero.webp",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-about.svg",
         alt: "Arbetslag som planerar ett markprojekt vid arbetsplatsen",
@@ -63,6 +66,7 @@ export const siteContent = {
       label: "Stensättning",
       href: "/stensattning/",
       summary: "Egen tjänstesida för stensättning, marksten och stenmurar.",
+      heroPhotoAssetPath: "/page-visuals/stensattning-photo.webp",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-stensattning.svg",
         alt: "Noggrant lagd marksten och låg stenmur vid entré",
@@ -76,6 +80,7 @@ export const siteContent = {
       label: "Markarbete",
       href: "/markarbete/",
       summary: "Egen tjänstesida för mark och anläggning.",
+      heroPhotoAssetPath: "/page-visuals/markarbete-photo.webp",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-markarbete.svg",
         alt: "Schaktad tomt med maskin och förberedd markbädd",
@@ -89,6 +94,7 @@ export const siteContent = {
       label: "Grävjobb",
       href: "/gravjobb/",
       summary: "Egen tjänstesida för maskin- och grävarbeten, inklusive poolgrävning.",
+      heroPhotoAssetPath: "/page-visuals/gravjobb-photo.webp",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-gravjobb.svg",
         alt: "Grävmaskin som utför schaktning för husgrund och tomtarbete",
@@ -103,6 +109,7 @@ export const siteContent = {
       href: "/dranering/",
       summary:
         "Toppsida för dränering med fuktsäkra markarbeten, schakt, återfyllnad och trygg hantering runt husgrund och mur.",
+      heroPhotoAssetPath: "/page-visuals/dranering-photo.webp",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-dranering.svg",
         alt: "Dräneringsschakt intill husgrund med rör och återfyllnad",
@@ -116,6 +123,7 @@ export const siteContent = {
       label: "Trädgårdsplanering",
       href: "/tradgardsplanering/",
       summary: "Egen tjänstesida för tomt- och trädgårdsplanering.",
+      heroPhotoAssetPath: "/page-visuals/tradgard-photo.webp",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-tradgardsplanering.svg",
         alt: "Planerad trädgård med nivåer, gångar och färdiga utemiljöer",
@@ -128,6 +136,7 @@ export const siteContent = {
       label: "Kontakt",
       href: "/kontakt/",
       summary: "Egen kontaktsida för offertförfrågningar, platsbesök och nästa steg.",
+      heroPhotoAssetPath: "/page-visuals/contact-hero.webp",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-contact.svg",
         alt: "Anteckningar och offertunderlag inför platsbesök för markprojekt",

@@ -7,9 +7,11 @@ import {
   applyRouteDocumentMetadata,
   assertRouteVisualAssets,
   assertStaticRouteArtifacts,
+  injectRouteHeroPreload,
   notFoundArtifactPath,
   notFoundPageMetadata,
   requireRouteRegistry,
+  routeHeroPreloadHref,
   routePageMetadata,
   routeVisualAssetPaths,
   staticSubpagePaths,
@@ -17,13 +19,14 @@ import {
   stripHomeHeroPreload,
 } from "./route-artifacts.mjs";
 
-function fixtureRoute(id, href, assetPath) {
+function fixtureRoute(id, href, assetPath, heroPhotoAssetPath = `/page-visuals/${id}-hero.webp`) {
   return {
     id,
     kind: "service",
     label: id,
     href,
     summary: `${id} summary`,
+    heroPhotoAssetPath,
     visual: { assetPath, alt: `${id} alt`, intent: `${id} intent` },
   };
 }
@@ -81,7 +84,10 @@ const rootHtmlWithoutSocialTags =
 const rootDocumentWithoutMetadata = '<!doctype html><html lang="sv"><body>Svard Entreprenad</body></html>';
 
 function emittedSubpageHtml(route) {
-  return stripHomeHeroPreload(applyRouteDocumentMetadata(rootHtml, routePageMetadata(route)));
+  return injectRouteHeroPreload(
+    stripHomeHeroPreload(applyRouteDocumentMetadata(rootHtml, routePageMetadata(route))),
+    routeHeroPreloadHref(route),
+  );
 }
 
 function notFoundArtifactFile(distDir) {
@@ -489,6 +495,53 @@ describe("assertStaticRouteArtifacts", () => {
     ).rejects.toThrow("Static route artifact check failed (mismatched: /tjanster/).");
   });
 
+  it("rejects a subpage artifact that preloads another route's hero photo instead of its own", async () => {
+    const entries = distEntries(fixtureRoutes);
+    entries[subpageArtifactPath("dist", "/kontakt/")] = injectRouteHeroPreload(
+      stripHomeHeroPreload(applyRouteDocumentMetadata(rootHtml, routePageMetadata(contactRoute))),
+      routeHeroPreloadHref(servicesRoute),
+    );
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: fixtureRoutes,
+        distDir: "dist",
+        readFile: memoryFileSystem(entries).readFile,
+      }),
+    ).rejects.toThrow("Static route artifact check failed (mismatched: /kontakt/).");
+  });
+
+  it("rejects a subpage artifact without any hero preload link", async () => {
+    const entries = distEntries(fixtureRoutes);
+    entries[subpageArtifactPath("dist", "/tjanster/")] = stripHomeHeroPreload(
+      applyRouteDocumentMetadata(rootHtml, routePageMetadata(servicesRoute)),
+    );
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: fixtureRoutes,
+        distDir: "dist",
+        readFile: memoryFileSystem(entries).readFile,
+      }),
+    ).rejects.toThrow("Static route artifact check failed (mismatched: /tjanster/).");
+  });
+
+  it("rejects a not-found artifact carrying a non-home image preload link", async () => {
+    const entries = distEntries(fixtureRoutes);
+    entries[notFoundArtifactFile("dist")] = injectRouteHeroPreload(
+      applyRouteDocumentMetadata(rootHtml, notFoundPageMetadata()),
+      routeHeroPreloadHref(servicesRoute),
+    );
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: fixtureRoutes,
+        distDir: "dist",
+        readFile: memoryFileSystem(entries).readFile,
+      }),
+    ).rejects.toThrow("Static route artifact check failed: dist/404.html must not carry any image preload link.");
+  });
+
   it("rejects a not-found artifact that still carries the home hero preload link", async () => {
     const entries = distEntries(fixtureRoutes);
     entries[notFoundArtifactFile("dist")] = applyRouteDocumentMetadata(rootHtml, notFoundPageMetadata());
@@ -499,7 +552,7 @@ describe("assertStaticRouteArtifacts", () => {
         distDir: "dist",
         readFile: memoryFileSystem(entries).readFile,
       }),
-    ).rejects.toThrow("Static route artifact check failed: dist/404.html must not carry the home hero preload link.");
+    ).rejects.toThrow("Static route artifact check failed: dist/404.html must not carry any image preload link.");
   });
 
   it("fails for a declared route without page metadata fields before reading artifacts", async () => {
@@ -507,6 +560,7 @@ describe("assertStaticRouteArtifacts", () => {
       id: "unlabeled",
       kind: "service",
       href: "/unlabeled/",
+      heroPhotoAssetPath: "/page-visuals/unlabeled-hero.webp",
       visual: { assetPath: "/page-visuals/svard-entreprenad-unlabeled.svg" },
     };
     const readFile = vi.fn();
@@ -668,6 +722,94 @@ describe("stripHomeHeroPreload", () => {
   });
 });
 
+describe("routeHeroPreloadHref", () => {
+  it("returns the declared hero photo asset path verbatim for a valid route", () => {
+    expect(routeHeroPreloadHref(fixtureRoute("services", "/tjanster/", "/page-visuals/svard-entreprenad-services.svg"))).toBe(
+      "/page-visuals/services-hero.webp",
+    );
+    expect(
+      routeHeroPreloadHref(fixtureRoute("custom", "/custom/", "/page-visuals/svard-entreprenad-custom.svg", "/page-visuals/custom-hero.webp")),
+    ).toBe("/page-visuals/custom-hero.webp");
+  });
+
+  it("rejects routes without a nonempty root-relative heroPhotoAssetPath", () => {
+    expect(() => routeHeroPreloadHref({ id: "broken", href: "/broken/" })).toThrow(
+      "Route broken must declare a nonempty heroPhotoAssetPath string.",
+    );
+    expect(() => routeHeroPreloadHref({ id: "broken", heroPhotoAssetPath: "" })).toThrow(
+      "Route broken must declare a nonempty heroPhotoAssetPath string.",
+    );
+    expect(() => routeHeroPreloadHref({ id: "broken", heroPhotoAssetPath: "page-visuals/hero.webp" })).toThrow(
+      'Route broken must declare a root-relative heroPhotoAssetPath starting with "/".',
+    );
+  });
+
+  it("rejects heroPhotoAssetPath values that cannot render inside a quoted href attribute", () => {
+    expect(() =>
+      routeHeroPreloadHref({ id: "spaced", heroPhotoAssetPath: "/page-visuals/hero photo.webp" }),
+    ).toThrow("Route spaced must keep heroPhotoAssetPath free of whitespace and quote or angle characters.");
+    expect(() =>
+      routeHeroPreloadHref({ id: "quoted", heroPhotoAssetPath: '/page-visuals/hero".webp' }),
+    ).toThrow("Route quoted must keep heroPhotoAssetPath free of whitespace and quote or angle characters.");
+    expect(() =>
+      routeHeroPreloadHref({ id: "windows", heroPhotoAssetPath: "\\page-visuals\\hero.webp" }),
+    ).toThrow('Route windows must use "/" directory separators in heroPhotoAssetPath.');
+  });
+
+  it("makes the registry validation reject a declared route without hero metadata", () => {
+    expect(() =>
+      requireRouteRegistry([
+        {
+          id: "heroless",
+          kind: "service",
+          label: "Heroless",
+          href: "/heroless/",
+          summary: "heroless summary",
+          visual: { assetPath: "/page-visuals/svard-entreprenad-heroless.svg", alt: "heroless alt", intent: "heroless intent" },
+        },
+      ]),
+    ).toThrow("Route heroless must declare a nonempty heroPhotoAssetPath string.");
+  });
+});
+
+describe("injectRouteHeroPreload", () => {
+  it("injects the route's own high-priority preload link directly before the head-close tag", () => {
+    const document =
+      '<!doctype html><html lang="sv"><head><title>Titel</title></head><body>Svard Entreprenad</body></html>';
+
+    expect(injectRouteHeroPreload(document, "/page-visuals/services-hero.webp")).toBe(
+      '<!doctype html><html lang="sv"><head><title>Titel</title>' +
+        '<link rel="preload" as="image" href="/page-visuals/services-hero.webp" fetchpriority="high" /></head>' +
+        "<body>Svard Entreprenad</body></html>",
+    );
+  });
+
+  it("injects after the home preload is stripped without disturbing the rest of the document", () => {
+    const document =
+      '<html><head><meta charset="UTF-8">' + homeHeroPreloadLink + "</head><body>Svard Entreprenad</body></html>";
+    const stamped = injectRouteHeroPreload(stripHomeHeroPreload(document), "/page-visuals/about-hero.webp");
+
+    expect(stamped).toContain(
+      '<link rel="preload" as="image" href="/page-visuals/about-hero.webp" fetchpriority="high" />',
+    );
+    expect(stamped).not.toContain("hero-photo.webp");
+    expect(stamped).toContain('<meta charset="UTF-8">');
+    expect(stamped).toContain("<body>Svard Entreprenad</body>");
+  });
+
+  it("rejects an empty document, a document without </head>, and an invalid asset path", () => {
+    expect(() => injectRouteHeroPreload("", "/page-visuals/hero.webp")).toThrow(
+      "Route hero preload injection requires a nonempty document string.",
+    );
+    expect(() => injectRouteHeroPreload("<html><body>inget huvud</body></html>", "/page-visuals/hero.webp")).toThrow(
+      "Route document must contain a </head> element to host the injected hero preload link.",
+    );
+    expect(() => injectRouteHeroPreload("<html><head></head></html>", "relative/hero.webp")).toThrow(
+      'Route hero preload injection requires a heroPhotoAssetPath that must declare a root-relative heroPhotoAssetPath starting with "/".',
+    );
+  });
+});
+
 describe("notFoundPageMetadata", () => {
   it("composes the Swedish not-found title and description from the site name", () => {
     expect(notFoundPageMetadata()).toEqual({
@@ -792,6 +934,28 @@ describe("siteContent route registry", () => {
     const assetPaths = routeVisualAssetPaths(siteContent.routes);
     expect(assetPaths).toHaveLength(9);
     expect(new Set(assetPaths).size).toBe(assetPaths.length);
+  });
+
+  it("declares one registry-owned hero photo per route for the rendered hero and the stamped preload", () => {
+    const expectedHeroPhotosByRoute = new Map([
+      ["home", "/page-visuals/hero-photo.webp"],
+      ["services", "/page-visuals/services-hero.webp"],
+      ["about", "/page-visuals/about-hero.webp"],
+      ["stensattning", "/page-visuals/stensattning-photo.webp"],
+      ["markarbete", "/page-visuals/markarbete-photo.webp"],
+      ["gravjobb", "/page-visuals/gravjobb-photo.webp"],
+      ["dranering", "/page-visuals/dranering-photo.webp"],
+      ["tradgard", "/page-visuals/tradgard-photo.webp"],
+      ["contact", "/page-visuals/contact-hero.webp"],
+    ]);
+
+    expect(new Set(siteContent.routes.map((route) => route.heroPhotoAssetPath)).size).toBe(9);
+
+    for (const route of siteContent.routes) {
+      expect(routeHeroPreloadHref(route)).toBe(expectedHeroPhotosByRoute.get(route.id));
+    }
+
+    expect(routeHeroPreloadHref(siteContent.routes[0])).toBe("/page-visuals/hero-photo.webp");
   });
 
   it("derives page metadata from every declared subpage's Swedish label and summary", () => {

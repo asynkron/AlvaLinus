@@ -2,6 +2,7 @@ export type RouteRegistryRoute = {
   readonly href: string;
   readonly label: string;
   readonly summary: string;
+  readonly heroPhotoAssetPath: string;
   readonly visual?: { readonly assetPath: string };
 };
 
@@ -16,6 +17,10 @@ export declare function staticSubpageRoutes(routes: readonly RouteRegistryRoute[
 
 export declare function staticSubpagePaths(routes: readonly RouteRegistryRoute[]): string[];
 
+export declare function requireRouteHeroPhotoAssetPath(route: RouteRegistryRoute, index: number): string;
+
+export declare function routeHeroPreloadHref(route: RouteRegistryRoute): string;
+
 export declare function routePageMetadata(route: RouteRegistryRoute): RoutePageMetadata;
 
 export declare const notFoundArtifactPath: "404.html";
@@ -25,6 +30,8 @@ export declare function notFoundPageMetadata(): RoutePageMetadata;
 export declare function applyRouteDocumentMetadata(document: string, metadata: RoutePageMetadata): string;
 
 export declare function stripHomeHeroPreload(document: string): string;
+
+export declare function injectRouteHeroPreload(document: string, assetPath: string): string;
 
 export declare function routeVisualAssetPaths(routes: readonly RouteRegistryRoute[]): string[];
 

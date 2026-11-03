@@ -21,20 +21,11 @@ import { siteContent } from "../data/siteContent";
 import { inquiryContactHref, resolveInquiryServiceOption } from "../lib/inquiry-service";
 import type { ServiceArea, SiteBreadcrumb, SiteBrand, SiteContent, SiteRoute } from "../types/site";
 
-const HERO_PHOTO_SRC = "/page-visuals/hero-photo.webp";
-
-// Background photo for each subpage hero, keyed by route id. Missing files
-// degrade gracefully to the plain navy hero (the <img> hides on error).
-const PAGE_HERO_PHOTOS: Record<string, string> = {
-  services: "/page-visuals/services-hero.webp",
-  about: "/page-visuals/about-hero.webp",
-  contact: "/page-visuals/contact-hero.webp",
-  stensattning: "/page-visuals/stensattning-photo.webp",
-  markarbete: "/page-visuals/markarbete-photo.webp",
-  gravjobb: "/page-visuals/gravjobb-photo.webp",
-  dranering: "/page-visuals/dranering-photo.webp",
-  tradgard: "/page-visuals/tradgard-photo.webp",
-};
+// Subpage hero photos are owned by the typed route registry's
+// heroPhotoAssetPath field (docs/rules/typed-route-content.md): the same
+// declared value feeds the rendered hero <img> and the static build's
+// per-document hero preload link. Missing files degrade gracefully to the
+// plain navy hero (the <img> hides on error).
 
 type SiteHomePageProps = {
   readonly currentPath?: string;
@@ -309,7 +300,7 @@ function RoutedPage({
 
   return (
     <>
-      <Hero content={content} />
+      <Hero content={content} imageSrc={route.heroPhotoAssetPath} />
       <Inventory content={content} />
       <Services content={content} />
       <Process content={content} />
@@ -320,11 +311,11 @@ function RoutedPage({
   );
 }
 
-function Hero({ content }: { readonly content: SiteContent }) {
+function Hero({ content, imageSrc }: { readonly content: SiteContent; readonly imageSrc: string }) {
   return (
     <section className="relative isolate overflow-hidden bg-foreground text-background">
       <img
-        src={HERO_PHOTO_SRC}
+        src={imageSrc}
         alt=""
         aria-hidden="true"
         fetchPriority="high"
@@ -407,7 +398,7 @@ function Inventory({ content }: { readonly content: SiteContent }) {
 function ServicesIndexPage({ content, route }: { readonly content: SiteContent; readonly route: SiteRoute }) {
   return (
     <>
-      <PageHero title={route.label} summary={route.summary} imageSrc={PAGE_HERO_PHOTOS[route.id]} breadcrumb={content.chrome.breadcrumb} />
+      <PageHero title={route.label} summary={route.summary} imageSrc={route.heroPhotoAssetPath} breadcrumb={content.chrome.breadcrumb} />
       <Services content={content} />
       <Trust content={content} />
       <Partners content={content} />
@@ -419,7 +410,7 @@ function ServicesIndexPage({ content, route }: { readonly content: SiteContent; 
 function AboutPage({ content, route }: { readonly content: SiteContent; readonly route: SiteRoute }) {
   return (
     <>
-      <PageHero title={route.label} summary={route.summary} imageSrc={PAGE_HERO_PHOTOS[route.id]} breadcrumb={content.chrome.breadcrumb} />
+      <PageHero title={route.label} summary={route.summary} imageSrc={route.heroPhotoAssetPath} breadcrumb={content.chrome.breadcrumb} />
       <About content={content} />
       <ContactLinkBand content={content} />
     </>
@@ -441,7 +432,7 @@ function ServicePage({
         title={service.title}
         summary={route.summary}
         eyebrow={content.chrome.service.heroEyebrow}
-        imageSrc={PAGE_HERO_PHOTOS[route.id]}
+        imageSrc={route.heroPhotoAssetPath}
         breadcrumb={content.chrome.breadcrumb}
       />
       <section className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-14 sm:px-8 lg:grid-cols-[1fr_0.72fr] lg:px-10">
@@ -480,7 +471,7 @@ function ContactPage({
 }) {
   return (
     <>
-      <PageHero title={route.label} summary={route.summary} imageSrc={PAGE_HERO_PHOTOS[route.id]} breadcrumb={content.chrome.breadcrumb} />
+      <PageHero title={route.label} summary={route.summary} imageSrc={route.heroPhotoAssetPath} breadcrumb={content.chrome.breadcrumb} />
       <Contact content={content} serviceOption={resolveInquiryServiceOption(content, inquiryServiceId)} />
     </>
   );
