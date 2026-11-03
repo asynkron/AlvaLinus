@@ -408,6 +408,27 @@ describe("SiteHomePage", () => {
     }
   });
 
+  it("keeps every current route aligned with a registry-owned hero photo asset", () => {
+    const expectedHeroPhotosByRoute = new Map([
+      ["home", "/page-visuals/hero-photo.webp"],
+      ["services", "/page-visuals/services-hero.webp"],
+      ["about", "/page-visuals/about-hero.webp"],
+      ["stensattning", "/page-visuals/stensattning-photo.webp"],
+      ["markarbete", "/page-visuals/markarbete-photo.webp"],
+      ["gravjobb", "/page-visuals/gravjobb-photo.webp"],
+      ["dranering", "/page-visuals/dranering-photo.webp"],
+      ["tradgard", "/page-visuals/tradgard-photo.webp"],
+      ["contact", "/page-visuals/contact-hero.webp"],
+    ]);
+
+    expect(content.routes).toHaveLength(9);
+    expect(new Set(content.routes.map((route) => route.heroPhotoAssetPath)).size).toBe(9);
+
+    for (const route of content.routes) {
+      expect(route.heroPhotoAssetPath).toBe(expectedHeroPhotosByRoute.get(route.id));
+    }
+  });
+
   it("fetches above-the-fold hero images at high priority while service card images stay lazy", () => {
     const { rerender } = render(<SiteHomePage content={content} />);
 
@@ -430,6 +451,13 @@ describe("SiteHomePage", () => {
 
     fireEvent.error(pageHero);
     expect(pageHero).toHaveStyle({ display: "none" });
+
+    rerender(<SiteHomePage currentPath="/stensattning/" content={content} />);
+
+    const serviceHero = heroImage("/page-visuals/stensattning-photo.webp");
+    expect(serviceHero).toHaveAttribute("fetchpriority", "high");
+    expect(serviceHero).toHaveAttribute("alt", "");
+    expect(serviceHero).toHaveAttribute("aria-hidden", "true");
   });
 
   it("falls back to the route SVG on the first photo error and removes the image when the fallback also fails", () => {

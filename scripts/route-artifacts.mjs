@@ -20,6 +20,9 @@ const socialMetaTagPatterns = [
 ];
 const linkTagPattern = /<link\b[^>]*>/gi;
 const preloadRelPattern = /\brel=(["'])preload\1/i;
+const imagePreloadAsPattern = /\bas=(["'])image\1/i;
+const linkHrefAttributePattern = /\bhref=(["'])([\s\S]*?)\1/i;
+const headClosePattern = /<\/head>/i;
 const homeHeroPreloadHrefPattern = /\bhref=(["'])\/page-visuals\/hero-photo\.webp\1/i;
 
 function isMissingEntryError(error) {
@@ -141,6 +144,12 @@ export function requireRouteRegistry(routes) {
       throw new Error(`${routeLabel(route, index)} must declare a visual assetPath string.`);
     }
 
+    const heroViolation = routeHeroPhotoAssetPathViolation(route.heroPhotoAssetPath);
+
+    if (heroViolation !== null) {
+      throw new Error(`${routeLabel(route, index)} ${heroViolation}`);
+    }
+
     const destination = outputDestination(route.href);
 
     if (destinations.has(destination)) {
@@ -164,6 +173,51 @@ export function staticSubpageRoutes(routes) {
 
 export function staticSubpagePaths(routes) {
   return staticSubpageRoutes(routes).map((route) => route.href);
+}
+
+/**
+ * A route hero photo asset path feeds both the rendered hero <img> and the
+ * stamped document's preload link href, so it must be a nonempty
+ * root-relative path whose text survives attribute rendering unchanged:
+ * no backslashes, whitespace, quotes or angle characters.
+ */
+function routeHeroPhotoAssetPathViolation(assetPath) {
+  if (typeof assetPath !== "string" || assetPath.length === 0) {
+    return "must declare a nonempty heroPhotoAssetPath string.";
+  }
+
+  if (assetPath.includes("\\")) {
+    return 'must use "/" directory separators in heroPhotoAssetPath.';
+  }
+
+  if (!assetPath.startsWith("/")) {
+    return 'must declare a root-relative heroPhotoAssetPath starting with "/".';
+  }
+
+  if (/[\s"'<>]/.test(assetPath)) {
+    return "must keep heroPhotoAssetPath free of whitespace and quote or angle characters.";
+  }
+
+  return null;
+}
+
+export function requireRouteHeroPhotoAssetPath(route, index) {
+  const violation = routeHeroPhotoAssetPathViolation(route?.heroPhotoAssetPath);
+
+  if (violation !== null) {
+    throw new Error(`${routeLabel(route, index)} ${violation}`);
+  }
+
+  return route.heroPhotoAssetPath;
+}
+
+/**
+ * Validated hero preload href for one route: the declared heroPhotoAssetPath
+ * verbatim, so the stamped preload link, the rendered hero image and the
+ * artifact assertion all read the same registry-owned string.
+ */
+export function routeHeroPreloadHref(route) {
+  return requireRouteHeroPhotoAssetPath(route, 0);
 }
 
 /**
@@ -306,6 +360,58 @@ export function stripHomeHeroPreload(document) {
   return document.replace(linkTagPattern, (linkTag) => (isHomeHeroPreloadLinkTag(linkTag) ? "" : linkTag));
 }
 
+function routeHeroPreloadLinkTag(assetPath) {
+  return `<link rel="preload" as="image" href="${assetPath}" fetchpriority="high" />`;
+}
+
+/**
+ * High-priority preload link for one stamped subpage document, inserted
+ * directly before the head-close tag so the browser starts fetching the
+ * route's LCP hero photo in parallel with the JavaScript bundle instead of
+ * after it executes. Composed after stripHomeHeroPreload, which removed the
+ * home document's own preload from the stamped source.
+ */
+export function injectRouteHeroPreload(document, assetPath) {
+  if (typeof document !== "string" || document.length === 0) {
+    throw new Error("Route hero preload injection requires a nonempty document string.");
+  }
+
+  const violation = routeHeroPhotoAssetPathViolation(assetPath);
+
+  if (violation !== null) {
+    throw new Error(`Route hero preload injection requires a heroPhotoAssetPath that ${violation}`);
+  }
+
+  if (!headClosePattern.test(document)) {
+    throw new Error("Route document must contain a </head> element to host the injected hero preload link.");
+  }
+
+  return document.replace(headClosePattern, () => `${routeHeroPreloadLinkTag(assetPath)}</head>`);
+}
+
+/**
+ * Hrefs of every image preload link carried by a document, in document
+ * order: the exact-equality base for "a document preloads exactly its own
+ * route hero photo and nothing else".
+ */
+function documentImagePreloadHrefs(document) {
+  const linkTags = document.match(linkTagPattern) ?? [];
+
+  return linkTags
+    .filter((linkTag) => preloadRelPattern.test(linkTag) && imagePreloadAsPattern.test(linkTag))
+    .map((linkTag) => {
+      const hrefMatch = linkTag.match(linkHrefAttributePattern);
+
+      return hrefMatch === null ? null : hrefMatch[2];
+    });
+}
+
+function documentCarriesExactlyOwnHeroPreload(document, heroPreloadHref) {
+  const imagePreloadHrefs = documentImagePreloadHrefs(document);
+
+  return imagePreloadHrefs.length === 1 && imagePreloadHrefs[0] === heroPreloadHref;
+}
+
 function documentCarriesRouteMetadata(document, metadata) {
   const extracted = extractDocumentMetadata(document);
 
@@ -335,6 +441,7 @@ export async function assertStaticRouteArtifacts({ routes, distDir, readFile }) 
   const expectedPages = staticSubpageRoutes(routes).map((route) => ({
     href: route.href,
     metadata: routePageMetadata(route),
+    heroPreloadHref: routeHeroPreloadHref(route),
   }));
   const expectedRoutes = expectedPages.map((page) => page.href);
   const rootHtml = await readFile(path.join(distDir, "index.html"), "utf8");
@@ -380,9 +487,9 @@ export async function assertStaticRouteArtifacts({ routes, distDir, readFile }) 
     );
   }
 
-  if (documentCarriesHomeHeroPreload(notFoundHtml)) {
+  if (documentImagePreloadHrefs(notFoundHtml).length > 0) {
     throw new Error(
-      `Static route artifact check failed: dist/${notFoundArtifactPath} must not carry the home hero preload link.`,
+      `Static route artifact check failed: dist/${notFoundArtifactPath} must not carry any image preload link.`,
     );
   }
 
@@ -393,7 +500,9 @@ export async function assertStaticRouteArtifacts({ routes, distDir, readFile }) 
       try {
         const routeHtml = await readFile(routeHtmlPath, "utf8");
 
-        return documentCarriesRouteMetadata(routeHtml, page.metadata) && !documentCarriesHomeHeroPreload(routeHtml)
+        return documentCarriesRouteMetadata(routeHtml, page.metadata) &&
+          !documentCarriesHomeHeroPreload(routeHtml) &&
+          documentCarriesExactlyOwnHeroPreload(routeHtml, page.heroPreloadHref)
           ? "matched"
           : "mismatched";
       } catch (error) {

@@ -7,8 +7,10 @@ import { defineConfig } from "vitest/config";
 import { siteContent } from "./src/data/siteContent";
 import {
   applyRouteDocumentMetadata,
+  injectRouteHeroPreload,
   notFoundArtifactPath,
   notFoundPageMetadata,
+  routeHeroPreloadHref,
   routePageMetadata,
   staticSubpageRoutes,
   stripHomeHeroPreload,
@@ -17,6 +19,7 @@ import {
 const staticRoutePages = staticSubpageRoutes(siteContent.routes).map((route) => ({
   href: route.href,
   metadata: routePageMetadata(route),
+  heroPreloadHref: routeHeroPreloadHref(route),
 }));
 
 function emitStaticRoutePages(): Plugin {
@@ -35,7 +38,10 @@ function emitStaticRoutePages(): Plugin {
       await Promise.all([
         ...staticRoutePages.map(async (routePage) => {
           const routeDir = path.join(outDir, routePage.href.replace(/^\/+|\/+$/g, ""));
-          const routeHtml = stripHomeHeroPreload(applyRouteDocumentMetadata(html, routePage.metadata));
+          const routeHtml = injectRouteHeroPreload(
+            stripHomeHeroPreload(applyRouteDocumentMetadata(html, routePage.metadata)),
+            routePage.heroPreloadHref,
+          );
 
           await fs.mkdir(routeDir, { recursive: true });
           await fs.writeFile(path.join(routeDir, "index.html"), routeHtml);
