@@ -324,4 +324,37 @@ export const siteContent = {
       { label: "E-post", value: "kontakt@svardentreprenad.se", href: "mailto:kontakt@svardentreprenad.se" },
     ],
   },
+  chrome: {
+    brand: {
+      name: "Svärd Entreprenad",
+      logoSrc: "/svard-entreprenad-logo.svg",
+    },
+    breadcrumb: {
+      ariaLabel: "Brödsmulor",
+      homeLabel: "Hem",
+    },
+    contactBand: {
+      eyebrow: "Nästa steg",
+      ctaLabel: "Kontakta oss",
+    },
+    footer: {
+      tagline: "Din lokala partner för mark, schakt, dränering och anläggning.",
+      pageHeading: "Sidor",
+      servicesHeading: "Tjänster",
+      contactHeading: "Kontakt",
+      pageNavAriaLabel: "Sidfotsnavigation",
+      servicesNavAriaLabel: "Tjänster",
+    },
+    notFound: {
+      title: "Sidan finns inte",
+      eyebrow: "Okänd sida",
+      summaryTemplate:
+        "{path} matchar ingen aktuell sida. Välj en av genvägarna nedan för att komma vidare.",
+      shortcutsLabel: "Genvägar",
+    },
+    service: {
+      heroEyebrow: "Tjänst",
+      guidanceHeading: "När tjänsten passar",
+    },
+  },
 } satisfies SiteContent;

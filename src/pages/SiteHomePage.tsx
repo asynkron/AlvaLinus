@@ -19,10 +19,8 @@ import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { siteContent } from "../data/siteContent";
 import { inquiryContactHref, resolveInquiryServiceOption } from "../lib/inquiry-service";
-import type { ServiceArea, SiteContent, SiteRoute } from "../types/site";
+import type { ServiceArea, SiteBreadcrumb, SiteBrand, SiteContent, SiteRoute } from "../types/site";
 
-const BRAND_NAME = "Svärd Entreprenad";
-const BRAND_LOGO_SRC = "/svard-entreprenad-logo.svg";
 const HERO_PHOTO_SRC = "/page-visuals/hero-photo.webp";
 
 // Background photo for each subpage hero, keyed by route id. Missing files
@@ -57,7 +55,7 @@ export function SiteHomePage({ currentPath = "/", inquiryServiceId, content = si
       >
         Hoppa till innehåll
       </a>
-      <Header currentPath={currentPath} />
+      <Header currentPath={currentPath} brand={content.chrome.brand} />
       <ContentSurface currentPath={currentPath} inquiryServiceId={inquiryServiceId} content={content} />
     </div>
   );
@@ -76,7 +74,7 @@ const SERVICE_PATHS = new Set(
     .map((route) => normalizePath(route.href)),
 );
 
-function Header({ currentPath = "/" }: { readonly currentPath?: string }) {
+function Header({ currentPath = "/", brand }: { readonly currentPath?: string; readonly brand: SiteBrand }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuToggleRef = useRef<HTMLButtonElement>(null);
   const active = normalizePath(currentPath);
@@ -93,13 +91,13 @@ function Header({ currentPath = "/" }: { readonly currentPath?: string }) {
   return (
     <header className="sticky top-0 z-30 bg-foreground text-background shadow-sm">
       <div className="mx-auto flex min-h-16 w-full max-w-7xl items-center justify-between gap-4 px-5 sm:px-8 lg:px-10">
-        <a href="/" className="flex min-w-0 items-center gap-3" aria-label={`${BRAND_NAME} startsida`}>
+        <a href="/" className="flex min-w-0 items-center gap-3" aria-label={`${brand.name} startsida`}>
           <img
-            src={BRAND_LOGO_SRC}
-            alt={`${BRAND_NAME} logotyp`}
+            src={brand.logoSrc}
+            alt={`${brand.name} logotyp`}
             className="h-9 w-auto max-w-[11rem] object-contain brightness-0 invert sm:h-10 sm:max-w-[14rem]"
           />
-          <span className="sr-only">{BRAND_NAME}</span>
+          <span className="sr-only">{brand.name}</span>
         </a>
         <nav aria-label="Huvudnavigation" className="hidden items-center gap-6 text-sm font-medium md:flex">
           {PAGE_NAV.map((route) => {
@@ -274,6 +272,10 @@ function normalizePath(path: string) {
   return withoutQuery.endsWith("/") ? withoutQuery : `${withoutQuery}/`;
 }
 
+function renderNotFoundSummary(template: string, currentPath: string) {
+  return template.replace("{path}", () => currentPath);
+}
+
 function RoutedPage({
   content,
   inquiryServiceId,
@@ -405,7 +407,7 @@ function Inventory({ content }: { readonly content: SiteContent }) {
 function ServicesIndexPage({ content, route }: { readonly content: SiteContent; readonly route: SiteRoute }) {
   return (
     <>
-      <PageHero title={route.label} summary={route.summary} imageSrc={PAGE_HERO_PHOTOS[route.id]} />
+      <PageHero title={route.label} summary={route.summary} imageSrc={PAGE_HERO_PHOTOS[route.id]} breadcrumb={content.chrome.breadcrumb} />
       <Services content={content} />
       <Trust content={content} />
       <Partners content={content} />
@@ -417,7 +419,7 @@ function ServicesIndexPage({ content, route }: { readonly content: SiteContent; 
 function AboutPage({ content, route }: { readonly content: SiteContent; readonly route: SiteRoute }) {
   return (
     <>
-      <PageHero title={route.label} summary={route.summary} imageSrc={PAGE_HERO_PHOTOS[route.id]} />
+      <PageHero title={route.label} summary={route.summary} imageSrc={PAGE_HERO_PHOTOS[route.id]} breadcrumb={content.chrome.breadcrumb} />
       <About content={content} />
       <ContactLinkBand content={content} />
     </>
@@ -438,8 +440,9 @@ function ServicePage({
       <PageHero
         title={service.title}
         summary={route.summary}
-        eyebrow="Tjänst"
+        eyebrow={content.chrome.service.heroEyebrow}
         imageSrc={PAGE_HERO_PHOTOS[route.id]}
+        breadcrumb={content.chrome.breadcrumb}
       />
       <section className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-14 sm:px-8 lg:grid-cols-[1fr_0.72fr] lg:px-10">
         <div>
@@ -456,7 +459,7 @@ function ServicePage({
           </div>
         </div>
         <aside className="rounded-lg border bg-card p-5 shadow-soft">
-          <h2 className="text-xl font-semibold">När tjänsten passar</h2>
+          <h2 className="text-xl font-semibold">{content.chrome.service.guidanceHeading}</h2>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">{service.guidance}</p>
         </aside>
       </section>
@@ -477,22 +480,25 @@ function ContactPage({
 }) {
   return (
     <>
-      <PageHero title={route.label} summary={route.summary} imageSrc={PAGE_HERO_PHOTOS[route.id]} />
+      <PageHero title={route.label} summary={route.summary} imageSrc={PAGE_HERO_PHOTOS[route.id]} breadcrumb={content.chrome.breadcrumb} />
       <Contact content={content} serviceOption={resolveInquiryServiceOption(content, inquiryServiceId)} />
     </>
   );
 }
 
 function NotFound({ content, currentPath }: { readonly content: SiteContent; readonly currentPath: string }) {
+  const chrome = content.chrome;
+
   return (
     <>
       <PageHero
-        title="Sidan finns inte"
-        eyebrow="Okänd sida"
-        summary={`${currentPath} matchar ingen aktuell sida. Välj en av genvägarna nedan för att komma vidare.`}
+        title={chrome.notFound.title}
+        eyebrow={chrome.notFound.eyebrow}
+        summary={renderNotFoundSummary(chrome.notFound.summaryTemplate, currentPath)}
+        breadcrumb={chrome.breadcrumb}
       />
       <section className="mx-auto w-full max-w-7xl px-5 py-14 sm:px-8 lg:px-10">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Genvägar</p>
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{chrome.notFound.shortcutsLabel}</p>
         <div className="mt-4 flex flex-wrap gap-2">
           {content.routes.map((route) => (
             <a
@@ -514,11 +520,13 @@ function PageHero({
   summary,
   eyebrow,
   imageSrc,
+  breadcrumb,
 }: {
   readonly title: string;
   readonly summary: string;
   readonly eyebrow?: string;
   readonly imageSrc?: string;
+  readonly breadcrumb: SiteBreadcrumb;
 }) {
   return (
     <section className="relative isolate overflow-hidden border-b border-background/10 bg-foreground text-background">
@@ -539,9 +547,9 @@ function PageHero({
         className="absolute inset-0 -z-10 bg-gradient-to-r from-foreground via-foreground/92 to-foreground/60"
       />
       <div className="mx-auto w-full max-w-7xl px-5 py-14 sm:px-8 lg:px-10 lg:py-20">
-        <nav aria-label="Brödsmulor" className="text-sm font-medium text-background/70">
+        <nav aria-label={breadcrumb.ariaLabel} className="text-sm font-medium text-background/70">
           <a href="/" className="transition-colors hover:text-primary">
-            Hem
+            {breadcrumb.homeLabel}
           </a>
           <span className="mx-2 text-background/40" aria-hidden="true">
             /
@@ -569,13 +577,15 @@ function ContactLinkBand({
     <section className="border-y bg-secondary">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-5 py-12 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-10">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Nästa steg</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">
+            {content.chrome.contactBand.eyebrow}
+          </p>
           <h2 className="mt-2 font-display text-2xl font-bold tracking-wide text-foreground">{content.contact.title}</h2>
           <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">{content.contact.summary}</p>
         </div>
         <Button asChild size="lg" className="shrink-0">
           <a href={serviceId ? inquiryContactHref(serviceId) : "/kontakt/"}>
-            Kontakta oss
+            {content.chrome.contactBand.ctaLabel}
             <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
           </a>
         </Button>
@@ -772,18 +782,17 @@ function Partners({ content }: { readonly content: SiteContent }) {
 
 function Footer({ content }: { readonly content: SiteContent }) {
   const email = content.contact.form.recipientEmail;
+  const chrome = content.chrome;
 
   return (
     <footer className="border-t border-background/10 bg-foreground text-background">
       <div className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-12 sm:px-8 md:grid-cols-[1.4fr_1fr_1fr_1fr] lg:px-10">
         <div className="max-w-sm">
-          <p className="font-display text-2xl font-bold uppercase tracking-wide text-background">{BRAND_NAME}</p>
-          <p className="mt-3 text-sm leading-6 text-background/65">
-            Din lokala partner för mark, schakt, dränering och anläggning.
-          </p>
+          <p className="font-display text-2xl font-bold uppercase tracking-wide text-background">{chrome.brand.name}</p>
+          <p className="mt-3 text-sm leading-6 text-background/65">{chrome.footer.tagline}</p>
         </div>
-        <nav aria-label="Sidfotsnavigation" className="text-sm">
-          <p className="font-semibold text-background">Sidor</p>
+        <nav aria-label={chrome.footer.pageNavAriaLabel} className="text-sm">
+          <p className="font-semibold text-background">{chrome.footer.pageHeading}</p>
           <ul className="mt-3 grid gap-2">
             {PAGE_NAV.map((route) => (
               <li key={route.href}>
@@ -794,8 +803,8 @@ function Footer({ content }: { readonly content: SiteContent }) {
             ))}
           </ul>
         </nav>
-        <nav aria-label="Tjänster" className="text-sm">
-          <p className="font-semibold text-background">Tjänster</p>
+        <nav aria-label={chrome.footer.servicesNavAriaLabel} className="text-sm">
+          <p className="font-semibold text-background">{chrome.footer.servicesHeading}</p>
           <ul className="mt-3 grid gap-2">
             {SERVICE_NAV.map((route) => (
               <li key={route.href}>
@@ -807,7 +816,7 @@ function Footer({ content }: { readonly content: SiteContent }) {
           </ul>
         </nav>
         <div className="text-sm">
-          <p className="font-semibold text-background">Kontakt</p>
+          <p className="font-semibold text-background">{chrome.footer.contactHeading}</p>
           <a
             href={`mailto:${email}`}
             className="mt-3 inline-flex items-center gap-2 text-background/70 transition-colors hover:text-primary"
@@ -819,7 +828,7 @@ function Footer({ content }: { readonly content: SiteContent }) {
       </div>
       <div className="border-t border-background/10">
         <div className="mx-auto w-full max-w-7xl px-5 py-5 text-xs text-background/50 sm:px-8 lg:px-10">
-          © {BRAND_NAME}
+          © {chrome.brand.name}
         </div>
       </div>
     </footer>

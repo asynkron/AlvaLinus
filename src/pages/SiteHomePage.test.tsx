@@ -51,6 +51,10 @@ function heroImage(src: string): HTMLImageElement {
   return image;
 }
 
+function notFoundSummary(path: string): string {
+  return siteContent.chrome.notFound.summaryTemplate.replace("{path}", path);
+}
+
 describe("SiteHomePage", () => {
   it("offers a Swedish skip link before header navigation that targets the stable page content", () => {
     render(<SiteHomePage content={content} />);
@@ -172,7 +176,7 @@ describe("SiteHomePage", () => {
     const toggle = screen.getByRole("button", { name: "Öppna meny" });
     fireEvent.click(toggle);
     const navigation = screen.getByRole("navigation", { name: "Mobilnavigation" });
-    const homeLink = screen.getByRole("link", { name: "Svärd Entreprenad startsida" });
+    const homeLink = screen.getByRole("link", { name: `${content.chrome.brand.name} startsida` });
     homeLink.focus();
     expect(homeLink).toHaveFocus();
 
@@ -238,8 +242,11 @@ describe("SiteHomePage", () => {
   it("renders owner-approved home content, service, process, partner, and contact areas", () => {
     render(<SiteHomePage content={content} />);
 
-    expect(screen.getByRole("link", { name: "Svärd Entreprenad startsida" })).toHaveAttribute("href", "/");
-    expect(screen.getByRole("img", { name: "Svärd Entreprenad logotyp" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: `${content.chrome.brand.name} startsida` })).toHaveAttribute("href", "/");
+    expect(screen.getByRole("img", { name: `${content.chrome.brand.name} logotyp` })).toHaveAttribute(
+      "src",
+      content.chrome.brand.logoSrc,
+    );
     expect(screen.getByRole("heading", { name: "Svärd Entreprenad" })).toBeInTheDocument();
     expect(screen.getByText(/Välkommen till Svärd Entreprenad/)).toBeInTheDocument();
     expect(screen.getByText(/Din trygga partner från första spadtag till färdigt resultat/)).toBeInTheDocument();
@@ -298,15 +305,54 @@ describe("SiteHomePage", () => {
 
     const footer = screen.getByRole("contentinfo");
     expect(
-      renderedNav(within(footer).getByRole("navigation", { name: "Sidfotsnavigation" })),
+      renderedNav(within(footer).getByRole("navigation", { name: content.chrome.footer.pageNavAriaLabel })),
     ).toEqual(pageRoutes.map((route) => ({ label: route.label, href: route.href })));
-    expect(renderedNav(within(footer).getByRole("navigation", { name: "Tjänster" }))).toEqual(
+    expect(renderedNav(within(footer).getByRole("navigation", { name: content.chrome.footer.servicesNavAriaLabel }))).toEqual(
       serviceRoutes.map((route) => ({ label: route.label, href: route.href })),
     );
 
     for (const route of [...pageRoutes, ...serviceRoutes]) {
       expect(screen.getAllByRole("link", { name: route.label }).length).toBeGreaterThan(0);
     }
+  });
+
+  it("renders the shared page chrome from the typed registry", () => {
+    const { rerender } = render(<SiteHomePage currentPath="/saknas/" content={content} />);
+    const chrome = content.chrome;
+
+    const header = screen.getByRole("banner");
+    expect(within(header).getByRole("link", { name: `${chrome.brand.name} startsida` })).toHaveAttribute("href", "/");
+    expect(within(header).getByRole("img", { name: `${chrome.brand.name} logotyp` })).toHaveAttribute(
+      "src",
+      chrome.brand.logoSrc,
+    );
+
+    expect(screen.getByRole("heading", { name: chrome.notFound.title, level: 1 })).toBeInTheDocument();
+    expect(screen.getByText(chrome.notFound.eyebrow)).toBeInTheDocument();
+    expect(screen.getByText(notFoundSummary("/saknas/"))).toBeInTheDocument();
+    expect(screen.getByText(chrome.notFound.shortcutsLabel)).toBeInTheDocument();
+
+    rerender(<SiteHomePage currentPath="/stensattning/" content={content} />);
+
+    const breadcrumb = screen.getByRole("navigation", { name: chrome.breadcrumb.ariaLabel });
+    expect(within(breadcrumb).getByRole("link", { name: chrome.breadcrumb.homeLabel })).toHaveAttribute("href", "/");
+    expect(screen.getByText(chrome.service.heroEyebrow)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: chrome.service.guidanceHeading })).toBeInTheDocument();
+    expect(screen.getByText(chrome.contactBand.eyebrow)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: chrome.contactBand.ctaLabel })).toHaveAttribute(
+      "href",
+      "/kontakt/?tjanst=stensattning",
+    );
+
+    const footer = screen.getByRole("contentinfo");
+    expect(within(footer).getByText(chrome.brand.name)).toBeInTheDocument();
+    expect(within(footer).getByText(chrome.footer.tagline)).toBeInTheDocument();
+    const pageNav = within(footer).getByRole("navigation", { name: chrome.footer.pageNavAriaLabel });
+    expect(within(pageNav).getByText(chrome.footer.pageHeading)).toBeInTheDocument();
+    const servicesNav = within(footer).getByRole("navigation", { name: chrome.footer.servicesNavAriaLabel });
+    expect(within(servicesNav).getByText(chrome.footer.servicesHeading)).toBeInTheDocument();
+    expect(within(footer).getAllByText(chrome.footer.contactHeading).length).toBeGreaterThan(0);
+    expect(within(footer).getByText(`© ${chrome.brand.name}`)).toBeInTheDocument();
   });
 
   it("presents the updated route decision as customer-facing service guidance", () => {
@@ -516,16 +562,16 @@ describe("SiteHomePage", () => {
       <SiteHomePage currentPath="/stensattning/" content={emptyServicesContent} />,
     );
 
-    expect(screen.getByRole("heading", { name: "Sidan finns inte" })).toBeInTheDocument();
-    expect(screen.getByText(/matchar ingen aktuell sida/)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: content.chrome.notFound.title })).toBeInTheDocument();
+    expect(screen.getByText(notFoundSummary("/stensattning/"))).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Inget innehåll ännu" })).not.toBeInTheDocument();
 
     rerender(
       <SiteHomePage currentPath="/saknas/" content={emptyServicesContent} />,
     );
 
-    expect(screen.getByRole("heading", { name: "Sidan finns inte" })).toBeInTheDocument();
-    expect(screen.getByText(/matchar ingen aktuell sida/)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: content.chrome.notFound.title })).toBeInTheDocument();
+    expect(screen.getByText(notFoundSummary("/saknas/"))).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Inget innehåll ännu" })).not.toBeInTheDocument();
   });
 
@@ -556,7 +602,7 @@ describe("SiteHomePage", () => {
     );
 
     expect(screen.getByRole("heading", { name: "Stensättning", level: 1 })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "När tjänsten passar" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: content.chrome.service.guidanceHeading })).toBeInTheDocument();
     expect(screen.getByText(stensattning.guidance)).toBeInTheDocument();
     expect(screen.queryByText(/fuktsäkring runt husgrund/)).not.toBeInTheDocument();
     expect(screen.queryByText(/markförutsättningar och nästa steg/)).not.toBeInTheDocument();
@@ -657,7 +703,7 @@ describe("SiteHomePage", () => {
   ])("carries the stable $id service identity in the $path inquiry action", ({ id, path }) => {
     render(<SiteHomePage currentPath={path} content={content} />);
 
-    expect(screen.getByRole("link", { name: "Kontakta oss" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: content.chrome.contactBand.ctaLabel })).toHaveAttribute(
       "href",
       `/kontakt/?tjanst=${id}`,
     );
@@ -668,11 +714,11 @@ describe("SiteHomePage", () => {
       <SiteHomePage currentPath="/tjanster/" content={content} />,
     );
 
-    expect(screen.getByRole("link", { name: "Kontakta oss" })).toHaveAttribute("href", "/kontakt/");
+    expect(screen.getByRole("link", { name: content.chrome.contactBand.ctaLabel })).toHaveAttribute("href", "/kontakt/");
 
     rerender(<SiteHomePage currentPath="/om-oss/" content={content} />);
 
-    expect(screen.getByRole("link", { name: "Kontakta oss" })).toHaveAttribute("href", "/kontakt/");
+    expect(screen.getByRole("link", { name: content.chrome.contactBand.ctaLabel })).toHaveAttribute("href", "/kontakt/");
   });
 
   it("follows a service page inquiry action into contact, selects that service and preserves a later manual change", () => {
@@ -680,7 +726,7 @@ describe("SiteHomePage", () => {
       <SiteHomePage currentPath="/dranering/" content={content} />,
     );
 
-    const inquiryHref = screen.getByRole("link", { name: "Kontakta oss" }).getAttribute("href");
+    const inquiryHref = screen.getByRole("link", { name: content.chrome.contactBand.ctaLabel }).getAttribute("href");
     expect(inquiryHref).not.toBeNull();
 
     const url = new URL(inquiryHref as string, "https://alvalinus.example");
@@ -771,8 +817,8 @@ describe("SiteHomePage", () => {
   it("fails unknown paths gracefully", () => {
     render(<SiteHomePage currentPath="/saknas/" content={content} />);
 
-    expect(screen.getByRole("heading", { name: "Sidan finns inte" })).toBeInTheDocument();
-    expect(screen.getByText(/matchar ingen aktuell sida/)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: content.chrome.notFound.title })).toBeInTheDocument();
+    expect(screen.getByText(notFoundSummary("/saknas/"))).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: "Hem" })[0]).toHaveAttribute("href", "/");
   });
 });
