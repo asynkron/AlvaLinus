@@ -1,11 +1,25 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 
 import { siteContent } from "../data/siteContent";
-import type { SiteContent } from "../types/site";
+import type { ServiceArea, SiteContent } from "../types/site";
 import { SiteHomePage } from "./SiteHomePage";
 
 const content: SiteContent = siteContent;
 const emptyServicesContent: SiteContent = { ...content, services: [] };
+
+function readMoreName(service: ServiceArea): string {
+  return `${content.sectionHeadings.services.readMoreAriaPrefix} ${service.title}`;
+}
+
+function registryService(id: string): ServiceArea {
+  const service = content.services.find((item) => item.id === id);
+
+  if (!service) {
+    throw new Error(`Missing registry service ${id}`);
+  }
+
+  return service;
+}
 
 function serviceCard(id: string): HTMLElement {
   const card = document.getElementById(id);
@@ -229,11 +243,11 @@ describe("SiteHomePage", () => {
     expect(screen.getByRole("heading", { name: "Svärd Entreprenad" })).toBeInTheDocument();
     expect(screen.getByText(/Välkommen till Svärd Entreprenad/)).toBeInTheDocument();
     expect(screen.getByText(/Din trygga partner från första spadtag till färdigt resultat/)).toBeInTheDocument();
-    expect(screen.getAllByText("Våra tjänster").length).toBeGreaterThan(0);
-    expect(screen.getByRole("heading", { name: "En pålitlig partner inom mark, bygg och anläggning" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Från första kontakt till slutfört arbete" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Därför väljer kunder oss" })).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "Samarbetspartner" })).not.toBeInTheDocument();
+    expect(screen.getAllByText(content.sectionHeadings.services.eyebrow).length).toBeGreaterThan(0);
+    expect(screen.getByRole("heading", { name: content.sectionHeadings.services.title })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: content.sectionHeadings.process.title })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: content.sectionHeadings.trust.title })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: content.sectionHeadings.partners.title })).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Kontakta oss för offert" })).toBeInTheDocument();
   });
 
@@ -298,9 +312,9 @@ describe("SiteHomePage", () => {
   it("presents the updated route decision as customer-facing service guidance", () => {
     render(<SiteHomePage content={content} />);
 
-    expect(screen.getByRole("heading", { name: "Tydliga vägar för rätt uppdrag" })).toBeInTheDocument();
-    expect(screen.getByText(/Hitta snabbt till företagets viktigaste information/)).toBeInTheDocument();
-    expect(screen.getByText(/från första kontakt till färdigt resultat/)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: content.inventory.heading })).toBeInTheDocument();
+    expect(screen.getByText(content.inventory.helper)).toBeInTheDocument();
+    expect(screen.getByText(content.inventory.routeDecision)).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: "Om oss" })[0]).toHaveAttribute("href", "/om-oss/");
   });
 
@@ -318,9 +332,9 @@ describe("SiteHomePage", () => {
     render(<SiteHomePage currentPath={currentPath} content={content} />);
 
     for (const service of content.services) {
-      const link = screen.getByRole("link", { name: `Läs mer om ${service.title}` });
+      const link = screen.getByRole("link", { name: readMoreName(service) });
       expect(link).toHaveAttribute("href", service.href);
-      expect(link).toHaveTextContent(/^Läs mer$/);
+      expect(link).toHaveTextContent(content.sectionHeadings.services.readMoreLabel);
     }
   });
 
@@ -375,6 +389,7 @@ describe("SiteHomePage", () => {
   it("falls back to the route SVG on the first photo error and removes the image when the fallback also fails", () => {
     render(<SiteHomePage content={content} />);
 
+    const stensattning = registryService("stensattning");
     const stensattningCard = within(serviceCard("stensattning"));
     const fallbackSrc = "/page-visuals/svard-entreprenad-stensattning.svg";
     const image = stensattningCard.getByRole("img");
@@ -393,15 +408,15 @@ describe("SiteHomePage", () => {
     fireEvent.error(image);
 
     expect(stensattningCard.queryByRole("img")).not.toBeInTheDocument();
-    expect(stensattningCard.getByRole("heading", { name: "Stensättning" })).toBeInTheDocument();
-    expect(stensattningCard.getByText(/Planerade stenytor/)).toBeInTheDocument();
-    expect(stensattningCard.getByRole("link", { name: "Läs mer om Stensättning" })).toHaveAttribute("href", "/stensattning/");
+    expect(stensattningCard.getByRole("heading", { name: stensattning.title })).toBeInTheDocument();
+    expect(stensattningCard.getByText(stensattning.summary)).toBeInTheDocument();
+    expect(stensattningCard.getByRole("link", { name: readMoreName(stensattning) })).toHaveAttribute("href", "/stensattning/");
 
     fireEvent.error(image);
 
     expect(stensattningCard.queryByRole("img")).not.toBeInTheDocument();
-    expect(stensattningCard.getByRole("heading", { name: "Stensättning" })).toBeInTheDocument();
-    expect(stensattningCard.getByRole("link", { name: "Läs mer om Stensättning" })).toHaveAttribute("href", "/stensattning/");
+    expect(stensattningCard.getByRole("heading", { name: stensattning.title })).toBeInTheDocument();
+    expect(stensattningCard.getByRole("link", { name: readMoreName(stensattning) })).toHaveAttribute("href", "/stensattning/");
   });
 
   it("keeps neighboring service cards and their successful images untouched when one card image fails twice", () => {
@@ -412,13 +427,14 @@ describe("SiteHomePage", () => {
     fireEvent.error(failingCard.getByRole("img"));
     expect(failingCard.queryByRole("img")).not.toBeInTheDocument();
 
+    const markarbete = registryService("markarbete");
     const markarbeteCard = within(serviceCard("markarbete"));
     const markarbeteImage = markarbeteCard.getByRole("img");
     expect(markarbeteImage).toHaveAttribute("src", "/page-visuals/markarbete-photo.webp");
     expect(markarbeteImage).toHaveAttribute("alt", "Schaktad tomt med maskin och förberedd markbädd");
     expect(markarbeteImage).toHaveAttribute("loading", "lazy");
-    expect(markarbeteCard.getByRole("heading", { name: "Markarbete" })).toBeInTheDocument();
-    expect(markarbeteCard.getByRole("link", { name: "Läs mer om Markarbete" })).toHaveAttribute("href", "/markarbete/");
+    expect(markarbeteCard.getByRole("heading", { name: markarbete.title })).toBeInTheDocument();
+    expect(markarbeteCard.getByRole("link", { name: readMoreName(markarbete) })).toHaveAttribute("href", "/markarbete/");
 
     const gravjobbCard = within(serviceCard("gravjobb"));
     expect(gravjobbCard.getByRole("img")).toHaveAttribute("src", "/page-visuals/gravjobb-photo.webp");
@@ -586,7 +602,7 @@ describe("SiteHomePage", () => {
   it("hides partner content when no current collaborator is configured", () => {
     render(<SiteHomePage content={content} />);
 
-    expect(screen.queryByRole("heading", { name: "Samarbetspartner" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: content.sectionHeadings.partners.title })).not.toBeInTheDocument();
     expect(screen.queryByText("UC Brons")).not.toBeInTheDocument();
     expect(screen.queryByText("Benders")).not.toBeInTheDocument();
     expect(screen.queryByText("Ahlsell")).not.toBeInTheDocument();
