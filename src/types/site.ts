@@ -24,12 +24,19 @@ export type SiteStat = {
   readonly value: string;
 };
 
+export type SiteSectionHeading = {
+  readonly eyebrow: string;
+  readonly title: string;
+  readonly summary: string;
+};
+
 export type ServiceArea = {
   readonly id: string;
   readonly title: string;
   readonly summary: string;
   readonly detail?: string;
   readonly guidance: string;
+  readonly photoSrc?: string;
   readonly href: string;
   readonly tags: readonly string[];
 };
@@ -83,6 +90,9 @@ export type ContactForm = {
 
 export type SiteContent = {
   readonly inventory: {
+    readonly eyebrow: string;
+    readonly heading: string;
+    readonly helper: string;
     readonly checkedAt: string;
     readonly source: string;
     readonly pageCount: number;
@@ -107,6 +117,15 @@ export type SiteContent = {
   readonly process: readonly ProcessStep[];
   readonly trust: readonly TrustSignal[];
   readonly partners: readonly PartnerItem[];
+  readonly sectionHeadings: {
+    readonly services: SiteSectionHeading & {
+      readonly readMoreLabel: string;
+      readonly readMoreAriaPrefix: string;
+    };
+    readonly process: SiteSectionHeading;
+    readonly trust: SiteSectionHeading;
+    readonly partners: SiteSectionHeading;
+  };
   readonly contact: {
     readonly title: string;
     readonly summary: string;

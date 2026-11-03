@@ -2,6 +2,9 @@ import type { SiteContent } from "../types/site";
 
 export const siteContent = {
   inventory: {
+    eyebrow: "Tjänsteöversikt",
+    heading: "Tydliga vägar för rätt uppdrag",
+    helper: "Hitta snabbt till företagets viktigaste information, tjänster och offertkontakt.",
     checkedAt: "2026-06-16T10:05:00Z",
     source: "Current route inventory and owner-approved service structure",
     pageCount: 58,
@@ -170,6 +173,7 @@ export const siteContent = {
         "Planerade stenytor, marksten och murar för entréer, gångar och gårdar där finish och bärighet behöver hålla över tid.",
       guidance:
         "Stensättning passar när entréer, gångar eller gårdar ska få stenytor, marksten eller murar med noggrant underarbete, rätt fall och fogar så finish och bärighet håller över tid.",
+      photoSrc: "/page-visuals/stensattning-photo.webp",
       href: "/stensattning/",
       tags: ["Marksten Örebro", "Stenmurar", "Finplanering"],
     },
@@ -180,6 +184,7 @@ export const siteContent = {
         "Bredden i mark och anläggning samlad i ett erbjudande för privatpersoner, företag och kommunala projekt.",
       guidance:
         "Markarbete passar när uppdraget samlar flera delar av mark och anläggning, från schakt och tomtförberedelse till kompletterande anläggningsarbeten för privatpersoner, företag och större projekt.",
+      photoSrc: "/page-visuals/markarbete-photo.webp",
       href: "/markarbete/",
       tags: ["Schakt", "Tomt", "Anläggning"],
     },
@@ -190,6 +195,7 @@ export const siteContent = {
         "Maskin- och grävarbeten för husgrunder, avlopp, VA, tomter och poolgrävning där rätt förarbete avgör slutresultatet.",
       guidance:
         "Grävjobb passar när arbetet kräver maskin och schakt, till exempel husgrunder, avlopp och VA, tomter eller poolgrävning, och förarbetet behöver göras rätt direkt på plats.",
+      photoSrc: "/page-visuals/gravjobb-photo.webp",
       href: "/gravjobb/",
       tags: ["Grävning", "Husgrund", "Poolgrävning"],
     },
@@ -202,6 +208,7 @@ export const siteContent = {
         "Dräneringssidan är en egen toppnivå för besökare som behöver fuktsäkring runt husgrund, mur eller källarvägg. Innehållet lyfter helheten från bedömning och grävning till återställning.",
       guidance:
         "Dränering passar när fukt hotar husgrund, murar eller tomtytor och hela arbetskedjan från bedömning och grävning till återställning ska tas om hand av samma utförare.",
+      photoSrc: "/page-visuals/dranering-photo.webp",
       href: "/dranering/",
       tags: ["Dränering", "Mur", "Fuktskydd"],
     },
@@ -212,6 +219,7 @@ export const siteContent = {
         "Tomt- och trädgårdsplanering som binder ihop höjder, ytor, planteringar och praktisk användning.",
       guidance:
         "Trädgårdsplanering passar när tomten behöver en helhet där höjder, ytor, planteringar och praktisk användning planeras ihop innan markarbetet sätts.",
+      photoSrc: "/page-visuals/tradgard-photo.webp",
       href: "/tradgardsplanering/",
       tags: ["Tomtplanering", "Utemiljö", "Finish"],
     },
@@ -252,6 +260,33 @@ export const siteContent = {
     },
   ],
   partners: [],
+  sectionHeadings: {
+    services: {
+      eyebrow: "Våra tjänster",
+      title: "En pålitlig partner inom mark, bygg och anläggning",
+      summary:
+        "Svärd Entreprenad hjälper privatpersoner, företag och fastighetsägare med markarbeten, dränering, grundläggning, stenläggning och andra anläggningsuppdrag.",
+      readMoreLabel: "Läs mer",
+      readMoreAriaPrefix: "Läs mer om",
+    },
+    process: {
+      eyebrow: "Arbetsprocess",
+      title: "Från första kontakt till slutfört arbete",
+      summary:
+        "Varje uppdrag drivs med tydlig dialog, planering på plats och noggrant utförande hela vägen till färdigt resultat.",
+    },
+    trust: {
+      eyebrow: "Varför välja oss",
+      title: "Därför väljer kunder oss",
+      summary: "Garantier, certifieringar och bred erfarenhet ligger bakom varje uppdrag vi tar oss an.",
+    },
+    partners: {
+      eyebrow: "Samarbetspartner",
+      title: "Samarbetspartner",
+      summary:
+        "Partnerfältet är uppdaterat enligt ägarens önskemål och visar endast aktuell samarbetspartner.",
+    },
+  },
   contact: {
     title: "Kontakta oss för offert",
     summary: "Skicka en förfrågan om ditt projekt så återkommer Svärd Entreprenad med nästa steg.",

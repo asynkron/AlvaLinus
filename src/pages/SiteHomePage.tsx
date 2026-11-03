@@ -25,17 +25,6 @@ const BRAND_NAME = "Svärd Entreprenad";
 const BRAND_LOGO_SRC = "/svard-entreprenad-logo.svg";
 const HERO_PHOTO_SRC = "/page-visuals/hero-photo.webp";
 
-// Real photographs used in the presentation layer. Keys are service ids.
-// Missing or failing photos fall back to the route SVG via onError; a failing
-// SVG removes the service card image instead of leaving a broken frame.
-const SERVICE_PHOTOS: Record<string, string> = {
-  stensattning: "/page-visuals/stensattning-photo.webp",
-  markarbete: "/page-visuals/markarbete-photo.webp",
-  dranering: "/page-visuals/dranering-photo.webp",
-  gravjobb: "/page-visuals/gravjobb-photo.webp",
-  tradgard: "/page-visuals/tradgard-photo.webp",
-};
-
 // Background photo for each subpage hero, keyed by route id. Missing files
 // degrade gracefully to the plain navy hero (the <img> hides on error).
 const PAGE_HERO_PHOTOS: Record<string, string> = {
@@ -390,14 +379,12 @@ function Inventory({ content }: { readonly content: SiteContent }) {
     <section className="mx-auto w-full max-w-7xl px-5 py-10 sm:px-8 lg:px-10">
       <div className="grid gap-6 rounded-lg border bg-card p-5 md:grid-cols-[0.8fr_1.2fr]">
         <div>
-          <p className="text-sm font-semibold text-primary">Tjänsteöversikt</p>
-          <h2 className="mt-2 font-display text-2xl font-bold tracking-wide">Tydliga vägar för rätt uppdrag</h2>
+          <p className="text-sm font-semibold text-primary">{content.inventory.eyebrow}</p>
+          <h2 className="mt-2 font-display text-2xl font-bold tracking-wide">{content.inventory.heading}</h2>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">{content.inventory.routeDecision}</p>
         </div>
         <div>
-          <p className="text-sm text-muted-foreground">
-            Hitta snabbt till företagets viktigaste information, tjänster och offertkontakt.
-          </p>
+          <p className="text-sm text-muted-foreground">{content.inventory.helper}</p>
           <div className="mt-4 flex flex-wrap gap-2">
             {content.inventory.primaryRoutes.map((route) => (
               <a
@@ -632,19 +619,17 @@ function ServiceCardImage({
 }
 
 function Services({ content }: { readonly content: SiteContent }) {
+  const section = content.sectionHeadings.services;
+
   return (
     <section id="tjanster" className="mx-auto w-full max-w-7xl px-5 py-12 sm:px-8 lg:px-10">
-      <SectionHeading
-        eyebrow="Våra tjänster"
-        title="En pålitlig partner inom mark, bygg och anläggning"
-        summary="Svärd Entreprenad hjälper privatpersoner, företag och fastighetsägare med markarbeten, dränering, grundläggning, stenläggning och andra anläggningsuppdrag."
-      />
+      <SectionHeading eyebrow={section.eyebrow} title={section.title} summary={section.summary} />
       <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {content.services.map((service) => {
           const visual = content.routes.find(
             (route) => route.kind === "service" && route.sourceId === service.id,
           )?.visual;
-          const photo = SERVICE_PHOTOS[service.id] ?? visual?.assetPath;
+          const photo = service.photoSrc ?? visual?.assetPath;
 
           return (
             <Card key={service.id} id={service.id} className="flex flex-col overflow-hidden">
@@ -669,10 +654,10 @@ function Services({ content }: { readonly content: SiteContent }) {
                 </div>
                 <a
                   href={service.href}
-                  aria-label={`Läs mer om ${service.title}`}
+                  aria-label={`${section.readMoreAriaPrefix} ${service.title}`}
                   className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary/80"
                 >
-                  Läs mer
+                  {section.readMoreLabel}
                   <ArrowRight className="ml-1.5 h-3.5 w-3.5" aria-hidden="true" />
                 </a>
               </CardContent>
@@ -700,18 +685,15 @@ function About({ content }: { readonly content: SiteContent }) {
 }
 
 function Process({ content }: { readonly content: SiteContent }) {
+  const heading = content.sectionHeadings.process;
+
   return (
     <section id="process" className="bg-foreground text-background">
       <div className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
         <div className="max-w-3xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Arbetsprocess</p>
-          <h2 className="mt-2 font-display text-4xl font-bold tracking-wide text-background">
-            Från första kontakt till slutfört arbete
-          </h2>
-          <p className="mt-3 leading-7 text-background/70">
-            Varje uppdrag drivs med tydlig dialog, planering på plats och noggrant utförande hela vägen till färdigt
-            resultat.
-          </p>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{heading.eyebrow}</p>
+          <h2 className="mt-2 font-display text-4xl font-bold tracking-wide text-background">{heading.title}</h2>
+          <p className="mt-3 leading-7 text-background/70">{heading.summary}</p>
         </div>
         <div className="mt-10 grid gap-8 md:grid-cols-4">
           {content.process.map((step, index) => (
@@ -733,17 +715,14 @@ function Process({ content }: { readonly content: SiteContent }) {
 
 function Trust({ content }: { readonly content: SiteContent }) {
   const icons = [ShieldCheck, BadgeCheck, CheckCircle2];
+  const heading = content.sectionHeadings.trust;
 
   return (
     <section className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
       <div className="mx-auto max-w-3xl text-center">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Varför välja oss</p>
-        <h2 className="mt-2 font-display text-4xl font-bold tracking-wide text-foreground">
-          Därför väljer kunder oss
-        </h2>
-        <p className="mt-3 leading-7 text-muted-foreground">
-          Garantier, certifieringar och bred erfarenhet ligger bakom varje uppdrag vi tar oss an.
-        </p>
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{heading.eyebrow}</p>
+        <h2 className="mt-2 font-display text-4xl font-bold tracking-wide text-foreground">{heading.title}</h2>
+        <p className="mt-3 leading-7 text-muted-foreground">{heading.summary}</p>
       </div>
       <div className="mt-12 grid gap-10 md:grid-cols-3">
         {content.trust.map((item, index) => {
@@ -769,15 +748,13 @@ function Partners({ content }: { readonly content: SiteContent }) {
     return null;
   }
 
+  const heading = content.sectionHeadings.partners;
+
   return (
     <section id="samarbetspartner" className="border-y bg-muted/70">
       <div className="mx-auto w-full max-w-7xl px-5 py-12 sm:px-8 lg:px-10">
         <div className="max-w-2xl">
-          <SectionHeading
-            eyebrow="Samarbetspartner"
-            title="Samarbetspartner"
-            summary="Partnerfältet är uppdaterat enligt ägarens önskemål och visar endast aktuell samarbetspartner."
-          />
+          <SectionHeading eyebrow={heading.eyebrow} title={heading.title} summary={heading.summary} />
         </div>
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {content.partners.map((partner) => (
