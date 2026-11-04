@@ -21,6 +21,7 @@ import { siteContent } from "../data/siteContent";
 import { inquiryContactHref, resolveInquiryServiceOption } from "../lib/inquiry-service";
 import type { ServiceArea, ServiceQuoteCalculator, SiteBreadcrumb, SiteBrand, SiteContent, SiteRoute } from "../types/site";
 
+const InquiryPage = lazy(() => import("./InquiryPage").then((module) => ({ default: module.InquiryPage })));
 const QuotePage = lazy(() => import("./QuotePage").then((module) => ({ default: module.QuotePage })));
 const DrainageQuotePage = lazy(() => import("./DrainageQuotePage").then((module) => ({ default: module.DrainageQuotePage })));
 
@@ -306,7 +307,18 @@ function RoutedPage({
   if (route.kind === "quote") {
     const QuoteView = route.id === "drainage-quote" ? DrainageQuotePage : QuotePage;
 
-    return <><Suspense fallback={<p role="status" className="px-5 py-16">Laddar offertberäkningen…</p>}><QuoteView /></Suspense><Footer content={content} /></>;
+    return (
+      <Suspense fallback={<p role="status" className="px-5 py-16">Laddar offertberäkningen…</p>}>
+        <QuoteView />
+      </Suspense>
+    );
+  }
+  if (route.kind === "inquiry") {
+    return (
+      <Suspense fallback={<p role="status" className="px-5 py-16">Laddar förfrågan om inhyrning…</p>}>
+        <InquiryPage />
+      </Suspense>
+    );
   }
   if (route.kind === "services") {
     return <ServicesIndexPage content={content} route={route} />;

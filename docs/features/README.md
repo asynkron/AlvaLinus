@@ -1,12 +1,13 @@
 # Feature catalog
 
-Reviewed against source: 2026-11-02.
+Reviewed against source: 2026-11-04.
 
 The catalog introduced in `f7b481f` already covers the current route inventory.
 The maintained catalog retains its published identities, including F4-US3 for
 the shipped keyboard bypass. This review also reconciles the distinct Swedish
 service-card link names shipped in `8c9af38` with F1-US1 evidence on home and the
-services index.
+services index. F5 was added on 2026-11-04 for the company staffing inquiry
+route without changing any retained identity.
 
 This catalog maps the static Swedish Svärd Entreprenad site to visitor outcomes.
 It is product-development input, not a claim that construction work, email delivery
@@ -17,16 +18,17 @@ or analytics runs inside the site.
 | F1 | [Choose a suitable groundworks service](service-selection.md) | ui | customer_outcome | — |
 | F2 | [Assess the company and working approach](company-confidence.md) | ui | customer_outcome | — |
 | F3 | [Prepare an initial project inquiry](project-inquiry.md) | ui | customer_outcome | — |
-| F4 | [Home, navigation and route recovery](navigation-and-recovery.md) | ui | surface | F1, F2, F3 |
+| F4 | [Home, navigation and route recovery](navigation-and-recovery.md) | ui | surface | F1, F2, F3, F5 |
+| F5 | [Prepare a company staffing inquiry](staffing-inquiry.md) | ui | customer_outcome | — |
 
 ## Route and subsection reconciliation
 
-The route registry has **nine** active routes. `inventory.pageCount = 58` is a
-historical inventory number, not a count of active pages. The five
+The route registry has **eleven** active routes. `inventory.pageCount = 58` is a
+historical inventory number, not a count of active pages. The
 `inventory.primaryRoutes` shortcuts are a subset; header (desktop and mobile)
 and footer navigation derive their page and service links from the same typed
-registry, so all five service pages are exposed there too. The renderer is the
-authority for visible sections.
+registry, so all five service pages and the staffing inquiry page are exposed
+there too. The renderer is the authority for visible sections.
 
 | Route/view | Outcome documentation and stories | Relevant sections |
 | --- | --- | --- |
@@ -38,6 +40,7 @@ authority for visible sections.
 | `/dranering/` | [F1-US5](user-stories/F1/F1-US5.md) | Hero; drainage summary and dedicated moisture-protection paragraph; tags; suitability aside; process; inquiry band; footer. |
 | `/tradgardsplanering/` | [F1-US6](user-stories/F1/F1-US6.md) | Hero; levels/surfaces/planting summary and tags; suitability aside; process; inquiry band; footer. |
 | `/om-oss/` | [F2-US1](user-stories/F2/F2-US1.md) | Hero and breadcrumb; company paragraphs; contact link band; footer. |
+| `/inhyrning/` | [F5-US1](user-stories/F5/F5-US1.md), [F5-US2](user-stories/F5/F5-US2.md) | Hero and breadcrumb; staffing inquiry form with Swedish validation, VAT note and mail-draft handoff; guidance aside; footer. |
 | `/kontakt/` | [F3-US1](user-stories/F3/F3-US1.md), [F3-US2](user-stories/F3/F3-US2.md) | Hero; quote/site-visit prompt; email address; native form; footer. |
 | Keyboard bypass on all rendered states | [F4-US3](user-stories/F4/F4-US3.md) | Hoppa till innehåll precedes Header and points to one #content target; ready bodies have tabindex=-1, availability sections do not. |
 | Shared empty/not-found | [F4-US2](user-stories/F4/F4-US2.md) | Header remains; the empty-services message replaces the service-dependent home/index bodies; ready not-found provides declared-route shortcuts and footer. |
@@ -84,7 +87,9 @@ does not provide persistence, delivery assurance or a privacy/compliance verdict
   [Backend entry points](backend-entry-points.json) records the intentionally
   empty backend boundary.
 - IDs F1–F4 and their original twelve story IDs were allocated in `f7b481f`.
-  F4-US3 was subsequently added without changing those identities. Retain them and
+  F4-US3 was subsequently added without changing those identities. F5 and
+  F5-US1/US2 were added on 2026-11-04 for the staffing inquiry route. Retain
+  them and
   the feature-document joins on future edits; leave removed IDs
   absent forever. No earlier IDs were found in the available checkout/history;
   that initial search is not proof of historical non-reuse outside that evidence.

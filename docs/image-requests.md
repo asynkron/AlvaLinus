@@ -97,6 +97,17 @@ AI-generated illustration, not a completed customer project.
   > with open sky for text overlay. Realistic commercial construction
   > photography, no people, no text or logos.
 
+### 6. `inhyrning-hero.webp` — Inhyrning hero (optional upgrade)
+- **Used for:** the `/inhyrning/` page hero background (behind the navy
+  overlay). Until delivered, the page uses the decorative
+  `inhyrning-hero.svg` illustration.
+- **Aspect / size:** 16:9 landscape, ≥ 1920 × 1080 px.
+- **Prompt:**
+  > Wide professional photograph of a Swedish groundworks site where a company
+  > excavator meets a visiting contractor: machine, trailer and cleared ground
+  > in calm daylight, suggesting hired help arriving for an assignment.
+  > Realistic commercial construction photography, no people, no text or logos.
+
 ---
 
 ## Summary checklist
@@ -106,6 +117,7 @@ AI-generated illustration, not a completed customer project.
 - [x] `public/page-visuals/services-hero.webp` (16:9, AI-generated illustration)
 - [ ] `public/page-visuals/about-hero.webp` (16:9)
 - [ ] `public/page-visuals/contact-hero.webp` (16:9)
+- [ ] `public/page-visuals/inhyrning-hero.webp` (16:9, optional upgrade; SVG hero in place)
 
 Once these land in `public/page-visuals/`, update the corresponding photo maps
 in `src/pages/SiteHomePage.tsx`. The abstract `svard-entreprenad-*.svg` placeholders stay

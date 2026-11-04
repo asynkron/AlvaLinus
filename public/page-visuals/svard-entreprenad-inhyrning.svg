@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc" viewBox="0 0 1200 800">
+  <title id="title">Svärd Entreprenad inhyrning platshållarbild</title>
+  <desc id="desc">Platshållarbild för inhyrningssidan där företag efterfrågar F-skattad personal med uppdrag, timpris och tidsperiod.</desc>
+  <rect width="1200" height="800" fill="#f4f1ea"/>
+  <rect x="110" y="150" width="460" height="500" rx="26" fill="#ffffff"/>
+  <path d="M160 270h320m-320 90h250m-320 90h290m-290 90h190" stroke="#c9bdab" stroke-width="24" stroke-linecap="round"/>
+  <circle cx="340" cy="590" r="46" fill="#bf4911"/>
+  <path d="M320 590l14 14 26-28" stroke="#ffffff" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="660" y="220" width="420" height="210" rx="18" fill="#61705e"/>
+  <path d="M700 380h340" stroke="#f4f1ea" stroke-width="20" stroke-linecap="round"/>
+  <path d="M700 300h220" stroke="#d99c49" stroke-width="20" stroke-linecap="round"/>
+  <circle cx="890" cy="150" r="56" fill="#3f4a3b"/>
+  <path d="M760 560c120-40 240-40 320 10" stroke="#8b6f4e" stroke-width="24" fill="none" stroke-linecap="round"/>
+  <circle cx="1000" cy="600" r="44" fill="#d99c49"/>
+  <circle cx="930" cy="580" r="44" fill="#bf4911"/>
+  <text x="110" y="735" fill="#2f352e" font-family="Arial, sans-serif" font-size="42" font-weight="700">Inhyrning</text>
+</svg>

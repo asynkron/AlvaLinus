@@ -391,6 +391,7 @@ describe("SiteHomePage", () => {
       ["home", "/page-visuals/svard-entreprenad-home.svg"],
       ["services", "/page-visuals/svard-entreprenad-services.svg"],
       ["about", "/page-visuals/svard-entreprenad-about.svg"],
+      ["inhyrning", "/page-visuals/svard-entreprenad-inhyrning.svg"],
       ["stensattning", "/page-visuals/svard-entreprenad-stensattning.svg"],
       ["markarbete", "/page-visuals/svard-entreprenad-markarbete.svg"],
       ["gravjobb", "/page-visuals/svard-entreprenad-gravjobb.svg"],
@@ -399,7 +400,7 @@ describe("SiteHomePage", () => {
       ["contact", "/page-visuals/svard-entreprenad-contact.svg"],
     ]);
 
-    expect(content.routes).toHaveLength(11);
+    expect(content.routes).toHaveLength(12);
 
     for (const route of content.routes) {
       expect(route.visual.assetPath).toBe(expectedVisualsByRoute.get(route.id));
@@ -417,6 +418,7 @@ describe("SiteHomePage", () => {
       ["home", "/page-visuals/hero-photo.webp"],
       ["services", "/page-visuals/services-hero.webp"],
       ["about", "/page-visuals/about-hero.webp"],
+      ["inhyrning", "/page-visuals/inhyrning-hero.svg"],
       ["stensattning", "/page-visuals/stensattning-photo.webp"],
       ["markarbete", "/page-visuals/markarbete-photo.webp"],
       ["gravjobb", "/page-visuals/gravjobb-generated.webp"],
@@ -425,8 +427,8 @@ describe("SiteHomePage", () => {
       ["contact", "/page-visuals/contact-hero.webp"],
     ]);
 
-    expect(content.routes).toHaveLength(11);
-    expect(new Set(content.routes.map((route) => route.heroPhotoAssetPath)).size).toBe(11);
+    expect(content.routes).toHaveLength(12);
+    expect(new Set(content.routes.map((route) => route.heroPhotoAssetPath)).size).toBe(12);
 
     for (const route of content.routes) {
       expect(route.heroPhotoAssetPath).toBe(expectedHeroPhotosByRoute.get(route.id));
@@ -713,6 +715,24 @@ describe("SiteHomePage", () => {
     expect(screen.queryByText("Benders")).not.toBeInTheDocument();
     expect(screen.queryByText("Ahlsell")).not.toBeInTheDocument();
     expect(screen.queryByText("Wasa Kredit")).not.toBeInTheDocument();
+  });
+
+  it("renders the dedicated staffing inquiry page with the nav link from the registry", async () => {
+    const { rerender } = render(<SiteHomePage content={content} />);
+
+    const nav = within(screen.getByRole("banner")).getByRole("navigation", { name: "Huvudnavigation" });
+    const inquiryLink = within(nav).getByRole("link", { name: "Inhyrning" });
+    expect(inquiryLink).toHaveAttribute("href", "/inhyrning/");
+    const omOssLink = within(nav).getByRole("link", { name: "Om oss" });
+    expect(omOssLink.compareDocumentPosition(inquiryLink) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+
+    rerender(<SiteHomePage currentPath="/inhyrning/" content={content} />);
+
+    expect(
+      await screen.findByRole("heading", { name: "Söker ni en F-skattare?", level: 1 }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("form", { name: "Förfrågan om inhyrning" })).toBeInTheDocument();
+    expect(screen.getByRole("navigation", { name: content.chrome.breadcrumb.ariaLabel })).toBeInTheDocument();
   });
 
   it("renders a static email handoff form and footer contact email", () => {

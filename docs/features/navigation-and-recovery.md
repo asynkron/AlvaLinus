@@ -1,7 +1,7 @@
 # F4: Home, navigation and route recovery
 
-Reviewed: 2026-11-02. Runtime: `ui`. Product role: `surface`.
-Supports **F1, F2, F3**, all active customer-outcome features.
+Reviewed: 2026-11-04. Runtime: `ui`. Product role: `surface`.
+Supports **F1, F2, F3 and F5**, all active customer-outcome features.
 
 Home and shared route handling make the service, company and inquiry outcomes
 reachable. This record is retained as a supporting surface, not promoted into
@@ -9,8 +9,9 @@ a separate customer result because it has tests.
 
 ## Entry points and current behavior
 
-All nine routes listed in the [index](README.md) share Header. Desktop navigation
-links home, services (with five service links), about and contact. The desktop
+All eleven routes listed in the [index](README.md) share Header. Desktop navigation
+links home, services (with five service links), about, the staffing inquiry and
+contact. The desktop
 Tjänster trigger is a focusable link declared with `aria-haspopup`, and its
 dropdown panel keeps the five service links in registry order; keyboard focus on
 the trigger reveals that panel through the existing `group-focus-within`
