@@ -614,6 +614,7 @@
           "/",
           "/tjanster/",
           "/om-oss/",
+          "/inhyrning/",
           "/stensattning/",
           "/markarbete/",
           "/gravjobb/",
@@ -641,7 +642,8 @@
         "supports_feature_ids": [
           "F1",
           "F2",
-          "F3"
+          "F3",
+          "F5"
         ],
         "customer_outcome": "",
         "outcome_signals": []
@@ -706,7 +708,7 @@
               "path": "src/pages/SiteHomePage.test.tsx",
               "name": "keeps every current route aligned with a page-specific visual asset",
               "evidence_type": "technical",
-              "supports": "Checks nine declared visual metadata mappings, not rendered photos or onError fallbacks."
+              "supports": "Checks eleven declared visual metadata mappings, not rendered photos or onError fallbacks."
             },
             {
               "framework": "vitest",
@@ -747,7 +749,7 @@
             "inventory.primaryRoutes has five shortcuts; it is not the full nine-route registry.",
             "Subpage heroes and the home hero use decorative photos requested at high fetch priority while service-card images stay lazy; a failing home hero photo hides its image without a retry loop while the hero content remains. Service-card images have route alt text."
           ],
-          "expected_outcome": "A declared static route can be selected for F1, F2 or F3.",
+          "expected_outcome": "A declared static route can be selected for F1, F2, F3 or F5.",
           "failure_behavior": "A missing host artifact can fail before React mounts; this catalog does not claim host-level fallback.",
           "recovery": "Use a known route or the home URL; repair/redeploy static route artifacts if missing."
         },
@@ -867,6 +869,163 @@
         "docs/features/user-stories/F4/F4-US1.md",
         "docs/features/user-stories/F4/F4-US2.md",
         "docs/features/user-stories/F4/F4-US3.md"
+      ]
+    },
+    {
+      "id": "F5",
+      "document": "docs/features/staffing-inquiry.md",
+      "capability": {
+        "classification": "ui",
+        "roles": [
+          "Company representative"
+        ],
+        "entry_points": [
+          "/inhyrning/"
+        ],
+        "principal_states": [
+          "Ready staffing inquiry page",
+          "Swedish per-field validation feedback",
+          "Mail-draft handoff with self-send confirmation",
+          "Fallback reopen draft link"
+        ],
+        "current_limitations": "A configured mail client is required. The site stores no inquiry, tracks no delivery and displays no confirmed-send state; the VAT basis of the offered rate relies on the visitor's description.",
+        "failure_behavior": "Custom Swedish validation blocks blank required fields, a malformed email and a missing, non-numeric or negative rate with per-field messages and an alert summary; a missing or incompatible mail client can prevent handoff without a site error receipt.",
+        "recovery": "Correct the named fields, or use the displayed address and the reopen-draft fallback link in a working mail client. Retype or copy details; the site offers no persistent draft recovery.",
+        "runtime_owners": [
+          "src/pages/InquiryPage.tsx",
+          "src/data/siteContent.ts"
+        ],
+        "background_component_relations": [],
+        "product_role": "customer_outcome",
+        "supports_feature_ids": [],
+        "customer_outcome": "Companies can prepare a staffing inquiry addressed to the company with assignment, rate, duration and contact details.",
+        "outcome_signals": [
+          "In an observed browser task, the nine inquiry controls can be located in mockup order with required and optional marks.",
+          "Submitting invalid input names each blocking field in Swedish and opens no draft.",
+          "A valid submit exposes the kontakt@svardentreprenad.se draft with its subject and labeled body, and the visitor is told they send the email themselves."
+        ]
+      },
+      "user_stories": [
+        {
+          "id": "F5-US1",
+          "title": "Prepare a staffing inquiry with company and assignment details",
+          "status": "current",
+          "role": "Company representative",
+          "action": "enter company details, needed help, offered hourly rate, duration and description",
+          "benefit": "give the company a useful basis to reply to the staffing request",
+          "source_anchors": [
+            "src/data/siteContent.ts",
+            "src/pages/InquiryPage.tsx",
+            "src/pages/SiteHomePage.tsx"
+          ],
+          "test_references": [
+            {
+              "framework": "vitest",
+              "path": "src/pages/InquiryPage.test.tsx",
+              "name": "collects the nine fields in mockup order with required and optional marks",
+              "evidence_type": "direct",
+              "supports": "Checks field order, required/optional attributes, autocomplete hints, the rate minimum, the VAT note association, the guidance aside and the handoff note. Does not establish visual layout."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/InquiryPage.test.tsx",
+              "name": "explains every missing required field in Swedish and focuses the first invalid field",
+              "evidence_type": "direct",
+              "supports": "Checks the alert summary, the seven per-field Swedish messages, aria-invalid/aria-describedby wiring, optional fields staying unmarked and focus on the first invalid control."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/InquiryPage.test.tsx",
+              "name": "explains an invalid email address and clears the error when the address is corrected",
+              "evidence_type": "direct",
+              "supports": "Checks the invalid-email message and that no draft opens for invalid input; correcting the field clears the message."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/InquiryPage.test.tsx",
+              "name": "rejects a negative offered hourly rate with a Swedish message",
+              "evidence_type": "direct",
+              "supports": "Checks the negative-rate message and aria-invalid on the rate input; no draft is opened."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/InquiryPage.test.tsx",
+              "name": "keeps validation in helper functions so optional fields stay out of the error set",
+              "evidence_type": "direct",
+              "supports": "Checks the validation helper directly: error key order, the missing-rate and non-numeric-rate messages, the malformed-email message and optional fields staying outside the set."
+            }
+          ],
+          "entry_point_refs": [],
+          "preconditions": [
+            "The /inhyrning/ route document has loaded.",
+            "The typed Inhyrning route is declared in the registry."
+          ],
+          "flow": [
+            "Open /inhyrning/ from the header Inhyrning link or a not-found shortcut.",
+            "Enter Företagets namn, Kontaktperson and E-post; Telefon and Organisationsnummer are optional.",
+            "Enter what help is needed, the offered hourly rate and how long the assignment runs.",
+            "Describe the assignment in Beskriv ärendet."
+          ],
+          "variants": [
+            "Missing required fields show a role=alert summary, one Swedish message per field, aria-invalid/aria-describedby and focus on the first invalid field.",
+            "A malformed email and a missing, non-numeric or negative rate each get their own Swedish message; correcting a field clears its message.",
+            "The rate field's description carries the note about stating whether the price includes or excludes VAT."
+          ],
+          "expected_outcome": "The visitor completes every required staffing detail or learns in Swedish exactly which field blocks the handoff; no draft opens while input is invalid.",
+          "failure_behavior": "The page cannot verify company details beyond shape checks; visitors correct the named fields from the messages.",
+          "recovery": "Read the per-field messages and correct the named inputs; the guidance aside lists what to include."
+        },
+        {
+          "id": "F5-US2",
+          "title": "Send the prepared staffing draft yourself",
+          "status": "current",
+          "role": "Company representative",
+          "action": "hand the completed inquiry draft to the own email program and send it",
+          "benefit": "review and send the staffing request from a trusted email tool",
+          "source_anchors": [
+            "src/pages/InquiryPage.tsx",
+            "src/data/siteContent.ts"
+          ],
+          "test_references": [
+            {
+              "framework": "vitest",
+              "path": "src/pages/InquiryPage.test.tsx",
+              "name": "opens a mail draft to the existing contact address with every supplied detail and explains the manual send",
+              "evidence_type": "direct",
+              "supports": "Checks the handed-off mailto recipient, subject and decoded body values, the injected draft opener call, the role=status self-send confirmation with the recipient address and the fallback link carrying the same draft. Uses an injected opener, so it does not exercise a real email program."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/InquiryPage.test.tsx",
+              "name": "marks empty optional fields with a dash in the mail draft without blocking the handoff",
+              "evidence_type": "direct",
+              "supports": "Checks the dash placeholders for empty optional fields and the absence of an alert on the successful handoff."
+            }
+          ],
+          "entry_point_refs": [],
+          "preconditions": [
+            "All required fields contain valid values.",
+            "A mail client is configured for the handoff."
+          ],
+          "flow": [
+            "Complete the staffing inquiry form with valid values.",
+            "Select Skicka förfrågan.",
+            "The page hands a mailto draft to kontakt@svardentreprenad.se with the subject Förfrågan om inhyrning and a labeled body to the email program.",
+            "Read the role=status confirmation that the draft awaits review and that the visitor sends the email themselves.",
+            "If the email program did not open, follow Öppna utkastet igen or copy the displayed address."
+          ],
+          "variants": [
+            "Empty optional fields are marked with a dash in the draft body instead of blocking the handoff.",
+            "The static help line beside the submit button states the draft handoff and the manual send before submitting."
+          ],
+          "expected_outcome": "The form requests a mailto handoff to kontakt@svardentreprenad.se with the staffing subject and details; the visitor sends the email themselves and delivery is not established.",
+          "failure_behavior": "The mail handler may fail to open; the page cannot confirm acceptance or sending.",
+          "recovery": "Use the reopen-draft fallback link or copy the displayed address and details into working email software; the site offers no persistent draft recovery or alternate transport."
+        }
+      ],
+      "user_story_documents": [
+        "docs/features/user-stories/F5/F5-US1.md",
+        "docs/features/user-stories/F5/F5-US2.md"
       ]
     }
   ]

@@ -918,13 +918,14 @@ describe("assertRouteVisualAssets", () => {
 });
 
 describe("siteContent route registry", () => {
-  it("declares eleven canonical routes with unique subpage destinations and visuals", () => {
-    expect(siteContent.routes).toHaveLength(11);
+  it("declares twelve canonical routes with unique subpage destinations and visuals", () => {
+    expect(siteContent.routes).toHaveLength(12);
     expect(staticSubpagePaths(siteContent.routes)).toEqual([
       "/offertberakning/",
       "/draneringsberakning/",
       "/tjanster/",
       "/om-oss/",
+      "/inhyrning/",
       "/stensattning/",
       "/markarbete/",
       "/gravjobb/",
@@ -934,7 +935,7 @@ describe("siteContent route registry", () => {
     ]);
 
     const assetPaths = routeVisualAssetPaths(siteContent.routes);
-    expect(assetPaths).toHaveLength(11);
+    expect(assetPaths).toHaveLength(12);
     expect(new Set(assetPaths).size).toBe(assetPaths.length);
   });
 
@@ -945,6 +946,7 @@ describe("siteContent route registry", () => {
       ["home", "/page-visuals/hero-photo.webp"],
       ["services", "/page-visuals/services-hero.webp"],
       ["about", "/page-visuals/about-hero.webp"],
+      ["inhyrning", "/page-visuals/inhyrning-hero.svg"],
       ["stensattning", "/page-visuals/stensattning-photo.webp"],
       ["markarbete", "/page-visuals/markarbete-photo.webp"],
       ["gravjobb", "/page-visuals/gravjobb-generated.webp"],
@@ -953,7 +955,7 @@ describe("siteContent route registry", () => {
       ["contact", "/page-visuals/contact-hero.webp"],
     ]);
 
-    expect(new Set(siteContent.routes.map((route) => route.heroPhotoAssetPath)).size).toBe(11);
+    expect(new Set(siteContent.routes.map((route) => route.heroPhotoAssetPath)).size).toBe(12);
 
     for (const route of siteContent.routes) {
       expect(routeHeroPreloadHref(route)).toBe(expectedHeroPhotosByRoute.get(route.id));

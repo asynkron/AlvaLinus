@@ -99,14 +99,45 @@
       "entry_point_refs": []
     },
     {
+      "name": "Prepare a company staffing inquiry",
+      "description": "Company representatives collect company details, needed help, offered hourly rate, duration and a description, receive Swedish validation feedback, and hand a mail draft to their own email program to send themselves.",
+      "document": "docs/features/staffing-inquiry.md",
+      "route_scope": "/inhyrning/",
+      "routes": [
+        "/inhyrning/"
+      ],
+      "code_paths": [
+        {
+          "path": "src/data/siteContent.ts",
+          "description": "Typed route registry entry, summary and shared recipient address."
+        },
+        {
+          "path": "src/pages/InquiryPage.tsx",
+          "description": "Staffing inquiry form: field specs, Swedish validation, mailto draft composition and confirmation."
+        },
+        {
+          "path": "src/pages/SiteHomePage.tsx",
+          "description": "Route rendering for /inhyrning/ inside the shared landmarks."
+        },
+        {
+          "path": "src/types/site.ts",
+          "description": "Static content and route contracts, including the inquiry route kind."
+        }
+      ],
+      "reviewed_against_source": "2026-11-04",
+      "slice_refs": [],
+      "entry_point_refs": []
+    },
+    {
       "name": "Home, navigation and route recovery",
-      "description": "Shared home orientation, header, footer, breadcrumbs and static route states help visitors reach the three customer outcomes.",
+      "description": "Shared home orientation, header, footer, breadcrumbs and static route states help visitors reach the customer outcomes.",
       "document": "docs/features/navigation-and-recovery.md",
-      "route_scope": "/, /tjanster/, /om-oss/, /stensattning/, /markarbete/, /gravjobb/, /dranering/, /tradgardsplanering/, /kontakt/",
+      "route_scope": "/, /tjanster/, /om-oss/, /inhyrning/, /stensattning/, /markarbete/, /gravjobb/, /dranering/, /tradgardsplanering/, /kontakt/",
       "routes": [
         "/",
         "/tjanster/",
         "/om-oss/",
+        "/inhyrning/",
         "/stensattning/",
         "/markarbete/",
         "/gravjobb/",

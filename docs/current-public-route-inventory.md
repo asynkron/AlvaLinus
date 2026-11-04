@@ -29,6 +29,7 @@ customer-facing pattern.
 | `/draneringsberakning/` | Interactive drainage quote estimate per linear meter with a preliminary total, email handoff, and print/PDF. | Header; calculator; footer. | `/page-visuals/svard-entreprenad-draneringsberakning.svg` for the measured drainage length around the foundation. |
 | `/tjanster/` | Services index for the main mark, building, and construction service areas. | Header; page hero; services cards; trust signals; contact link band. | `/page-visuals/svard-entreprenad-services.svg` for the combined services overview. |
 | `/om-oss/` | About page describing work approach, experience, responsibility, and delivery from first dig to finished result. | Header; page hero; about content; contact link band. | `/page-visuals/svard-entreprenad-about.svg` for work planning, responsibility, and process context. |
+| `/inhyrning/` | Staffing inquiry page where companies request hired F-tax-registered help with company details, assignment, offered hourly rate and duration. | Header; page hero; inquiry form with Swedish validation and mail-draft handoff; guidance aside; footer. | `/page-visuals/svard-entreprenad-inhyrning.svg` for company staffing requests and assignment details. |
 | `/stensattning/` | Dedicated service page for paving, stone surfaces, and stone walls. | Header; page hero; service detail section; service tags; "Nar tjansten passar" aside; process steps; contact link band. | `/page-visuals/svard-entreprenad-stensattning.svg` for paving, stone surfaces, and finish. |
 | `/markarbete/` | Dedicated service page for groundworks and construction preparation. | Header; page hero; service detail section; service tags; "Nar tjansten passar" aside; process steps; contact link band. | `/page-visuals/svard-entreprenad-markarbete.svg` for excavation, site preparation, and ground beds. |
 | `/gravjobb/` | Dedicated service page for machine and excavation work, including foundations, sewage, utilities, plots, and pool excavation. | Header; page hero; service detail section; service tags; "Nar tjansten passar" aside; process steps; contact link band. | `/page-visuals/svard-entreprenad-gravjobb.svg` for machine capacity and excavation work. |
@@ -66,7 +67,7 @@ customer-facing pattern.
 - Partners is conditionally available on home and the services index but is
   currently omitted because the configured list is empty. Both ready pages
   include the shared footer; the services index also has a breadcrumb hero.
-- The source-backed [feature catalog](features/README.md) maps the nine
+- The source-backed [feature catalog](features/README.md) maps the ten
   non-quote routes in this inventory, their shared states and subsections to
   visitor outcomes and stories; both interactive quote calculators are outside
   the cataloged feature set.
