@@ -140,7 +140,12 @@ describe("SiteHomePage", () => {
     expect(toggle).toHaveAccessibleName("Stäng meny");
     expect(toggle).toHaveAttribute("aria-expanded", "true");
     const navigation = screen.getByRole("navigation", { name: "Mobilnavigation" });
-    const link = within(navigation).getByRole("link", { name: "Dränering" });
+    const link = within(navigation).getAllByRole("link", { name: "Dränering" })[0];
+
+    if (!link) {
+      throw new Error("Missing mobile Dränering link");
+    }
+
     const focusedControl = focusOrigin === "link" ? link : toggle;
     focusedControl.focus();
     expect(focusedControl).toHaveFocus();
@@ -160,7 +165,7 @@ describe("SiteHomePage", () => {
 
     fireEvent.click(toggle);
     const reopenedNavigation = screen.getByRole("navigation", { name: "Mobilnavigation" });
-    const reopenedLink = within(reopenedNavigation).getByRole("link", { name: "Dränering" });
+    const reopenedLink = within(reopenedNavigation).getAllByRole("link", { name: "Dränering" })[0];
     expect(reopenedLink).toHaveAttribute("href", "/dranering/");
     expect(reopenedLink).toHaveAttribute("aria-current", "page");
     expect(toggle).toHaveAttribute("aria-expanded", "true");
@@ -239,6 +244,88 @@ describe("SiteHomePage", () => {
     }
   });
 
+  it("opens the desktop Kalkyler disclosure straight to the drainage and driveway calculators", () => {
+    render(<SiteHomePage content={content} />);
+
+    const headerNav = within(screen.getByRole("banner")).getByRole("navigation", { name: "Huvudnavigation" });
+    const summary = within(headerNav).getByText(content.chrome.calcMenu.label);
+    const menu = summary.closest("details");
+
+    if (!menu) {
+      throw new Error("Missing rendered desktop Kalkyler details element");
+    }
+
+    expect(summary.tagName).toBe("SUMMARY");
+    expect(menu).not.toHaveAttribute("open");
+
+    fireEvent.click(summary);
+    expect(menu).toHaveAttribute("open");
+
+    const links = within(menu).getAllByRole("link");
+    expect(links.map((link) => link.textContent?.trim())).toEqual(["Dränering", "Uppfart"]);
+    expect(links.map((link) => link.getAttribute("href"))).toEqual(["/draneringsberakning/", "/offertberakning/#uppfart"]);
+
+    for (const link of links) {
+      const routeHrefs = content.routes.map((route) => route.href);
+      expect(routeHrefs).toContain((link.getAttribute("href") ?? "").split("#")[0]);
+    }
+  });
+
+  it("keeps the same Kalkyler calculator links inside the mobile menu disclosure", () => {
+    render(<SiteHomePage content={content} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Öppna meny" }));
+    const navigation = screen.getByRole("navigation", { name: "Mobilnavigation" });
+    const summary = within(navigation).getByText(content.chrome.calcMenu.label);
+    const menu = summary.closest("details");
+
+    if (!menu) {
+      throw new Error("Missing rendered mobile Kalkyler details element");
+    }
+
+    expect(summary.tagName).toBe("SUMMARY");
+    expect(menu).not.toHaveAttribute("open");
+
+    fireEvent.click(summary);
+    expect(menu).toHaveAttribute("open");
+
+    const links = within(menu).getAllByRole("link");
+    expect(links.map((link) => link.textContent?.trim())).toEqual(["Dränering", "Uppfart"]);
+    expect(links.map((link) => link.getAttribute("href"))).toEqual(["/draneringsberakning/", "/offertberakning/#uppfart"]);
+  });
+
+  it("marks the active calculator link inside Kalkyler and highlights the group only on calculator pages", () => {
+    const headerNav = () => within(screen.getByRole("banner")).getByRole("navigation", { name: "Huvudnavigation" });
+    const summary = () => within(headerNav()).getByText(content.chrome.calcMenu.label);
+    const menuFor = (currentSummary: HTMLElement) => {
+      const menu = currentSummary.closest("details");
+
+      if (!menu) {
+        throw new Error("Missing rendered Kalkyler details element");
+      }
+
+      return menu;
+    };
+
+    const { rerender } = render(<SiteHomePage currentPath="/draneringsberakning/" content={content} />);
+
+    const drainageMenu = menuFor(summary());
+    expect(within(drainageMenu).getByRole("link", { name: "Dränering" })).toHaveAttribute("aria-current", "page");
+    expect(within(drainageMenu).getByRole("link", { name: "Uppfart" })).not.toHaveAttribute("aria-current");
+    expect(summary()).toHaveClass("text-primary");
+
+    rerender(<SiteHomePage currentPath="/offertberakning/" content={content} />);
+
+    const drivewayMenu = menuFor(summary());
+    expect(within(drivewayMenu).getByRole("link", { name: "Uppfart" })).toHaveAttribute("aria-current", "page");
+    expect(within(drivewayMenu).getByRole("link", { name: "Dränering" })).not.toHaveAttribute("aria-current");
+    expect(summary()).toHaveClass("text-primary");
+
+    rerender(<SiteHomePage currentPath="/" content={content} />);
+
+    expect(summary()).toHaveClass("text-background/75");
+  });
+
   it("renders owner-approved home content, service, process, partner, and contact areas", () => {
     render(<SiteHomePage content={content} />);
 
@@ -284,10 +371,16 @@ describe("SiteHomePage", () => {
     render(<SiteHomePage content={content} />);
 
     const pageRoutes = content.routes.filter((route) => route.kind !== "service");
+    const headerRoutes = pageRoutes.filter((route) => route.kind !== "quote");
     const serviceRoutes = content.routes.filter((route) => route.kind === "service");
-    const headerAndFooterNav = pageRoutes.flatMap((route) =>
+    const calcLinks = content.chrome.calcMenu.links;
+    const headerNav = headerRoutes.flatMap((route) =>
       route.kind === "services"
-        ? [{ label: route.label, href: route.href }, ...serviceRoutes.map((service) => ({ label: service.label, href: service.href }))]
+        ? [
+            { label: route.label, href: route.href },
+            ...serviceRoutes.map((service) => ({ label: service.label, href: service.href })),
+            ...calcLinks.map((link) => ({ label: link.label, href: link.href })),
+          ]
         : [{ label: route.label, href: route.href }],
     );
     const renderedNav = (scope: HTMLElement) =>
@@ -296,12 +389,10 @@ describe("SiteHomePage", () => {
         .map((link) => ({ label: link.textContent?.trim(), href: link.getAttribute("href") }));
 
     const header = screen.getByRole("banner");
-    expect(renderedNav(within(header).getByRole("navigation", { name: "Huvudnavigation" }))).toEqual(
-      headerAndFooterNav,
-    );
+    expect(renderedNav(within(header).getByRole("navigation", { name: "Huvudnavigation" }))).toEqual(headerNav);
 
     fireEvent.click(screen.getByRole("button", { name: "Öppna meny" }));
-    expect(renderedNav(screen.getByRole("navigation", { name: "Mobilnavigation" }))).toEqual(headerAndFooterNav);
+    expect(renderedNav(screen.getByRole("navigation", { name: "Mobilnavigation" }))).toEqual(headerNav);
 
     const footer = screen.getByRole("contentinfo");
     expect(

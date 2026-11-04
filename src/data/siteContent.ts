@@ -384,6 +384,13 @@ export const siteContent = {
       eyebrow: "Nästa steg",
       ctaLabel: "Kontakta oss",
     },
+    calcMenu: {
+      label: "Kalkyler",
+      links: [
+        { label: "Dränering", href: "/draneringsberakning/" },
+        { label: "Uppfart", href: "/offertberakning/#uppfart" },
+      ],
+    },
     footer: {
       tagline: "Din lokala partner för mark, schakt, dränering och anläggning.",
       pageHeading: "Sidor",

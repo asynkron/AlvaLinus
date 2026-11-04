@@ -50,8 +50,9 @@ customer-facing pattern.
   the header's Tjänster links rather than as its own top-level header item; it
   renders as a dedicated service page whose drainage detail paragraph is
   declared in the service registry like every other service text.
-- `/draneringsberakning/` is a `quote` route exposed in the header, mobile
-  menu, footer, and not-found shortcuts like `/offertberakning/`. The drainage
+- `/draneringsberakning/` is a `quote` route exposed through the header and
+  mobile menu Kalkyler group, the footer, and not-found shortcuts like
+  `/offertberakning/` (`#uppfart` selects the driveway calculator). The drainage
   service page carries a registry-declared calculator link band, and the quote
   page starts with husdränering and uppfart choice buttons that lead to the
   drainage route and the reused driveway calculator. Both quotes present only

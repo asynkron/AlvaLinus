@@ -9,13 +9,18 @@ a separate customer result because it has tests.
 
 ## Entry points and current behavior
 
-All eleven routes listed in the [index](README.md) share Header. Desktop navigation
-links home, services (with five service links), about, the staffing inquiry and
-contact. The desktop
+All twelve routes listed in the [index](README.md) share Header. Desktop navigation
+links home, services (with five service links), the Kalkyler group with the two
+calculator links, about, the staffing inquiry and contact. The desktop
 Tjänster trigger is a focusable link declared with `aria-haspopup`, and its
 dropdown panel keeps the five service links in registry order; keyboard focus on
 the trigger reveals that panel through the existing `group-focus-within`
-styling. The mobile button toggles its menu. Escape from a menu descendant
+styling. The Kalkyler entry is a native `details`/`summary` disclosure from the
+registry's `chrome.calcMenu`; the focusable summary toggles the two direct
+calculator links (Dränering to `/draneringsberakning/`, Uppfart to
+`/offertberakning/#uppfart`) with keyboard or pointer activation. The mobile
+button toggles its menu, which nests the same Kalkyler disclosure and the
+calculator links after the service links. Escape from a menu descendant
 or the focused toggle closes an open menu and returns focus to the toggle;
 the menu can reopen.
 Tab/Shift+Tab events are not cancelled; Escape elsewhere in the header leaves
@@ -29,7 +34,8 @@ Swedish label, href and link order is declared once in
 [typed content](../../src/data/siteContent.ts), and adding or renaming a route
 there updates every header and footer link without parallel markup edits. The
 registry order is the link order; the renderer only groups the five service
-detail routes under the Tjänster entry.
+detail routes under the Tjänster entry and the two quote routes under the
+Kalkyler disclosure, while the footer keeps the full page list.
 
 The decorative hero photographs on home and subpages are requested at high
 fetch priority without a lazy-loading attribute, so above-the-fold rendering is

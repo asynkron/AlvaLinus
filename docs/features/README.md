@@ -23,7 +23,7 @@ or analytics runs inside the site.
 
 ## Route and subsection reconciliation
 
-The route registry has **eleven** active routes. `inventory.pageCount = 58` is a
+The route registry has **twelve** active routes. `inventory.pageCount = 58` is a
 historical inventory number, not a count of active pages. The
 `inventory.primaryRoutes` shortcuts are a subset; header (desktop and mobile)
 and footer navigation derive their page and service links from the same typed
@@ -42,6 +42,8 @@ there too. The renderer is the authority for visible sections.
 | `/om-oss/` | [F2-US1](user-stories/F2/F2-US1.md) | Hero and breadcrumb; company paragraphs; contact link band; footer. |
 | `/inhyrning/` | [F5-US1](user-stories/F5/F5-US1.md), [F5-US2](user-stories/F5/F5-US2.md) | Hero and breadcrumb; staffing inquiry form with Swedish validation, VAT note and mail-draft handoff; guidance aside; footer. |
 | `/kontakt/` | [F3-US1](user-stories/F3/F3-US1.md), [F3-US2](user-stories/F3/F3-US2.md) | Hero; quote/site-visit prompt; email address; native form; footer. |
+| `/offertberakning/` | [F4-US1](user-stories/F4/F4-US1.md) | Hero; breadcrumb; calculator choice (`#uppfart` selects the driveway calculator) with preliminary total and email handoff; footer. |
+| `/draneringsberakning/` | [F4-US1](user-stories/F4/F4-US1.md) | Hero; breadcrumb; drainage length calculator with preliminary total, email handoff and print; footer. |
 | Keyboard bypass on all rendered states | [F4-US3](user-stories/F4/F4-US3.md) | Hoppa till innehåll precedes Header and points to one #content target; ready bodies have tabindex=-1, availability sections do not. |
 | Shared empty/not-found | [F4-US2](user-stories/F4/F4-US2.md) | Header remains; the empty-services message replaces the service-dependent home/index bodies; ready not-found provides declared-route shortcuts and footer. |
 
