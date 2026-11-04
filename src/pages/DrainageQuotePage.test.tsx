@@ -16,45 +16,42 @@ function decodedEmailHref(): string {
 }
 
 describe("DrainageQuotePage", () => {
-  it("presents the approved example with example prices marked as an estimate, not a binding quote", () => {
+  it("presents the drainage estimate without internal prices or part amounts", () => {
     render(<DrainageQuotePage />);
 
     expect(screen.getByRole("heading", { name: "Vad kostar din dränering?", level: 1 })).toBeInTheDocument();
-    expect(screen.getByText(/Exempelpriser inklusive moms/)).toBeInTheDocument();
-    expect(screen.getByText(/Totalt 4 500 kr per löpmeter/)).toBeInTheDocument();
-    expect(screen.getByText("Preliminärt underlag · exempelpriser")).toBeInTheDocument();
-    expect(screen.getByText(/inte en bindande offert/)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Husdränering" })).toBeInTheDocument();
+    expect(screen.getByText("Preliminärt underlag")).toBeInTheDocument();
     expect(screen.getByText(/Det här ingår/)).toBeInTheDocument();
+    expect(screen.getByText(/Etablering och schaktning längs husgrund/)).toBeInTheDocument();
+    expect(screen.getByText("Momsstatus ej bekräftad")).toBeInTheDocument();
+    expect(screen.getByText(/inte en bindande offert/)).toBeInTheDocument();
     expect(screen.getByText(/Öppnar ditt e-postprogram. Inget skickas automatiskt./)).toBeInTheDocument();
+
+    expect(screen.queryByText(/Priser och beräkningsgrund/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/kr\/m/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Schakt och markarbete/)).not.toBeInTheDocument();
+    expect(document.querySelector(".quote-lines")).toBeNull();
+    expect(document.querySelector(".quote-prices")).toBeNull();
   });
 
-  it("recalculates part amounts and the preliminary total per löpmeter into the email handoff", () => {
+  it.each([
+    { meters: "40", expected: 146900 },
+    { meters: "55", expected: 199400 },
+    { meters: "60", expected: 214400 },
+  ])("calculates $meters löpmeter to $expected kr on the page and in the email", ({ meters, expected }) => {
     render(<DrainageQuotePage />);
-    fireEvent.change(lengthInput(), { target: { value: "25" } });
+    fireEvent.change(lengthInput(), { target: { value: meters } });
+
+    expect(screen.getByText(money(expected))).toBeInTheDocument();
 
     const href = decodedEmailHref();
 
-    expect(href).toContain("Offertförfrågan – dränering");
-    expect(href).toContain("Längd: 25 löpmeter");
-    expect(href).toContain(`Schakt och markarbete: ${money(25 * 2125)}`);
-    expect(href).toContain(`Dränering och fuktskydd: ${money(25 * 1750)}`);
-    expect(href).toContain(`Återfyllning och borttransport: ${money(25 * 625)}`);
-    expect(href).toContain(`Preliminär summa: ${money(112500)} inklusive moms`);
-    expect(href).toContain("Exempelpriser och omfattning behöver bekräftas");
-  });
-
-  it("shows the calculated part amounts and total on the page", () => {
-    render(<DrainageQuotePage />);
-    fireEvent.change(lengthInput(), { target: { value: "25" } });
-
-    expect(screen.getByText(`25 m × ${money(2125)}`)).toBeInTheDocument();
-    expect(screen.getByText(money(25 * 2125))).toBeInTheDocument();
-    expect(screen.getByText(`25 m × ${money(1750)}`)).toBeInTheDocument();
-    expect(screen.getByText(money(25 * 1750))).toBeInTheDocument();
-    expect(screen.getByText(`25 m × ${money(625)}`)).toBeInTheDocument();
-    expect(screen.getByText(money(25 * 625))).toBeInTheDocument();
-    expect(screen.getByText(money(112500))).toBeInTheDocument();
-    expect(screen.getByText("Inklusive moms")).toBeInTheDocument();
+    expect(href).toContain("Offertförfrågan – husdränering");
+    expect(href).toContain(`Längd: ${meters} löpmeter`);
+    expect(href).toContain(`Preliminär summa: ${money(expected)} (momsstatus ej bekräftad)`);
+    expect(href).toContain("Omfattning behöver bekräftas");
+    expect(href).not.toMatch(/kr\/m|Schakt och markarbete/);
   });
 
   it("supports decimal lengths and keeps the same precision in the email", () => {
@@ -64,8 +61,8 @@ describe("DrainageQuotePage", () => {
     const href = decodedEmailHref();
 
     expect(href).toContain("Längd: 40,5 löpmeter");
-    expect(href).toContain(`Preliminär summa: ${money(40.5 * 4500)} inklusive moms`);
-    expect(screen.getByText(money(40.5 * 4500))).toBeInTheDocument();
+    expect(href).toContain(`Preliminär summa: ${money(148650)} (momsstatus ej bekräftad)`);
+    expect(screen.getByText(money(148650))).toBeInTheDocument();
   });
 
   it.each(["", "0", "-5", "100001"])("blocks the invalid length %s without a misleading result", (invalid) => {
@@ -95,10 +92,10 @@ describe("DrainageQuotePage", () => {
     fireEvent.change(lengthInput(), { target: { value: "10" } });
 
     expect(liveRegion).toHaveTextContent("Beräknad totalsumma");
-    expect(liveRegion).toHaveTextContent(money(45000));
+    expect(liveRegion).toHaveTextContent(money(41900));
   });
 
-  it("restores the approved example and clears the project description", () => {
+  it("restores the example and clears the project description", () => {
     render(<DrainageQuotePage />);
     fireEvent.change(lengthInput(), { target: { value: "-5" } });
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "Villa i Örebro" } });
@@ -111,5 +108,14 @@ describe("DrainageQuotePage", () => {
     expect(screen.getByRole("textbox")).toHaveValue("");
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect(decodedEmailHref()).toContain("Längd: 40 löpmeter");
+    expect(decodedEmailHref()).toContain(`Preliminär summa: ${money(146900)}`);
+  });
+
+  it("links visitors with a driveway project back to the quote calculator", () => {
+    render(<DrainageQuotePage />);
+
+    const link = screen.getByRole("link", { name: "Räkna på uppfart" });
+
+    expect(link).toHaveAttribute("href", "/offertberakning/");
   });
 });
