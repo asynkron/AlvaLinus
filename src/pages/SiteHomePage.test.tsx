@@ -721,7 +721,7 @@ describe("SiteHomePage", () => {
     const { rerender } = render(<SiteHomePage content={content} />);
 
     const nav = within(screen.getByRole("banner")).getByRole("navigation", { name: "Huvudnavigation" });
-    const inquiryLink = within(nav).getByRole("link", { name: "För företag" });
+    const inquiryLink = within(nav).getByRole("link", { name: "Inhyrning" });
     expect(inquiryLink).toHaveAttribute("href", "/inhyrning/");
     const omOssLink = within(nav).getByRole("link", { name: "Om oss" });
     expect(inquiryLink.compareDocumentPosition(omOssLink) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();

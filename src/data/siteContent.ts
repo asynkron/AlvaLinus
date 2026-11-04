@@ -65,7 +65,7 @@ export const siteContent = {
     {
       id: "inhyrning",
       kind: "inquiry",
-      label: "För företag",
+      label: "Inhyrning",
       href: "/inhyrning/",
       summary: "Förfrågan för företag som söker inhyrd hjälp med F-skattad personal.",
       heroPhotoAssetPath: "/page-visuals/inhyrning-hero.svg",
