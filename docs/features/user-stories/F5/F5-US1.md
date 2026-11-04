@@ -9,11 +9,11 @@ As a company representative, I want to enter company details, needed help, offer
 ## Preconditions
 
 - The /inhyrning/ route document has loaded.
-- The typed Inhyrning route is declared in the registry.
+- The typed För företag route is declared in the registry.
 
 ## Flow
 
-1. Open /inhyrning/ from the header Inhyrning link (desktop, mobile or footer) or a not-found shortcut.
+1. Open /inhyrning/ from the header För företag link (desktop, mobile or footer) or a not-found shortcut.
 2. Read Söker ni en F-skattare? and the En tydlig start aside.
 3. Enter Företagets namn, Kontaktperson and E-post; Telefon and Organisationsnummer are optional.
 4. Enter what help is needed, the offered hourly rate and how long the assignment runs.

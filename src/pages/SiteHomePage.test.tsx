@@ -721,10 +721,10 @@ describe("SiteHomePage", () => {
     const { rerender } = render(<SiteHomePage content={content} />);
 
     const nav = within(screen.getByRole("banner")).getByRole("navigation", { name: "Huvudnavigation" });
-    const inquiryLink = within(nav).getByRole("link", { name: "Inhyrning" });
+    const inquiryLink = within(nav).getByRole("link", { name: "För företag" });
     expect(inquiryLink).toHaveAttribute("href", "/inhyrning/");
     const omOssLink = within(nav).getByRole("link", { name: "Om oss" });
-    expect(omOssLink.compareDocumentPosition(inquiryLink) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(inquiryLink.compareDocumentPosition(omOssLink) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
 
     rerender(<SiteHomePage currentPath="/inhyrning/" content={content} />);
 

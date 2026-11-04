@@ -263,7 +263,7 @@ export function InquiryPage({ openDraft = openDefaultMailDraft }: InquiryPagePro
             <span className="inquiry-crumb-separator" aria-hidden="true">
               /
             </span>
-            <span>Inhyrning</span>
+            <span>För företag</span>
           </nav>
           <h1>Söker ni en F-skattare?</h1>
           <p>Berätta om ert företag och uppdrag, så får vi ett bra underlag för att återkomma till er.</p>
