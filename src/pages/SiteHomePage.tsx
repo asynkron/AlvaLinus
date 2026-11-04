@@ -81,16 +81,22 @@ export function SiteHomePage({ currentPath = "/", inquiryServiceId, content = si
 
 // Header (desktop and mobile) and footer navigation derive from the typed
 // route registry in src/data/siteContent.ts: each destination's Swedish label,
-// href and order is declared once in that registry, and these views select the
-// page-level routes and the service detail routes from it.
+// href and order is declared once in that registry. The header and mobile menu
+// render the page routes except the calculator pages, which the registry's
+// chrome.calcMenu groups under a Kalkyler disclosure; the footer keeps the
+// full page route list.
 const PAGE_NAV: readonly SiteRoute[] = siteContent.routes.filter((route) => route.kind !== "service");
+const HEADER_PAGE_NAV: readonly SiteRoute[] = PAGE_NAV.filter((route) => route.kind !== "quote");
 const SERVICE_NAV: readonly SiteRoute[] = siteContent.routes.filter((route) => route.kind === "service");
+const CALC_MENU = siteContent.chrome.calcMenu;
 
 const SERVICE_PATHS = new Set(
   siteContent.routes
     .filter((route) => route.kind === "services" || route.kind === "service")
     .map((route) => normalizePath(route.href)),
 );
+
+const CALC_MENU_PATHS = new Set(CALC_MENU.links.map((link) => normalizePath(link.href)));
 
 function Header({ currentPath = "/", brand }: { readonly currentPath?: string; readonly brand: SiteBrand }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -118,47 +124,50 @@ function Header({ currentPath = "/", brand }: { readonly currentPath?: string; r
           <span className="sr-only">{brand.name}</span>
         </a>
         <nav aria-label="Huvudnavigation" className="hidden items-center gap-6 text-sm font-medium md:flex">
-          {PAGE_NAV.map((route) => {
+          {HEADER_PAGE_NAV.map((route) => {
             const isActive = normalizePath(route.href) === active;
 
             if (route.kind === "services") {
               return (
-                <div key={route.href} className="group relative">
-                  <a
-                    className={`inline-flex items-center gap-1 ${
-                      servicesActive ? "text-primary" : "text-background/75 transition-colors hover:text-primary"
-                    }`}
-                    aria-current={isActive ? "page" : undefined}
-                    aria-haspopup="true"
-                    href={route.href}
-                  >
-                    {route.label}
-                    <ChevronDown
-                      className="h-4 w-4 transition-transform group-hover:rotate-180 group-focus-within:rotate-180"
-                      aria-hidden="true"
-                    />
-                  </a>
-                  <div className="invisible absolute left-1/2 top-full z-40 w-56 -translate-x-1/2 pt-3 opacity-0 transition-opacity group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-                    <div className="overflow-hidden rounded-lg border bg-card py-1 text-foreground shadow-soft">
-                      {SERVICE_NAV.map((service) => {
-                        const serviceActive = normalizePath(service.href) === active;
+                <Fragment key={route.href}>
+                  <div className="group relative">
+                    <a
+                      className={`inline-flex items-center gap-1 ${
+                        servicesActive ? "text-primary" : "text-background/75 transition-colors hover:text-primary"
+                      }`}
+                      aria-current={isActive ? "page" : undefined}
+                      aria-haspopup="true"
+                      href={route.href}
+                    >
+                      {route.label}
+                      <ChevronDown
+                        className="h-4 w-4 transition-transform group-hover:rotate-180 group-focus-within:rotate-180"
+                        aria-hidden="true"
+                      />
+                    </a>
+                    <div className="invisible absolute left-1/2 top-full z-40 w-56 -translate-x-1/2 pt-3 opacity-0 transition-opacity group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                      <div className="overflow-hidden rounded-lg border bg-card py-1 text-foreground shadow-soft">
+                        {SERVICE_NAV.map((service) => {
+                          const serviceActive = normalizePath(service.href) === active;
 
-                        return (
-                          <a
-                            key={service.href}
-                            className={`block px-4 py-2 text-sm transition-colors hover:bg-secondary ${
-                              serviceActive ? "font-semibold text-primary" : "text-foreground"
-                            }`}
-                            aria-current={serviceActive ? "page" : undefined}
-                            href={service.href}
-                          >
-                            {service.label}
-                          </a>
-                        );
-                      })}
+                          return (
+                            <a
+                              key={service.href}
+                              className={`block px-4 py-2 text-sm transition-colors hover:bg-secondary ${
+                                serviceActive ? "font-semibold text-primary" : "text-foreground"
+                              }`}
+                              aria-current={serviceActive ? "page" : undefined}
+                              href={service.href}
+                            >
+                              {service.label}
+                            </a>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
-                </div>
+                  <CalcMenu variant="desktop" activePath={active} />
+                </Fragment>
               );
             }
 
@@ -194,7 +203,7 @@ function Header({ currentPath = "/", brand }: { readonly currentPath?: string; r
           className="border-t border-background/10 px-5 pb-4 pt-2 sm:px-8 md:hidden"
           onKeyDown={handleMenuKeyDown}
         >
-          {PAGE_NAV.map((route) => {
+          {HEADER_PAGE_NAV.map((route) => {
             const isActive = normalizePath(route.href) === active;
 
             return (
@@ -209,24 +218,27 @@ function Header({ currentPath = "/", brand }: { readonly currentPath?: string; r
                   {route.label}
                 </a>
                 {route.kind === "services" ? (
-                  <div className="ml-3 border-l border-background/15 pl-3">
-                    {SERVICE_NAV.map((service) => {
-                      const serviceActive = normalizePath(service.href) === active;
+                  <>
+                    <div className="ml-3 border-l border-background/15 pl-3">
+                      {SERVICE_NAV.map((service) => {
+                        const serviceActive = normalizePath(service.href) === active;
 
-                      return (
-                        <a
-                          key={service.href}
-                          className={`block rounded-md px-3 py-2 text-sm transition-colors ${
-                            serviceActive ? "bg-background/10 text-primary" : "text-background/70 hover:bg-background/10"
-                          }`}
-                          aria-current={serviceActive ? "page" : undefined}
-                          href={service.href}
-                        >
-                          {service.label}
-                        </a>
-                      );
-                    })}
-                  </div>
+                        return (
+                          <a
+                            key={service.href}
+                            className={`block rounded-md px-3 py-2 text-sm transition-colors ${
+                              serviceActive ? "bg-background/10 text-primary" : "text-background/70 hover:bg-background/10"
+                            }`}
+                            aria-current={serviceActive ? "page" : undefined}
+                            href={service.href}
+                          >
+                            {service.label}
+                          </a>
+                        );
+                      })}
+                    </div>
+                    <CalcMenu variant="mobile" activePath={active} />
+                  </>
                 ) : null}
               </Fragment>
             );
@@ -234,6 +246,60 @@ function Header({ currentPath = "/", brand }: { readonly currentPath?: string; r
         </nav>
       ) : null}
     </header>
+  );
+}
+
+function CalcMenu({ variant, activePath }: { readonly variant: "desktop" | "mobile"; readonly activePath: string }) {
+  const groupActive = CALC_MENU_PATHS.has(activePath);
+  const desktop = variant === "desktop";
+
+  return (
+    <details className="group relative">
+      <summary
+        className={`cursor-pointer list-none [&::-webkit-details-marker]:hidden ${
+          desktop
+            ? `inline-flex items-center gap-1 ${
+                groupActive ? "text-primary" : "text-background/75 transition-colors hover:text-primary"
+              }`
+            : `flex w-full items-center gap-1 rounded-md px-3 py-3 text-base font-medium ${
+                groupActive ? "bg-background/10 text-primary" : "text-background/80 hover:bg-background/10"
+              }`
+        }`}
+      >
+        {CALC_MENU.label}
+        <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" aria-hidden="true" />
+      </summary>
+      <div
+        className={
+          desktop ? "absolute left-1/2 top-full z-40 w-56 -translate-x-1/2 pt-3" : "ml-3 border-l border-background/15 pl-3"
+        }
+      >
+        <div className={desktop ? "overflow-hidden rounded-lg border bg-card py-1 text-foreground shadow-soft" : undefined}>
+          {CALC_MENU.links.map((link) => {
+            const linkActive = normalizePath(link.href) === activePath;
+
+            return (
+              <a
+                key={link.href}
+                aria-current={linkActive ? "page" : undefined}
+                href={link.href}
+                className={
+                  desktop
+                    ? `block px-4 py-2 text-sm transition-colors hover:bg-secondary ${
+                        linkActive ? "font-semibold text-primary" : "text-foreground"
+                      }`
+                    : `block rounded-md px-3 py-2 text-sm transition-colors ${
+                        linkActive ? "bg-background/10 text-primary" : "text-background/70 hover:bg-background/10"
+                      }`
+                }
+              >
+                {link.label}
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </details>
   );
 }
 

@@ -108,6 +108,11 @@ export type SiteBreadcrumb = {
   readonly homeLabel: string;
 };
 
+export type SiteCalcMenu = {
+  readonly label: string;
+  readonly links: readonly SiteLink[];
+};
+
 export type SiteChrome = {
   readonly brand: SiteBrand;
   readonly breadcrumb: SiteBreadcrumb;
@@ -115,6 +120,7 @@ export type SiteChrome = {
     readonly eyebrow: string;
     readonly ctaLabel: string;
   };
+  readonly calcMenu: SiteCalcMenu;
   readonly footer: {
     readonly tagline: string;
     readonly pageHeading: string;
