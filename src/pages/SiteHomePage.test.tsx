@@ -815,7 +815,7 @@ describe("SiteHomePage", () => {
     const inquiryLink = within(nav).getByRole("link", { name: "Inhyrning" });
     expect(inquiryLink).toHaveAttribute("href", "/inhyrning/");
     const omOssLink = within(nav).getByRole("link", { name: "Om oss" });
-    expect(omOssLink.compareDocumentPosition(inquiryLink) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(inquiryLink.compareDocumentPosition(omOssLink) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
 
     rerender(<SiteHomePage currentPath="/inhyrning/" content={content} />);
 

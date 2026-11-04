@@ -63,6 +63,19 @@ export const siteContent = {
       },
     },
     {
+      id: "inhyrning",
+      kind: "inquiry",
+      label: "Inhyrning",
+      href: "/inhyrning/",
+      summary: "Förfrågan för företag som söker inhyrd hjälp med F-skattad personal.",
+      heroPhotoAssetPath: "/page-visuals/inhyrning-hero.svg",
+      visual: {
+        assetPath: "/page-visuals/svard-entreprenad-inhyrning.svg",
+        alt: "Företagsförfrågan om inhyrd personal med uppdragsbeskrivning och timpris",
+        intent: "Kopplar inhyrningssidan till företag som söker F-skattad hjälp med tydliga uppdragsuppgifter.",
+      },
+    },
+    {
       id: "about",
       kind: "about",
       label: "Om oss",
@@ -74,19 +87,6 @@ export const siteContent = {
         assetPath: "/page-visuals/svard-entreprenad-about.svg",
         alt: "Arbetslag som planerar ett markprojekt vid arbetsplatsen",
         intent: "Stärker berättelsen om ansvar, erfarenhet och tydlig arbetsprocess.",
-      },
-    },
-    {
-      id: "inhyrning",
-      kind: "inquiry",
-      label: "Inhyrning",
-      href: "/inhyrning/",
-      summary: "Förfrågan för företag som söker inhyrd hjälp med F-skattad personal.",
-      heroPhotoAssetPath: "/page-visuals/inhyrning-hero.svg",
-      visual: {
-        assetPath: "/page-visuals/svard-entreprenad-inhyrning.svg",
-        alt: "Företagsförfrågan om inhyrd personal med uppdragsbeskrivning och timpris",
-        intent: "Kopplar inhyrningssidan till företag som söker F-skattad hjälp med tydliga uppdragsuppgifter.",
       },
     },
     {

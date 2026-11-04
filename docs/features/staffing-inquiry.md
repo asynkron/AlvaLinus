@@ -9,7 +9,7 @@ read; the visitor reviews and sends the prepared draft themselves.
 ## Entry points and current behavior
 
 `/inhyrning/` renders a dedicated page whose header link (desktop, mobile and
-footer) is the typed `Inhyrning` route declared in
+footer) is the typed `Inhyrning` route (id `inhyrning`) declared in
 [siteContent](../../src/data/siteContent.ts); unknown routes expose the same
 destination through the not-found shortcuts. The page hero carries the
 breadcrumb Hem / Inhyrning, the heading "Söker ni en F-skattare?" and an intro
