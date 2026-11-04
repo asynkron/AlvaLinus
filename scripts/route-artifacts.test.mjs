@@ -918,10 +918,11 @@ describe("assertRouteVisualAssets", () => {
 });
 
 describe("siteContent route registry", () => {
-  it("declares ten canonical routes with unique subpage destinations and visuals", () => {
-    expect(siteContent.routes).toHaveLength(10);
+  it("declares eleven canonical routes with unique subpage destinations and visuals", () => {
+    expect(siteContent.routes).toHaveLength(11);
     expect(staticSubpagePaths(siteContent.routes)).toEqual([
       "/offertberakning/",
+      "/draneringsberakning/",
       "/tjanster/",
       "/om-oss/",
       "/stensattning/",
@@ -933,13 +934,14 @@ describe("siteContent route registry", () => {
     ]);
 
     const assetPaths = routeVisualAssetPaths(siteContent.routes);
-    expect(assetPaths).toHaveLength(10);
+    expect(assetPaths).toHaveLength(11);
     expect(new Set(assetPaths).size).toBe(assetPaths.length);
   });
 
   it("declares one registry-owned hero photo per route for the rendered hero and the stamped preload", () => {
     const expectedHeroPhotosByRoute = new Map([
       ["quote", "/page-visuals/quote-hero.png"],
+      ["drainage-quote", "/page-visuals/draneringsberakning-hero.webp"],
       ["home", "/page-visuals/hero-photo.webp"],
       ["services", "/page-visuals/services-hero.webp"],
       ["about", "/page-visuals/about-hero.webp"],
@@ -951,13 +953,13 @@ describe("siteContent route registry", () => {
       ["contact", "/page-visuals/contact-hero.webp"],
     ]);
 
-    expect(new Set(siteContent.routes.map((route) => route.heroPhotoAssetPath)).size).toBe(10);
+    expect(new Set(siteContent.routes.map((route) => route.heroPhotoAssetPath)).size).toBe(11);
 
     for (const route of siteContent.routes) {
       expect(routeHeroPreloadHref(route)).toBe(expectedHeroPhotosByRoute.get(route.id));
     }
 
-    expect(routeHeroPreloadHref(siteContent.routes[1])).toBe("/page-visuals/hero-photo.webp");
+    expect(routeHeroPreloadHref(siteContent.routes.find((route) => route.id === "home"))).toBe("/page-visuals/hero-photo.webp");
   });
 
   it("derives page metadata from every declared subpage's Swedish label and summary", () => {
@@ -968,9 +970,9 @@ describe("siteContent route registry", () => {
       });
     }
 
-    expect(routePageMetadata(siteContent.routes[2])).toEqual({
+    expect(routePageMetadata(siteContent.routes.find((route) => route.id === "services"))).toEqual({
       title: "Tjänster – Svärd Entreprenad",
-      description: siteContent.routes[2].summary,
+      description: siteContent.routes.find((route) => route.id === "services").summary,
     });
   });
 
@@ -1003,7 +1005,7 @@ describe("siteContent route registry", () => {
 
     const staleSocialEntries = {
       ...entries,
-      [subpageArtifactPath("dist", "/tjanster/")]: subpageHtmlWithRootSocialTags(siteContent.routes[1]),
+      [subpageArtifactPath("dist", "/tjanster/")]: subpageHtmlWithRootSocialTags(siteContent.routes.find((route) => route.id === "services")),
     };
 
     await expect(

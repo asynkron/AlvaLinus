@@ -1,6 +1,6 @@
 # Current Public Route Inventory
 
-Checked: 2026-10-31
+Checked: 2026-11-04
 
 Source of truth:
 
@@ -25,7 +25,8 @@ customer-facing pattern.
 | Route | Page purpose | Visible sections | Current page-specific visual asset |
 | --- | --- | --- | --- |
 | `/` | Startsida with an overview of services, work process, trust signals, and quote contact. | Header; hero; service overview inventory; services cards; process steps; trust signals; contact section; footer. | `/page-visuals/svard-entreprenad-home.svg` for the overall mark and construction first impression. |
-| `/offertberakning/` | Interactive quote estimate with email handoff. | Header; calculator; footer. | `/page-visuals/svard-entreprenad-quote.svg` for measured project area. |
+| `/offertberakning/` | Quote start page with a husdränering and uppfart calculator choice, a preliminary total, and email handoff. | Header; calculator choice or driveway calculator; footer. | `/page-visuals/svard-entreprenad-quote.svg` for measured project area. |
+| `/draneringsberakning/` | Interactive drainage quote estimate per linear meter with a preliminary total, email handoff, and print/PDF. | Header; calculator; footer. | `/page-visuals/svard-entreprenad-draneringsberakning.svg` for the measured drainage length around the foundation. |
 | `/tjanster/` | Services index for the main mark, building, and construction service areas. | Header; page hero; services cards; trust signals; contact link band. | `/page-visuals/svard-entreprenad-services.svg` for the combined services overview. |
 | `/om-oss/` | About page describing work approach, experience, responsibility, and delivery from first dig to finished result. | Header; page hero; about content; contact link band. | `/page-visuals/svard-entreprenad-about.svg` for work planning, responsibility, and process context. |
 | `/stensattning/` | Dedicated service page for paving, stone surfaces, and stone walls. | Header; page hero; service detail section; service tags; "Nar tjansten passar" aside; process steps; contact link band. | `/page-visuals/svard-entreprenad-stensattning.svg` for paving, stone surfaces, and finish. |
@@ -48,6 +49,13 @@ customer-facing pattern.
   the header's Tjänster links rather than as its own top-level header item; it
   renders as a dedicated service page whose drainage detail paragraph is
   declared in the service registry like every other service text.
+- `/draneringsberakning/` is a `quote` route exposed in the header, mobile
+  menu, footer, and not-found shortcuts like `/offertberakning/`. The drainage
+  service page carries a registry-declared calculator link band, and the quote
+  page starts with husdränering and uppfart choice buttons that lead to the
+  drainage route and the reused driveway calculator. Both quotes present only
+  a preliminary total; internal prices, unit prices, and part amounts stay out
+  of the customer view, printout, and email.
 - Service pages no longer render external source links, and the contact page no
   longer includes a dedicated source-only contact entry. Future source
   references should stay in documentation or editorial tooling rather than
@@ -58,5 +66,7 @@ customer-facing pattern.
 - Partners is conditionally available on home and the services index but is
   currently omitted because the configured list is empty. Both ready pages
   include the shared footer; the services index also has a breadcrumb hero.
-- The source-backed [feature catalog](features/README.md) maps these nine
-  routes, their shared states and subsections to visitor outcomes and stories.
+- The source-backed [feature catalog](features/README.md) maps the nine
+  non-quote routes in this inventory, their shared states and subsections to
+  visitor outcomes and stories; both interactive quote calculators are outside
+  the cataloged feature set.

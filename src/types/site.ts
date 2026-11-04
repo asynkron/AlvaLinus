@@ -40,6 +40,15 @@ export type ServiceArea = {
   readonly photoSrc?: string;
   readonly href: string;
   readonly tags: readonly string[];
+  readonly quoteCalculator?: ServiceQuoteCalculator;
+};
+
+export type ServiceQuoteCalculator = {
+  readonly href: string;
+  readonly eyebrow: string;
+  readonly heading: string;
+  readonly description: string;
+  readonly cta: string;
 };
 
 export type ProcessStep = {

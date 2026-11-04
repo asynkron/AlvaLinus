@@ -23,8 +23,18 @@ export const siteContent = {
     {
       id: "quote", kind: "quote", label: "Offertberäkning", href: "/offertberakning/",
       heroPhotoAssetPath: "/page-visuals/quote-hero.png",
-      summary: "Preliminär kostnadsberäkning för asfalterad uppfart med redigerbara exempelpriser.",
+      summary: "Välj kalkyl för husdränering eller uppfart och få en preliminär totalsumma att prata vidare om.",
       visual: { assetPath: "/page-visuals/svard-entreprenad-quote.svg", alt: "Måttsatt uppfart", intent: "Visar ytan som ligger till grund för kalkylen." },
+    },
+    {
+      id: "drainage-quote", kind: "quote", label: "Dräneringsberäkning", href: "/draneringsberakning/",
+      heroPhotoAssetPath: "/page-visuals/draneringsberakning-hero.webp",
+      summary: "Preliminär dräneringskalkyl per löpmeter med direkt totalsumma och e-postförfrågan.",
+      visual: {
+        assetPath: "/page-visuals/svard-entreprenad-draneringsberakning.svg",
+        alt: "Uppmätt dräneringslängd runt husgrund med schakt och rör",
+        intent: "Visar löpmeterlängden som ligger till grund för dräneringskalkylen.",
+      },
     },
     {
       id: "home",
@@ -227,6 +237,14 @@ export const siteContent = {
       photoSrc: "/page-visuals/dranering-photo.webp",
       href: "/dranering/",
       tags: ["Dränering", "Mur", "Fuktskydd"],
+      quoteCalculator: {
+        href: "/draneringsberakning/",
+        eyebrow: "Kostnadsberäkning",
+        heading: "Räkna på din dränering",
+        description:
+          "Ange dräneringens längd i löpmeter och få direkt en preliminär totalsumma.",
+        cta: "Öppna dräneringsberäkningen",
+      },
     },
     {
       id: "tradgard",
