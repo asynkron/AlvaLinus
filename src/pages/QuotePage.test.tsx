@@ -22,4 +22,9 @@ describe("QuotePage", () => {
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect(screen.getByRole("spinbutton", { name: /Antal lass/ })).toHaveValue(1);
   });
+  it("links visitors with a drainage project to the drainage calculator", () => {
+    render(<QuotePage />);
+    const link = screen.getByRole("link", { name: "Räkna på dränering" });
+    expect(link).toHaveAttribute("href", "/draneringsberakning/");
+  });
 });

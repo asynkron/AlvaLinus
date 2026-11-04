@@ -19,9 +19,10 @@ import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { siteContent } from "../data/siteContent";
 import { inquiryContactHref, resolveInquiryServiceOption } from "../lib/inquiry-service";
-import type { ServiceArea, SiteBreadcrumb, SiteBrand, SiteContent, SiteRoute } from "../types/site";
+import type { ServiceArea, ServiceQuoteCalculator, SiteBreadcrumb, SiteBrand, SiteContent, SiteRoute } from "../types/site";
 
 const QuotePage = lazy(() => import("./QuotePage").then((module) => ({ default: module.QuotePage })));
+const DrainageQuotePage = lazy(() => import("./DrainageQuotePage").then((module) => ({ default: module.DrainageQuotePage })));
 
 const HERO_PHOTO_SRC = "/page-visuals/hero-photo.webp";
 
@@ -303,7 +304,9 @@ function RoutedPage({
 }) {
 
   if (route.kind === "quote") {
-    return <><Suspense fallback={<p role="status" className="px-5 py-16">Laddar offertberäkningen…</p>}><QuotePage /></Suspense><Footer content={content} /></>;
+    const QuoteView = route.id === "drainage-quote" ? DrainageQuotePage : QuotePage;
+
+    return <><Suspense fallback={<p role="status" className="px-5 py-16">Laddar offertberäkningen…</p>}><QuoteView /></Suspense><Footer content={content} /></>;
   }
   if (route.kind === "services") {
     return <ServicesIndexPage content={content} route={route} />;
@@ -488,8 +491,31 @@ function ServicePage({
         </aside>
       </section>
       <Process content={content} />
+      {service.quoteCalculator ? <QuoteCalculatorBand calculator={service.quoteCalculator} /> : null}
       <ContactLinkBand content={content} serviceId={service.id} />
     </>
+  );
+}
+
+function QuoteCalculatorBand({ calculator }: { readonly calculator: ServiceQuoteCalculator }) {
+  return (
+    <section aria-label={calculator.heading} className="border-y bg-secondary">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-5 py-12 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-10">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">
+            {calculator.eyebrow}
+          </p>
+          <h2 className="mt-2 font-display text-2xl font-bold tracking-wide text-foreground">{calculator.heading}</h2>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">{calculator.description}</p>
+        </div>
+        <Button asChild size="lg" className="shrink-0">
+          <a href={calculator.href}>
+            {calculator.cta}
+            <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+          </a>
+        </Button>
+      </div>
+    </section>
   );
 }
 

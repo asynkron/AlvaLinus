@@ -27,6 +27,16 @@ export const siteContent = {
       visual: { assetPath: "/page-visuals/svard-entreprenad-quote.svg", alt: "Måttsatt uppfart", intent: "Visar ytan som ligger till grund för kalkylen." },
     },
     {
+      id: "drainage-quote", kind: "quote", label: "Dräneringsberäkning", href: "/draneringsberakning/",
+      heroPhotoAssetPath: "/page-visuals/draneringsberakning-hero.webp",
+      summary: "Preliminär dräneringskalkyl per löpmeter med tydliga exempelpriser och e-postförfrågan.",
+      visual: {
+        assetPath: "/page-visuals/svard-entreprenad-draneringsberakning.svg",
+        alt: "Uppmätt dräneringslängd runt husgrund med schakt och rör",
+        intent: "Visar löpmeterlängden som ligger till grund för dräneringskalkylen.",
+      },
+    },
+    {
       id: "home",
       kind: "home",
       label: "Hem",
@@ -227,6 +237,14 @@ export const siteContent = {
       photoSrc: "/page-visuals/dranering-photo.webp",
       href: "/dranering/",
       tags: ["Dränering", "Mur", "Fuktskydd"],
+      quoteCalculator: {
+        href: "/draneringsberakning/",
+        eyebrow: "Kostnadsberäkning",
+        heading: "Räkna på din dränering",
+        description:
+          "Ange dräneringens längd i löpmeter och få direkt en preliminär kostnadsbild med tydliga exempelpriser.",
+        cta: "Öppna dräneringsberäkningen",
+      },
     },
     {
       id: "tradgard",

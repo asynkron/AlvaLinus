@@ -387,6 +387,7 @@ describe("SiteHomePage", () => {
   it("keeps every current route aligned with a page-specific visual asset", () => {
     const expectedVisualsByRoute = new Map([
       ["quote", "/page-visuals/svard-entreprenad-quote.svg"],
+      ["drainage-quote", "/page-visuals/svard-entreprenad-draneringsberakning.svg"],
       ["home", "/page-visuals/svard-entreprenad-home.svg"],
       ["services", "/page-visuals/svard-entreprenad-services.svg"],
       ["about", "/page-visuals/svard-entreprenad-about.svg"],
@@ -398,7 +399,7 @@ describe("SiteHomePage", () => {
       ["contact", "/page-visuals/svard-entreprenad-contact.svg"],
     ]);
 
-    expect(content.routes).toHaveLength(10);
+    expect(content.routes).toHaveLength(11);
 
     for (const route of content.routes) {
       expect(route.visual.assetPath).toBe(expectedVisualsByRoute.get(route.id));
@@ -412,6 +413,7 @@ describe("SiteHomePage", () => {
   it("keeps every current route aligned with a registry-owned hero photo asset", () => {
     const expectedHeroPhotosByRoute = new Map([
       ["quote", "/page-visuals/quote-hero.png"],
+      ["drainage-quote", "/page-visuals/draneringsberakning-hero.webp"],
       ["home", "/page-visuals/hero-photo.webp"],
       ["services", "/page-visuals/services-hero.webp"],
       ["about", "/page-visuals/about-hero.webp"],
@@ -423,8 +425,8 @@ describe("SiteHomePage", () => {
       ["contact", "/page-visuals/contact-hero.webp"],
     ]);
 
-    expect(content.routes).toHaveLength(10);
-    expect(new Set(content.routes.map((route) => route.heroPhotoAssetPath)).size).toBe(10);
+    expect(content.routes).toHaveLength(11);
+    expect(new Set(content.routes.map((route) => route.heroPhotoAssetPath)).size).toBe(11);
 
     for (const route of content.routes) {
       expect(route.heroPhotoAssetPath).toBe(expectedHeroPhotosByRoute.get(route.id));
@@ -660,6 +662,34 @@ describe("SiteHomePage", () => {
     expect(screen.getByText(/poolgrävning där rätt förarbete avgör slutresultatet/)).toBeInTheDocument();
     expect(screen.queryByText(dranering.detail!)).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Visa källsida" })).not.toBeInTheDocument();
+  });
+
+  it("links the drainage service page to its drainage calculator while other services stay calculator-free", () => {
+    const { rerender } = render(<SiteHomePage currentPath="/dranering/" content={content} />);
+
+    const dranering = content.services.find((service) => service.id === "dranering")!;
+    const calculator = dranering.quoteCalculator;
+    expect(calculator).toBeDefined();
+
+    const band = screen.getByRole("region", { name: calculator!.heading });
+    expect(within(band).getByRole("heading", { name: calculator!.heading })).toBeInTheDocument();
+    expect(within(band).getByText(calculator!.description)).toBeInTheDocument();
+
+    const cta = within(band).getByRole("link", { name: calculator!.cta });
+    expect(cta).toHaveAttribute("href", "/draneringsberakning/");
+
+    rerender(<SiteHomePage currentPath="/stensattning/" content={content} />);
+
+    expect(screen.queryByRole("link", { name: calculator!.cta })).not.toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: calculator!.heading })).not.toBeInTheDocument();
+  });
+
+  it("routes the drainage calculator path to the drainage quote page", async () => {
+    render(<SiteHomePage currentPath="/draneringsberakning/" content={content} />);
+
+    expect(await screen.findByRole("heading", { name: "Vad kostar din dränering?", level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole("spinbutton", { name: /Dräneringens längd/ })).toHaveValue(40);
+    expect(screen.getByText(/inte en bindande offert/)).toBeInTheDocument();
   });
 
   it("renders dedicated about and contact paths", () => {
