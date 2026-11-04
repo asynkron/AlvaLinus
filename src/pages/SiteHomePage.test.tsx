@@ -141,6 +141,11 @@ describe("SiteHomePage", () => {
     expect(toggle).toHaveAttribute("aria-expanded", "true");
     const navigation = screen.getByRole("navigation", { name: "Mobilnavigation" });
     const link = within(navigation).getAllByRole("link", { name: "Dränering" })[0];
+
+    if (!link) {
+      throw new Error("Missing mobile Dränering link");
+    }
+
     const focusedControl = focusOrigin === "link" ? link : toggle;
     focusedControl.focus();
     expect(focusedControl).toHaveFocus();
