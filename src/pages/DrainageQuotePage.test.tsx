@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { DrainageQuotePage } from "./DrainageQuotePage";
 
-const money = (value: number) => new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK", minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(value);
+const money = (value: number) => new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK", minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(value).replace(/[\u00a0\u202f]/g, " ");
 
 function lengthInput() {
   return screen.getByRole("spinbutton", { name: /Dräneringens längd/ });
@@ -12,7 +12,7 @@ function decodedEmailHref(): string {
 
   expect(link.getAttribute("href") ?? "").toContain("mailto:kontakt@svardentreprenad.se");
 
-  return decodeURIComponent(link.getAttribute("href") ?? "");
+  return decodeURIComponent(link.getAttribute("href") ?? "").replace(/[\u00a0\u202f]/g, " ");
 }
 
 describe("DrainageQuotePage", () => {

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { QuotePage } from "./QuotePage";
 
-const money = (value: number) => new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK", minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(value);
+const money = (value: number) => new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK", minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(value).replace(/[\u00a0\u202f]/g, " ");
 
 function chooseUppfart() {
   window.location.hash = "uppfart";
@@ -21,7 +21,7 @@ function decodedEmailHref(): string {
 
   expect(link.getAttribute("href") ?? "").toContain("mailto:kontakt@svardentreprenad.se");
 
-  return decodeURIComponent(link.getAttribute("href") ?? "");
+  return decodeURIComponent(link.getAttribute("href") ?? "").replace(/[\u00a0\u202f]/g, " ");
 }
 
 beforeEach(() => {
