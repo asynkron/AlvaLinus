@@ -949,7 +949,7 @@ describe("siteContent route registry", () => {
       ["inhyrning", "/page-visuals/inhyrning-hero.svg"],
       ["stensattning", "/page-visuals/stensattning-photo.webp"],
       ["markarbete", "/page-visuals/markarbete-photo.webp"],
-      ["gravjobb", "/page-visuals/gravjobb-generated.webp"],
+      ["gravjobb", "/page-visuals/gravjobb-photo.webp"],
       ["dranering", "/page-visuals/dranering-photo.webp"],
       ["tradgard", "/page-visuals/tradgard-generated.webp"],
       ["contact", "/page-visuals/contact-hero.webp"],

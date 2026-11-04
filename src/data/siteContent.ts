@@ -99,7 +99,7 @@ export const siteContent = {
       heroPhotoAssetPath: "/page-visuals/stensattning-photo.webp",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-stensattning.svg",
-        alt: "Noggrant lagd marksten och låg stenmur vid entré",
+        alt: "Stenmur längs en trädgård under anläggningsarbete",
         intent: "Lyfter precision, finish och hållbara stenytor för stensättningssidan.",
       },
     },
@@ -113,7 +113,7 @@ export const siteContent = {
       heroPhotoAssetPath: "/page-visuals/markarbete-photo.webp",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-markarbete.svg",
-        alt: "Schaktad tomt med maskin och förberedd markbädd",
+        alt: "Planerad jordyta och stenlagd gång vid markarbete",
         intent: "Förankrar sidan i breda mark- och anläggningsarbeten från grund till yta.",
       },
     },
@@ -124,10 +124,10 @@ export const siteContent = {
       label: "Grävjobb",
       href: "/gravjobb/",
       summary: "Egen tjänstesida för maskin- och grävarbeten, inklusive poolgrävning.",
-      heroPhotoAssetPath: "/page-visuals/gravjobb-generated.webp",
+      heroPhotoAssetPath: "/page-visuals/gravjobb-photo.webp",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-gravjobb.svg",
-        alt: "Grävmaskin som utför schaktning för husgrund och tomtarbete",
+        alt: "Grävmaskin vid pågående markarbete intill en byggnad",
         intent: "Kommunicerar maskinkapacitet och korrekt förarbete för grävsidan.",
       },
     },
@@ -213,6 +213,7 @@ export const siteContent = {
       guidance:
         "Stensättning passar när entréer, gångar eller gårdar ska få stenytor, marksten eller murar med noggrant underarbete, rätt fall och fogar så finish och bärighet håller över tid.",
       photoSrc: "/page-visuals/stensattning-photo.webp",
+      photoObjectPosition: "50% 55%",
       href: "/stensattning/",
       tags: ["Marksten Örebro", "Stenmurar", "Finplanering"],
     },
@@ -234,7 +235,8 @@ export const siteContent = {
         "Maskin- och grävarbeten för husgrunder, avlopp, VA, tomter och poolgrävning där rätt förarbete avgör slutresultatet.",
       guidance:
         "Grävjobb passar när arbetet kräver maskin och schakt, till exempel husgrunder, avlopp och VA, tomter eller poolgrävning, och förarbetet behöver göras rätt direkt på plats.",
-      photoSrc: "/page-visuals/gravjobb-generated.webp",
+      photoSrc: "/page-visuals/gravjobb-photo.webp",
+      photoObjectPosition: "50% 55%",
       href: "/gravjobb/",
       tags: ["Grävning", "Husgrund", "Poolgrävning"],
     },

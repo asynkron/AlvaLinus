@@ -1,24 +1,35 @@
 # Image requests — Svärd Entreprenad site
 
-The landing page images are synced from the canvas. The original logo and four existing
-photographs are retained from the canvas. The rendered header uses a smaller
-448 × 170 lossless WebP logo; photos also have smaller responsive WebP variants. Grävjobb and Trädgårdsplanering now use the
-canvas's AI-generated illustrations, saved as `gravjobb-generated.webp` and
-`tradgard-generated.webp`. WebP variants at 640, 960 and 1568 pixels wide let the browser select a size
-for service cards or full-width heroes without upscaling the source. Original
-canvas PNGs are excluded from the deployable assets. These also appear on the services index and their
-service-page heroes. They are illustrative images, not photographs of completed
-customer projects. The three general subpage hero photographs below remain
-outstanding for About and Contact. The services hero now uses an AI-generated
-groundworks illustration; it does not depict a completed customer project.
-Real replacements for the generated images are optional.
+The landing page uses the current images from the [Brainstorming canvas](https://app.faktorial.ai/projects/alvalinus/canvases/92cb0d4d-ce02-4eb9-9379-4aecaae33025).
+The three selected photographs were recovered from the project's stored
+canvas attachments on 4 November 2026. They appear on the home and services cards
+and their corresponding service-page heroes:
+
+| Site asset | Canvas file | Canvas element |
+| --- | --- | --- |
+| `stensattning-photo.webp` | `IMG_6593.PNG` | `caa2791c-219f-4080-9852-90b60f0813be` |
+| `markarbete-photo.webp` | `IMG_6597.PNG` | `3154d76c-15f8-4f0e-8ca4-57ff1697ea0a` |
+| `gravjobb-photo.webp` | `IMG_6596.PNG` | `0b8ccc17-41d3-4990-9b94-8f315abf8d3e` |
+
+Each photograph has 400, 640 and 900 pixel-wide WebP versions, preserving the
+original aspect ratio without upscaling. Cards use the canvas's 16:10 cover crop;
+Stensättning and Grävjobb retain its `50% 55%` focal position. The large source
+PNGs stay outside the deployable assets. The previous generated Grävjobb image
+has been replaced by the selected photograph.
+
+The original home hero and drainage photograph remain unchanged and match the
+recovered canvas attachment bytes. The vector logo remains in use.
+Trädgårdsplanering still uses the canvas's AI-generated illustration in 640, 960
+and 1568 pixel-wide WebP versions. The services hero is also AI-generated. These
+illustrations do not depict completed customer projects. About and Contact hero
+photographs remain outstanding.
 
 ## How to deliver
 
 - **Drop each file into `public/page-visuals/` using the exact filename below.**
-  Once the three general hero photographs are delivered, add their paths to
-  `PAGE_HERO_PHOTOS` in `src/pages/SiteHomePage.tsx`. Until then, those pages
-  use the plain navy hero without requesting missing files.
+  Set any new page hero through its `heroPhotoAssetPath` in
+  `src/data/siteContent.ts`, preserving the typed route inventory. About and
+  Contact currently use the plain navy hero when their photographs are absent.
 - You can deliver **JPG or PNG** and I will convert + downscale to WebP, or
   deliver **WebP** directly (preferred final format). Target the listed pixel
   size; larger is fine, I'll downscale.
@@ -38,23 +49,18 @@ AI-generated illustration, not a completed customer project.
 | Page use | File | Notes |
 |---|---|---|
 | Home hero | `hero-photo.webp` | Orange excavator at sunset on a worksite ✓ |
-| Stensättning card + page hero | `stensattning-photo.webp` | Paver/cobblestone path ✓ |
-| Markarbete card + page hero | `markarbete-photo.webp` | Excavator digging a foundation trench ✓ |
+| Stensättning card + page hero | `stensattning-photo.webp` | Retaining wall beside a garden ✓ |
+| Markarbete card + page hero | `markarbete-photo.webp` | Prepared soil and paved courtyard path ✓ |
 | Dränering card + page hero | `dranering-photo.webp` | Foundation drainage with pipe + gravel ✓ |
 
 ---
 
 ## Needed images
 
-### 1. `gravjobb-photo.webp` — Grävjobb (excavation) — **priority**
-- **Used for:** service card on home + `/tjanster/`, and the `/gravjobb/` page hero.
-- **Aspect / size:** 3:2 landscape, ≥ 1536 × 1024 px.
-- **Prompt:**
-  > Professional photograph of a tracked hydraulic excavator digging a deep
-  > trench for a house foundation on a residential building site in Sweden.
-  > Fresh excavated earth, the machine's bucket mid-dig, clear daylight with
-  > soft shadows. Documentary/commercial construction photography, sharp focus,
-  > realistic, no people in frame, no text or logos.
+### 1. `gravjobb-photo.webp` — Grävjobb (excavation) — delivered
+
+The canvas's `IMG_6596.PNG` photograph now supplies the home and services cards
+and the `/gravjobb/` hero. No replacement image is needed.
 
 ### 2. `tradgard-photo.webp` — Trädgårdsplanering (garden/landscape planning) — **priority**
 - **Used for:** service card on home + `/tjanster/`, and the `/tradgardsplanering/` page hero.

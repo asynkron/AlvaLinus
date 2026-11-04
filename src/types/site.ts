@@ -38,6 +38,7 @@ export type ServiceArea = {
   readonly detail?: string;
   readonly guidance: string;
   readonly photoSrc?: string;
+  readonly photoObjectPosition?: string;
   readonly href: string;
   readonly tags: readonly string[];
   readonly quoteCalculator?: ServiceQuoteCalculator;

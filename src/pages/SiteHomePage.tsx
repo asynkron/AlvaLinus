@@ -27,14 +27,14 @@ const DrainageQuotePage = lazy(() => import("./DrainageQuotePage").then((module)
 
 const HERO_PHOTO_SRC = "/page-visuals/hero-photo.webp";
 
-// Canvas-synced service imagery. Grävjobb and Trädgårdsplanering use
-// AI-generated illustrations. Failing photos fall back to the route SVG;
+// Canvas-synced service imagery. Trädgårdsplanering uses an AI-generated
+// illustration. Failing photos fall back to the route SVG;
 // a failing SVG removes the image while retaining the card content.
 const SERVICE_PHOTOS: Record<string, string> = {
   stensattning: "/page-visuals/stensattning-photo.webp",
   markarbete: "/page-visuals/markarbete-photo.webp",
   dranering: "/page-visuals/dranering-photo.webp",
-  gravjobb: "/page-visuals/gravjobb-generated.webp",
+  gravjobb: "/page-visuals/gravjobb-photo.webp",
   tradgard: "/page-visuals/tradgard-generated.webp",
 };
 
@@ -728,10 +728,12 @@ type ServiceCardImageStage = "photo" | "fallback" | "hidden";
 
 function ServiceCardImage({
   photoSrc,
+  objectPosition,
   fallbackSrc,
   alt,
 }: {
   readonly photoSrc: string;
+  readonly objectPosition?: string;
   readonly fallbackSrc?: string;
   readonly alt: string;
 }) {
@@ -750,6 +752,7 @@ function ServiceCardImage({
       sizes="(min-width: 1280px) 384px, (min-width: 1024px) calc((100vw - 128px) / 3), (min-width: 768px) calc((100vw - 88px) / 2), (min-width: 640px) calc(100vw - 64px), calc(100vw - 40px)"
       alt={alt}
       className="aspect-[16/10] w-full border-b object-cover"
+      style={stage === "photo" && objectPosition ? { objectPosition } : undefined}
       loading="lazy"
       decoding="async"
       width={800}
@@ -781,6 +784,7 @@ function Services({ content }: { readonly content: SiteContent }) {
               {photo ? (
                 <ServiceCardImage
                   photoSrc={photo}
+                  objectPosition={service.photoObjectPosition}
                   fallbackSrc={visual?.assetPath}
                   alt={visual?.alt ?? service.title}
                 />

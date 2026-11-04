@@ -512,7 +512,7 @@ describe("SiteHomePage", () => {
       ["inhyrning", "/page-visuals/inhyrning-hero.svg"],
       ["stensattning", "/page-visuals/stensattning-photo.webp"],
       ["markarbete", "/page-visuals/markarbete-photo.webp"],
-      ["gravjobb", "/page-visuals/gravjobb-generated.webp"],
+      ["gravjobb", "/page-visuals/gravjobb-photo.webp"],
       ["dranering", "/page-visuals/dranering-photo.webp"],
       ["tradgard", "/page-visuals/tradgard-generated.webp"],
       ["contact", "/page-visuals/contact-hero.webp"],
@@ -566,14 +566,14 @@ describe("SiteHomePage", () => {
     const image = stensattningCard.getByRole("img");
 
     expect(image).toHaveAttribute("src", "/page-visuals/stensattning-photo.webp");
-    expect(image).toHaveAttribute("alt", "Noggrant lagd marksten och låg stenmur vid entré");
+    expect(image).toHaveAttribute("alt", "Stenmur längs en trädgård under anläggningsarbete");
     expect(image).toHaveAttribute("loading", "lazy");
 
     fireEvent.error(image);
 
     const fallbackImage = stensattningCard.getByRole("img");
     expect(fallbackImage).toHaveAttribute("src", fallbackSrc);
-    expect(fallbackImage).toHaveAttribute("alt", "Noggrant lagd marksten och låg stenmur vid entré");
+    expect(fallbackImage).toHaveAttribute("alt", "Stenmur längs en trädgård under anläggningsarbete");
     expect(fallbackImage).toHaveAttribute("loading", "lazy");
 
     fireEvent.error(image);
@@ -602,13 +602,13 @@ describe("SiteHomePage", () => {
     const markarbeteCard = within(serviceCard("markarbete"));
     const markarbeteImage = markarbeteCard.getByRole("img");
     expect(markarbeteImage).toHaveAttribute("src", "/page-visuals/markarbete-photo.webp");
-    expect(markarbeteImage).toHaveAttribute("alt", "Schaktad tomt med maskin och förberedd markbädd");
+    expect(markarbeteImage).toHaveAttribute("alt", "Planerad jordyta och stenlagd gång vid markarbete");
     expect(markarbeteImage).toHaveAttribute("loading", "lazy");
     expect(markarbeteCard.getByRole("heading", { name: markarbete.title })).toBeInTheDocument();
     expect(markarbeteCard.getByRole("link", { name: readMoreName(markarbete) })).toHaveAttribute("href", "/markarbete/");
 
     const gravjobbCard = within(serviceCard("gravjobb"));
-    expect(gravjobbCard.getByRole("img")).toHaveAttribute("src", "/page-visuals/gravjobb-generated.webp");
+    expect(gravjobbCard.getByRole("img")).toHaveAttribute("src", "/page-visuals/gravjobb-photo.webp");
     expect(gravjobbCard.getByRole("heading", { name: "Grävjobb" })).toBeInTheDocument();
   });
 
