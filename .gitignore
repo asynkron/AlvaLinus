@@ -9,5 +9,6 @@ vite.config.js
 # Faktorial declarations are source; generated state and reports are local.
 .faktorial/*
 !.faktorial/main-verify.json
+!.faktorial/live.json
 coverage/
 .vitest/

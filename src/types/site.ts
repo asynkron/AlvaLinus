@@ -16,6 +16,7 @@ export type SiteRoute = SiteLink & {
   readonly kind: SiteRouteKind;
   readonly sourceId?: string;
   readonly summary: string;
+  readonly heroPhotoAssetPath: string;
   readonly visual: SiteRouteVisual;
 };
 
@@ -24,10 +25,19 @@ export type SiteStat = {
   readonly value: string;
 };
 
+export type SiteSectionHeading = {
+  readonly eyebrow: string;
+  readonly title: string;
+  readonly summary: string;
+};
+
 export type ServiceArea = {
   readonly id: string;
   readonly title: string;
   readonly summary: string;
+  readonly detail?: string;
+  readonly guidance: string;
+  readonly photoSrc?: string;
   readonly href: string;
   readonly tags: readonly string[];
 };
@@ -70,6 +80,7 @@ export type ContactForm = {
   readonly recipientEmail: string;
   readonly subject: string;
   readonly submitLabel: string;
+  readonly handoffNote: string;
   readonly nameField: ContactTextField;
   readonly customerTypeField: ContactSelectField;
   readonly serviceField: ContactSelectField;
@@ -78,8 +89,48 @@ export type ContactForm = {
   };
 };
 
+export type SiteBrand = {
+  readonly name: string;
+  readonly logoSrc: string;
+};
+
+export type SiteBreadcrumb = {
+  readonly ariaLabel: string;
+  readonly homeLabel: string;
+};
+
+export type SiteChrome = {
+  readonly brand: SiteBrand;
+  readonly breadcrumb: SiteBreadcrumb;
+  readonly contactBand: {
+    readonly eyebrow: string;
+    readonly ctaLabel: string;
+  };
+  readonly footer: {
+    readonly tagline: string;
+    readonly pageHeading: string;
+    readonly servicesHeading: string;
+    readonly contactHeading: string;
+    readonly pageNavAriaLabel: string;
+    readonly servicesNavAriaLabel: string;
+  };
+  readonly notFound: {
+    readonly title: string;
+    readonly eyebrow: string;
+    readonly summaryTemplate: string;
+    readonly shortcutsLabel: string;
+  };
+  readonly service: {
+    readonly heroEyebrow: string;
+    readonly guidanceHeading: string;
+  };
+};
+
 export type SiteContent = {
   readonly inventory: {
+    readonly eyebrow: string;
+    readonly heading: string;
+    readonly helper: string;
     readonly checkedAt: string;
     readonly source: string;
     readonly pageCount: number;
@@ -104,6 +155,15 @@ export type SiteContent = {
   readonly process: readonly ProcessStep[];
   readonly trust: readonly TrustSignal[];
   readonly partners: readonly PartnerItem[];
+  readonly sectionHeadings: {
+    readonly services: SiteSectionHeading & {
+      readonly readMoreLabel: string;
+      readonly readMoreAriaPrefix: string;
+    };
+    readonly process: SiteSectionHeading;
+    readonly trust: SiteSectionHeading;
+    readonly partners: SiteSectionHeading;
+  };
   readonly contact: {
     readonly title: string;
     readonly summary: string;
@@ -111,4 +171,5 @@ export type SiteContent = {
     readonly form: ContactForm;
     readonly items: readonly ContactItem[];
   };
+  readonly chrome: SiteChrome;
 };

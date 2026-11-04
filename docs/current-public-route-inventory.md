@@ -1,6 +1,6 @@
 # Current Public Route Inventory
 
-Checked: 2026-10-25
+Checked: 2026-10-31
 
 Source of truth:
 
@@ -12,9 +12,9 @@ This inventory covers the current Svard Entreprenad public route surface. The
 site now has typed page-specific placeholder visual metadata for every listed
 route in `src/data/siteContent.ts`, with matching generated SVG assets under
 `public/page-visuals/`. The renderer uses the shared
-`/svard-entreprenad-logo.png` logo, a decorative home hero photograph,
+`/svard-entreprenad-logo.svg` logo, a decorative home hero photograph,
 service-card photographs with the route SVGs as image-error fallbacks, and
-subpage hero photographs that hide on error while retaining the text. The
+home and subpage hero photographs that hide on error while retaining the text. The
 table below names the canonical typed SVG metadata assets, not the preferred
 photographs displayed by the renderer. Previous external source links
 have been removed from the public UI and are not a desired retained
@@ -24,8 +24,8 @@ customer-facing pattern.
 
 | Route | Page purpose | Visible sections | Current page-specific visual asset |
 | --- | --- | --- | --- |
-| `/offertberakning/` | Preliminary calculator for an asphalt driveway using customer-supplied example prices. | Header; area and load inputs; editable prices; unconfirmed/inclusive/exclusive VAT selector; live breakdown; email handoff; print; footer. | `/page-visuals/svard-entreprenad-quote.svg` for the measured driveway area. |
 | `/` | Startsida with an overview of services, work process, trust signals, and quote contact. | Header; hero; service overview inventory; services cards; process steps; trust signals; contact section; footer. | `/page-visuals/svard-entreprenad-home.svg` for the overall mark and construction first impression. |
+| `/offertberakning/` | Interactive quote estimate with email handoff. | Header; calculator; footer. | `/page-visuals/svard-entreprenad-quote.svg` for measured project area. |
 | `/tjanster/` | Services index for the main mark, building, and construction service areas. | Header; page hero; services cards; trust signals; contact link band. | `/page-visuals/svard-entreprenad-services.svg` for the combined services overview. |
 | `/om-oss/` | About page describing work approach, experience, responsibility, and delivery from first dig to finished result. | Header; page hero; about content; contact link band. | `/page-visuals/svard-entreprenad-about.svg` for work planning, responsibility, and process context. |
 | `/stensattning/` | Dedicated service page for paving, stone surfaces, and stone walls. | Header; page hero; service detail section; service tags; "Nar tjansten passar" aside; process steps; contact link band. | `/page-visuals/svard-entreprenad-stensattning.svg` for paving, stone surfaces, and finish. |
@@ -37,10 +37,17 @@ customer-facing pattern.
 
 ## Follow-up Notes
 
+- Unknown paths are not declared routes and stay outside the inventory. The
+  build also emits a `dist/404.html` recovery artifact carrying the same SPA
+  document with the Swedish not-found title and description, so a static host
+  that serves it at unknown paths boots the app, which renders the existing
+  Sidan finns inte recovery with the requested URL. Whether the production
+  host serves the artifact at unknown paths is a host decision, not part of
+  the route inventory.
 - `/dranering/` is an inventory shortcut and a `service` route, exposed within
-  the header's Tjänster links rather than as its own top-level header item; the
-  renderer treats it as a dedicated service page with one drainage-specific
-  explanatory paragraph.
+  the header's Tjänster links rather than as its own top-level header item; it
+  renders as a dedicated service page whose drainage detail paragraph is
+  declared in the service registry like every other service text.
 - Service pages no longer render external source links, and the contact page no
   longer includes a dedicated source-only contact entry. Future source
   references should stay in documentation or editorial tooling rather than
@@ -51,5 +58,5 @@ customer-facing pattern.
 - Partners is conditionally available on home and the services index but is
   currently omitted because the configured list is empty. Both ready pages
   include the shared footer; the services index also has a breadcrumb hero.
-- The source-backed [feature catalog](features/README.md) maps the original nine
+- The source-backed [feature catalog](features/README.md) maps these nine
   routes, their shared states and subsections to visitor outcomes and stories.

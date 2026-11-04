@@ -10,4 +10,4 @@ const checkedRoutes = await assertStaticRouteArtifacts({
   readFile: fs.readFile,
 });
 
-console.log(`Verified ${checkedRoutes.length} static route artifacts.`);
+console.log(`Verified ${checkedRoutes.length} static route artifacts and the not-found recovery artifact.`);

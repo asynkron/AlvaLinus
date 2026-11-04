@@ -5,10 +5,22 @@ import type { Plugin, ResolvedConfig } from "vite";
 import { defineConfig } from "vitest/config";
 
 import { siteContent } from "./src/data/siteContent";
+import {
+  applyRouteDocumentMetadata,
+  injectRouteHeroPreload,
+  notFoundArtifactPath,
+  notFoundPageMetadata,
+  routeHeroPreloadHref,
+  routePageMetadata,
+  staticSubpageRoutes,
+  stripHomeHeroPreload,
+} from "./scripts/route-artifacts.mjs";
 
-const staticRoutePaths = siteContent.routes
-  .map((route) => route.href)
-  .filter((href) => href !== "/" && href.startsWith("/"));
+const staticRoutePages = staticSubpageRoutes(siteContent.routes).map((route) => ({
+  href: route.href,
+  metadata: routePageMetadata(route),
+  heroPreloadHref: routeHeroPreloadHref(route),
+}));
 
 function emitStaticRoutePages(): Plugin {
   let outDir = "dist";
@@ -29,15 +41,21 @@ function emitStaticRoutePages(): Plugin {
     async closeBundle() {
       const sourceHtml = path.join(outDir, "index.html");
       const html = await fs.readFile(sourceHtml, "utf8");
+      const notFoundHtml = stripHomeHeroPreload(applyRouteDocumentMetadata(html, notFoundPageMetadata()));
 
-      await Promise.all(
-        staticRoutePaths.map(async (routePath) => {
-          const routeDir = path.join(outDir, routePath.replace(/^\/+|\/+$/g, ""));
+      await Promise.all([
+        ...staticRoutePages.map(async (routePage) => {
+          const routeDir = path.join(outDir, routePage.href.replace(/^\/+|\/+$/g, ""));
+          const routeHtml = injectRouteHeroPreload(
+            stripHomeHeroPreload(applyRouteDocumentMetadata(html, routePage.metadata)),
+            routePage.heroPreloadHref,
+          );
 
           await fs.mkdir(routeDir, { recursive: true });
-          await fs.writeFile(path.join(routeDir, "index.html"), html);
+          await fs.writeFile(path.join(routeDir, "index.html"), routeHtml);
         }),
-      );
+        fs.writeFile(path.join(outDir, notFoundArtifactPath), notFoundHtml),
+      ]);
     },
   };
 }
@@ -53,6 +71,9 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: ["./src/test/setup.ts"],
+    css: {
+      include: [/styles\.css\?raw/],
+    },
     coverage: {
       provider: "v8",
       include: ["src/**/*.{ts,tsx}"],

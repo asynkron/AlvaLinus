@@ -12,18 +12,17 @@ import {
   ShieldCheck,
   X,
 } from "lucide-react";
-import { type KeyboardEvent, lazy, Suspense, useEffect, useRef, useState } from "react";
+import { Fragment, type KeyboardEvent, lazy, Suspense, useRef, useState } from "react";
 
 import { StaticState } from "../components/StaticState";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { loadSiteContent } from "../lib/site-content";
-import type { ServiceArea, SiteContent, SiteRoute } from "../types/site";
+import { siteContent } from "../data/siteContent";
+import { inquiryContactHref, resolveInquiryServiceOption } from "../lib/inquiry-service";
+import type { ServiceArea, SiteBreadcrumb, SiteBrand, SiteContent, SiteRoute } from "../types/site";
 
 const QuotePage = lazy(() => import("./QuotePage").then((module) => ({ default: module.QuotePage })));
 
-const BRAND_NAME = "Svärd Entreprenad";
-const BRAND_LOGO_SRC = "/svard-entreprenad-logo.svg";
 const HERO_PHOTO_SRC = "/page-visuals/hero-photo.webp";
 
 // Canvas-synced service imagery. Grävjobb and Trädgårdsplanering use
@@ -34,17 +33,6 @@ const SERVICE_PHOTOS: Record<string, string> = {
   markarbete: "/page-visuals/markarbete-photo.webp",
   dranering: "/page-visuals/dranering-photo.webp",
   gravjobb: "/page-visuals/gravjobb-generated.webp",
-  tradgard: "/page-visuals/tradgard-generated.webp",
-};
-
-// Only reference supplied subpage photos. About and contact keep
-// the plain navy hero until their requested photographs are delivered.
-const PAGE_HERO_PHOTOS: Record<string, string> = {
-  services: "/page-visuals/services-hero.webp",
-  stensattning: "/page-visuals/stensattning-photo.webp",
-  markarbete: "/page-visuals/markarbete-photo.webp",
-  gravjobb: "/page-visuals/gravjobb-generated.webp",
-  dranering: "/page-visuals/dranering-photo.webp",
   tradgard: "/page-visuals/tradgard-generated.webp",
 };
 
@@ -63,65 +51,46 @@ function responsiveImageSrcSet(src: string | undefined): string | undefined {
   return undefined;
 }
 
-type LoadState =
-  | { readonly status: "loading" }
-  | { readonly status: "error"; readonly message: string }
-  | { readonly status: "ready"; readonly content: SiteContent };
 
 type SiteHomePageProps = {
   readonly currentPath?: string;
-  readonly initialState?: LoadState;
+  readonly inquiryServiceId?: string;
+  readonly content?: SiteContent;
 };
 
-export function SiteHomePage({ currentPath = "/", initialState }: SiteHomePageProps) {
-  const [state, setState] = useState<LoadState>(initialState ?? { status: "loading" });
-
-  useEffect(() => {
-    if (initialState) {
-      return;
-    }
-
-    let cancelled = false;
-
-    loadSiteContent()
-      .then((content) => {
-        if (!cancelled) {
-          setState({ status: "ready", content });
-        }
-      })
-      .catch((error: unknown) => {
-        if (!cancelled) {
-          const message = error instanceof Error ? error.message : "Innehållskällan kunde inte läsas.";
-          setState({ status: "error", message });
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [initialState]);
-
+export function SiteHomePage({ currentPath = "/", inquiryServiceId, content = siteContent }: SiteHomePageProps) {
+  // The skip link, sticky header and root footer are siblings around the
+  // content main element: descendants of main would lose their banner and
+  // contentinfo landmark roles in browsers (ARIA in HTML main-descendant
+  // suppression), leaving screen readers without page landmarks.
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <a href="#main-content" className="skip-link">Hoppa till innehållet</a>
-      <Header currentPath={currentPath} />
-      <main id="main-content" tabIndex={-1}><ContentSurface currentPath={currentPath} state={state} /></main>
+      <a
+        href="#content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-foreground focus:shadow-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        Hoppa till innehåll
+      </a>
+      <Header currentPath={currentPath} brand={content.chrome.brand} />
+      <ContentSurface currentPath={currentPath} inquiryServiceId={inquiryServiceId} content={content} />
     </div>
   );
 }
 
-const SERVICE_NAV = [
-  { label: "Offertberäkning", href: "/offertberakning/" },
-  { label: "Stensättning", href: "/stensattning/" },
-  { label: "Markarbete", href: "/markarbete/" },
-  { label: "Grävjobb", href: "/gravjobb/" },
-  { label: "Dränering", href: "/dranering/" },
-  { label: "Trädgårdsplanering", href: "/tradgardsplanering/" },
-];
+// Header (desktop and mobile) and footer navigation derive from the typed
+// route registry in src/data/siteContent.ts: each destination's Swedish label,
+// href and order is declared once in that registry, and these views select the
+// page-level routes and the service detail routes from it.
+const PAGE_NAV: readonly SiteRoute[] = siteContent.routes.filter((route) => route.kind !== "service");
+const SERVICE_NAV: readonly SiteRoute[] = siteContent.routes.filter((route) => route.kind === "service");
 
-const SERVICE_PATHS = new Set([...SERVICE_NAV.map((link) => normalizePath(link.href)), normalizePath("/tjanster/")]);
+const SERVICE_PATHS = new Set(
+  siteContent.routes
+    .filter((route) => route.kind === "services" || route.kind === "service")
+    .map((route) => normalizePath(route.href)),
+);
 
-function Header({ currentPath = "/" }: { readonly currentPath?: string }) {
+function Header({ currentPath = "/", brand }: { readonly currentPath?: string; readonly brand: SiteBrand }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuToggleRef = useRef<HTMLButtonElement>(null);
   const active = normalizePath(currentPath);
@@ -138,78 +107,70 @@ function Header({ currentPath = "/" }: { readonly currentPath?: string }) {
   return (
     <header className="sticky top-0 z-30 bg-foreground text-background shadow-sm">
       <div className="mx-auto flex min-h-16 w-full max-w-7xl items-center justify-between gap-4 px-5 sm:px-8 lg:px-10">
-        <a href="/" className="flex min-w-0 items-center gap-3" aria-label={`${BRAND_NAME} startsida`}>
+        <a href="/" className="flex min-w-0 items-center gap-3" aria-label={`${brand.name} startsida`}>
           <img
-            src={BRAND_LOGO_SRC}
-            width={448}
-            height={170}
-            alt={`${BRAND_NAME} logotyp`}
+            src={brand.logoSrc}
+            alt={`${brand.name} logotyp`}
             className="h-9 w-auto max-w-[11rem] object-contain brightness-0 invert sm:h-10 sm:max-w-[14rem]"
           />
-          <span className="sr-only">{BRAND_NAME}</span>
+          <span className="sr-only">{brand.name}</span>
         </a>
         <nav aria-label="Huvudnavigation" className="hidden items-center gap-6 text-sm font-medium md:flex">
-          <a
-            className={active === "/" ? "text-primary" : "text-background/75 transition-colors hover:text-primary"}
-            aria-current={active === "/" ? "page" : undefined}
-            href="/"
-          >
-            Hem
-          </a>
-          <div className="group relative">
-            <a
-              className={`inline-flex items-center gap-1 ${
-                servicesActive ? "text-primary" : "text-background/75 transition-colors hover:text-primary"
-              }`}
-              aria-current={active === "/tjanster/" ? "page" : undefined}
-              aria-haspopup="true"
-              href="/tjanster/"
-            >
-              Tjänster
-              <ChevronDown
-                className="h-4 w-4 transition-transform group-hover:rotate-180 group-focus-within:rotate-180"
-                aria-hidden="true"
-              />
-            </a>
-            <div className="invisible absolute left-1/2 top-full z-40 w-56 -translate-x-1/2 pt-3 opacity-0 transition-opacity group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-              <div className="overflow-hidden rounded-lg border bg-card py-1 text-foreground shadow-soft">
-                {SERVICE_NAV.map((link) => {
-                  const isActive = normalizePath(link.href) === active;
+          {PAGE_NAV.map((route) => {
+            const isActive = normalizePath(route.href) === active;
 
-                  return (
-                    <a
-                      key={link.href}
-                      className={`block px-4 py-2 text-sm transition-colors hover:bg-secondary ${
-                        isActive ? "font-semibold text-primary" : "text-foreground"
-                      }`}
-                      aria-current={isActive ? "page" : undefined}
-                      href={link.href}
-                    >
-                      {link.label}
-                    </a>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-          <a
-            className={
-              active === "/om-oss/" ? "text-primary" : "text-background/75 transition-colors hover:text-primary"
+            if (route.kind === "services") {
+              return (
+                <div key={route.href} className="group relative">
+                  <a
+                    className={`inline-flex items-center gap-1 ${
+                      servicesActive ? "text-primary" : "text-background/75 transition-colors hover:text-primary"
+                    }`}
+                    aria-current={isActive ? "page" : undefined}
+                    aria-haspopup="true"
+                    href={route.href}
+                  >
+                    {route.label}
+                    <ChevronDown
+                      className="h-4 w-4 transition-transform group-hover:rotate-180 group-focus-within:rotate-180"
+                      aria-hidden="true"
+                    />
+                  </a>
+                  <div className="invisible absolute left-1/2 top-full z-40 w-56 -translate-x-1/2 pt-3 opacity-0 transition-opacity group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                    <div className="overflow-hidden rounded-lg border bg-card py-1 text-foreground shadow-soft">
+                      {SERVICE_NAV.map((service) => {
+                        const serviceActive = normalizePath(service.href) === active;
+
+                        return (
+                          <a
+                            key={service.href}
+                            className={`block px-4 py-2 text-sm transition-colors hover:bg-secondary ${
+                              serviceActive ? "font-semibold text-primary" : "text-foreground"
+                            }`}
+                            aria-current={serviceActive ? "page" : undefined}
+                            href={service.href}
+                          >
+                            {service.label}
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              );
             }
-            aria-current={active === "/om-oss/" ? "page" : undefined}
-            href="/om-oss/"
-          >
-            Om oss
-          </a>
-          <a
-            className={
-              active === "/kontakt/" ? "text-primary" : "text-background/75 transition-colors hover:text-primary"
-            }
-            aria-current={active === "/kontakt/" ? "page" : undefined}
-            href="/kontakt/"
-          >
-            Kontakt
-          </a>
+
+            return (
+              <a
+                key={route.href}
+                className={isActive ? "text-primary" : "text-background/75 transition-colors hover:text-primary"}
+                aria-current={isActive ? "page" : undefined}
+                href={route.href}
+              >
+                {route.label}
+              </a>
+            );
+          })}
         </nav>
         <button
           ref={menuToggleRef}
@@ -231,97 +192,78 @@ function Header({ currentPath = "/" }: { readonly currentPath?: string }) {
           className="border-t border-background/10 px-5 pb-4 pt-2 sm:px-8 md:hidden"
           onKeyDown={handleMenuKeyDown}
         >
-          <a
-            className={`block rounded-md px-3 py-3 text-base font-medium transition-colors ${
-              active === "/" ? "bg-background/10 text-primary" : "text-background/80 hover:bg-background/10"
-            }`}
-            aria-current={active === "/" ? "page" : undefined}
-            href="/"
-          >
-            Hem
-          </a>
-          <a
-            className={`block rounded-md px-3 py-3 text-base font-medium transition-colors ${
-              active === "/tjanster/" ? "bg-background/10 text-primary" : "text-background/80 hover:bg-background/10"
-            }`}
-            aria-current={active === "/tjanster/" ? "page" : undefined}
-            href="/tjanster/"
-          >
-            Tjänster
-          </a>
-          <div className="ml-3 border-l border-background/15 pl-3">
-            {SERVICE_NAV.map((link) => {
-              const isActive = normalizePath(link.href) === active;
+          {PAGE_NAV.map((route) => {
+            const isActive = normalizePath(route.href) === active;
 
-              return (
+            return (
+              <Fragment key={route.href}>
                 <a
-                  key={link.href}
-                  className={`block rounded-md px-3 py-2 text-sm transition-colors ${
-                    isActive ? "bg-background/10 text-primary" : "text-background/70 hover:bg-background/10"
+                  className={`block rounded-md px-3 py-3 text-base font-medium transition-colors ${
+                    isActive ? "bg-background/10 text-primary" : "text-background/80 hover:bg-background/10"
                   }`}
                   aria-current={isActive ? "page" : undefined}
-                  href={link.href}
+                  href={route.href}
                 >
-                  {link.label}
+                  {route.label}
                 </a>
-              );
-            })}
-          </div>
-          <a
-            className={`block rounded-md px-3 py-3 text-base font-medium transition-colors ${
-              active === "/om-oss/" ? "bg-background/10 text-primary" : "text-background/80 hover:bg-background/10"
-            }`}
-            aria-current={active === "/om-oss/" ? "page" : undefined}
-            href="/om-oss/"
-          >
-            Om oss
-          </a>
-          <a
-            className={`block rounded-md px-3 py-3 text-base font-medium transition-colors ${
-              active === "/kontakt/" ? "bg-background/10 text-primary" : "text-background/80 hover:bg-background/10"
-            }`}
-            aria-current={active === "/kontakt/" ? "page" : undefined}
-            href="/kontakt/"
-          >
-            Kontakt
-          </a>
+                {route.kind === "services" ? (
+                  <div className="ml-3 border-l border-background/15 pl-3">
+                    {SERVICE_NAV.map((service) => {
+                      const serviceActive = normalizePath(service.href) === active;
+
+                      return (
+                        <a
+                          key={service.href}
+                          className={`block rounded-md px-3 py-2 text-sm transition-colors ${
+                            serviceActive ? "bg-background/10 text-primary" : "text-background/70 hover:bg-background/10"
+                          }`}
+                          aria-current={serviceActive ? "page" : undefined}
+                          href={service.href}
+                        >
+                          {service.label}
+                        </a>
+                      );
+                    })}
+                  </div>
+                ) : null}
+              </Fragment>
+            );
+          })}
         </nav>
       ) : null}
     </header>
   );
 }
 
-function ContentSurface({ currentPath, state }: { readonly currentPath: string; readonly state: LoadState }) {
-  if (state.status === "loading") {
-    return (
-      <section id="content" className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
-        <StaticState state="loading" />
-      </section>
-    );
-  }
-
-  if (state.status === "error") {
-    return (
-      <section id="content" className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
-        <StaticState state="error" title="Innehåll kunde inte laddas" message={state.message} />
-      </section>
-    );
-  }
-
-  const { content } = state;
+function ContentSurface({
+  currentPath,
+  inquiryServiceId,
+  content,
+}: {
+  readonly currentPath: string;
+  readonly inquiryServiceId?: string;
+  readonly content: SiteContent;
+}) {
   const route = getRouteForPath(content, currentPath);
 
-  if (content.services.length === 0) {
+  if (routeDependsOnServices(route) && content.services.length === 0) {
     return (
-      <section id="content" className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
-        <StaticState state="empty" title="Inget innehåll ännu" message="Lägg till statiska dataposter i src/data." />
-      </section>
+      <main id="content" className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
+        <StaticState title="Inget innehåll ännu" message="Lägg till statiska dataposter i src/data." />
+      </main>
     );
   }
 
   return (
     <>
-      {route ? <RoutedPage content={content} route={route} /> : <NotFound content={content} currentPath={currentPath} />}
+      <main id="content" tabIndex={-1} className="scroll-mt-20 focus:outline-none">
+        {route ? (
+          <RoutedPage content={content} inquiryServiceId={inquiryServiceId} route={route} />
+        ) : (
+          <NotFound content={content} currentPath={currentPath} />
+        )}
+      </main>
+      <Footer content={content} />
     </>
   );
 }
@@ -330,6 +272,10 @@ function getRouteForPath(content: SiteContent, currentPath: string): SiteRoute |
   const normalizedPath = normalizePath(currentPath);
 
   return content.routes.find((route) => normalizePath(route.href) === normalizedPath);
+}
+
+function routeDependsOnServices(route: SiteRoute | undefined): boolean {
+  return route?.kind === "home" || route?.kind === "services";
 }
 
 function normalizePath(path: string) {
@@ -342,7 +288,20 @@ function normalizePath(path: string) {
   return withoutQuery.endsWith("/") ? withoutQuery : `${withoutQuery}/`;
 }
 
-function RoutedPage({ content, route }: { readonly content: SiteContent; readonly route: SiteRoute }) {
+function renderNotFoundSummary(template: string, currentPath: string) {
+  return template.replace("{path}", () => currentPath);
+}
+
+function RoutedPage({
+  content,
+  inquiryServiceId,
+  route,
+}: {
+  readonly content: SiteContent;
+  readonly inquiryServiceId?: string;
+  readonly route: SiteRoute;
+}) {
+
   if (route.kind === "quote") {
     return <><Suspense fallback={<p role="status" className="px-5 py-16">Laddar offertberäkningen…</p>}><QuotePage /></Suspense><Footer content={content} /></>;
   }
@@ -357,40 +316,46 @@ function RoutedPage({ content, route }: { readonly content: SiteContent; readonl
   if (route.kind === "service") {
     const service = content.services.find((item) => item.id === route.sourceId);
 
-    return service ? <ServicePage content={content} route={route} service={service} /> : <NotFound content={content} currentPath={route.href} />;
+    return service ? (
+      <ServicePage content={content} route={route} service={service} />
+    ) : (
+      <NotFound content={content} currentPath={route.href} />
+    );
   }
 
   if (route.kind === "contact") {
-    return <ContactPage content={content} route={route} />;
+    return <ContactPage content={content} inquiryServiceId={inquiryServiceId} route={route} />;
   }
 
   return (
     <>
-      <Hero content={content} />
+      <Hero content={content} imageSrc={route.heroPhotoAssetPath} />
       <Inventory content={content} />
       <Services content={content} />
       <Process content={content} />
       <Trust content={content} />
       <Partners content={content} />
       <Contact content={content} />
-      <Footer content={content} />
     </>
   );
 }
 
-function Hero({ content }: { readonly content: SiteContent }) {
+function Hero({ content, imageSrc }: { readonly content: SiteContent; readonly imageSrc: string }) {
   return (
     <section className="relative isolate overflow-hidden bg-foreground text-background">
       <img
-        src={HERO_PHOTO_SRC}
-        srcSet={responsiveImageSrcSet(HERO_PHOTO_SRC)}
+        src={imageSrc}
+        srcSet={responsiveImageSrcSet(imageSrc)}
         sizes="100vw"
         width={1600}
         height={905}
-        fetchPriority="high"
         alt=""
         aria-hidden="true"
+        fetchPriority="high"
         className="absolute inset-0 -z-10 h-full w-full object-cover"
+        onError={(event) => {
+          event.currentTarget.style.display = "none";
+        }}
       />
       <div
         aria-hidden="true"
@@ -440,14 +405,12 @@ function Inventory({ content }: { readonly content: SiteContent }) {
     <section className="mx-auto w-full max-w-7xl px-5 py-10 sm:px-8 lg:px-10">
       <div className="grid gap-6 rounded-lg border bg-card p-5 md:grid-cols-[0.8fr_1.2fr]">
         <div>
-          <p className="text-sm font-semibold text-primary">Tjänsteöversikt</p>
-          <h2 className="mt-2 font-display text-2xl font-bold tracking-wide">Tydliga vägar för rätt uppdrag</h2>
+          <p className="text-sm font-semibold text-primary">{content.inventory.eyebrow}</p>
+          <h2 className="mt-2 font-display text-2xl font-bold tracking-wide">{content.inventory.heading}</h2>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">{content.inventory.routeDecision}</p>
         </div>
         <div>
-          <p className="text-sm text-muted-foreground">
-            Hitta snabbt till företagets viktigaste information, tjänster och offertkontakt.
-          </p>
+          <p className="text-sm text-muted-foreground">{content.inventory.helper}</p>
           <div className="mt-4 flex flex-wrap gap-2">
             {content.inventory.primaryRoutes.map((route) => (
               <a
@@ -468,12 +431,11 @@ function Inventory({ content }: { readonly content: SiteContent }) {
 function ServicesIndexPage({ content, route }: { readonly content: SiteContent; readonly route: SiteRoute }) {
   return (
     <>
-      <PageHero title={route.label} summary={route.summary} imageSrc={PAGE_HERO_PHOTOS[route.id]} />
+      <PageHero title={route.label} summary={route.summary} imageSrc={route.heroPhotoAssetPath} breadcrumb={content.chrome.breadcrumb} />
       <Services content={content} />
       <Trust content={content} />
       <Partners content={content} />
       <ContactLinkBand content={content} />
-      <Footer content={content} />
     </>
   );
 }
@@ -481,10 +443,9 @@ function ServicesIndexPage({ content, route }: { readonly content: SiteContent; 
 function AboutPage({ content, route }: { readonly content: SiteContent; readonly route: SiteRoute }) {
   return (
     <>
-      <PageHero title={route.label} summary={route.summary} imageSrc={PAGE_HERO_PHOTOS[route.id]} />
+      <PageHero title={route.label} summary={route.summary} imageSrc={route.heroPhotoAssetPath} breadcrumb={content.chrome.breadcrumb} />
       <About content={content} />
       <ContactLinkBand content={content} />
-      <Footer content={content} />
     </>
   );
 }
@@ -503,17 +464,15 @@ function ServicePage({
       <PageHero
         title={service.title}
         summary={route.summary}
-        eyebrow="Tjänst"
-        imageSrc={PAGE_HERO_PHOTOS[route.id]}
+        eyebrow={content.chrome.service.heroEyebrow}
+        imageSrc={route.heroPhotoAssetPath}
+        breadcrumb={content.chrome.breadcrumb}
       />
       <section className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-14 sm:px-8 lg:grid-cols-[1fr_0.72fr] lg:px-10">
         <div>
           <p className="text-lg leading-8 text-foreground">{service.summary}</p>
-          {service.id === "dranering" ? (
-            <p className="mt-4 leading-7 text-muted-foreground">
-              Dräneringssidan är en egen toppnivå för besökare som behöver fuktsäkring runt husgrund, mur eller
-              källarvägg. Innehållet lyfter helheten från bedömning och grävning till återställning.
-            </p>
+          {service.detail ? (
+            <p className="mt-4 leading-7 text-muted-foreground">{service.detail}</p>
           ) : null}
           <div className="mt-6 flex flex-wrap gap-2">
             {service.tags.map((tag) => (
@@ -524,40 +483,46 @@ function ServicePage({
           </div>
         </div>
         <aside className="rounded-lg border bg-card p-5 shadow-soft">
-          <h2 className="text-xl font-semibold">När tjänsten passar</h2>
-          <p className="mt-3 text-sm leading-6 text-muted-foreground">
-            {service.title} passar när du vill ha en tydlig genomgång av behov, markförutsättningar och nästa steg
-            innan arbetet planeras.
-          </p>
+          <h2 className="text-xl font-semibold">{content.chrome.service.guidanceHeading}</h2>
+          <p className="mt-3 text-sm leading-6 text-muted-foreground">{service.guidance}</p>
         </aside>
       </section>
       <Process content={content} />
-      <ContactLinkBand content={content} />
-      <Footer content={content} />
+      <ContactLinkBand content={content} serviceId={service.id} />
     </>
   );
 }
 
-function ContactPage({ content, route }: { readonly content: SiteContent; readonly route: SiteRoute }) {
+function ContactPage({
+  content,
+  inquiryServiceId,
+  route,
+}: {
+  readonly content: SiteContent;
+  readonly inquiryServiceId?: string;
+  readonly route: SiteRoute;
+}) {
   return (
     <>
-      <PageHero title={route.label} summary={route.summary} imageSrc={PAGE_HERO_PHOTOS[route.id]} />
-      <Contact content={content} />
-      <Footer content={content} />
+      <PageHero title={route.label} summary={route.summary} imageSrc={route.heroPhotoAssetPath} breadcrumb={content.chrome.breadcrumb} />
+      <Contact content={content} serviceOption={resolveInquiryServiceOption(content, inquiryServiceId)} />
     </>
   );
 }
 
 function NotFound({ content, currentPath }: { readonly content: SiteContent; readonly currentPath: string }) {
+  const chrome = content.chrome;
+
   return (
     <>
       <PageHero
-        title="Sidan finns inte"
-        eyebrow="Okänd sida"
-        summary={`${currentPath} matchar ingen aktuell sida. Välj en av genvägarna nedan för att komma vidare.`}
+        title={chrome.notFound.title}
+        eyebrow={chrome.notFound.eyebrow}
+        summary={renderNotFoundSummary(chrome.notFound.summaryTemplate, currentPath)}
+        breadcrumb={chrome.breadcrumb}
       />
       <section className="mx-auto w-full max-w-7xl px-5 py-14 sm:px-8 lg:px-10">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Genvägar</p>
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{chrome.notFound.shortcutsLabel}</p>
         <div className="mt-4 flex flex-wrap gap-2">
           {content.routes.map((route) => (
             <a
@@ -570,7 +535,6 @@ function NotFound({ content, currentPath }: { readonly content: SiteContent; rea
           ))}
         </div>
       </section>
-      <Footer content={content} />
     </>
   );
 }
@@ -580,11 +544,13 @@ function PageHero({
   summary,
   eyebrow,
   imageSrc,
+  breadcrumb,
 }: {
   readonly title: string;
   readonly summary: string;
   readonly eyebrow?: string;
   readonly imageSrc?: string;
+  readonly breadcrumb: SiteBreadcrumb;
 }) {
   return (
     <section className="relative isolate overflow-hidden border-b border-background/10 bg-foreground text-background">
@@ -593,9 +559,9 @@ function PageHero({
           src={imageSrc}
           srcSet={responsiveImageSrcSet(imageSrc)}
           sizes="100vw"
-          fetchPriority="high"
           alt=""
           aria-hidden="true"
+          fetchPriority="high"
           className="absolute inset-0 -z-10 h-full w-full object-cover"
           onError={(event) => {
             event.currentTarget.style.display = "none";
@@ -607,9 +573,9 @@ function PageHero({
         className="absolute inset-0 -z-10 bg-gradient-to-r from-foreground via-foreground/92 to-foreground/60"
       />
       <div className="mx-auto w-full max-w-7xl px-5 py-14 sm:px-8 lg:px-10 lg:py-20">
-        <nav aria-label="Brödsmulor" className="text-sm font-medium text-background/70">
+        <nav aria-label={breadcrumb.ariaLabel} className="text-sm font-medium text-background/70">
           <a href="/" className="transition-colors hover:text-primary">
-            Hem
+            {breadcrumb.homeLabel}
           </a>
           <span className="mx-2 text-background/40" aria-hidden="true">
             /
@@ -626,18 +592,26 @@ function PageHero({
   );
 }
 
-function ContactLinkBand({ content }: { readonly content: SiteContent }) {
+function ContactLinkBand({
+  content,
+  serviceId,
+}: {
+  readonly content: SiteContent;
+  readonly serviceId?: string;
+}) {
   return (
     <section className="border-y bg-secondary">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-5 py-12 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-10">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Nästa steg</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">
+            {content.chrome.contactBand.eyebrow}
+          </p>
           <h2 className="mt-2 font-display text-2xl font-bold tracking-wide text-foreground">{content.contact.title}</h2>
           <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">{content.contact.summary}</p>
         </div>
         <Button asChild size="lg" className="shrink-0">
-          <a href="/kontakt/">
-            Kontakta oss
+          <a href={serviceId ? inquiryContactHref(serviceId) : "/kontakt/"}>
+            {content.chrome.contactBand.ctaLabel}
             <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
           </a>
         </Button>
@@ -686,19 +660,17 @@ function ServiceCardImage({
 }
 
 function Services({ content }: { readonly content: SiteContent }) {
+  const section = content.sectionHeadings.services;
+
   return (
     <section id="tjanster" className="mx-auto w-full max-w-7xl px-5 py-12 sm:px-8 lg:px-10">
-      <SectionHeading
-        eyebrow="Våra tjänster"
-        title="En pålitlig partner inom mark, bygg och anläggning"
-        summary="Svärd Entreprenad hjälper privatpersoner, företag och fastighetsägare med markarbeten, dränering, grundläggning, stenläggning och andra anläggningsuppdrag."
-      />
+      <SectionHeading eyebrow={section.eyebrow} title={section.title} summary={section.summary} />
       <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {content.services.map((service) => {
           const visual = content.routes.find(
             (route) => route.kind === "service" && route.sourceId === service.id,
           )?.visual;
-          const photo = SERVICE_PHOTOS[service.id] ?? visual?.assetPath;
+          const photo = service.photoSrc ?? visual?.assetPath;
 
           return (
             <Card key={service.id} id={service.id} className="flex flex-col overflow-hidden">
@@ -723,9 +695,10 @@ function Services({ content }: { readonly content: SiteContent }) {
                 </div>
                 <a
                   href={service.href}
+                  aria-label={`${section.readMoreAriaPrefix} ${service.title}`}
                   className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary/80"
                 >
-                  Läs mer
+                  {section.readMoreLabel}
                   <ArrowRight className="ml-1.5 h-3.5 w-3.5" aria-hidden="true" />
                 </a>
               </CardContent>
@@ -753,18 +726,15 @@ function About({ content }: { readonly content: SiteContent }) {
 }
 
 function Process({ content }: { readonly content: SiteContent }) {
+  const heading = content.sectionHeadings.process;
+
   return (
     <section id="process" className="bg-foreground text-background">
       <div className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
         <div className="max-w-3xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Arbetsprocess</p>
-          <h2 className="mt-2 font-display text-4xl font-bold tracking-wide text-background">
-            Från första kontakt till slutfört arbete
-          </h2>
-          <p className="mt-3 leading-7 text-background/70">
-            Varje uppdrag drivs med tydlig dialog, planering på plats och noggrant utförande hela vägen till färdigt
-            resultat.
-          </p>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{heading.eyebrow}</p>
+          <h2 className="mt-2 font-display text-4xl font-bold tracking-wide text-background">{heading.title}</h2>
+          <p className="mt-3 leading-7 text-background/70">{heading.summary}</p>
         </div>
         <div className="mt-10 grid gap-8 md:grid-cols-4">
           {content.process.map((step, index) => (
@@ -786,17 +756,14 @@ function Process({ content }: { readonly content: SiteContent }) {
 
 function Trust({ content }: { readonly content: SiteContent }) {
   const icons = [ShieldCheck, BadgeCheck, CheckCircle2];
+  const heading = content.sectionHeadings.trust;
 
   return (
     <section className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
       <div className="mx-auto max-w-3xl text-center">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Varför välja oss</p>
-        <h2 className="mt-2 font-display text-4xl font-bold tracking-wide text-foreground">
-          Därför väljer kunder oss
-        </h2>
-        <p className="mt-3 leading-7 text-muted-foreground">
-          Garantier, certifieringar och bred erfarenhet ligger bakom varje uppdrag vi tar oss an.
-        </p>
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{heading.eyebrow}</p>
+        <h2 className="mt-2 font-display text-4xl font-bold tracking-wide text-foreground">{heading.title}</h2>
+        <p className="mt-3 leading-7 text-muted-foreground">{heading.summary}</p>
       </div>
       <div className="mt-12 grid gap-10 md:grid-cols-3">
         {content.trust.map((item, index) => {
@@ -822,15 +789,13 @@ function Partners({ content }: { readonly content: SiteContent }) {
     return null;
   }
 
+  const heading = content.sectionHeadings.partners;
+
   return (
     <section id="samarbetspartner" className="border-y bg-muted/70">
       <div className="mx-auto w-full max-w-7xl px-5 py-12 sm:px-8 lg:px-10">
         <div className="max-w-2xl">
-          <SectionHeading
-            eyebrow="Samarbetspartner"
-            title="Samarbetspartner"
-            summary="Partnerfältet är uppdaterat enligt ägarens önskemål och visar endast aktuell samarbetspartner."
-          />
+          <SectionHeading eyebrow={heading.eyebrow} title={heading.title} summary={heading.summary} />
         </div>
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {content.partners.map((partner) => (
@@ -848,25 +813,19 @@ function Partners({ content }: { readonly content: SiteContent }) {
 
 function Footer({ content }: { readonly content: SiteContent }) {
   const email = content.contact.form.recipientEmail;
+  const chrome = content.chrome;
 
   return (
     <footer className="border-t border-background/10 bg-foreground text-background">
       <div className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-12 sm:px-8 md:grid-cols-[1.4fr_1fr_1fr_1fr] lg:px-10">
         <div className="max-w-sm">
-          <p className="font-display text-2xl font-bold uppercase tracking-wide text-background">{BRAND_NAME}</p>
-          <p className="mt-3 text-sm leading-6 text-background/65">
-            Din lokala partner för mark, schakt, dränering och anläggning.
-          </p>
+          <p className="font-display text-2xl font-bold uppercase tracking-wide text-background">{chrome.brand.name}</p>
+          <p className="mt-3 text-sm leading-6 text-background/65">{chrome.footer.tagline}</p>
         </div>
-        <nav aria-label="Sidfotsnavigation" className="text-sm">
-          <p className="font-semibold text-background">Sidor</p>
+        <nav aria-label={chrome.footer.pageNavAriaLabel} className="text-sm">
+          <p className="font-semibold text-background">{chrome.footer.pageHeading}</p>
           <ul className="mt-3 grid gap-2">
-            {[
-              { label: "Hem", href: "/" },
-              { label: "Tjänster", href: "/tjanster/" },
-              { label: "Om oss", href: "/om-oss/" },
-              { label: "Kontakt", href: "/kontakt/" },
-            ].map((route) => (
+            {PAGE_NAV.map((route) => (
               <li key={route.href}>
                 <a href={route.href} className="text-background/70 transition-colors hover:text-primary">
                   {route.label}
@@ -875,8 +834,8 @@ function Footer({ content }: { readonly content: SiteContent }) {
             ))}
           </ul>
         </nav>
-        <nav aria-label="Tjänster" className="text-sm">
-          <p className="font-semibold text-background">Tjänster</p>
+        <nav aria-label={chrome.footer.servicesNavAriaLabel} className="text-sm">
+          <p className="font-semibold text-background">{chrome.footer.servicesHeading}</p>
           <ul className="mt-3 grid gap-2">
             {SERVICE_NAV.map((route) => (
               <li key={route.href}>
@@ -888,7 +847,7 @@ function Footer({ content }: { readonly content: SiteContent }) {
           </ul>
         </nav>
         <div className="text-sm">
-          <p className="font-semibold text-background">Kontakt</p>
+          <p className="font-semibold text-background">{chrome.footer.contactHeading}</p>
           <a
             href={`mailto:${email}`}
             className="mt-3 inline-flex items-center gap-2 text-background/70 transition-colors hover:text-primary"
@@ -900,14 +859,23 @@ function Footer({ content }: { readonly content: SiteContent }) {
       </div>
       <div className="border-t border-background/10">
         <div className="mx-auto w-full max-w-7xl px-5 py-5 text-xs text-background/50 sm:px-8 lg:px-10">
-          © {BRAND_NAME}
+          © {chrome.brand.name}
         </div>
       </div>
     </footer>
   );
 }
 
-function Contact({ content }: { readonly content: SiteContent }) {
+const CONTACT_FIELD_BASE_CLASS =
+  "rounded-md border bg-card px-3 py-2 text-base font-normal text-foreground outline-none transition-colors focus:border-primary focus-visible:ring-2 focus-visible:ring-ring sm:text-sm";
+
+function Contact({
+  content,
+  serviceOption,
+}: {
+  readonly content: SiteContent;
+  readonly serviceOption?: string;
+}) {
   const form = content.contact.form;
   const emailAction = `mailto:${form.recipientEmail}?subject=${encodeURIComponent(form.subject)}`;
 
@@ -940,6 +908,7 @@ function Contact({ content }: { readonly content: SiteContent }) {
         </div>
         <form
           aria-label={form.ariaLabel}
+          aria-describedby="kontakt-handoff-note"
           action={emailAction}
           method="post"
           encType="text/plain"
@@ -952,7 +921,7 @@ function Contact({ content }: { readonly content: SiteContent }) {
               name={form.nameField.name}
               placeholder={form.nameField.placeholder}
               required
-              className="min-h-11 rounded-md border bg-card px-3 py-2 text-base font-normal text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary sm:text-sm"
+              className={`min-h-11 ${CONTACT_FIELD_BASE_CLASS} placeholder:text-muted-foreground`}
             />
           </label>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -961,7 +930,7 @@ function Contact({ content }: { readonly content: SiteContent }) {
               <select
                 name={form.customerTypeField.name}
                 required
-                className="min-h-11 rounded-md border bg-card px-3 py-2 text-base font-normal text-foreground outline-none transition-colors focus:border-primary sm:text-sm"
+                className={`min-h-11 ${CONTACT_FIELD_BASE_CLASS}`}
               >
                 {form.customerTypeField.options.map((option) => (
                   <option key={option}>{option}</option>
@@ -973,7 +942,8 @@ function Contact({ content }: { readonly content: SiteContent }) {
               <select
                 name={form.serviceField.name}
                 required
-                className="min-h-11 rounded-md border bg-card px-3 py-2 text-base font-normal text-foreground outline-none transition-colors focus:border-primary sm:text-sm"
+                defaultValue={serviceOption}
+                className={`min-h-11 ${CONTACT_FIELD_BASE_CLASS}`}
               >
                 {form.serviceField.options.map((option) => (
                   <option key={option}>{option}</option>
@@ -988,9 +958,19 @@ function Contact({ content }: { readonly content: SiteContent }) {
               placeholder={form.messageField.placeholder}
               required
               rows={form.messageField.rows}
-              className="min-h-32 resize-y rounded-md border bg-card px-3 py-2 text-base font-normal text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary sm:text-sm"
+              className={`min-h-32 resize-y ${CONTACT_FIELD_BASE_CLASS} placeholder:text-muted-foreground`}
             />
           </label>
+          <p id="kontakt-handoff-note" className="text-sm leading-6 text-muted-foreground">
+            {form.handoffNote}{" "}
+            <a
+              href={emailAction}
+              className="font-medium text-foreground underline underline-offset-4 transition-colors hover:text-primary"
+            >
+              {form.recipientEmail}
+            </a>
+            .
+          </p>
           <Button type="submit" className="justify-self-start">
             <Mail className="mr-2 h-4 w-4" aria-hidden="true" />
             {form.submitLabel}

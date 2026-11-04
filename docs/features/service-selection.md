@@ -1,6 +1,6 @@
 # F1: Choose a suitable groundworks service
 
-Reviewed: 2026-10-24. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-02. Runtime: `ui`. Product role: `customer_outcome`.
 
 Visitors need to identify which service fits a property or construction project
 before asking for a discussion. The current result is service understanding and
@@ -9,7 +9,9 @@ a route to inquiry preparation, not an instant price or confirmed booking.
 ## Entry points and current behavior
 
 Home `/` and `/tjanster/` list the five typed service records with summaries,
-tags and Läs mer links. Home also supplies hero actions and route shortcuts.
+tags and visible Läs mer links. Each card link has the accessible name
+`Läs mer om <service title>` so its destination is identifiable outside the
+surrounding card on both home and the index. Home also supplies hero actions and route shortcuts.
 The index adds trust cards and a contact link band. Its partners section is
 currently absent because the list is empty.
 
@@ -23,16 +25,21 @@ currently absent because the list is empty.
 
 [F1-US1](user-stories/F1/F1-US1.md) covers comparing these offers on home/index.
 Every detail view has a page hero, summary, tags, När tjänsten passar aside,
-four-step process, contact link band and footer. Service cards use photographs
+four-step process, contact link band and footer. Each detail view's band
+inquiry action targets `/kontakt/?tjanst=<service id>` with that view's typed
+service id, so the contact form opens with the matching option preselected
+(F3 owns that resolution and its defaults). Service cards use photographs
 with typed route SVG fallback; if the fallback SVG also errors, the card image
 is removed with no retry loop while title, summary and Läs mer remain. Page hero
-photograph errors hide the image and retain text. These decorative backgrounds
-are not project case-study evidence.
+photographs are requested at high fetch priority while service-card images stay
+lazy, and photograph errors hide the image and retain text. These decorative
+backgrounds are not project case-study evidence.
 
 ## Outcome and support
 
 The visitor can select a matching service for a stated project and reach
-`/kontakt/` from that detail page. Those are observable task checks; no
+`/kontakt/` from that detail page with that service preselected in the
+inquiry form, still changeable. Those are observable task checks; no
 conversion analytics is installed. F4 supplies navigation/recovery. F2 explains
 the shared process and company claims; F3 owns inquiry preparation.
 There are no service APIs, background jobs, automatic estimates or booking records.
@@ -45,26 +52,37 @@ ServicesIndexPage, Services, ServicePage and the route branching.
 [Types](../../src/types/site.ts) define the content contract.
 
 A missing service for a known service route renders not-found. An empty
-services list blocks every route body. Loading/error/empty/not-found handling
+services list blocks the home and services-index bodies with the empty state.
+Empty-services and not-found handling
 and recovery ceilings are described in [F4](navigation-and-recovery.md).
 A content defect requires source correction and static redeployment.
 
 Existing Vitest declarations directly check representative home tags,
-Stensättning guidance and Dränering/Grävjobb detail text. The six story documents
+Stensättning and Dränering per-service guidance plus the absence of the retired
+shared template sentence, and Dränering/Grävjobb detail text. The six story documents
 and identity manifest carry exact names and the limited assertion scope.
 No dedicated Markarbete or Trädgårdsplanering render test is mapped.
-The services-index view is source-reviewed, not established by a dedicated
-existing rendered test. Metadata tests do not prove displayed image fallbacks;
-deterministic rendered image-error tests now cover the home service-card
-photo→SVG fallback and its terminal removal.
+The parameterized declaration `names every service-card link by its destination on %s`
+renders both home and the services index and checks all five accessible link
+names, destinations and unchanged visible Läs mer text. It does not establish
+the index hero, trust section, layout or a complete assistive-technology flow.
+Metadata tests do not prove displayed image fallbacks;
+F1-US1 maps deterministic rendered image-error declarations for the home
+service-card photo→SVG fallback, terminal removal with content/link retention,
+and isolation from neighboring cards. The five service-page band inquiry
+destinations are each checked by the parameterized F3-US1 declaration listed in
+[project-inquiry.md](project-inquiry.md). These mappings do not establish
+services-index image fallback behavior and are not test execution receipts;
+above-the-fold hero fetch priority and subpage-hero image hiding are mapped
+once through [F4-US1](user-stories/F4/F4-US1.md).
 
 ## What Works Less Well
 
-Except for the drainage paragraph, detail views largely repeat a summary,
-generic suitability advice and the same process. Visitors cannot compare
-service-specific prerequisites or inspect a completed example here. Grävjobb
-covers several very different needs in one short summary, so a pool owner has
-little guidance on what to provide before asking for a visit.
+Except for the drainage paragraph, detail views repeat a summary, per-service
+suitability guidance and the same process. Visitors cannot inspect a completed
+example here. Grävjobb covers several very different needs in one short
+summary, so a pool owner has little guidance on what to provide before asking
+for a visit.
 
 ## Roadmap
 
@@ -73,5 +91,6 @@ little guidance on what to provide before asking for a visit.
 - Expand: add concrete completed-project examples to the appropriate service
   views when approved media and descriptions exist.
 - Coverage: when those pages change, protect the distinct rendered
-  Markarbete/Trädgårdsplanering and index contracts at the page boundary.
+  Markarbete/Trädgårdsplanering and remaining index contracts at the page
+  boundary; retain the existing home/index accessible-link coverage.
 

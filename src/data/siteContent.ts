@@ -2,6 +2,9 @@ import type { SiteContent } from "../types/site";
 
 export const siteContent = {
   inventory: {
+    eyebrow: "Tjänsteöversikt",
+    heading: "Tydliga vägar för rätt uppdrag",
+    helper: "Hitta snabbt till företagets viktigaste information, tjänster och offertkontakt.",
     checkedAt: "2026-06-16T10:05:00Z",
     source: "Current route inventory and owner-approved service structure",
     pageCount: 58,
@@ -19,6 +22,7 @@ export const siteContent = {
   routes: [
     {
       id: "quote", kind: "quote", label: "Offertberäkning", href: "/offertberakning/",
+      heroPhotoAssetPath: "/page-visuals/quote-hero.png",
       summary: "Preliminär kostnadsberäkning för asfalterad uppfart med redigerbara exempelpriser.",
       visual: { assetPath: "/page-visuals/svard-entreprenad-quote.svg", alt: "Måttsatt uppfart", intent: "Visar ytan som ligger till grund för kalkylen." },
     },
@@ -28,6 +32,7 @@ export const siteContent = {
       label: "Hem",
       href: "/",
       summary: "Startsida med översikt över tjänster, arbetsprocess och offertkontakt.",
+      heroPhotoAssetPath: "/page-visuals/hero-photo.webp",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-home.svg",
         alt: "Entreprenadmaskin vid färdigplanerad tomt för Svärd Entreprenads startsida",
@@ -40,6 +45,7 @@ export const siteContent = {
       label: "Tjänster",
       href: "/tjanster/",
       summary: "Samlad sida för de huvudsakliga mark-, bygg- och anläggningstjänsterna.",
+      heroPhotoAssetPath: "/page-visuals/services-hero.webp",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-services.svg",
         alt: "Samlad vy över markarbeten, stensättning och dräneringstjänster",
@@ -53,6 +59,7 @@ export const siteContent = {
       href: "/om-oss/",
       summary:
         "Läs om Svärd Entreprenads arbetssätt, erfarenhet och ansvar från första spadtag till färdigt resultat.",
+      heroPhotoAssetPath: "/page-visuals/about-hero.webp",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-about.svg",
         alt: "Arbetslag som planerar ett markprojekt vid arbetsplatsen",
@@ -66,6 +73,7 @@ export const siteContent = {
       label: "Stensättning",
       href: "/stensattning/",
       summary: "Egen tjänstesida för stensättning, marksten och stenmurar.",
+      heroPhotoAssetPath: "/page-visuals/stensattning-photo.webp",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-stensattning.svg",
         alt: "Noggrant lagd marksten och låg stenmur vid entré",
@@ -79,6 +87,7 @@ export const siteContent = {
       label: "Markarbete",
       href: "/markarbete/",
       summary: "Egen tjänstesida för mark och anläggning.",
+      heroPhotoAssetPath: "/page-visuals/markarbete-photo.webp",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-markarbete.svg",
         alt: "Schaktad tomt med maskin och förberedd markbädd",
@@ -92,6 +101,7 @@ export const siteContent = {
       label: "Grävjobb",
       href: "/gravjobb/",
       summary: "Egen tjänstesida för maskin- och grävarbeten, inklusive poolgrävning.",
+      heroPhotoAssetPath: "/page-visuals/gravjobb-generated.webp",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-gravjobb.svg",
         alt: "Grävmaskin som utför schaktning för husgrund och tomtarbete",
@@ -106,6 +116,7 @@ export const siteContent = {
       href: "/dranering/",
       summary:
         "Toppsida för dränering med fuktsäkra markarbeten, schakt, återfyllnad och trygg hantering runt husgrund och mur.",
+      heroPhotoAssetPath: "/page-visuals/dranering-photo.webp",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-dranering.svg",
         alt: "Dräneringsschakt intill husgrund med rör och återfyllnad",
@@ -119,6 +130,7 @@ export const siteContent = {
       label: "Trädgårdsplanering",
       href: "/tradgardsplanering/",
       summary: "Egen tjänstesida för tomt- och trädgårdsplanering.",
+      heroPhotoAssetPath: "/page-visuals/tradgard-generated.webp",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-tradgardsplanering.svg",
         alt: "Planerad trädgård med nivåer, gångar och färdiga utemiljöer",
@@ -131,6 +143,7 @@ export const siteContent = {
       label: "Kontakt",
       href: "/kontakt/",
       summary: "Egen kontaktsida för offertförfrågningar, platsbesök och nästa steg.",
+      heroPhotoAssetPath: "/page-visuals/contact-hero.webp",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-contact.svg",
         alt: "Anteckningar och offertunderlag inför platsbesök för markprojekt",
@@ -174,6 +187,9 @@ export const siteContent = {
       title: "Stensättning",
       summary:
         "Planerade stenytor, marksten och murar för entréer, gångar och gårdar där finish och bärighet behöver hålla över tid.",
+      guidance:
+        "Stensättning passar när entréer, gångar eller gårdar ska få stenytor, marksten eller murar med noggrant underarbete, rätt fall och fogar så finish och bärighet håller över tid.",
+      photoSrc: "/page-visuals/stensattning-photo.webp",
       href: "/stensattning/",
       tags: ["Marksten Örebro", "Stenmurar", "Finplanering"],
     },
@@ -182,6 +198,9 @@ export const siteContent = {
       title: "Markarbete",
       summary:
         "Bredden i mark och anläggning samlad i ett erbjudande för privatpersoner, företag och kommunala projekt.",
+      guidance:
+        "Markarbete passar när uppdraget samlar flera delar av mark och anläggning, från schakt och tomtförberedelse till kompletterande anläggningsarbeten för privatpersoner, företag och större projekt.",
+      photoSrc: "/page-visuals/markarbete-photo.webp",
       href: "/markarbete/",
       tags: ["Schakt", "Tomt", "Anläggning"],
     },
@@ -190,6 +209,9 @@ export const siteContent = {
       title: "Grävjobb",
       summary:
         "Maskin- och grävarbeten för husgrunder, avlopp, VA, tomter och poolgrävning där rätt förarbete avgör slutresultatet.",
+      guidance:
+        "Grävjobb passar när arbetet kräver maskin och schakt, till exempel husgrunder, avlopp och VA, tomter eller poolgrävning, och förarbetet behöver göras rätt direkt på plats.",
+      photoSrc: "/page-visuals/gravjobb-generated.webp",
       href: "/gravjobb/",
       tags: ["Grävning", "Husgrund", "Poolgrävning"],
     },
@@ -198,6 +220,11 @@ export const siteContent = {
       title: "Dränering",
       summary:
         "Dräneringar och fuktsäkra markarbeten runt hus, murar och tomter med ansvar för hela arbetskedjan.",
+      detail:
+        "Dräneringssidan är en egen toppnivå för besökare som behöver fuktsäkring runt husgrund, mur eller källarvägg. Innehållet lyfter helheten från bedömning och grävning till återställning.",
+      guidance:
+        "Dränering passar när fukt hotar husgrund, murar eller tomtytor och hela arbetskedjan från bedömning och grävning till återställning ska tas om hand av samma utförare.",
+      photoSrc: "/page-visuals/dranering-photo.webp",
       href: "/dranering/",
       tags: ["Dränering", "Mur", "Fuktskydd"],
     },
@@ -206,6 +233,9 @@ export const siteContent = {
       title: "Trädgårdsplanering",
       summary:
         "Tomt- och trädgårdsplanering som binder ihop höjder, ytor, planteringar och praktisk användning.",
+      guidance:
+        "Trädgårdsplanering passar när tomten behöver en helhet där höjder, ytor, planteringar och praktisk användning planeras ihop innan markarbetet sätts.",
+      photoSrc: "/page-visuals/tradgard-generated.webp",
       href: "/tradgardsplanering/",
       tags: ["Tomtplanering", "Utemiljö", "Finish"],
     },
@@ -246,6 +276,33 @@ export const siteContent = {
     },
   ],
   partners: [],
+  sectionHeadings: {
+    services: {
+      eyebrow: "Våra tjänster",
+      title: "En pålitlig partner inom mark, bygg och anläggning",
+      summary:
+        "Svärd Entreprenad hjälper privatpersoner, företag och fastighetsägare med markarbeten, dränering, grundläggning, stenläggning och andra anläggningsuppdrag.",
+      readMoreLabel: "Läs mer",
+      readMoreAriaPrefix: "Läs mer om",
+    },
+    process: {
+      eyebrow: "Arbetsprocess",
+      title: "Från första kontakt till slutfört arbete",
+      summary:
+        "Varje uppdrag drivs med tydlig dialog, planering på plats och noggrant utförande hela vägen till färdigt resultat.",
+    },
+    trust: {
+      eyebrow: "Varför välja oss",
+      title: "Därför väljer kunder oss",
+      summary: "Garantier, certifieringar och bred erfarenhet ligger bakom varje uppdrag vi tar oss an.",
+    },
+    partners: {
+      eyebrow: "Samarbetspartner",
+      title: "Samarbetspartner",
+      summary:
+        "Partnerfältet är uppdaterat enligt ägarens önskemål och visar endast aktuell samarbetspartner.",
+    },
+  },
   contact: {
     title: "Kontakta oss för offert",
     summary: "Skicka en förfrågan om ditt projekt så återkommer Svärd Entreprenad med nästa steg.",
@@ -255,6 +312,8 @@ export const siteContent = {
       recipientEmail: "kontakt@svardentreprenad.se",
       subject: "Offertförfrågan från alvalinus.se",
       submitLabel: "Skicka offertförfrågan",
+      handoffNote:
+        "Din förfrågan öppnas i ditt eget e-postprogram för granskning och utskick. Webbplatsen kan inte bekräfta att meddelandet har levererats. Fungerar inte överlämningen når du oss direkt på",
       nameField: {
         label: "Namn",
         name: "name",
@@ -280,5 +339,38 @@ export const siteContent = {
     items: [
       { label: "E-post", value: "kontakt@svardentreprenad.se", href: "mailto:kontakt@svardentreprenad.se" },
     ],
+  },
+  chrome: {
+    brand: {
+      name: "Svärd Entreprenad",
+      logoSrc: "/svard-entreprenad-logo.svg",
+    },
+    breadcrumb: {
+      ariaLabel: "Brödsmulor",
+      homeLabel: "Hem",
+    },
+    contactBand: {
+      eyebrow: "Nästa steg",
+      ctaLabel: "Kontakta oss",
+    },
+    footer: {
+      tagline: "Din lokala partner för mark, schakt, dränering och anläggning.",
+      pageHeading: "Sidor",
+      servicesHeading: "Tjänster",
+      contactHeading: "Kontakt",
+      pageNavAriaLabel: "Sidfotsnavigation",
+      servicesNavAriaLabel: "Tjänster",
+    },
+    notFound: {
+      title: "Sidan finns inte",
+      eyebrow: "Okänd sida",
+      summaryTemplate:
+        "{path} matchar ingen aktuell sida. Välj en av genvägarna nedan för att komma vidare.",
+      shortcutsLabel: "Genvägar",
+    },
+    service: {
+      heroEyebrow: "Tjänst",
+      guidanceHeading: "När tjänsten passar",
+    },
   },
 } satisfies SiteContent;

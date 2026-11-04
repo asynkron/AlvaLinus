@@ -2,13 +2,124 @@ import path from "node:path";
 
 const visualAssetPrefix = "/page-visuals/svard-entreprenad-";
 const visualAssetSuffix = ".svg";
+const percentEscapePattern = /%[0-9a-fA-F]{2}/;
+
+const siteName = "Svärd Entreprenad";
+const titleElementPattern = /<title\b[^>]*>([\s\S]*?)<\/title>/i;
+const descriptionMetaTagPattern = /<meta\b[^>]*\bname=(["'])description\1[^>]*>/i;
+const descriptionContentPattern = /\s+content=(["'])([\s\S]*?)\1/i;
+const ogTitleMetaTagPattern = /<meta\b[^>]*\bproperty=(["'])og:title\1[^>]*>/i;
+const ogDescriptionMetaTagPattern = /<meta\b[^>]*\bproperty=(["'])og:description\1[^>]*>/i;
+const twitterTitleMetaTagPattern = /<meta\b[^>]*\bname=(["'])twitter:title\1[^>]*>/i;
+const twitterDescriptionMetaTagPattern = /<meta\b[^>]*\bname=(["'])twitter:description\1[^>]*>/i;
+const socialMetaTagPatterns = [
+  ogTitleMetaTagPattern,
+  ogDescriptionMetaTagPattern,
+  twitterTitleMetaTagPattern,
+  twitterDescriptionMetaTagPattern,
+];
+const linkTagPattern = /<link\b[^>]*>/gi;
+const preloadRelPattern = /\brel=(["'])preload\1/i;
+const imagePreloadAsPattern = /\bas=(["'])image\1/i;
+const linkHrefAttributePattern = /\bhref=(["'])([\s\S]*?)\1/i;
+const headClosePattern = /<\/head>/i;
+const homeHeroPreloadHrefPattern = /\bhref=(["'])\/page-visuals\/hero-photo\.webp\1/i;
 
 function isMissingEntryError(error) {
   return error instanceof Error && "code" in error && error.code === "ENOENT";
 }
 
+function escapeHtmlText(text) {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function unescapeHtmlText(text) {
+  return text
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&");
+}
+
+function metaTagContent(document, metaTagPattern) {
+  const metaTagMatch = document.match(metaTagPattern);
+  const contentMatch = metaTagMatch === null ? null : metaTagMatch[0].match(descriptionContentPattern);
+
+  return contentMatch === null ? null : unescapeHtmlText(contentMatch[2]);
+}
+
+function extractDocumentMetadata(document) {
+  const titleMatch = document.match(titleElementPattern);
+
+  return {
+    title: titleMatch === null ? null : unescapeHtmlText(titleMatch[1]),
+    description: metaTagContent(document, descriptionMetaTagPattern),
+    ogTitle: metaTagContent(document, ogTitleMetaTagPattern),
+    ogDescription: metaTagContent(document, ogDescriptionMetaTagPattern),
+    twitterTitle: metaTagContent(document, twitterTitleMetaTagPattern),
+    twitterDescription: metaTagContent(document, twitterDescriptionMetaTagPattern),
+  };
+}
+
 function routeLabel(route, index) {
   return typeof route?.id === "string" && route.id.length > 0 ? `Route ${route.id}` : `Route at index ${index}`;
+}
+
+/**
+ * A canonical public route href is the site root "/" or a root-relative
+ * directory path that starts and ends with "/" and uses single "/" separators
+ * between nonempty segments. Backslashes, dot segments ("." and ".."), query or
+ * fragment text, and percent-encoded sequences that could hide separators or
+ * dots are rejected so a declared href always maps to one unambiguous static
+ * output directory.
+ */
+function canonicalHrefViolation(href) {
+  if (typeof href !== "string" || !href.startsWith("/")) {
+    return 'must declare a root-relative href starting with "/".';
+  }
+
+  if (href === "/") return null;
+
+  if (href.includes("\\")) {
+    return 'must use "/" directory separators; backslashes are not canonical route paths.';
+  }
+
+  if (href.includes("?") || href.includes("#")) {
+    return "must be a plain directory path without query or fragment text.";
+  }
+
+  if (percentEscapePattern.test(href)) {
+    return "must avoid percent-encoded sequences that can hide separators or dots.";
+  }
+
+  if (href.includes("//")) {
+    return 'must use single "/" separators without repeated slashes.';
+  }
+
+  const segments = href.slice(1).split("/");
+  const dotSegment = segments.find((segment) => segment === "." || segment === "..");
+
+  if (dotSegment !== undefined) {
+    return 'must not contain "." or ".." path segments.';
+  }
+
+  if (segments[segments.length - 1] !== "") {
+    return 'must end with "/" so the static build emits a directory index page.';
+  }
+
+  return null;
+}
+
+function outputDestination(href) {
+  return href.replace(/^\/+|\/+$/g, "");
+}
+
+function describeOutputDestination(destination) {
+  return destination.length === 0 ? "dist/index.html" : `dist/${destination}/index.html`;
 }
 
 export function requireRouteRegistry(routes) {
@@ -16,23 +127,302 @@ export function requireRouteRegistry(routes) {
     throw new Error("Route registry must be a non-empty array of declared routes.");
   }
 
+  const destinations = new Map();
+
   routes.forEach((route, index) => {
     if (typeof route?.href !== "string" || !route.href.startsWith("/")) {
       throw new Error(`${routeLabel(route, index)} must declare a root-relative href starting with "/".`);
     }
 
+    const hrefViolation = canonicalHrefViolation(route.href);
+
+    if (hrefViolation !== null) {
+      throw new Error(`${routeLabel(route, index)} ${hrefViolation}`);
+    }
+
     if (typeof route?.visual?.assetPath !== "string" || route.visual.assetPath.length === 0) {
       throw new Error(`${routeLabel(route, index)} must declare a visual assetPath string.`);
     }
+
+    const heroViolation = routeHeroPhotoAssetPathViolation(route.heroPhotoAssetPath);
+
+    if (heroViolation !== null) {
+      throw new Error(`${routeLabel(route, index)} ${heroViolation}`);
+    }
+
+    const destination = outputDestination(route.href);
+
+    if (destinations.has(destination)) {
+      const otherIndex = destinations.get(destination);
+
+      throw new Error(
+        `${routeLabel(route, index)} and ${routeLabel(routes[otherIndex], otherIndex)} both emit ` +
+          `${describeOutputDestination(destination)}; routes must declare unique static output destinations.`,
+      );
+    }
+
+    destinations.set(destination, index);
   });
 
   return routes;
 }
 
+export function staticSubpageRoutes(routes) {
+  return requireRouteRegistry(routes).filter((route) => route.href !== "/");
+}
+
 export function staticSubpagePaths(routes) {
-  return requireRouteRegistry(routes)
-    .map((route) => route.href)
-    .filter((href) => href !== "/");
+  return staticSubpageRoutes(routes).map((route) => route.href);
+}
+
+/**
+ * A route hero photo asset path feeds both the rendered hero <img> and the
+ * stamped document's preload link href, so it must be a nonempty
+ * root-relative path whose text survives attribute rendering unchanged:
+ * no backslashes, whitespace, quotes or angle characters.
+ */
+function routeHeroPhotoAssetPathViolation(assetPath) {
+  if (typeof assetPath !== "string" || assetPath.length === 0) {
+    return "must declare a nonempty heroPhotoAssetPath string.";
+  }
+
+  if (assetPath.includes("\\")) {
+    return 'must use "/" directory separators in heroPhotoAssetPath.';
+  }
+
+  if (!assetPath.startsWith("/")) {
+    return 'must declare a root-relative heroPhotoAssetPath starting with "/".';
+  }
+
+  if (/[\s"'<>]/.test(assetPath)) {
+    return "must keep heroPhotoAssetPath free of whitespace and quote or angle characters.";
+  }
+
+  return null;
+}
+
+export function requireRouteHeroPhotoAssetPath(route, index) {
+  const violation = routeHeroPhotoAssetPathViolation(route?.heroPhotoAssetPath);
+
+  if (violation !== null) {
+    throw new Error(`${routeLabel(route, index)} ${violation}`);
+  }
+
+  return route.heroPhotoAssetPath;
+}
+
+/**
+ * Validated hero preload href for one route: the declared heroPhotoAssetPath
+ * verbatim, so the stamped preload link, the rendered hero image and the
+ * artifact assertion all read the same registry-owned string.
+ */
+export function routeHeroPreloadHref(route) {
+  return requireRouteHeroPhotoAssetPath(route, 0);
+}
+
+/**
+ * Declared page-metadata composition for emitted subpage documents: the title
+ * combines the route's Swedish label with the site name, and the description
+ * is the route's registry summary verbatim. The same composed strings feed the
+ * title element, the description meta and the og/twitter social card tags, so
+ * the registry stays the single owner of the Swedish text; this function only
+ * declares how the document strings are composed from it.
+ */
+export function routePageMetadata(route) {
+  const routeName = typeof route?.id === "string" && route.id.length > 0 ? `Route ${route.id}` : "Route";
+
+  if (typeof route?.label !== "string" || route.label.trim().length === 0) {
+    throw new Error(`${routeName} must declare a nonempty label string for page metadata.`);
+  }
+
+  if (typeof route?.summary !== "string" || route.summary.trim().length === 0) {
+    throw new Error(`${routeName} must declare a nonempty summary string for page metadata.`);
+  }
+
+  return requirePageMetadata({ title: `${route.label} – ${siteName}`, description: route.summary });
+}
+
+function requirePageMetadata(metadata) {
+  if (
+    typeof metadata?.title !== "string" ||
+    metadata.title.length === 0 ||
+    typeof metadata?.description !== "string" ||
+    metadata.description.length === 0
+  ) {
+    throw new Error("Route page metadata requires nonempty title and description strings.");
+  }
+
+  return metadata;
+}
+
+/**
+ * The emitted not-found recovery artifact is a dist-root document, not a
+ * declared route: it must never enter requireRouteRegistry validation or the
+ * route destination map, because registry uniqueness and href semantics
+ * describe declared routes only.
+ */
+export const notFoundArtifactPath = "404.html";
+
+/**
+ * Declared Swedish page metadata for the not-found recovery artifact: the
+ * title combines the in-app "Sidan finns inte" recovery heading with the site
+ * name, and the description mirrors the in-app not-found guidance toward the
+ * route shortcuts. The site name stays the single brand owner; this function
+ * only declares how the document strings are composed from it.
+ */
+export function notFoundPageMetadata() {
+  return requirePageMetadata({
+    title: `Sidan finns inte – ${siteName}`,
+    description: "Sidan du sökte matchar ingen aktuell sida. Välj en av genvägarna eller kontakta oss för offert.",
+  });
+}
+
+function replaceTitleElement(document, title) {
+  if (!titleElementPattern.test(document)) {
+    throw new Error("Route document must contain a <title> element to replace.");
+  }
+
+  return document.replace(titleElementPattern, () => `<title>${escapeHtmlText(title)}</title>`);
+}
+
+function replaceMetaTagContent(document, metaTagPattern, content, missingDiagnostic) {
+  const metaTagMatch = document.match(metaTagPattern);
+
+  if (metaTagMatch === null || !descriptionContentPattern.test(metaTagMatch[0])) {
+    throw new Error(missingDiagnostic);
+  }
+
+  return document.replace(metaTagPattern, (tag) =>
+    tag.replace(descriptionContentPattern, () => ` content="${escapeHtmlText(content)}"`),
+  );
+}
+
+function replaceDescriptionMetaTag(document, description) {
+  return replaceMetaTagContent(
+    document,
+    descriptionMetaTagPattern,
+    description,
+    "Route document must contain a description meta tag with a content attribute to replace.",
+  );
+}
+
+function replaceSocialMetaTags(document, metadata) {
+  return socialMetaTagPatterns.reduce(
+    (updatedDocument, metaTagPattern) =>
+      replaceMetaTagContent(
+        updatedDocument,
+        metaTagPattern,
+        metaTagPattern === ogTitleMetaTagPattern || metaTagPattern === twitterTitleMetaTagPattern
+          ? metadata.title
+          : metadata.description,
+        "Route document must contain og:title, og:description, twitter:title and twitter:description meta tags with content attributes to replace.",
+      ),
+    document,
+  );
+}
+
+export function applyRouteDocumentMetadata(document, metadata) {
+  if (typeof document !== "string" || document.length === 0) {
+    throw new Error("Route document metadata emission requires a nonempty document string.");
+  }
+
+  const pageMetadata = requirePageMetadata(metadata);
+  const documentWithHeadText = replaceDescriptionMetaTag(
+    replaceTitleElement(document, pageMetadata.title),
+    pageMetadata.description,
+  );
+
+  return replaceSocialMetaTags(documentWithHeadText, pageMetadata);
+}
+
+function isHomeHeroPreloadLinkTag(linkTag) {
+  return preloadRelPattern.test(linkTag) && homeHeroPreloadHrefPattern.test(linkTag);
+}
+
+function documentCarriesHomeHeroPreload(document) {
+  const linkTags = document.match(linkTagPattern);
+
+  return linkTags !== null && linkTags.some(isHomeHeroPreloadLinkTag);
+}
+
+/**
+ * Absence-tolerant strip for the emitted home-hero preload link: documents
+ * without the link are returned unchanged, so the static route emission can
+ * apply it uniformly to every non-root document regardless of source shape.
+ * Composed separately from applyRouteDocumentMetadata, which owns only the
+ * title, description and social card text.
+ */
+export function stripHomeHeroPreload(document) {
+  if (typeof document !== "string" || document.length === 0) {
+    return document;
+  }
+
+  return document.replace(linkTagPattern, (linkTag) => (isHomeHeroPreloadLinkTag(linkTag) ? "" : linkTag));
+}
+
+function routeHeroPreloadLinkTag(assetPath) {
+  return `<link rel="preload" as="image" href="${assetPath}" fetchpriority="high" />`;
+}
+
+/**
+ * High-priority preload link for one stamped subpage document, inserted
+ * directly before the head-close tag so the browser starts fetching the
+ * route's LCP hero photo in parallel with the JavaScript bundle instead of
+ * after it executes. Composed after stripHomeHeroPreload, which removed the
+ * home document's own preload from the stamped source.
+ */
+export function injectRouteHeroPreload(document, assetPath) {
+  if (typeof document !== "string" || document.length === 0) {
+    throw new Error("Route hero preload injection requires a nonempty document string.");
+  }
+
+  const violation = routeHeroPhotoAssetPathViolation(assetPath);
+
+  if (violation !== null) {
+    throw new Error(`Route hero preload injection requires a heroPhotoAssetPath that ${violation}`);
+  }
+
+  if (!headClosePattern.test(document)) {
+    throw new Error("Route document must contain a </head> element to host the injected hero preload link.");
+  }
+
+  return document.replace(headClosePattern, () => `${routeHeroPreloadLinkTag(assetPath)}</head>`);
+}
+
+/**
+ * Hrefs of every image preload link carried by a document, in document
+ * order: the exact-equality base for "a document preloads exactly its own
+ * route hero photo and nothing else".
+ */
+function documentImagePreloadHrefs(document) {
+  const linkTags = document.match(linkTagPattern) ?? [];
+
+  return linkTags
+    .filter((linkTag) => preloadRelPattern.test(linkTag) && imagePreloadAsPattern.test(linkTag))
+    .map((linkTag) => {
+      const hrefMatch = linkTag.match(linkHrefAttributePattern);
+
+      return hrefMatch === null ? null : hrefMatch[2];
+    });
+}
+
+function documentCarriesExactlyOwnHeroPreload(document, heroPreloadHref) {
+  const imagePreloadHrefs = documentImagePreloadHrefs(document);
+
+  return imagePreloadHrefs.length === 1 && imagePreloadHrefs[0] === heroPreloadHref;
+}
+
+function documentCarriesRouteMetadata(document, metadata) {
+  const extracted = extractDocumentMetadata(document);
+
+  return (
+    extracted.title === metadata.title &&
+    extracted.description === metadata.description &&
+    extracted.ogTitle === metadata.title &&
+    extracted.ogDescription === metadata.description &&
+    extracted.twitterTitle === metadata.title &&
+    extracted.twitterDescription === metadata.description
+  );
 }
 
 export function routeVisualAssetPaths(routes) {
@@ -48,15 +438,73 @@ function isDeclaredVisualAssetPath(assetPath) {
 }
 
 export async function assertStaticRouteArtifacts({ routes, distDir, readFile }) {
-  const expectedRoutes = staticSubpagePaths(routes);
+  const expectedPages = staticSubpageRoutes(routes).map((route) => ({
+    href: route.href,
+    metadata: routePageMetadata(route),
+    heroPreloadHref: routeHeroPreloadHref(route),
+  }));
+  const expectedRoutes = expectedPages.map((page) => page.href);
   const rootHtml = await readFile(path.join(distDir, "index.html"), "utf8");
 
+  const rootMetadata = extractDocumentMetadata(rootHtml);
+
+  if (
+    rootMetadata.title === null ||
+    rootMetadata.title.length === 0 ||
+    rootMetadata.description === null ||
+    rootMetadata.description.length === 0
+  ) {
+    throw new Error(
+      "Static route artifact check failed: the root document must keep a <title> element and a nonempty description meta content attribute.",
+    );
+  }
+
+  if (!documentCarriesHomeHeroPreload(rootHtml)) {
+    throw new Error(
+      "Static route artifact check failed: the root document must carry the home hero preload link for /page-visuals/hero-photo.webp.",
+    );
+  }
+
+  const notFoundHtmlPath = path.join(distDir, notFoundArtifactPath);
+
+  let notFoundHtml;
+
+  try {
+    notFoundHtml = await readFile(notFoundHtmlPath, "utf8");
+  } catch (error) {
+    if (isMissingEntryError(error)) {
+      throw new Error(
+        `Static route artifact check failed: the not-found recovery document dist/${notFoundArtifactPath} is missing.`,
+      );
+    }
+
+    throw error;
+  }
+
+  if (!documentCarriesRouteMetadata(notFoundHtml, notFoundPageMetadata())) {
+    throw new Error(
+      `Static route artifact check failed: dist/${notFoundArtifactPath} must carry the not-found title and description instead of the root document metadata.`,
+    );
+  }
+
+  if (documentImagePreloadHrefs(notFoundHtml).length > 0) {
+    throw new Error(
+      `Static route artifact check failed: dist/${notFoundArtifactPath} must not carry any image preload link.`,
+    );
+  }
+
   const outcomes = await Promise.all(
-    expectedRoutes.map(async (route) => {
-      const routeHtmlPath = path.join(distDir, route.replace(/^\/+|\/+$/g, ""), "index.html");
+    expectedPages.map(async (page) => {
+      const routeHtmlPath = path.join(distDir, page.href.replace(/^\/+|\/+$/g, ""), "index.html");
 
       try {
-        return (await readFile(routeHtmlPath, "utf8")) === rootHtml ? "matched" : "mismatched";
+        const routeHtml = await readFile(routeHtmlPath, "utf8");
+
+        return documentCarriesRouteMetadata(routeHtml, page.metadata) &&
+          !documentCarriesHomeHeroPreload(routeHtml) &&
+          documentCarriesExactlyOwnHeroPreload(routeHtml, page.heroPreloadHref)
+          ? "matched"
+          : "mismatched";
       } catch (error) {
         if (isMissingEntryError(error)) return "missing";
 

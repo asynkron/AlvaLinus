@@ -39,6 +39,14 @@ locked dependencies in `FAKTORIAL_WORKTREE_PATH` without running tests.
 The pinned `@asynkron/astwalker-typescript` alias supports Faktorial's analysis
 toolchain independently of the application's TypeScript compiler.
 
+## Faktorial Live
+
+The committed [Live recipe](.faktorial/live.json) runs `scripts/live.mjs`, which
+starts the existing Vite configuration using Faktorial's loopback `HOST` and
+allocated `PORT`. Strict port binding keeps the app on its assigned preview port.
+Faktorial installs dependencies from `package-lock.json`; this static site needs
+no secrets or external services to start.
+
 ## Project Structure
 
 - `src/pages/` contains page-level React components.

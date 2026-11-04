@@ -2,7 +2,7 @@
 
 Feature: [F1 — Choose a suitable groundworks service](../../service-selection.md)  
 Status: current  
-Reviewed: 2026-10-24
+Reviewed: 2026-10-28
 
 As a project visitor, I want to read the Dränering service page so I can recognize drainage work covering assessment, excavation and restoration around a foundation, wall or basement.
 
@@ -15,7 +15,7 @@ As a project visitor, I want to read the Dränering service page so I can recogn
 1. Open /dranering/.
 2. Read the route introduction, service summary and tags: Dränering, Mur, Fuktskydd.
 3. Read När tjänsten passar and the four process steps.
-4. Follow Kontakta oss to /kontakt/.
+4. Follow Kontakta oss to /kontakt/?tjanst=dranering with Dränering preselected and still changeable in the inquiry form.
 
 ## Variants
 

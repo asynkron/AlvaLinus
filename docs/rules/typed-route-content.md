@@ -36,3 +36,22 @@ and PR35 removed 9 stale visual-inventory claims after typed page-specific
 placeholder visuals already existed for every public route. The fix made the
 inventory describe current route assets and added a postbuild check for the
 asset files, preventing docs from becoming a contradictory parallel inventory.
+
+## Keep Public Route Hrefs Canonical
+
+`requireRouteRegistry` in `scripts/route-artifacts.mjs` is the single validation
+boundary for declared route hrefs. `vite.config.ts` and both artifact assertion
+entrypoints take their route lists through it, so an invalid registry fails
+before Vite emits any file.
+
+A canonical route href is the site root `"/"` or a root-relative directory path
+that starts and ends with `"/"` and separates nonempty segments with single
+slashes. Dot segments (`.` and `..`), backslashes, query or fragment text,
+percent-encoded sequences that can hide separators or dots, repeated slashes,
+and duplicate static output destinations are rejected with a diagnostic naming
+the offending route.
+
+WHY: fk36 closed an fk26 follow-up gap where duplicate hrefs or ambiguous paths
+would flow from the registry into `path.join` output directories unchecked. The
+registry now rejects them at config load, keeping the declared route inventory
+and the emitted static artifact tree aligned.

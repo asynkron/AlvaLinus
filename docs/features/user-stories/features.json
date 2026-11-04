@@ -25,10 +25,10 @@
           "Services index",
           "Five dedicated service pages",
           "Missing service resolves to not-found",
-          "Global loading/error/empty states"
+          "Empty-services feedback on home and the services index"
         ],
-        "current_limitations": "Service detail pages share a generic suitability aside and process; Markarbete and Trädgårdsplanering have no dedicated rendered-page test mapping.",
-        "failure_behavior": "A missing service record yields not-found. An empty services list replaces every route body with the empty state.",
+        "current_limitations": "Service detail pages share the process section, while each aside carries its own declared suitability guidance; Markarbete and Trädgårdsplanering have no dedicated rendered-page test mapping.",
+        "failure_behavior": "A missing service record yields not-found. An empty services list replaces the home and services-index bodies with the empty state.",
         "recovery": "Use a declared route or restore the missing typed content and redeploy; the page has no content-editing interface.",
         "runtime_owners": [
           "src/pages/SiteHomePage.tsx",
@@ -40,7 +40,7 @@
         "customer_outcome": "Visitors identify which offered service fits their project and can reach the inquiry route.",
         "outcome_signals": [
           "In an observed task, a visitor selects the service matching a stated project need.",
-          "A visitor can reach /kontakt/ from the selected service page."
+          "A visitor can reach /kontakt/ from the selected service page with that service preselected in the inquiry form."
         ]
       },
       "user_stories": [
@@ -69,6 +69,27 @@
               "name": "renders representative service tags including pool digging under Grävjobb",
               "evidence_type": "direct",
               "supports": "Checks representative service tags on home."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "names every service-card link by its destination on %s",
+              "evidence_type": "direct",
+              "supports": "Parameterized home and services-index cases check all five accessible names, matching hrefs and unchanged visible Läs mer text. Does not establish other index sections, browser layout or a complete assistive-technology flow."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "falls back to the route SVG on the first photo error and removes the image when the fallback also fails",
+              "evidence_type": "direct",
+              "supports": "Checks the home Stensättning card's photo/SVG failures, retained title, summary and service link, and terminal image removal. Does not render the services index or subpage heroes."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "keeps neighboring service cards and their successful images untouched when one card image fails twice",
+              "evidence_type": "direct",
+              "supports": "Checks that failure of the home Stensättning card leaves Markarbete and Grävjobb images and content available; does not establish dedicated detail-page rendering."
             }
           ],
           "entry_point_refs": [],
@@ -78,15 +99,16 @@
           "flow": [
             "Open / or /tjanster/.",
             "Compare Stensättning, Markarbete, Grävjobb, Dränering and Trädgårdsplanering.",
-            "Follow Läs mer to the appropriate detail route."
+            "Follow the appropriate Läs mer link, whose accessible name includes the service title, to its detail route."
           ],
           "variants": [
             "Home adds hero, route shortcuts and process.",
             "The services index adds trust content and an inquiry link band.",
-            "Service card photos fall back to route SVGs on image error."
+            "Service card photos fall back to route SVGs on image error; a failed SVG removes the image while keeping the title, summary and Läs mer link. Neighboring cards retain their own images and content.",
+            "On both views, visible Läs mer links are named Läs mer om <service title> for assistive technology and link-list navigation."
           ],
           "expected_outcome": "A matching service route can be selected from the five cards.",
-          "failure_behavior": "No services shows Inget innehåll ännu instead of the route body.",
+          "failure_behavior": "No services shows Inget innehåll ännu on home and the services index instead of the service body.",
           "recovery": "Reload after a content deployment; use the header links to choose a route."
         },
         {
@@ -106,7 +128,7 @@
               "path": "src/pages/SiteHomePage.test.tsx",
               "name": "renders a dedicated service page with customer-facing guidance",
               "evidence_type": "direct",
-              "supports": "Checks the Stensättning heading, suitability aside and next-step guidance."
+              "supports": "Checks the Stensättning heading, the suitability aside heading and its per-service guidance, and that Dränering renders its own distinct guidance without the retired shared template sentence."
             }
           ],
           "entry_point_refs": [],
@@ -117,7 +139,7 @@
             "Open /stensattning/.",
             "Read the route introduction, service summary and tags: Marksten Örebro, Stenmurar, Finplanering.",
             "Read När tjänsten passar and the four process steps.",
-            "Follow Kontakta oss to /kontakt/."
+            "Follow Kontakta oss to /kontakt/?tjanst=stensattning with Stensättning preselected and still changeable."
           ],
           "variants": [
             "The suitability aside and process are shared across service pages.",
@@ -147,7 +169,7 @@
             "Open /markarbete/.",
             "Read the route introduction, service summary and tags: Schakt, Tomt, Anläggning.",
             "Read När tjänsten passar and the four process steps.",
-            "Follow Kontakta oss to /kontakt/."
+            "Follow Kontakta oss to /kontakt/?tjanst=markarbete with Markarbete preselected and still changeable."
           ],
           "variants": [
             "The suitability aside and process are shared across service pages.",
@@ -192,7 +214,7 @@
             "Open /gravjobb/.",
             "Read the route introduction, service summary and tags: Grävning, Husgrund, Poolgrävning.",
             "Read När tjänsten passar and the four process steps.",
-            "Follow Kontakta oss to /kontakt/."
+            "Follow Kontakta oss to /kontakt/?tjanst=gravjobb with Grävjobb preselected and still changeable."
           ],
           "variants": [
             "The suitability aside and process are shared across service pages.",
@@ -230,7 +252,7 @@
             "Open /dranering/.",
             "Read the route introduction, service summary and tags: Dränering, Mur, Fuktskydd.",
             "Read När tjänsten passar and the four process steps.",
-            "Follow Kontakta oss to /kontakt/."
+            "Follow Kontakta oss to /kontakt/?tjanst=dranering with Dränering preselected and still changeable."
           ],
           "variants": [
             "The drainage page adds a paragraph on moisture protection around foundations, walls and basements.",
@@ -260,7 +282,7 @@
             "Open /tradgardsplanering/.",
             "Read the route introduction, service summary and tags: Tomtplanering, Utemiljö, Finish.",
             "Read När tjänsten passar and the four process steps.",
-            "Follow Kontakta oss to /kontakt/."
+            "Follow Kontakta oss to /kontakt/?tjanst=tradgard with Trädgårdsplanering preselected and still changeable."
           ],
           "variants": [
             "The suitability aside and process are shared across service pages.",
@@ -306,8 +328,8 @@
           "Partners omitted for the current empty list"
         ],
         "current_limitations": "Trust statements describe experience, certification and guarantees without linked supporting credentials or project case studies in these sections.",
-        "failure_behavior": "About shares the global load/error/empty handling; an empty partner list intentionally renders no partner section.",
-        "recovery": "Reload for transient loading problems; maintainers must correct missing content through a static deployment.",
+        "failure_behavior": "About keeps its body when services is empty; the empty-services feedback applies only to service-dependent routes; an empty partner list intentionally renders no partner section.",
+        "recovery": "Use header navigation; maintainers must correct missing content through a static deployment.",
         "runtime_owners": [
           "src/pages/SiteHomePage.tsx",
           "src/data/siteContent.ts"
@@ -425,9 +447,11 @@
         "principal_states": [
           "Contact section on home",
           "Dedicated contact page",
+          "Service preselected from a service-page inquiry action",
           "Native required-field validation",
           "Mail-client handoff",
-          "Visible email fallback"
+          "Visible email fallback",
+          "Handoff explanation associated with the form"
         ],
         "current_limitations": "A configured mail client is required. The site stores no inquiry, tracks no delivery and displays no confirmed-send state; no email or phone field is collected.",
         "failure_behavior": "Browser validation can block blank required fields; a missing or incompatible mail client can prevent handoff without a site error receipt.",
@@ -442,7 +466,9 @@
         "customer_outcome": "Visitors can prepare an inquiry addressed to the company with their project details.",
         "outcome_signals": [
           "In an observed browser task, name, customer type, service and message controls can be located.",
-          "The form exposes the configured mailto recipient and subject; actual sending is confirmed outside the site."
+          "The form exposes the configured mailto recipient and subject; actual sending is confirmed outside the site.",
+          "A service-page inquiry action preselects that service in the Tjänst select, and the visitor can change it before the handoff.",
+          "Before submitting, a visitor can identify the external email step, the delivery limit and the direct-email fallback."
         ]
       },
       "user_stories": [
@@ -463,7 +489,42 @@
               "path": "src/pages/SiteHomePage.test.tsx",
               "name": "renders a static email handoff form and footer contact email",
               "evidence_type": "direct",
-              "supports": "Checks form method, mailto action, text/plain encoding, named controls, submit button and email link; does not send mail or exercise native validation."
+              "supports": "Checks form method, mailto action, text/plain encoding, named controls, submit button, aria-describedby note association, explanation before the button, in-form fallback recipient/subject and absence of a sent confirmation. Does not send mail, exercise native validation or establish a separate home rendering."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "carries the stable $id service identity in the $path inquiry action",
+              "evidence_type": "direct",
+              "supports": "Parameterized over the five service pages; checks each rendered band link's /kontakt/?tjanst=<service id> destination against the typed service id."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "follows a service page inquiry action into contact, selects that service and preserves a later manual change",
+              "evidence_type": "direct",
+              "supports": "Follows the rendered link's URL into /kontakt/, checks the recognized Dränering preselection in the named service select and a manual change to Annat. Does not send mail."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "keeps the typed default service selection on home and direct contact without inquiry context",
+              "evidence_type": "direct",
+              "supports": "Checks the first typed option without context on home and /kontakt/."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "retains the default service selection for unrecognized inquiry context $context",
+              "evidence_type": "direct",
+              "supports": "Parameterized unknown, label-like and malformed contexts; checks default retention, the unchanged typed option list and that context text never becomes an option, element or script content."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "retains the default service selection when a recognized service has no matching typed option",
+              "evidence_type": "direct",
+              "supports": "Checks that a recognized service id without a matching configured option retains the first option and the unchanged option list."
             }
           ],
           "entry_point_refs": [],
@@ -472,8 +533,9 @@
             "A mail client is configured for the handoff."
           ],
           "flow": [
-            "Find Kontakta oss för offert.",
-            "Enter Namn, choose Kundtyp and Tjänst, and describe the project, place and desired timing in Meddelande.",
+            "Find Kontakta oss för offert; from a service page its inquiry action opens /kontakt/ with that service preselected in Tjänst.",
+            "Enter Namn, confirm or change Kundtyp and Tjänst, and describe the project, place and desired timing in Meddelande.",
+            "Read the explanation before the submit button: review and send in your own email program; the website cannot confirm delivery.",
             "Select Skicka offertförfrågan.",
             "Review and send in the external mail client if it opens."
           ],
@@ -481,11 +543,13 @@
             "Customer types are Privatperson, Företag, and BRF eller fastighetsägare.",
             "Services include the five offered areas and Annat.",
             "Pool excavation is part of Grävjobb, not a separate Pool option.",
-            "Required fields use browser-native validation; the site has no custom submit handler."
+            "Service-page inquiry actions target /kontakt/?tjanst=<service id> using the typed service record id; contact preselects the matching typed option and keeps manual change available, while direct /kontakt/ and home /#kontakt without context and unknown or malformed context keep the first option without creating new options.",
+            "Required fields use browser-native validation; the site has no custom submit handler.",
+            "The same typed explanation and subject-bearing fallback email link appear inside the form on home and /kontakt/; aria-describedby associates the note with the form."
           ],
-          "expected_outcome": "The form requests a plain-text mail-client handoff to kontakt@svardentreprenad.se with the configured subject; delivery is not established.",
+          "expected_outcome": "The form requests a plain-text mail-client handoff to kontakt@svardentreprenad.se with the configured subject and the actually selected Tjänst option; delivery is not established.",
           "failure_behavior": "The mail handler may fail to open; the page cannot confirm acceptance or sending.",
-          "recovery": "Use the visible email address and include project details manually."
+          "recovery": "Use the address linked in the explanation or copy it into working email software and include project details manually; the fallback link still needs an email handler."
         },
         {
           "id": "F3-US2",
@@ -504,7 +568,14 @@
               "path": "src/pages/SiteHomePage.test.tsx",
               "name": "renders a static email handoff form and footer contact email",
               "evidence_type": "direct",
-              "supports": "Checks the visible contact-address link points to the configured mailto address."
+              "supports": "Checks the in-form fallback mailto recipient and subject and the footer's recipient-only email link on /kontakt/; does not exercise email software or copying."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "keeps the index and about inquiry actions generic while service pages carry service identity",
+              "evidence_type": "direct",
+              "supports": "Checks that index and about band links keep the generic /kontakt/ destination; service-page destinations are mapped under F3-US1."
             }
           ],
           "entry_point_refs": [],
@@ -512,13 +583,14 @@
             "The page has loaded enough to render the contact section or footer."
           ],
           "flow": [
-            "Read kontakt@svardentreprenad.se in the contact section or footer.",
+            "Read kontakt@svardentreprenad.se in the contact section, the in-form handoff explanation or footer.",
             "Use its email link or copy the address into an email tool.",
             "Describe the project and a way to reply."
           ],
           "variants": [
             "Footer contact is available on every ready routed page and not-found.",
-            "ContactLinkBand on about, index and service pages leads to /kontakt/ rather than embedding another form."
+            "ContactLinkBand on about and index leads to /kontakt/ and on service pages to /kontakt/?tjanst=<service id>, rather than embedding another form.",
+            "The in-form fallback email link includes the configured subject; the footer email link contains only the recipient."
           ],
           "expected_outcome": "The visitor has the company email address; no website receipt is implied.",
           "failure_behavior": "The mailto link still depends on the user's email handler.",
@@ -550,20 +622,18 @@
           "/kontakt/"
         ],
         "principal_states": [
-          "Loading",
-          "Load error",
           "Empty services",
           "Ready known route",
           "Unknown route",
-          "Mobile menu closed/open"
+          "Mobile menu closed/open",
+          "Keyboard bypass to the page body"
         ],
-        "current_limitations": "Navigation destinations are repeated in Header/SERVICE_NAV, Footer and the typed inventory. Empty services suppresses even about and contact route bodies. Hosting may reject unknown paths before React can display not-found.",
-        "failure_behavior": "Load errors show an alert without a retry control; unknown in-app paths show declared-route shortcuts. Loading/error/empty states retain the header but have no footer.",
+        "current_limitations": "Header, mobile-menu and footer navigation derive their destinations from the typed route registry, whose five inventory shortcuts remain a display subset; desktop dropdown keyboard interaction is unmapped. Hosting may reject unknown paths before React can display not-found.",
+        "failure_behavior": "Unknown in-app paths show declared-route shortcuts. The empty-services state retains the header but has no footer.",
         "recovery": "Use header links or reload; unknown ready routes provide all registered shortcuts. Static-host handling remains a deployment concern.",
         "runtime_owners": [
           "src/pages/SiteHomePage.tsx",
           "src/data/siteContent.ts",
-          "src/lib/site-content.ts",
           "src/components/StaticState.tsx"
         ],
         "background_component_relations": [],
@@ -599,6 +669,27 @@
             {
               "framework": "vitest",
               "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "derives header, mobile menu and footer navigation from the typed route registry",
+              "evidence_type": "direct",
+              "supports": "Checks desktop, mobile-menu and footer destinations, Swedish labels and link order against content.routes as the single declaration source; does not exercise dropdown interaction or responsive layout."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "dismisses mobile navigation with Escape from its %s and allows reopening",
+              "evidence_type": "direct",
+              "supports": "Parameterized link and toggle cases check menu expanded state, Escape dismissal, focus restoration, reopening, click dismissal and uncancelled Tab/Shift+Tab events. JSDOM does not establish actual browser Tab movement, responsive layout or desktop dropdown interaction."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "keeps mobile navigation open and preserves focus when Escape is pressed elsewhere in the header",
+              "evidence_type": "direct",
+              "supports": "Checks that Escape on the brand link outside the menu/toggle leaves the open menu and current focus unchanged."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
               "name": "links from the home page to active static subpage paths only",
               "evidence_type": "direct",
               "supports": "Checks home CTA destinations and excludes retired routes."
@@ -616,6 +707,27 @@
               "name": "keeps every current route aligned with a page-specific visual asset",
               "evidence_type": "technical",
               "supports": "Checks nine declared visual metadata mappings, not rendered photos or onError fallbacks."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "fetches above-the-fold hero images at high priority while service card images stay lazy",
+              "evidence_type": "direct",
+              "supports": "Checks fetchpriority=high, decorative alt/aria-hidden and no lazy-loading attribute on the home and about heroes, lazy service-card images without fetchpriority, and that a failing about-hero photo hides via display:none. DOM-attribute evidence only; it does not establish real network scheduling or an LCP improvement."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "keeps the decorative home hero photo on the success path",
+              "evidence_type": "direct",
+              "supports": "Checks the home hero photo's src and its empty decorative alt/aria-hidden treatment."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "hides a failing home hero photo without a retry loop and keeps the hero intact",
+              "evidence_type": "direct",
+              "supports": "Checks display:none hiding across repeated image errors while the headline, intro, actions and stats remain. Does not establish browser image loading or CSS visibility."
             }
           ],
           "entry_point_refs": [],
@@ -630,8 +742,10 @@
           ],
           "variants": [
             "Header services links expose all five detail routes.",
+            "Header (desktop and mobile) and footer page and service links derive their Swedish labels, hrefs and order from the typed route registry, so a route edit is one declaration in src/data/siteContent.ts instead of parallel markup edits.",
+            "An open mobile menu closes on Escape from a link or the focused toggle, restores focus to the toggle and can reopen; the toggle also closes it by click. Tab and Shift+Tab are not cancelled. Escape elsewhere in the header leaves the menu and focus unchanged.",
             "inventory.primaryRoutes has five shortcuts; it is not the full nine-route registry.",
-            "Subpage heroes and the home hero use decorative photos; service-card images have route alt text."
+            "Subpage heroes and the home hero use decorative photos requested at high fetch priority while service-card images stay lazy; a failing home hero photo hides its image without a retry loop while the hero content remains. Service-card images have route alt text."
           ],
           "expected_outcome": "A declared static route can be selected for F1, F2 or F3.",
           "failure_behavior": "A missing host artifact can fail before React mounts; this catalog does not claim host-level fallback.",
@@ -642,7 +756,7 @@
           "title": "Recognize unavailable content and recover to a known route",
           "status": "current",
           "role": "Site visitor",
-          "action": "interpret loading, error, empty and unknown-route feedback",
+          "action": "interpret empty and unknown-route feedback",
           "benefit": "avoid mistaking missing content for a successful page",
           "source_anchors": [
             "src/data/siteContent.ts",
@@ -652,23 +766,30 @@
             {
               "framework": "vitest",
               "path": "src/pages/SiteHomePage.test.tsx",
-              "name": "starts with a loading state before static content resolves",
+              "name": "renders ready bundled content on the first paint without a loading skeleton",
               "evidence_type": "direct",
-              "supports": "Checks the initial loading label."
+              "supports": "Checks that the default boot renders ready home content with no Laddar innehåll skeleton."
             },
             {
               "framework": "vitest",
               "path": "src/pages/SiteHomePage.test.tsx",
-              "name": "shows an error state",
+              "name": "keeps $label empty-services feedback when services are empty",
               "evidence_type": "direct",
-              "supports": "Checks the error alert text."
+              "supports": "Parameterized home and services-index cases check the empty-state heading and the absence of other route bodies."
             },
             {
               "framework": "vitest",
               "path": "src/pages/SiteHomePage.test.tsx",
-              "name": "shows an empty state when static data has no services",
+              "name": "keeps about and contact bodies available when services are empty",
               "evidence_type": "direct",
-              "supports": "Checks the empty-state heading."
+              "supports": "Checks the about body and the contact form, handoff note and fallback email with one #content target and retained header/footer."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "keeps service and unknown routes on not-found recovery when services are empty",
+              "evidence_type": "direct",
+              "supports": "Checks that a service route without its record and an unknown route use not-found recovery instead of the empty state."
             },
             {
               "framework": "vitest",
@@ -681,29 +802,72 @@
           "entry_point_refs": [],
           "preconditions": [
             "React has mounted.",
-            "For not-found, content is ready and services is nonempty."
+            "For not-found, content is ready."
           ],
           "flow": [
-            "Wait while Laddar innehåll is displayed.",
-            "If loading fails, read the error alert.",
-            "If services is empty, recognize Inget innehåll ännu.",
+            "Read the bundled page body directly on the default boot; the static site boots bundled ready content with no loading skeleton and no network request.",
+            "If services is empty, recognize Inget innehåll ännu on home and the services index; about and contact keep their bodies.",
             "For an unknown ready path, use a Sidan finns inte shortcut to a registered route."
           ],
           "variants": [
             "Query/hash suffixes are removed and a missing trailing slash is normalized by the renderer.",
             "A service route with no matching service record uses not-found.",
-            "Normal content is loaded asynchronously from a bundled module, without network I/O."
+            "The default boot renders bundled content immediately, without network I/O; the page imports the bundled content module directly and no loader module exists."
           ],
           "expected_outcome": "The rendered state identifies content availability and provides route recovery when ready.",
-          "failure_behavior": "Error and empty states have no inline retry; the empty-services guard applies to all route kinds.",
-          "recovery": "Reload for a fresh load or use header navigation; a content defect needs a corrected static deployment."
+          "failure_behavior": "The empty-services state has no inline retry; its feedback applies to the service-dependent home and services-index bodies.",
+          "recovery": "Use header navigation; a content defect needs a corrected static deployment."
+        },
+        {
+          "id": "F4-US3",
+          "title": "Bypass repeated navigation with the keyboard",
+          "status": "current",
+          "role": "Keyboard visitor",
+          "action": "use Hoppa till innehåll before the header links",
+          "benefit": "reach the page body without traversing repeated navigation",
+          "source_anchors": [
+            "src/pages/SiteHomePage.tsx"
+          ],
+          "test_references": [
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "offers a Swedish skip link before header navigation that targets the stable page content",
+              "evidence_type": "direct",
+              "supports": "Checks the Swedish link, #content destination, order before header navigation and focusable ready-page target; does not exercise browser anchor activation or CSS visibility."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "keeps exactly one stable content target in the $label state",
+              "evidence_type": "direct",
+              "supports": "Parameterized ready home, subpage, unknown-route and empty cases check one matching target; ready targets have tabindex=-1. Does not assert focusability of the empty-services section or browser scrolling."
+            }
+          ],
+          "entry_point_refs": [],
+          "preconditions": [
+            "React has mounted and the page shell is rendered."
+          ],
+          "flow": [
+            "Reach Hoppa till innehåll before the repeated header navigation.",
+            "Activate the #content link to bypass the header.",
+            "Read the routed body or current availability message."
+          ],
+          "variants": [
+            "The link is visually hidden until focused, when existing focus styles reveal it.",
+            "Ready home, subpage and in-app not-found views share a focusable #content wrapper with scroll margin.",
+            "The empty-services state retains one #content section but does not give that section tabindex=-1."
+          ],
+          "expected_outcome": "A stable page-body anchor is available before header navigation on all rendered states; ready content has a programmatically focusable destination.",
+          "failure_behavior": "A host error before React mounts cannot offer the link. The empty-services section has an anchor but no explicit focusability attribute; browser focus/scroll behavior is not established by DOM assertions.",
+          "recovery": "Use ordinary keyboard navigation if anchor behavior is unavailable; a missing static entry document requires host/artifact repair."
         }
       ],
       "user_story_documents": [
         "docs/features/user-stories/F4/F4-US1.md",
-        "docs/features/user-stories/F4/F4-US2.md"
+        "docs/features/user-stories/F4/F4-US2.md",
+        "docs/features/user-stories/F4/F4-US3.md"
       ]
     }
   ]
 }
-

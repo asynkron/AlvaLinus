@@ -2,7 +2,7 @@
 
 Feature: [F1 — Choose a suitable groundworks service](../../service-selection.md)  
 Status: current  
-Reviewed: 2026-10-24
+Reviewed: 2026-10-28
 
 As a project visitor, I want to read the Grävjobb service page so I can place pool excavation within the excavation service rather than seek a separate pool page.
 
@@ -15,7 +15,7 @@ As a project visitor, I want to read the Grävjobb service page so I can place p
 1. Open /gravjobb/.
 2. Read the route introduction, service summary and tags: Grävning, Husgrund, Poolgrävning.
 3. Read När tjänsten passar and the four process steps.
-4. Follow Kontakta oss to /kontakt/.
+4. Follow Kontakta oss to /kontakt/?tjanst=gravjobb with Grävjobb preselected and still changeable in the inquiry form.
 
 ## Variants
 

@@ -2,7 +2,7 @@
 
 Feature: [F1 — Choose a suitable groundworks service](../../service-selection.md)  
 Status: current  
-Reviewed: 2026-10-24
+Reviewed: 2026-10-28
 
 As a project visitor, I want to read the Stensättning service page so I can plan an entrance, path or courtyard with suitable finish and load-bearing preparation.
 
@@ -15,7 +15,7 @@ As a project visitor, I want to read the Stensättning service page so I can pla
 1. Open /stensattning/.
 2. Read the route introduction, service summary and tags: Marksten Örebro, Stenmurar, Finplanering.
 3. Read När tjänsten passar and the four process steps.
-4. Follow Kontakta oss to /kontakt/.
+4. Follow Kontakta oss to /kontakt/?tjanst=stensattning with Stensättning preselected and still changeable in the inquiry form.
 
 ## Variants
 
