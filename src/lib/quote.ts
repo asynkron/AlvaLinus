@@ -1,3 +1,5 @@
+import type { SiteQuoteMail } from "../types/site";
+
 const moneyFormat = new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK", minimumFractionDigits: 0, maximumFractionDigits: 2 });
 const numberFormat = new Intl.NumberFormat("sv-SE", { maximumFractionDigits: 2 });
 
@@ -9,6 +11,14 @@ export function formatMoney(value: number): string {
 
 export function formatNumber(value: number): string {
   return numberFormat.format(value);
+}
+
+export function fillTemplate(template: string, values: Record<string, string>): string {
+  return template.replace(/\{(\w+)\}/g, (placeholder, key: string) => values[key] ?? placeholder);
+}
+
+export function buildQuoteMailto(mail: SiteQuoteMail, values: Record<string, string>): string {
+  return `mailto:${mail.recipientEmail}?subject=${encodeURIComponent(mail.subject)}&body=${encodeURIComponent(fillTemplate(mail.bodyTemplate, values))}`;
 }
 
 export function drainageTotal(meters: number): number {
