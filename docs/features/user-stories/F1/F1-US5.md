@@ -2,7 +2,7 @@
 
 Feature: [F1 — Choose a suitable groundworks service](../../service-selection.md)  
 Status: current  
-Reviewed: 2026-10-28
+Reviewed: 2026-11-06
 
 As a project visitor, I want to read the Dränering service page so I can recognize drainage work covering assessment, excavation and restoration around a foundation, wall or basement.
 
@@ -20,6 +20,7 @@ As a project visitor, I want to read the Dränering service page so I can recogn
 ## Variants
 
 - The drainage page adds a paragraph on moisture protection around foundations, walls and basements.
+- The drainage page carries a registry-declared Kostnadsberäkning link band to /draneringsberakning/ ([F6](../F6/F6-US1.md) owns the calculator); the other service pages render no calculator band.
 - The page hero hides a failed photo, keeping its text on the dark background.
 
 ## Expected outcome
@@ -38,6 +39,7 @@ Choose another declared service or contact the company from the footer.
 - [src/pages/SiteHomePage.tsx](../../../../src/pages/SiteHomePage.tsx)
 
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `renders dedicated Dränering and Grävjobb pages` (direct): Checks the dedicated Dränering heading and foundation moisture-protection paragraph.
+- vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `links the drainage service page to its drainage calculator while other services stay calculator-free` (direct): Checks the drainage page's calculator band link to /draneringsberakning/ and that the other service pages render no calculator band.
 
 Backend entry-point references: none (frontend-only). Test mappings were reviewed as source declarations; this document is not an execution receipt.
 
