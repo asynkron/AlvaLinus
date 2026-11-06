@@ -40,7 +40,8 @@ photographs remain outstanding.
 
 ## Style anchor (already in place)
 
-Offertberäkning uses `public/page-visuals/quote-hero.png`, created with built-in
+Offertberäkning uses `public/page-visuals/quote-hero.webp` with 640 and 960
+pixel-wide variants, converted from the original PNG created with built-in
 imagegen. Prompt: a wide photorealistic Swedish asphalt driveway with granite
 edging, a Nordic house and birch trees in warm afternoon light; quiet space on
 the left for the heading, no people, vehicles, text or logos. This is an

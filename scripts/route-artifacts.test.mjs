@@ -941,7 +941,7 @@ describe("siteContent route registry", () => {
 
   it("declares one registry-owned hero photo per route for the rendered hero and the stamped preload", () => {
     const expectedHeroPhotosByRoute = new Map([
-      ["quote", "/page-visuals/quote-hero.png"],
+      ["quote", "/page-visuals/quote-hero.webp"],
       ["drainage-quote", "/page-visuals/draneringsberakning-hero.webp"],
       ["home", "/page-visuals/hero-photo.webp"],
       ["services", "/page-visuals/services-hero.webp"],
