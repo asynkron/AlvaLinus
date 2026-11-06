@@ -1,7 +1,20 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { siteContent } from "../data/siteContent";
+import { vatStatusLabel } from "../lib/quote";
 import { QuotePage } from "./QuotePage";
 
+const shared = siteContent.quote.shared;
+const text = siteContent.quote.uppfart;
+
 const money = (value: number) => new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK", minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(value).replace(/[\u00a0\u202f]/g, " ");
+
+function labelPattern(label: string): RegExp {
+  return new RegExp(label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+}
+
+function draftBody(values: Record<string, string>): string {
+  return text.mail.bodyTemplate.replace(/\{(\w+)\}/g, (placeholder, key: string) => values[key] ?? placeholder);
+}
 
 function chooseUppfart() {
   window.location.hash = "uppfart";
@@ -9,17 +22,21 @@ function chooseUppfart() {
 }
 
 function areaInput() {
-  return screen.getByRole("spinbutton", { name: /Uppfartens yta/ });
+  return screen.getByRole("spinbutton", { name: labelPattern(text.areaLabel) });
 }
 
 function loadsInput() {
-  return screen.getByRole("spinbutton", { name: /Antal lass/ });
+  return screen.getByRole("spinbutton", { name: labelPattern(text.loadsLabel) });
+}
+
+function asphaltCheckbox() {
+  return screen.getByRole("checkbox", { name: labelPattern(text.asphaltLabel) });
 }
 
 function decodedEmailHref(): string {
-  const link = screen.getByRole("link", { name: /Begär offert/ });
+  const link = screen.getByRole("link", { name: labelPattern(shared.sendLabel) });
 
-  expect(link.getAttribute("href") ?? "").toContain("mailto:kontakt@svardentreprenad.se");
+  expect(link.getAttribute("href") ?? "").toContain(`mailto:${text.mail.recipientEmail}`);
 
   return decodeURIComponent(link.getAttribute("href") ?? "").replace(/[\u00a0\u202f]/g, " ");
 }
@@ -32,14 +49,14 @@ describe("QuotePage", () => {
   it("starts with two calculator choice buttons before any calculator fields", () => {
     render(<QuotePage />);
 
-    expect(screen.getByRole("heading", { name: "Vad gäller din offertförfrågan?" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Räkna på husdränering" })).toHaveAttribute("href", "/draneringsberakning/");
-    expect(screen.getByRole("link", { name: "Räkna på uppfart" })).toHaveAttribute("href", "#uppfart");
+    expect(screen.getByRole("heading", { name: text.choiceHeading })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: text.drainageChoiceLabel })).toHaveAttribute("href", "/draneringsberakning/");
+    expect(screen.getByRole("link", { name: text.drivewayChoiceLabel })).toHaveAttribute("href", "#uppfart");
 
-    expect(screen.queryByRole("spinbutton", { name: /Uppfartens yta/ })).not.toBeInTheDocument();
-    expect(screen.queryByRole("spinbutton", { name: /Antal lass/ })).not.toBeInTheDocument();
-    expect(screen.queryByRole("checkbox", { name: /Inkludera asfalt/ })).not.toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "Din kostnadsbild" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("spinbutton", { name: labelPattern(text.areaLabel) })).not.toBeInTheDocument();
+    expect(screen.queryByRole("spinbutton", { name: labelPattern(text.loadsLabel) })).not.toBeInTheDocument();
+    expect(screen.queryByRole("checkbox", { name: labelPattern(text.asphaltLabel) })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: shared.resultHeading })).not.toBeInTheDocument();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
 
@@ -49,16 +66,16 @@ describe("QuotePage", () => {
 
     expect(areaInput()).toHaveValue(100);
     expect(loadsInput()).toHaveValue(1);
-    expect(screen.getByRole("checkbox", { name: /Inkludera asfalt/ })).toBeChecked();
-    expect(screen.getByRole("heading", { name: "Din kostnadsbild" })).toBeInTheDocument();
-    expect(screen.getByText("Preliminärt underlag")).toBeInTheDocument();
+    expect(asphaltCheckbox()).toBeChecked();
+    expect(screen.getByRole("heading", { name: shared.resultHeading })).toBeInTheDocument();
+    expect(screen.getByText(shared.resultCaption)).toBeInTheDocument();
     expect(screen.getByText(money(168600))).toBeInTheDocument();
-    expect(screen.getByText("Momsstatus ej bekräftad")).toBeInTheDocument();
-    expect(screen.getByText(/inte en bindande offert/)).toBeInTheDocument();
+    expect(screen.getByText(vatStatusLabel)).toBeInTheDocument();
+    expect(screen.getByText(shared.disclaimer)).toBeInTheDocument();
 
-    expect(screen.queryByRole("link", { name: "Räkna på husdränering" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Räkna på uppfart" })).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Välj annan kalkyl/ })).toHaveAttribute("href", "/offertberakning/");
+    expect(screen.queryByRole("link", { name: text.drainageChoiceLabel })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: text.drivewayChoiceLabel })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: text.backLinkLabel })).toHaveAttribute("href", "/offertberakning/");
   });
 
   it("recalculates the reused driveway calculation into a preliminary total", () => {
@@ -68,7 +85,7 @@ describe("QuotePage", () => {
 
     expect(screen.getByText(money(87750))).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("checkbox", { name: /Inkludera asfalt/ }));
+    fireEvent.click(asphaltCheckbox());
 
     expect(screen.getByText(money(54400))).toBeInTheDocument();
     expect(screen.queryByText(money(87750))).not.toBeInTheDocument();
@@ -85,17 +102,13 @@ describe("QuotePage", () => {
 
     const href = decodedEmailHref();
 
-    expect(href).toContain("Offertförfrågan – uppfart");
-    expect(href).toContain("Yta: 50 m²");
-    expect(href).toContain("Antal lass: 1");
-    expect(href).toContain("Asfalt: Ja");
-    expect(href).toContain(`Preliminär summa: ${money(87750)} (momsstatus ej bekräftad)`);
-    expect(href).toContain("Omfattning behöver bekräftas");
+    expect(href).toContain(text.mail.subject);
+    expect(href).toContain(draftBody({ area: "50", loads: "1", asphalt: text.asphaltYesLabel, total: money(87750), vat: vatStatusLabel.toLowerCase(), notes: "" }));
     expect(href).not.toMatch(/kr\/m|Fast kostnad|950|667/);
 
-    fireEvent.click(screen.getByRole("checkbox", { name: /Inkludera asfalt/ }));
+    fireEvent.click(asphaltCheckbox());
 
-    expect(decodedEmailHref()).toContain("Asfalt: Nej");
+    expect(decodedEmailHref()).toContain(draftBody({ area: "50", loads: "1", asphalt: text.asphaltNoLabel, total: money(54400), vat: vatStatusLabel.toLowerCase(), notes: "" }));
   });
 
   it("blocks invalid quantities without a misleading result and resets the calculator", () => {
@@ -104,11 +117,11 @@ describe("QuotePage", () => {
 
     fireEvent.change(loadsInput(), { target: { value: "1.5" } });
 
-    expect(screen.getByRole("alert")).toHaveTextContent("Ange en yta större än 0, ett helt antal lass och högst 100 000.");
-    expect(screen.queryByRole("link", { name: /Begär offert/ })).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Kontrollera dina uppgifter/ })).toBeDisabled();
-    expect(screen.getByRole("button", { name: /Skriv ut/ })).toBeDisabled();
-    expect(screen.queryByText(/Beräknad totalsumma/)).not.toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent(text.error);
+    expect(screen.queryByRole("link", { name: labelPattern(shared.sendLabel) })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: shared.sendInvalidLabel })).toBeDisabled();
+    expect(screen.getByRole("button", { name: shared.printLabel })).toBeDisabled();
+    expect(screen.queryByText(shared.totalLabel)).not.toBeInTheDocument();
 
     fireEvent.change(areaInput(), { target: { value: "-5" } });
     fireEvent.change(loadsInput(), { target: { value: "1" } });
@@ -117,12 +130,12 @@ describe("QuotePage", () => {
     fireEvent.change(areaInput(), { target: { value: "" } });
     expect(screen.getByRole("alert")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: /Återställ exempel/ }));
+    fireEvent.click(screen.getByRole("button", { name: text.resetLabel }));
 
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect(areaInput()).toHaveValue(100);
     expect(loadsInput()).toHaveValue(1);
-    expect(screen.getByRole("checkbox", { name: /Inkludera asfalt/ })).toBeChecked();
+    expect(asphaltCheckbox()).toBeChecked();
     expect(screen.getByText(money(168600))).toBeInTheDocument();
   });
 
@@ -130,7 +143,7 @@ describe("QuotePage", () => {
     render(<QuotePage />);
     chooseUppfart();
 
-    const help = screen.getByText("Ange en yta större än noll och ett helt antal lass.");
+    const help = screen.getByText(text.quantityHelp);
 
     expect(help).toHaveAttribute("id", "quote-quantity-help");
     expect(areaInput()).toHaveAttribute("aria-describedby", "quote-quantity-help");
@@ -142,7 +155,7 @@ describe("QuotePage", () => {
 
     fireEvent.change(loadsInput(), { target: { value: "2" } });
 
-    expect(liveRegion).toHaveTextContent("Beräknad totalsumma");
+    expect(liveRegion).toHaveTextContent(shared.totalLabel);
     expect(liveRegion).toHaveTextContent(money(170600));
   });
 

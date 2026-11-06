@@ -1,16 +1,39 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { siteContent } from "../data/siteContent";
+import { formatNumber, vatStatusLabel } from "../lib/quote";
 import { DrainageQuotePage } from "./DrainageQuotePage";
+
+const shared = siteContent.quote.shared;
+const text = siteContent.quote.drainage;
 
 const money = (value: number) => new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK", minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(value).replace(/[\u00a0\u202f]/g, " ");
 
+function labelPattern(label: string): RegExp {
+  return new RegExp(label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+}
+
+function draftBody(values: Record<string, string>): string {
+  return text.mail.bodyTemplate.replace(/\{(\w+)\}/g, (placeholder, key: string) => values[key] ?? placeholder);
+}
+
+function firstIncludedParagraph(): string {
+  const paragraph = text.includedParagraphs[0];
+
+  if (paragraph === undefined) {
+    throw new Error("Missing registry included paragraph");
+  }
+
+  return paragraph;
+}
+
 function lengthInput() {
-  return screen.getByRole("spinbutton", { name: /Dräneringens längd/ });
+  return screen.getByRole("spinbutton", { name: labelPattern(text.lengthLabel) });
 }
 
 function decodedEmailHref(): string {
-  const link = screen.getByRole("link", { name: /Begär offert/ });
+  const link = screen.getByRole("link", { name: labelPattern(shared.sendLabel) });
 
-  expect(link.getAttribute("href") ?? "").toContain("mailto:kontakt@svardentreprenad.se");
+  expect(link.getAttribute("href") ?? "").toContain(`mailto:${text.mail.recipientEmail}`);
 
   return decodeURIComponent(link.getAttribute("href") ?? "").replace(/[\u00a0\u202f]/g, " ");
 }
@@ -19,14 +42,14 @@ describe("DrainageQuotePage", () => {
   it("presents the drainage estimate without internal prices or part amounts", () => {
     render(<DrainageQuotePage />);
 
-    expect(screen.getByRole("heading", { name: "Vad kostar din dränering?", level: 1 })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Husdränering" })).toBeInTheDocument();
-    expect(screen.getByText("Preliminärt underlag")).toBeInTheDocument();
-    expect(screen.getByText(/Det här ingår/)).toBeInTheDocument();
-    expect(screen.getByText(/Etablering och schaktning längs husgrund/)).toBeInTheDocument();
-    expect(screen.getByText("Momsstatus ej bekräftad")).toBeInTheDocument();
-    expect(screen.getByText(/inte en bindande offert/)).toBeInTheDocument();
-    expect(screen.getByText(/Öppnar ditt e-postprogram. Inget skickas automatiskt./)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: text.heading, level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: text.workHeading })).toBeInTheDocument();
+    expect(screen.getByText(shared.resultCaption)).toBeInTheDocument();
+    expect(screen.getByText(text.includedHeading)).toBeInTheDocument();
+    expect(screen.getByText(firstIncludedParagraph())).toBeInTheDocument();
+    expect(screen.getByText(vatStatusLabel)).toBeInTheDocument();
+    expect(screen.getByText(shared.disclaimer)).toBeInTheDocument();
+    expect(screen.getByText(shared.mailHelp)).toBeInTheDocument();
 
     expect(screen.queryByText(/Priser och beräkningsgrund/)).not.toBeInTheDocument();
     expect(screen.queryByText(/kr\/m/)).not.toBeInTheDocument();
@@ -47,10 +70,8 @@ describe("DrainageQuotePage", () => {
 
     const href = decodedEmailHref();
 
-    expect(href).toContain("Offertförfrågan – husdränering");
-    expect(href).toContain(`Längd: ${meters} löpmeter`);
-    expect(href).toContain(`Preliminär summa: ${money(expected)} (momsstatus ej bekräftad)`);
-    expect(href).toContain("Omfattning behöver bekräftas");
+    expect(href).toContain(text.mail.subject);
+    expect(href).toContain(draftBody({ length: formatNumber(Number(meters)), total: money(expected), vat: vatStatusLabel.toLowerCase(), notes: "" }));
     expect(href).not.toMatch(/kr\/m|Schakt och markarbete/);
   });
 
@@ -60,8 +81,7 @@ describe("DrainageQuotePage", () => {
 
     const href = decodedEmailHref();
 
-    expect(href).toContain("Längd: 40,5 löpmeter");
-    expect(href).toContain(`Preliminär summa: ${money(148650)} (momsstatus ej bekräftad)`);
+    expect(href).toContain(draftBody({ length: formatNumber(40.5), total: money(148650), vat: vatStatusLabel.toLowerCase(), notes: "" }));
     expect(screen.getByText(money(148650))).toBeInTheDocument();
   });
 
@@ -69,18 +89,18 @@ describe("DrainageQuotePage", () => {
     render(<DrainageQuotePage />);
     fireEvent.change(lengthInput(), { target: { value: invalid } });
 
-    expect(screen.getByRole("alert")).toHaveTextContent("Ange en längd större än 0 och högst 100 000 meter.");
-    expect(screen.queryByRole("link", { name: /Begär offert/ })).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Kontrollera dina uppgifter/ })).toBeDisabled();
-    expect(screen.getByRole("button", { name: /Skriv ut/ })).toBeDisabled();
+    expect(screen.getByRole("alert")).toHaveTextContent(text.error);
+    expect(screen.queryByRole("link", { name: labelPattern(shared.sendLabel) })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: shared.sendInvalidLabel })).toBeDisabled();
+    expect(screen.getByRole("button", { name: shared.printLabel })).toBeDisabled();
     expect(lengthInput()).toHaveAttribute("aria-invalid", "true");
-    expect(screen.queryByText(/Beräknad totalsumma/)).not.toBeInTheDocument();
+    expect(screen.queryByText(shared.totalLabel)).not.toBeInTheDocument();
   });
 
   it("describes the length field and announces updates in a polite live region", () => {
     render(<DrainageQuotePage />);
 
-    const help = screen.getByText("Ange en längd större än noll.");
+    const help = screen.getByText(text.lengthHelp);
 
     expect(help).toHaveAttribute("id", "meter-help");
     expect(lengthInput()).toHaveAttribute("aria-describedby", "meter-help");
@@ -91,7 +111,7 @@ describe("DrainageQuotePage", () => {
 
     fireEvent.change(lengthInput(), { target: { value: "10" } });
 
-    expect(liveRegion).toHaveTextContent("Beräknad totalsumma");
+    expect(liveRegion).toHaveTextContent(shared.totalLabel);
     expect(liveRegion).toHaveTextContent(money(41900));
   });
 
@@ -102,19 +122,18 @@ describe("DrainageQuotePage", () => {
 
     expect(screen.getByRole("alert")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: /Återställ exempel/ }));
+    fireEvent.click(screen.getByRole("button", { name: text.resetLabel }));
 
     expect(lengthInput()).toHaveValue(40);
     expect(screen.getByRole("textbox")).toHaveValue("");
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
-    expect(decodedEmailHref()).toContain("Längd: 40 löpmeter");
-    expect(decodedEmailHref()).toContain(`Preliminär summa: ${money(146900)}`);
+    expect(decodedEmailHref()).toContain(draftBody({ length: formatNumber(40), total: money(146900), vat: vatStatusLabel.toLowerCase(), notes: "" }));
   });
 
   it("links visitors with a driveway project back to the quote calculator", () => {
     render(<DrainageQuotePage />);
 
-    const link = screen.getByRole("link", { name: "Räkna på uppfart" });
+    const link = screen.getByRole("link", { name: text.drivewayCrossLinkLabel });
 
     expect(link).toHaveAttribute("href", "/offertberakning/");
   });

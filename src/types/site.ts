@@ -99,6 +99,80 @@ export type ContactForm = {
   };
 };
 
+export type SiteQuoteMail = {
+  readonly recipientEmail: string;
+  readonly subject: string;
+  readonly bodyTemplate: string;
+};
+
+export type SiteQuoteShared = {
+  readonly formAriaLabel: string;
+  readonly resultAriaLabel: string;
+  readonly resultHeading: string;
+  readonly resultCaption: string;
+  readonly totalLabel: string;
+  readonly disclaimer: string;
+  readonly sendLabel: string;
+  readonly sendInvalidLabel: string;
+  readonly mailHelp: string;
+  readonly printLabel: string;
+};
+
+export type SiteQuoteUppfart = {
+  readonly breadcrumbLabel: string;
+  readonly heading: string;
+  readonly intro: string;
+  readonly choiceHeading: string;
+  readonly choiceSummary: string;
+  readonly drainageChoiceLabel: string;
+  readonly drivewayChoiceLabel: string;
+  readonly backLinkLabel: string;
+  readonly workHeading: string;
+  readonly workSummary: string;
+  readonly areaLabel: string;
+  readonly areaUnit: string;
+  readonly loadsLabel: string;
+  readonly loadsUnit: string;
+  readonly quantityHelp: string;
+  readonly asphaltLabel: string;
+  readonly asphaltHelp: string;
+  readonly asphaltYesLabel: string;
+  readonly asphaltNoLabel: string;
+  readonly notesLabel: string;
+  readonly notesOptionalLabel: string;
+  readonly notesPlaceholder: string;
+  readonly resetLabel: string;
+  readonly error: string;
+  readonly mail: SiteQuoteMail;
+};
+
+export type SiteQuoteDrainage = {
+  readonly breadcrumbLabel: string;
+  readonly heading: string;
+  readonly intro: string;
+  readonly workHeading: string;
+  readonly workSummary: string;
+  readonly lengthLabel: string;
+  readonly lengthUnit: string;
+  readonly lengthHelp: string;
+  readonly includedHeading: string;
+  readonly includedParagraphs: readonly string[];
+  readonly notesLabel: string;
+  readonly notesOptionalLabel: string;
+  readonly notesPlaceholder: string;
+  readonly resetLabel: string;
+  readonly error: string;
+  readonly drivewayCrossLinkQuestion: string;
+  readonly drivewayCrossLinkLabel: string;
+  readonly mail: SiteQuoteMail;
+};
+
+export type SiteQuote = {
+  readonly shared: SiteQuoteShared;
+  readonly uppfart: SiteQuoteUppfart;
+  readonly drainage: SiteQuoteDrainage;
+};
+
 export type SiteBrand = {
   readonly name: string;
   readonly logoSrc: string;
@@ -116,6 +190,15 @@ export type SiteCalcMenu = {
 
 export type SiteChrome = {
   readonly brand: SiteBrand;
+  readonly skipLinkLabel: string;
+  readonly navAriaLabel: string;
+  readonly mobileNavAriaLabel: string;
+  readonly menuOpenLabel: string;
+  readonly menuCloseLabel: string;
+  readonly emptyStateTitle: string;
+  readonly emptyStateMessage: string;
+  readonly quoteFallback: string;
+  readonly inquiryFallback: string;
   readonly breadcrumb: SiteBreadcrumb;
   readonly contactBand: {
     readonly eyebrow: string;
@@ -187,5 +270,6 @@ export type SiteContent = {
     readonly form: ContactForm;
     readonly items: readonly ContactItem[];
   };
+  readonly quote: SiteQuote;
   readonly chrome: SiteChrome;
 };
