@@ -38,7 +38,7 @@ export function QuotePage() {
   }
   return <>
     <section className="quote-intro">
-      <img className="quote-hero-image" src="/page-visuals/quote-hero.png" alt="" aria-hidden="true" fetchPriority="high" onError={event => { event.currentTarget.style.display = "none"; }} />
+      <img className="quote-hero-image" src="/page-visuals/quote-hero.webp" srcSet="/page-visuals/quote-hero-640.webp 640w, /page-visuals/quote-hero-960.webp 960w, /page-visuals/quote-hero.webp 1672w" sizes="100vw" alt="" aria-hidden="true" fetchPriority="high" onError={event => { event.currentTarget.style.display = "none"; }} />
       <div className="quote-wrap"><a href="/">Hem</a><span aria-hidden="true"> / </span><span>Offertberäkning</span><h1>Räkna på ditt projekt</h1><p>Välj vad du vill ha hjälp med för att få en preliminär kostnadsbild.</p></div>
     </section>
     <div className="quote-wrap quote-layout">

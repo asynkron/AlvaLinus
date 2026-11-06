@@ -504,7 +504,7 @@ describe("SiteHomePage", () => {
 
   it("keeps every current route aligned with a registry-owned hero photo asset", () => {
     const expectedHeroPhotosByRoute = new Map([
-      ["quote", "/page-visuals/quote-hero.png"],
+      ["quote", "/page-visuals/quote-hero.webp"],
       ["drainage-quote", "/page-visuals/draneringsberakning-hero.webp"],
       ["home", "/page-visuals/hero-photo.webp"],
       ["services", "/page-visuals/services-hero.webp"],

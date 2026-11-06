@@ -22,7 +22,7 @@ export const siteContent = {
   routes: [
     {
       id: "quote", kind: "quote", label: "Offertberäkning", href: "/offertberakning/",
-      heroPhotoAssetPath: "/page-visuals/quote-hero.png",
+      heroPhotoAssetPath: "/page-visuals/quote-hero.webp",
       summary: "Välj kalkyl för husdränering eller uppfart och få en preliminär totalsumma att prata vidare om.",
       visual: { assetPath: "/page-visuals/svard-entreprenad-quote.svg", alt: "Måttsatt uppfart", intent: "Visar ytan som ligger till grund för kalkylen." },
     },

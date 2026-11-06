@@ -145,4 +145,20 @@ describe("QuotePage", () => {
     expect(liveRegion).toHaveTextContent("Beräknad totalsumma");
     expect(liveRegion).toHaveTextContent(money(170600));
   });
+
+  it("serves the decorative hero from responsive WebP variants of the registry asset", () => {
+    render(<QuotePage />);
+
+    const hero = document.querySelector("img.quote-hero-image") as HTMLImageElement;
+
+    expect(hero).toHaveAttribute("src", "/page-visuals/quote-hero.webp");
+    expect(hero).toHaveAttribute(
+      "srcSet",
+      "/page-visuals/quote-hero-640.webp 640w, /page-visuals/quote-hero-960.webp 960w, /page-visuals/quote-hero.webp 1672w",
+    );
+    expect(hero).toHaveAttribute("sizes", "100vw");
+    expect(hero).toHaveAttribute("alt", "");
+    expect(hero).toHaveAttribute("aria-hidden", "true");
+    expect(hero).toHaveAttribute("fetchpriority", "high");
+  });
 });
