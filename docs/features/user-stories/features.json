@@ -242,6 +242,13 @@
               "name": "renders dedicated Dränering and Grävjobb pages",
               "evidence_type": "direct",
               "supports": "Checks the dedicated Dränering heading and foundation moisture-protection paragraph."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "links the drainage service page to its drainage calculator while other services stay calculator-free",
+              "evidence_type": "direct",
+              "supports": "Checks the drainage page's calculator band link to /draneringsberakning/ and that the other service pages render no calculator band."
             }
           ],
           "entry_point_refs": [],
@@ -256,6 +263,7 @@
           ],
           "variants": [
             "The drainage page adds a paragraph on moisture protection around foundations, walls and basements.",
+            "The drainage page carries a registry-declared Kostnadsberäkning link band to /draneringsberakning/; the other service pages render no calculator band.",
             "The page hero hides a failed photo, keeping its text on the dark background."
           ],
           "expected_outcome": "The visitor can describe how Dränering relates to the project and reach inquiry preparation.",
@@ -611,6 +619,8 @@
           "Site visitor"
         ],
         "entry_points": [
+          "/offertberakning/",
+          "/draneringsberakning/",
           "/",
           "/tjanster/",
           "/om-oss/",
@@ -629,7 +639,7 @@
           "Mobile menu closed/open",
           "Keyboard bypass to the page body"
         ],
-        "current_limitations": "Header, mobile-menu and footer navigation derive their destinations from the typed route registry, whose five inventory shortcuts remain a display subset; desktop dropdown keyboard interaction is unmapped. Hosting may reject unknown paths before React can display not-found.",
+        "current_limitations": "Header, mobile-menu and footer navigation derive their destinations from the typed route registry, whose six inventory shortcuts remain a display subset; desktop dropdown keyboard interaction is unmapped. Hosting may reject unknown paths before React can display not-found.",
         "failure_behavior": "Unknown in-app paths show declared-route shortcuts. The empty-services state retains the header but has no footer.",
         "recovery": "Use header links or reload; unknown ready routes provide all registered shortcuts. Static-host handling remains a deployment concern.",
         "runtime_owners": [
@@ -643,7 +653,8 @@
           "F1",
           "F2",
           "F3",
-          "F5"
+          "F5",
+          "F6"
         ],
         "customer_outcome": "",
         "outcome_signals": []
@@ -678,6 +689,34 @@
             {
               "framework": "vitest",
               "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "keeps the desktop Tjänster dropdown trigger focusable with its five registry-ordered service links",
+              "evidence_type": "direct",
+              "supports": "Checks the trigger's aria-haspopup declaration, focusability, uncancelled Tab/Shift+Tab events and the panel's five service links in registry order with their Swedish accessible names. JSDOM does not establish browser tab order or the panel's focus-only CSS reveal."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "opens the desktop Kalkyler disclosure straight to the drainage and driveway calculators",
+              "evidence_type": "direct",
+              "supports": "Checks the desktop details/summary disclosure exposes the Dränering and Uppfart calculator links with their registry destinations."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "keeps the same Kalkyler calculator links inside the mobile menu disclosure",
+              "evidence_type": "direct",
+              "supports": "Checks the mobile menu nests the same two calculator links with the same destinations."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "marks the active calculator link inside Kalkyler and highlights the group only on calculator pages",
+              "evidence_type": "direct",
+              "supports": "Checks active-link marking inside Kalkyler and that the group highlight applies only on the two calculator pages."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
               "name": "dismisses mobile navigation with Escape from its %s and allows reopening",
               "evidence_type": "direct",
               "supports": "Parameterized link and toggle cases check menu expanded state, Escape dismissal, focus restoration, reopening, click dismissal and uncancelled Tab/Shift+Tab events. JSDOM does not establish actual browser Tab movement, responsive layout or desktop dropdown interaction."
@@ -708,7 +747,7 @@
               "path": "src/pages/SiteHomePage.test.tsx",
               "name": "keeps every current route aligned with a page-specific visual asset",
               "evidence_type": "technical",
-              "supports": "Checks eleven declared visual metadata mappings, not rendered photos or onError fallbacks."
+              "supports": "Checks twelve declared visual metadata mappings, not rendered photos or onError fallbacks."
             },
             {
               "framework": "vitest",
@@ -744,12 +783,13 @@
           ],
           "variants": [
             "Header services links expose all five detail routes.",
+            "The desktop Tjänster trigger keeps its aria-haspopup declaration and reveals its registry-ordered dropdown panel on keyboard focus; the Kalkyler disclosure (desktop details/summary and the nested mobile-menu copy) exposes the two calculator links from chrome.calcMenu and marks the active calculator link only on calculator pages.",
             "Header (desktop and mobile) and footer page and service links derive their Swedish labels, hrefs and order from the typed route registry, so a route edit is one declaration in src/data/siteContent.ts instead of parallel markup edits.",
             "An open mobile menu closes on Escape from a link or the focused toggle, restores focus to the toggle and can reopen; the toggle also closes it by click. Tab and Shift+Tab are not cancelled. Escape elsewhere in the header leaves the menu and focus unchanged.",
-            "inventory.primaryRoutes has five shortcuts; it is not the full nine-route registry.",
+            "inventory.primaryRoutes has six shortcuts; it is not the full twelve-route registry.",
             "Subpage heroes and the home hero use decorative photos requested at high fetch priority while service-card images stay lazy; a failing home hero photo hides its image without a retry loop while the hero content remains. Service-card images have route alt text."
           ],
-          "expected_outcome": "A declared static route can be selected for F1, F2, F3 or F5.",
+          "expected_outcome": "A declared static route can be selected for F1, F2, F3, F5 or F6.",
           "failure_behavior": "A missing host artifact can fail before React mounts; this catalog does not claim host-level fallback.",
           "recovery": "Use a known route or the home URL; repair/redeploy static route artifacts if missing."
         },
@@ -1026,6 +1066,325 @@
       "user_story_documents": [
         "docs/features/user-stories/F5/F5-US1.md",
         "docs/features/user-stories/F5/F5-US2.md"
+      ]
+    },
+    {
+      "id": "F6",
+      "document": "docs/features/quote-calculators.md",
+      "capability": {
+        "classification": "ui",
+        "roles": [
+          "Property owner",
+          "Project visitor"
+        ],
+        "entry_points": [
+          "/offertberakning/",
+          "/draneringsberakning/"
+        ],
+        "principal_states": [
+          "Calculator choice",
+          "Driveway calculator",
+          "Drainage calculator",
+          "Preliminary total announced",
+          "Invalid input feedback"
+        ],
+        "current_limitations": "Totals are client-side estimates from fixed source-price constants carrying the standing unconfirmed VAT label; no calculation state is saved or shareable, and a configured mail client plus the browser print dialog carry the handoff.",
+        "failure_behavior": "Invalid measurements replace the total with a Swedish role=alert message, mark the input and disable the email and print controls; a missing or incompatible mail client can prevent handoff without a site error receipt.",
+        "recovery": "Correct the named measurement or use Återställ exempel; use the displayed address in a working email tool when the handoff fails.",
+        "runtime_owners": [
+          "src/pages/QuotePage.tsx",
+          "src/pages/DrainageQuotePage.tsx",
+          "src/lib/quote.ts",
+          "src/data/siteContent.ts"
+        ],
+        "background_component_relations": [],
+        "product_role": "customer_outcome",
+        "supports_feature_ids": [],
+        "customer_outcome": "Visitors get a self-serve preliminary cost picture for husdränering or an asfalterad uppfart before deciding to engage the company.",
+        "outcome_signals": [
+          "In an observed task, a visitor selects husdränering or uppfart and sees one preliminary total for the entered measurements.",
+          "A valid calculation exposes the Begär offert mailto draft with the measurements and total and a print/PDF path, with nothing sent automatically.",
+          "Invalid input shows a Swedish blocking message instead of a misleading total."
+        ]
+      },
+      "user_stories": [
+        {
+          "id": "F6-US1",
+          "title": "Choose the calculator for the project",
+          "status": "current",
+          "role": "Project visitor",
+          "action": "choose between the husdränering and uppfart calculators",
+          "benefit": "get a preliminary quote for the right project type",
+          "source_anchors": [
+            "src/pages/QuotePage.tsx",
+            "src/pages/DrainageQuotePage.tsx",
+            "src/data/siteContent.ts"
+          ],
+          "test_references": [
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuotePage.test.tsx",
+              "name": "starts with two calculator choice buttons before any calculator fields",
+              "evidence_type": "direct",
+              "supports": "Checks the choice heading, both choice-link destinations and that no quantity fields, asphalt checkbox, result heading or alert exists before choosing."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuotePage.test.tsx",
+              "name": "reveals only the uppfart calculator after choosing uppfart",
+              "evidence_type": "direct",
+              "supports": "Checks that the choice buttons disappear, the back link targets /offertberakning/ and only the driveway fields appear."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/DrainageQuotePage.test.tsx",
+              "name": "links visitors with a driveway project back to the quote calculator",
+              "evidence_type": "direct",
+              "supports": "Checks the drainage page's /offertberakning/ cross-link destination."
+            }
+          ],
+          "entry_point_refs": [],
+          "preconditions": [
+            "The /offertberakning/ route document has loaded."
+          ],
+          "flow": [
+            "Open /offertberakning/ from the header Kalkyler Uppfart link, the footer, a not-found shortcut or the drainage calculator's Räkna på uppfart cross-link.",
+            "Read Vad gäller din offertförfrågan? and choose Räkna på husdränering or Räkna på uppfart.",
+            "On the drainage page, follow Räkna på uppfart back to the driveway calculator."
+          ],
+          "variants": [
+            "Räkna på husdränering links to /draneringsberakning/ and Räkna på uppfart links to the #uppfart hash; no calculator fields or result are visible before a choice.",
+            "The #uppfart hash reveals only the driveway calculator; Välj annan kalkyl returns to the choice view and the hash change listener keeps the view in sync.",
+            "The drainage page offers Räkna på uppfart as a plain link to /offertberakning/."
+          ],
+          "expected_outcome": "The visitor works in exactly one calculator whose fields and result match the chosen project type.",
+          "failure_behavior": "No calculation is created by visiting the choice view; the visitor can change the choice at any time.",
+          "recovery": "Choose again through the choice view, the Kalkyler disclosure or the cross-links."
+        },
+        {
+          "id": "F6-US2",
+          "title": "See a total-only preliminary total for the entered measurements",
+          "status": "current",
+          "role": "Property owner",
+          "action": "enter measurements and read the announced preliminary total",
+          "benefit": "gauge the cost before making contact",
+          "source_anchors": [
+            "src/pages/QuotePage.tsx",
+            "src/pages/DrainageQuotePage.tsx",
+            "src/lib/quote.ts"
+          ],
+          "test_references": [
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuotePage.test.tsx",
+              "name": "reveals only the uppfart calculator after choosing uppfart",
+              "evidence_type": "direct",
+              "supports": "Checks the example defaults, the checked asphalt box, the result heading, the Preliminärt underlag caption, the example total, the VAT-status label and the disclaimer."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuotePage.test.tsx",
+              "name": "recalculates the reused driveway calculation into a preliminary total",
+              "evidence_type": "direct",
+              "supports": "Checks the recalculated totals for a changed area and an unchecked asphalt box and that no price-breakdown markup exists."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuotePage.test.tsx",
+              "name": "describes the quantity fields and announces updates in a polite live region",
+              "evidence_type": "direct",
+              "supports": "Checks the shared field-description association and the polite atomic live region announcing the updated total."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/DrainageQuotePage.test.tsx",
+              "name": "presents the drainage estimate without internal prices or part amounts",
+              "evidence_type": "direct",
+              "supports": "Checks the drainage headings, scope summary, caption, VAT-status label and disclaimer and the absence of internal prices and breakdown markup."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/DrainageQuotePage.test.tsx",
+              "name": "calculates $meters löpmeter to $expected kr on the page and in the email",
+              "evidence_type": "direct",
+              "supports": "Parameterized 40/55/60-meter cases check the on-page totals."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/DrainageQuotePage.test.tsx",
+              "name": "supports decimal lengths and keeps the same precision in the email",
+              "evidence_type": "direct",
+              "supports": "Checks a decimal length's total on the page."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/DrainageQuotePage.test.tsx",
+              "name": "describes the length field and announces updates in a polite live region",
+              "evidence_type": "direct",
+              "supports": "Checks the field description association and the polite atomic live region announcing the updated total."
+            }
+          ],
+          "entry_point_refs": [],
+          "preconditions": [
+            "A calculator is selected (uppfart via the #uppfart hash, husdränering via /draneringsberakning/)."
+          ],
+          "flow": [
+            "Enter Uppfartens yta and Antal lass, or Dräneringens längd in löpmeter.",
+            "Read the help text under the fields and the Det här ingår scope summary on the drainage page.",
+            "Read the announced Beräknad totalsumma, the currency total and Momsstatus ej bekräftad in the Din kostnadsbild aside.",
+            "Read the disclaimer that this is an estimate, not a binding quote, and that ROT deduction and payment terms are specified in the real quote."
+          ],
+          "variants": [
+            "The driveway calculator starts from the example values 100 m², 1 lass and the checked Inkludera asfalt checkbox; unchecking asphalt recalculates the total.",
+            "The drainage calculator starts from the example 40 löpmeter and accepts decimal lengths with the same precision on the page and in the email.",
+            "Totals recalculate on every change and are announced through an aria-live polite, aria-atomic region.",
+            "Only the total is shown: no unit prices, part amounts or price-breakdown sections exist in the customer view."
+          ],
+          "expected_outcome": "The visitor sees exactly one preliminary total for the entered measurements, clearly labeled as unconfirmed regarding VAT and non-binding.",
+          "failure_behavior": "The website cannot confirm a binding price; the disclaimer directs scope confirmation to the real quote discussion.",
+          "recovery": "Adjust the measurements or continue to the email handoff; no binding offer is created on the site."
+        },
+        {
+          "id": "F6-US3",
+          "title": "Recover from invalid measurements",
+          "status": "current",
+          "role": "Project visitor",
+          "action": "read the Swedish feedback for invalid measurements and correct or reset them",
+          "benefit": "avoid acting on a misleading total",
+          "source_anchors": [
+            "src/pages/QuotePage.tsx",
+            "src/pages/DrainageQuotePage.tsx"
+          ],
+          "test_references": [
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuotePage.test.tsx",
+              "name": "blocks invalid quantities without a misleading result and resets the calculator",
+              "evidence_type": "direct",
+              "supports": "Checks the Swedish alert, the absent email link, the disabled result and print controls, the absent total for empty and negative values and the reset behavior."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/DrainageQuotePage.test.tsx",
+              "name": "blocks the invalid length %s without a misleading result",
+              "evidence_type": "direct",
+              "supports": "Parameterized empty, zero, negative and over-limit cases check the alert, aria-invalid, the disabled email and print controls and the absent total."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/DrainageQuotePage.test.tsx",
+              "name": "restores the example and clears the project description",
+              "evidence_type": "direct",
+              "supports": "Checks that reset restores the example length, clears the note and the alert and leaves a valid email handoff."
+            }
+          ],
+          "entry_point_refs": [],
+          "preconditions": [
+            "A calculator is selected with an entered measurement."
+          ],
+          "flow": [
+            "Enter an invalid value: a non-positive or over-limit area, a fractional number of loads, or an empty, non-positive or over-limit drainage length.",
+            "Read the role=alert Swedish message and the marked input instead of a total.",
+            "Correct the value or select Återställ exempel to restore the example values and clear the note."
+          ],
+          "variants": [
+            "The driveway message is Ange en yta större än 0, ett helt antal lass och högst 100 000. while the area or loads are invalid; the drainage message is Ange en längd större än 0 och högst 100 000 meter..",
+            "While input is invalid, no Beräknad totalsumma is rendered, the input carries aria-invalid, and the email and print controls are disabled or replaced by a disabled Kontrollera dina uppgifter button.",
+            "Återställ exempel restores the example measurements, the default asphalt choice and an empty note, clearing the alert."
+          ],
+          "expected_outcome": "The visitor never sees a stale total alongside invalid input and can recover by correcting the named value or resetting the example.",
+          "failure_behavior": "The page performs shape and range checks only; it cannot judge whether the entered measurements fit the real project.",
+          "recovery": "Correct the named measurement or reset the example; the disclaimer keeps scope confirmation with the company."
+        },
+        {
+          "id": "F6-US4",
+          "title": "Print or save the preliminary quote as PDF",
+          "status": "current",
+          "role": "Property owner",
+          "action": "print or save the preliminary quote through the browser print dialog",
+          "benefit": "keep or share the cost picture outside the browser session",
+          "source_anchors": [
+            "src/pages/QuotePage.tsx",
+            "src/pages/DrainageQuotePage.tsx"
+          ],
+          "test_references": [],
+          "entry_point_refs": [],
+          "preconditions": [
+            "A calculator shows a valid preliminary total."
+          ],
+          "flow": [
+            "Enter valid measurements and read the announced total.",
+            "Select Skriv ut / spara som PDF to open the browser's print dialog.",
+            "Keep or share the printed page; it carries the same total-only content as the view."
+          ],
+          "variants": [
+            "Both calculators expose the same print control in the Din kostnadsbild aside; it stays disabled while input is invalid."
+          ],
+          "expected_outcome": "The visitor can hand the preliminary total to paper or a PDF through the browser's own print path; the website produces no separate document, file or stored quote.",
+          "failure_behavior": "The website cannot confirm that a printout or PDF was produced; browser and printer availability stay outside the site.",
+          "recovery": "Retry the print control or read the total on screen; no print invocation is covered by a reviewed declaration, so the printed rendering remains an unmapped gap."
+        },
+        {
+          "id": "F6-US5",
+          "title": "Hand off the quote request by email",
+          "status": "current",
+          "role": "Property owner",
+          "action": "hand the measurements and preliminary total to the company by email",
+          "benefit": "start the discussion from the same numbers",
+          "source_anchors": [
+            "src/pages/QuotePage.tsx",
+            "src/pages/DrainageQuotePage.tsx"
+          ],
+          "test_references": [
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuotePage.test.tsx",
+              "name": "keeps the email handoff about the uppfart without internal prices",
+              "evidence_type": "direct",
+              "supports": "Checks the mailto recipient, subject, decoded body values including the Asfalt answer and unconfirmed VAT label, the confirmed-scope line and the absence of internal prices."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/DrainageQuotePage.test.tsx",
+              "name": "calculates $meters löpmeter to $expected kr on the page and in the email",
+              "evidence_type": "direct",
+              "supports": "Parameterized 40/55/60-meter cases check the drainage subject, length line, preliminary sum and the absence of internal prices in the email."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/DrainageQuotePage.test.tsx",
+              "name": "supports decimal lengths and keeps the same precision in the email",
+              "evidence_type": "direct",
+              "supports": "Checks the decimal length's precision in the email body."
+            }
+          ],
+          "entry_point_refs": [],
+          "preconditions": [
+            "A calculator shows a valid preliminary total.",
+            "A mail client is configured for the handoff."
+          ],
+          "flow": [
+            "Optionally add the project note with place, current substrate and desired timing.",
+            "Select Begär offert på underlaget.",
+            "Review and send the prepared draft in the own email program.",
+            "Read Öppnar ditt e-postprogram. Inget skickas automatiskt. beside the control."
+          ],
+          "variants": [
+            "The driveway draft has the subject Offertförfrågan – uppfart and a body with Yta, Antal lass, the Asfalt answer, the preliminary sum labeled momsstatus ej bekräftad and Omfattning behöver bekräftas; unchecking asphalt changes the Asfalt answer.",
+            "The drainage draft has the subject Offertförfrågan – husdränering and a body with the length in löpmeter, the preliminary sum and Omfattning behöver bekräftas.",
+            "Both drafts address kontakt@svardentreprenad.se and never contain internal unit prices, fixed costs or part amounts."
+          ],
+          "expected_outcome": "The email program receives a draft carrying the entered measurements and the preliminary total; the visitor sends it themselves and delivery is not established.",
+          "failure_behavior": "The mail handler may fail to open; the page cannot confirm acceptance or sending.",
+          "recovery": "Copy the address and details into a working email tool; the site offers no persistent draft recovery or alternate transport."
+        }
+      ],
+      "user_story_documents": [
+        "docs/features/user-stories/F6/F6-US1.md",
+        "docs/features/user-stories/F6/F6-US2.md",
+        "docs/features/user-stories/F6/F6-US3.md",
+        "docs/features/user-stories/F6/F6-US4.md",
+        "docs/features/user-stories/F6/F6-US5.md"
       ]
     }
   ]

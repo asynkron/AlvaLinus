@@ -30,7 +30,7 @@
           "description": "Static content and route contracts."
         }
       ],
-      "reviewed_against_source": "2026-10-29",
+      "reviewed_against_source": "2026-11-06",
       "slice_refs": [],
       "entry_point_refs": []
     },
@@ -129,6 +129,45 @@
       "entry_point_refs": []
     },
     {
+      "name": "Calculate a preliminary quote",
+      "description": "Visitors choose the husdränering or uppfart calculator, enter measurements and get a total-only preliminary quote they can email or print.",
+      "document": "docs/features/quote-calculators.md",
+      "route_scope": "/offertberakning/, /draneringsberakning/",
+      "routes": [
+        "/offertberakning/",
+        "/draneringsberakning/"
+      ],
+      "code_paths": [
+        {
+          "path": "src/pages/QuotePage.tsx",
+          "description": "Calculator choice view and driveway calculator with its fields, total, email handoff and print control."
+        },
+        {
+          "path": "src/pages/DrainageQuotePage.tsx",
+          "description": "Drainage length calculator with its scope summary, total, email handoff and print control."
+        },
+        {
+          "path": "src/lib/quote.ts",
+          "description": "Tiered drainage and driveway total helpers plus Swedish money and number formatting."
+        },
+        {
+          "path": "src/data/siteContent.ts",
+          "description": "Typed quote routes with hero photos and visual metadata, and the drainage service's calculator band."
+        },
+        {
+          "path": "src/pages/SiteHomePage.tsx",
+          "description": "Lazy quote-route branching inside the shared landmarks and the registry calculator band rendering."
+        },
+        {
+          "path": "src/types/site.ts",
+          "description": "Quote route kind and calculator band contracts."
+        }
+      ],
+      "reviewed_against_source": "2026-11-06",
+      "slice_refs": [],
+      "entry_point_refs": []
+    },
+    {
       "name": "Home, navigation and route recovery",
       "description": "Shared home orientation, header, footer, breadcrumbs and static route states help visitors reach the customer outcomes.",
       "document": "docs/features/navigation-and-recovery.md",
@@ -163,7 +202,7 @@
           "description": "Emits static HTML entry artifacts for declared subpages."
         }
       ],
-      "reviewed_against_source": "2026-10-29",
+      "reviewed_against_source": "2026-11-06",
       "slice_refs": [],
       "entry_point_refs": []
     }

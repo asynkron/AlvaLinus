@@ -1,6 +1,6 @@
 # F1: Choose a suitable groundworks service
 
-Reviewed: 2026-11-02. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-06. Runtime: `ui`. Product role: `customer_outcome`.
 
 Visitors need to identify which service fits a property or construction project
 before asking for a discussion. The current result is service understanding and
@@ -20,7 +20,7 @@ currently absent because the list is empty.
 | [F1-US2: Stensättning](user-stories/F1/F1-US2.md), `/stensattning/` | Assess entrances, paths, courtyards, paving and stone walls; tags Marksten Örebro, Stenmurar, Finplanering. |
 | [F1-US3: Markarbete](user-stories/F1/F1-US3.md), `/markarbete/` | Scope broad groundworks for private, business or municipal projects; tags Schakt, Tomt, Anläggning. |
 | [F1-US4: Grävjobb](user-stories/F1/F1-US4.md), `/gravjobb/` | Locate excavation for foundations, sewage, utilities, plots and pools; tags Grävning, Husgrund, Poolgrävning. Pool has no separate route. |
-| [F1-US5: Dränering](user-stories/F1/F1-US5.md), `/dranering/` | Understand moisture protection around foundations, walls and basements; adds a specific paragraph on assessment, excavation and restoration; tags Dränering, Mur, Fuktskydd. |
+| [F1-US5: Dränering](user-stories/F1/F1-US5.md), `/dranering/` | Understand moisture protection around foundations, walls and basements; adds a specific paragraph on assessment, excavation and restoration; carries a registry-declared calculator link band to the drainage quote ([F6](quote-calculators.md)); tags Dränering, Mur, Fuktskydd. |
 | [F1-US6: Trädgårdsplanering](user-stories/F1/F1-US6.md), `/tradgardsplanering/` | Connect levels, surfaces, planting and practical outdoor use; tags Tomtplanering, Utemiljö, Finish. |
 
 [F1-US1](user-stories/F1/F1-US1.md) covers comparing these offers on home/index.
@@ -41,8 +41,11 @@ The visitor can select a matching service for a stated project and reach
 `/kontakt/` from that detail page with that service preselected in the
 inquiry form, still changeable. Those are observable task checks; no
 conversion analytics is installed. F4 supplies navigation/recovery. F2 explains
-the shared process and company claims; F3 owns inquiry preparation.
-There are no service APIs, background jobs, automatic estimates or booking records.
+the shared process and company claims; F3 owns inquiry preparation. The
+drainage page's calculator band links to the visitor-driven preliminary
+estimate, which [F6](quote-calculators.md) owns; no service page creates an
+estimate by itself. There are no service APIs, background jobs or booking
+records.
 
 ## Source, states and evidence
 
@@ -59,7 +62,8 @@ A content defect requires source correction and static redeployment.
 
 Existing Vitest declarations directly check representative home tags,
 Stensättning and Dränering per-service guidance plus the absence of the retired
-shared template sentence, and Dränering/Grävjobb detail text. The six story documents
+shared template sentence, Dränering/Grävjobb detail text, and the drainage
+page's calculator band link with calculator-free sibling services. The six story documents
 and identity manifest carry exact names and the limited assertion scope.
 No dedicated Markarbete or Trädgårdsplanering render test is mapped.
 The parameterized declaration `names every service-card link by its destination on %s`

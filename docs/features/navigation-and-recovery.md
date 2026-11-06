@@ -1,7 +1,7 @@
 # F4: Home, navigation and route recovery
 
-Reviewed: 2026-11-04. Runtime: `ui`. Product role: `surface`.
-Supports **F1, F2, F3 and F5**, all active customer-outcome features.
+Reviewed: 2026-11-06. Runtime: `ui`. Product role: `surface`.
+Supports **F1, F2, F3, F5 and F6**, all active customer-outcome features.
 
 Home and shared route handling make the service, company and inquiry outcomes
 reachable. This record is retained as a supporting surface, not promoted into
@@ -42,7 +42,7 @@ fetch priority without a lazy-loading attribute, so above-the-fold rendering is
 not deferred behind below-the-fold imagery; service-card images stay lazy.
 
 [F4-US1](user-stories/F4/F4-US1.md) covers navigation from the home hero's two
-actions, route shortcuts and shared chrome. The inventory's five shortcuts
+actions, route shortcuts and shared chrome. The inventory's six shortcuts
 are not the complete registry. Pool and reference-project pages are not active.
 The historical pageCount 58 is not a rendered route count.
 
@@ -115,7 +115,7 @@ failure mappings; this supporting surface points to F1 rather than duplicating
 those story references.
 
 No product background module, API, storage, telemetry or report belongs to this
-surface. Outcome measurement stays with F1–F3; there is no standalone conversion
+surface. Outcome measurement stays with F1–F3, F5 and F6; there is no standalone conversion
 claim for the route inventory.
 
 ## What Works Less Well

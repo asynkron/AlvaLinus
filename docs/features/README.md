@@ -1,13 +1,15 @@
 # Feature catalog
 
-Reviewed against source: 2026-11-04.
+Reviewed against source: 2026-11-06.
 
 The catalog introduced in `f7b481f` already covers the current route inventory.
 The maintained catalog retains its published identities, including F4-US3 for
 the shipped keyboard bypass. This review also reconciles the distinct Swedish
 service-card link names shipped in `8c9af38` with F1-US1 evidence on home and the
 services index. F5 was added on 2026-11-04 for the company staffing inquiry
-route without changing any retained identity.
+route without changing any retained identity. F6 was added on 2026-11-06 for
+the two interactive quote calculators, which previously appeared only as
+navigation targets under F4-US1.
 
 This catalog maps the static Swedish Svärd Entreprenad site to visitor outcomes.
 It is product-development input, not a claim that construction work, email delivery
@@ -18,8 +20,9 @@ or analytics runs inside the site.
 | F1 | [Choose a suitable groundworks service](service-selection.md) | ui | customer_outcome | — |
 | F2 | [Assess the company and working approach](company-confidence.md) | ui | customer_outcome | — |
 | F3 | [Prepare an initial project inquiry](project-inquiry.md) | ui | customer_outcome | — |
-| F4 | [Home, navigation and route recovery](navigation-and-recovery.md) | ui | surface | F1, F2, F3, F5 |
+| F4 | [Home, navigation and route recovery](navigation-and-recovery.md) | ui | surface | F1, F2, F3, F5, F6 |
 | F5 | [Prepare a company staffing inquiry](staffing-inquiry.md) | ui | customer_outcome | — |
+| F6 | [Calculate a preliminary quote](quote-calculators.md) | ui | customer_outcome | — |
 
 ## Route and subsection reconciliation
 
@@ -37,13 +40,13 @@ there too. The renderer is the authority for visible sections.
 | `/stensattning/` | [F1-US2](user-stories/F1/F1-US2.md) | Hero; service summary; paving/wall tags; suitability aside; process; inquiry band; footer. |
 | `/markarbete/` | [F1-US3](user-stories/F1/F1-US3.md) | Hero; broad groundwork summary; excavation/site tags; suitability aside; process; inquiry band; footer. |
 | `/gravjobb/` | [F1-US4](user-stories/F1/F1-US4.md) | Hero; foundation/utility/pool excavation summary and tags; suitability aside; process; inquiry band; footer. |
-| `/dranering/` | [F1-US5](user-stories/F1/F1-US5.md) | Hero; drainage summary and dedicated moisture-protection paragraph; tags; suitability aside; process; inquiry band; footer. |
+| `/dranering/` | [F1-US5](user-stories/F1/F1-US5.md) | Hero; drainage summary and dedicated moisture-protection paragraph; tags; suitability aside; process; calculator link band to [F6](quote-calculators.md); inquiry band; footer. |
 | `/tradgardsplanering/` | [F1-US6](user-stories/F1/F1-US6.md) | Hero; levels/surfaces/planting summary and tags; suitability aside; process; inquiry band; footer. |
 | `/om-oss/` | [F2-US1](user-stories/F2/F2-US1.md) | Hero and breadcrumb; company paragraphs; contact link band; footer. |
 | `/inhyrning/` | [F5-US1](user-stories/F5/F5-US1.md), [F5-US2](user-stories/F5/F5-US2.md) | Hero and breadcrumb; staffing inquiry form with Swedish validation, VAT note and mail-draft handoff; guidance aside; footer. |
 | `/kontakt/` | [F3-US1](user-stories/F3/F3-US1.md), [F3-US2](user-stories/F3/F3-US2.md) | Hero; quote/site-visit prompt; email address; native form; footer. |
-| `/offertberakning/` | [F4-US1](user-stories/F4/F4-US1.md) | Hero; breadcrumb; calculator choice (`#uppfart` selects the driveway calculator) with preliminary total and email handoff; footer. |
-| `/draneringsberakning/` | [F4-US1](user-stories/F4/F4-US1.md) | Hero; breadcrumb; drainage length calculator with preliminary total, email handoff and print; footer. |
+| `/offertberakning/` | [F6-US1](user-stories/F6/F6-US1.md), [F6-US2](user-stories/F6/F6-US2.md), [F6-US3](user-stories/F6/F6-US3.md), [F6-US4](user-stories/F6/F6-US4.md), [F6-US5](user-stories/F6/F6-US5.md); [F4-US1](user-stories/F4/F4-US1.md) | Hero; breadcrumb; calculator choice (`#uppfart` selects the driveway calculator) with preliminary total, email handoff and print; footer. |
+| `/draneringsberakning/` | [F6-US1](user-stories/F6/F6-US1.md), [F6-US2](user-stories/F6/F6-US2.md), [F6-US3](user-stories/F6/F6-US3.md), [F6-US4](user-stories/F6/F6-US4.md), [F6-US5](user-stories/F6/F6-US5.md); [F4-US1](user-stories/F4/F4-US1.md) | Hero; breadcrumb; drainage length calculator with preliminary total, email handoff and print; footer. |
 | Keyboard bypass on all rendered states | [F4-US3](user-stories/F4/F4-US3.md) | Hoppa till innehåll precedes Header and points to one #content target; ready bodies have tabindex=-1, availability sections do not. |
 | Shared empty/not-found | [F4-US2](user-stories/F4/F4-US2.md) | Header remains; the empty-services message replaces the service-dependent home/index bodies; ready not-found provides declared-route shortcuts and footer. |
 
@@ -71,7 +74,7 @@ Hero values are marketing statements, not measured operational statistics.
 Build/quality scripts produce static artifacts and development evidence; they
 are not hidden customer features or public incoming ports.
 
-All four capabilities are `ui`. Backend slices, ports, feature/story port
+All six capabilities are `ui`. Backend slices, ports, feature/story port
 references and background relations are explicitly empty. Frontend paths belong
 in `routes` and capability `entry_points`, not the backend-port registry.
 
@@ -90,7 +93,8 @@ does not provide persistence, delivery assurance or a privacy/compliance verdict
   empty backend boundary.
 - IDs F1–F4 and their original twelve story IDs were allocated in `f7b481f`.
   F4-US3 was subsequently added without changing those identities. F5 and
-  F5-US1/US2 were added on 2026-11-04 for the staffing inquiry route. Retain
+  F5-US1/US2 were added on 2026-11-04 for the staffing inquiry route, and
+  F6 with F6-US1–US5 was added on 2026-11-06 for the two quote calculators. Retain
   them and
   the feature-document joins on future edits; leave removed IDs
   absent forever. No earlier IDs were found in the available checkout/history;
@@ -102,7 +106,10 @@ does not provide persistence, delivery assurance or a privacy/compliance verdict
   story files and both feature manifests against the renderer and typed registry.
   Record source review date; do not treat schema validity as product accuracy.
 - Test references name reviewed declarations in
-  [SiteHomePage.test.tsx](../../src/pages/SiteHomePage.test.tsx). `direct` means
+  [SiteHomePage.test.tsx](../../src/pages/SiteHomePage.test.tsx) plus, for the
+  quote calculators, [QuotePage.test.tsx](../../src/pages/QuotePage.test.tsx)
+  and [DrainageQuotePage.test.tsx](../../src/pages/DrainageQuotePage.test.tsx).
+  `direct` means
   the assertion checks the stated user-visible facet, not every step of a story.
   `technical` checks supporting metadata. No test was executed for this source
   review. F4-US1 maps the mobile-menu declaration for Escape from a link

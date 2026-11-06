@@ -68,7 +68,7 @@ customer-facing pattern.
 - Partners is conditionally available on home and the services index but is
   currently omitted because the configured list is empty. Both ready pages
   include the shared footer; the services index also has a breadcrumb hero.
-- The source-backed [feature catalog](features/README.md) maps the ten
-  non-quote routes in this inventory, their shared states and subsections to
-  visitor outcomes and stories; both interactive quote calculators are outside
-  the cataloged feature set.
+- The source-backed [feature catalog](features/README.md) maps all twelve
+  routes in this inventory, their shared states and subsections to
+  visitor outcomes and stories, including both interactive quote
+  calculators as the dedicated F6 feature.
