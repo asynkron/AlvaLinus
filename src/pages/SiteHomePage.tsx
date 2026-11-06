@@ -19,7 +19,7 @@ import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { siteContent } from "../data/siteContent";
 import { inquiryContactHref, resolveInquiryServiceOption } from "../lib/inquiry-service";
-import type { ServiceArea, ServiceQuoteCalculator, SiteBreadcrumb, SiteBrand, SiteContent, SiteRoute } from "../types/site";
+import type { ServiceArea, ServiceQuoteCalculator, SiteBreadcrumb, SiteChrome, SiteContent, SiteRoute } from "../types/site";
 
 const InquiryPage = lazy(() => import("./InquiryPage").then((module) => ({ default: module.InquiryPage })));
 const QuotePage = lazy(() => import("./QuotePage").then((module) => ({ default: module.QuotePage })));
@@ -71,9 +71,9 @@ export function SiteHomePage({ currentPath = "/", inquiryServiceId, content = si
         href="#content"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-foreground focus:shadow-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
-        Hoppa till innehåll
+        {content.chrome.skipLinkLabel}
       </a>
-      <Header currentPath={currentPath} brand={content.chrome.brand} />
+      <Header currentPath={currentPath} chrome={content.chrome} />
       <ContentSurface currentPath={currentPath} inquiryServiceId={inquiryServiceId} content={content} />
     </div>
   );
@@ -98,7 +98,8 @@ const SERVICE_PATHS = new Set(
 
 const CALC_MENU_PATHS = new Set(CALC_MENU.links.map((link) => normalizePath(link.href)));
 
-function Header({ currentPath = "/", brand }: { readonly currentPath?: string; readonly brand: SiteBrand }) {
+function Header({ currentPath = "/", chrome }: { readonly currentPath?: string; readonly chrome: SiteChrome }) {
+  const { brand } = chrome;
   const [menuOpen, setMenuOpen] = useState(false);
   const menuToggleRef = useRef<HTMLButtonElement>(null);
   const active = normalizePath(currentPath);
@@ -123,7 +124,7 @@ function Header({ currentPath = "/", brand }: { readonly currentPath?: string; r
           />
           <span className="sr-only">{brand.name}</span>
         </a>
-        <nav aria-label="Huvudnavigation" className="hidden items-center gap-6 text-sm font-medium md:flex">
+        <nav aria-label={chrome.navAriaLabel} className="hidden items-center gap-6 text-sm font-medium md:flex">
           {HEADER_PAGE_NAV.map((route) => {
             const isActive = normalizePath(route.href) === active;
 
@@ -187,7 +188,7 @@ function Header({ currentPath = "/", brand }: { readonly currentPath?: string; r
           ref={menuToggleRef}
           type="button"
           className="inline-flex h-10 w-10 items-center justify-center rounded-md text-background transition-colors hover:bg-background/10 md:hidden"
-          aria-label={menuOpen ? "Stäng meny" : "Öppna meny"}
+          aria-label={menuOpen ? chrome.menuCloseLabel : chrome.menuOpenLabel}
           aria-expanded={menuOpen}
           aria-controls="mobil-meny"
           onClick={() => setMenuOpen((open) => !open)}
@@ -199,7 +200,7 @@ function Header({ currentPath = "/", brand }: { readonly currentPath?: string; r
       {menuOpen ? (
         <nav
           id="mobil-meny"
-          aria-label="Mobilnavigation"
+          aria-label={chrome.mobileNavAriaLabel}
           className="border-t border-background/10 px-5 pb-4 pt-2 sm:px-8 md:hidden"
           onKeyDown={handleMenuKeyDown}
         >
@@ -317,7 +318,7 @@ function ContentSurface({
   if (routeDependsOnServices(route) && content.services.length === 0) {
     return (
       <main id="content" className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
-        <StaticState title="Inget innehåll ännu" message="Lägg till statiska dataposter i src/data." />
+        <StaticState title={content.chrome.emptyStateTitle} message={content.chrome.emptyStateMessage} />
       </main>
     );
   }
@@ -374,14 +375,14 @@ function RoutedPage({
     const QuoteView = route.id === "drainage-quote" ? DrainageQuotePage : QuotePage;
 
     return (
-      <Suspense fallback={<p role="status" className="px-5 py-16">Laddar offertberäkningen…</p>}>
+      <Suspense fallback={<p role="status" className="px-5 py-16">{content.chrome.quoteFallback}</p>}>
         <QuoteView />
       </Suspense>
     );
   }
   if (route.kind === "inquiry") {
     return (
-      <Suspense fallback={<p role="status" className="px-5 py-16">Laddar förfrågan om inhyrning…</p>}>
+      <Suspense fallback={<p role="status" className="px-5 py-16">{content.chrome.inquiryFallback}</p>}>
         <InquiryPage />
       </Suspense>
     );

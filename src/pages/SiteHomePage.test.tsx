@@ -7,6 +7,14 @@ import { SiteHomePage } from "./SiteHomePage";
 const content: SiteContent = siteContent;
 const emptyServicesContent: SiteContent = { ...content, services: [] };
 
+const chrome = content.chrome;
+const skipLinkLabel = chrome.skipLinkLabel;
+const desktopNavLabel = chrome.navAriaLabel;
+const mobileNavLabel = chrome.mobileNavAriaLabel;
+const menuOpenLabel = chrome.menuOpenLabel;
+const menuCloseLabel = chrome.menuCloseLabel;
+const emptyStateTitle = chrome.emptyStateTitle;
+
 function readMoreName(service: ServiceArea): string {
   return `${content.sectionHeadings.services.readMoreAriaPrefix} ${service.title}`;
 }
@@ -59,7 +67,7 @@ describe("SiteHomePage", () => {
   it("offers a Swedish skip link before header navigation that targets the stable page content", () => {
     render(<SiteHomePage content={content} />);
 
-    const skipLink = screen.getByRole("link", { name: "Hoppa till innehåll" });
+    const skipLink = screen.getByRole("link", { name: skipLinkLabel });
     expect(skipLink).toHaveAttribute("href", "#content");
 
     const header = screen.getByRole("banner");
@@ -111,7 +119,7 @@ describe("SiteHomePage", () => {
         throw new Error("Missing rendered #content target");
       }
 
-      const skipLink = screen.getByRole("link", { name: "Hoppa till innehåll" });
+      const skipLink = screen.getByRole("link", { name: skipLinkLabel });
       expect(skipLink).toHaveAttribute("href", `#${target.id}`);
       expect(target).toBe(screen.getByRole("main"));
 
@@ -132,14 +140,14 @@ describe("SiteHomePage", () => {
   it.each(["link", "toggle"] as const)("dismisses mobile navigation with Escape from its %s and allows reopening", (focusOrigin) => {
     render(<SiteHomePage currentPath="/dranering/" content={content} />);
 
-    const toggle = screen.getByRole("button", { name: "Öppna meny" });
+    const toggle = screen.getByRole("button", { name: menuOpenLabel });
     expect(toggle).toHaveAttribute("aria-expanded", "false");
-    expect(screen.queryByRole("navigation", { name: "Mobilnavigation" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("navigation", { name: mobileNavLabel })).not.toBeInTheDocument();
 
     fireEvent.click(toggle);
-    expect(toggle).toHaveAccessibleName("Stäng meny");
+    expect(toggle).toHaveAccessibleName(menuCloseLabel);
     expect(toggle).toHaveAttribute("aria-expanded", "true");
-    const navigation = screen.getByRole("navigation", { name: "Mobilnavigation" });
+    const navigation = screen.getByRole("navigation", { name: mobileNavLabel });
     const link = within(navigation).getAllByRole("link", { name: "Dränering" })[0];
 
     if (!link) {
@@ -158,19 +166,19 @@ describe("SiteHomePage", () => {
     }
 
     fireEvent.keyDown(focusedControl, { key: "Escape" });
-    expect(screen.queryByRole("navigation", { name: "Mobilnavigation" })).not.toBeInTheDocument();
-    expect(toggle).toHaveAccessibleName("Öppna meny");
+    expect(screen.queryByRole("navigation", { name: mobileNavLabel })).not.toBeInTheDocument();
+    expect(toggle).toHaveAccessibleName(menuOpenLabel);
     expect(toggle).toHaveAttribute("aria-expanded", "false");
     expect(toggle).toHaveFocus();
 
     fireEvent.click(toggle);
-    const reopenedNavigation = screen.getByRole("navigation", { name: "Mobilnavigation" });
+    const reopenedNavigation = screen.getByRole("navigation", { name: mobileNavLabel });
     const reopenedLink = within(reopenedNavigation).getAllByRole("link", { name: "Dränering" })[0];
     expect(reopenedLink).toHaveAttribute("href", "/dranering/");
     expect(reopenedLink).toHaveAttribute("aria-current", "page");
     expect(toggle).toHaveAttribute("aria-expanded", "true");
     fireEvent.click(toggle);
-    expect(screen.queryByRole("navigation", { name: "Mobilnavigation" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("navigation", { name: mobileNavLabel })).not.toBeInTheDocument();
     expect(toggle).toHaveAttribute("aria-expanded", "false");
     expect(toggle).toHaveFocus();
   });
@@ -178,9 +186,9 @@ describe("SiteHomePage", () => {
   it("keeps mobile navigation open and preserves focus when Escape is pressed elsewhere in the header", () => {
     render(<SiteHomePage content={content} />);
 
-    const toggle = screen.getByRole("button", { name: "Öppna meny" });
+    const toggle = screen.getByRole("button", { name: menuOpenLabel });
     fireEvent.click(toggle);
-    const navigation = screen.getByRole("navigation", { name: "Mobilnavigation" });
+    const navigation = screen.getByRole("navigation", { name: mobileNavLabel });
     const homeLink = screen.getByRole("link", { name: `${content.chrome.brand.name} startsida` });
     homeLink.focus();
     expect(homeLink).toHaveFocus();
@@ -188,7 +196,7 @@ describe("SiteHomePage", () => {
     fireEvent.keyDown(homeLink, { key: "Escape" });
 
     expect(navigation).toBeInTheDocument();
-    expect(toggle).toHaveAccessibleName("Stäng meny");
+    expect(toggle).toHaveAccessibleName(menuCloseLabel);
     expect(toggle).toHaveAttribute("aria-expanded", "true");
     expect(homeLink).toHaveFocus();
   });
@@ -196,7 +204,7 @@ describe("SiteHomePage", () => {
   it("keeps the desktop Tjänster dropdown trigger focusable with its five registry-ordered service links", () => {
     render(<SiteHomePage content={content} />);
 
-    const headerNav = within(screen.getByRole("banner")).getByRole("navigation", { name: "Huvudnavigation" });
+    const headerNav = within(screen.getByRole("banner")).getByRole("navigation", { name: desktopNavLabel });
     const serviceRoutes = content.routes.filter((route) => route.kind === "service");
     const serviceHrefs = new Set(serviceRoutes.map((route) => route.href));
     const trigger = within(headerNav).getByRole("link", { name: "Tjänster" });
@@ -247,7 +255,7 @@ describe("SiteHomePage", () => {
   it("opens the desktop Kalkyler disclosure straight to the drainage and driveway calculators", () => {
     render(<SiteHomePage content={content} />);
 
-    const headerNav = within(screen.getByRole("banner")).getByRole("navigation", { name: "Huvudnavigation" });
+    const headerNav = within(screen.getByRole("banner")).getByRole("navigation", { name: desktopNavLabel });
     const summary = within(headerNav).getByText(content.chrome.calcMenu.label);
     const menu = summary.closest("details");
 
@@ -274,8 +282,8 @@ describe("SiteHomePage", () => {
   it("keeps the same Kalkyler calculator links inside the mobile menu disclosure", () => {
     render(<SiteHomePage content={content} />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Öppna meny" }));
-    const navigation = screen.getByRole("navigation", { name: "Mobilnavigation" });
+    fireEvent.click(screen.getByRole("button", { name: menuOpenLabel }));
+    const navigation = screen.getByRole("navigation", { name: mobileNavLabel });
     const summary = within(navigation).getByText(content.chrome.calcMenu.label);
     const menu = summary.closest("details");
 
@@ -295,7 +303,7 @@ describe("SiteHomePage", () => {
   });
 
   it("marks the active calculator link inside Kalkyler and highlights the group only on calculator pages", () => {
-    const headerNav = () => within(screen.getByRole("banner")).getByRole("navigation", { name: "Huvudnavigation" });
+    const headerNav = () => within(screen.getByRole("banner")).getByRole("navigation", { name: desktopNavLabel });
     const summary = () => within(headerNav()).getByText(content.chrome.calcMenu.label);
     const menuFor = (currentSummary: HTMLElement) => {
       const menu = currentSummary.closest("details");
@@ -389,10 +397,10 @@ describe("SiteHomePage", () => {
         .map((link) => ({ label: link.textContent?.trim(), href: link.getAttribute("href") }));
 
     const header = screen.getByRole("banner");
-    expect(renderedNav(within(header).getByRole("navigation", { name: "Huvudnavigation" }))).toEqual(headerNav);
+    expect(renderedNav(within(header).getByRole("navigation", { name: desktopNavLabel }))).toEqual(headerNav);
 
-    fireEvent.click(screen.getByRole("button", { name: "Öppna meny" }));
-    expect(renderedNav(screen.getByRole("navigation", { name: "Mobilnavigation" }))).toEqual(headerNav);
+    fireEvent.click(screen.getByRole("button", { name: menuOpenLabel }));
+    expect(renderedNav(screen.getByRole("navigation", { name: mobileNavLabel }))).toEqual(headerNav);
 
     const footer = screen.getByRole("contentinfo");
     expect(
@@ -409,7 +417,6 @@ describe("SiteHomePage", () => {
 
   it("renders the shared page chrome from the typed registry", () => {
     const { rerender } = render(<SiteHomePage currentPath="/saknas/" content={content} />);
-    const chrome = content.chrome;
 
     const header = screen.getByRole("banner");
     expect(within(header).getByRole("link", { name: `${chrome.brand.name} startsida` })).toHaveAttribute("href", "/");
@@ -650,7 +657,7 @@ describe("SiteHomePage", () => {
   ])("keeps $label empty-services feedback when services are empty", ({ path }) => {
     render(<SiteHomePage currentPath={path} content={emptyServicesContent} />);
 
-    expect(screen.getByRole("heading", { name: "Inget innehåll ännu" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: emptyStateTitle })).toBeInTheDocument();
     expect(screen.queryByRole("form", { name: "Offertförfrågan via e-post" })).not.toBeInTheDocument();
   });
 
@@ -689,7 +696,7 @@ describe("SiteHomePage", () => {
 
     expect(screen.getByRole("heading", { name: content.chrome.notFound.title })).toBeInTheDocument();
     expect(screen.getByText(notFoundSummary("/stensattning/"))).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "Inget innehåll ännu" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: emptyStateTitle })).not.toBeInTheDocument();
 
     rerender(
       <SiteHomePage currentPath="/saknas/" content={emptyServicesContent} />,
@@ -697,7 +704,7 @@ describe("SiteHomePage", () => {
 
     expect(screen.getByRole("heading", { name: content.chrome.notFound.title })).toBeInTheDocument();
     expect(screen.getByText(notFoundSummary("/saknas/"))).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "Inget innehåll ännu" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: emptyStateTitle })).not.toBeInTheDocument();
   });
 
   it("renders ready bundled content on the first paint without a loading skeleton", () => {
@@ -811,7 +818,7 @@ describe("SiteHomePage", () => {
   it("renders the dedicated staffing inquiry page with the nav link from the registry", async () => {
     const { rerender } = render(<SiteHomePage content={content} />);
 
-    const nav = within(screen.getByRole("banner")).getByRole("navigation", { name: "Huvudnavigation" });
+    const nav = within(screen.getByRole("banner")).getByRole("navigation", { name: desktopNavLabel });
     const inquiryLink = within(nav).getByRole("link", { name: "Inhyrning" });
     expect(inquiryLink).toHaveAttribute("href", "/inhyrning/");
     const omOssLink = within(nav).getByRole("link", { name: "Om oss" });
