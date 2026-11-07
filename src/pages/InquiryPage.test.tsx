@@ -31,7 +31,7 @@ const validValues: Record<InquiryFieldKey, string> = {
 
 function fieldLabel(key: InquiryFieldKey): string {
   const label = text.fields[key].label;
-  return optionalFields.includes(key) ? `${label} (${text.optionalMark})` : label;
+  return optionalFields.includes(key) ? `${label} ${text.optionalMark}` : label;
 }
 
 function rateHint(): string {
