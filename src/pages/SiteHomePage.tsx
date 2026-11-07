@@ -134,7 +134,7 @@ function Header({ currentPath = "/", chrome }: { readonly currentPath?: string; 
                   <div className="group relative">
                     <a
                       className={`inline-flex items-center gap-1 ${
-                        servicesActive ? "text-primary" : "text-background/75 transition-colors hover:text-primary"
+                        servicesActive ? "text-primary-onDark" : "text-background/75 transition-colors hover:text-primary-onDark"
                       }`}
                       aria-current={isActive ? "page" : undefined}
                       aria-haspopup="true"
@@ -175,7 +175,7 @@ function Header({ currentPath = "/", chrome }: { readonly currentPath?: string; 
             return (
               <a
                 key={route.href}
-                className={isActive ? "text-primary" : "text-background/75 transition-colors hover:text-primary"}
+                className={isActive ? "text-primary-onDark" : "text-background/75 transition-colors hover:text-primary-onDark"}
                 aria-current={isActive ? "page" : undefined}
                 href={route.href}
               >
@@ -211,7 +211,7 @@ function Header({ currentPath = "/", chrome }: { readonly currentPath?: string; 
               <Fragment key={route.href}>
                 <a
                   className={`block rounded-md px-3 py-3 text-base font-medium transition-colors ${
-                    isActive ? "bg-background/10 text-primary" : "text-background/80 hover:bg-background/10"
+                    isActive ? "bg-background/10 text-primary-onDark" : "text-background/80 hover:bg-background/10"
                   }`}
                   aria-current={isActive ? "page" : undefined}
                   href={route.href}
@@ -228,7 +228,7 @@ function Header({ currentPath = "/", chrome }: { readonly currentPath?: string; 
                           <a
                             key={service.href}
                             className={`block rounded-md px-3 py-2 text-sm transition-colors ${
-                              serviceActive ? "bg-background/10 text-primary" : "text-background/70 hover:bg-background/10"
+                              serviceActive ? "bg-background/10 text-primary-onDark" : "text-background/70 hover:bg-background/10"
                             }`}
                             aria-current={serviceActive ? "page" : undefined}
                             href={service.href}
@@ -260,10 +260,10 @@ function CalcMenu({ variant, activePath }: { readonly variant: "desktop" | "mobi
         className={`cursor-pointer list-none [&::-webkit-details-marker]:hidden ${
           desktop
             ? `inline-flex items-center gap-1 ${
-                groupActive ? "text-primary" : "text-background/75 transition-colors hover:text-primary"
+                groupActive ? "text-primary-onDark" : "text-background/75 transition-colors hover:text-primary-onDark"
               }`
             : `flex w-full items-center gap-1 rounded-md px-3 py-3 text-base font-medium ${
-                groupActive ? "bg-background/10 text-primary" : "text-background/80 hover:bg-background/10"
+                groupActive ? "bg-background/10 text-primary-onDark" : "text-background/80 hover:bg-background/10"
               }`
         }`}
       >
@@ -290,7 +290,7 @@ function CalcMenu({ variant, activePath }: { readonly variant: "desktop" | "mobi
                         linkActive ? "font-semibold text-primary" : "text-foreground"
                       }`
                     : `block rounded-md px-3 py-2 text-sm transition-colors ${
-                        linkActive ? "bg-background/10 text-primary" : "text-background/70 hover:bg-background/10"
+                        linkActive ? "bg-background/10 text-primary-onDark" : "text-background/70 hover:bg-background/10"
                       }`
                 }
               >
@@ -445,7 +445,7 @@ function Hero({ content, imageSrc }: { readonly content: SiteContent; readonly i
       />
       <div className="mx-auto w-full max-w-7xl px-5 py-20 sm:px-8 lg:px-10 lg:py-28">
         <div className="max-w-2xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{content.hero.eyebrow}</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary-onDark">{content.hero.eyebrow}</p>
           <h1 className="mt-4 font-display text-5xl font-bold uppercase leading-[0.95] tracking-wide text-background sm:text-6xl lg:text-7xl">
             {content.hero.title}
           </h1>
@@ -471,7 +471,7 @@ function Hero({ content, imageSrc }: { readonly content: SiteContent; readonly i
           <dl className="mt-10 flex flex-wrap gap-x-8 gap-y-4">
             {content.hero.stats.map((stat) => (
               <div key={stat.label} className="max-w-[14rem]">
-                <dt className="text-base font-semibold text-primary">{stat.value}</dt>
+                <dt className="text-base font-semibold text-primary-onDark">{stat.value}</dt>
                 <dd className="mt-0.5 text-sm leading-5 text-background/70">{stat.label}</dd>
               </div>
             ))}
@@ -679,16 +679,16 @@ function PageHero({
       />
       <div className="mx-auto w-full max-w-7xl px-5 py-14 sm:px-8 lg:px-10 lg:py-20">
         <nav aria-label={breadcrumb.ariaLabel} className="text-sm font-medium text-background/70">
-          <a href="/" className="transition-colors hover:text-primary">
+          <a href="/" className="transition-colors hover:text-primary-onDark">
             {breadcrumb.homeLabel}
           </a>
           <span className="mx-2 text-background/40" aria-hidden="true">
             /
           </span>
-          <span className="text-primary">{title}</span>
+          <span className="text-primary-onDark">{title}</span>
         </nav>
         {eyebrow ? (
-          <p className="mt-6 text-sm font-semibold uppercase tracking-[0.18em] text-primary">{eyebrow}</p>
+          <p className="mt-6 text-sm font-semibold uppercase tracking-[0.18em] text-primary-onDark">{eyebrow}</p>
         ) : null}
         <h1 className="mt-3 font-display text-3xl font-bold uppercase leading-tight tracking-wide text-background break-words sm:text-5xl lg:text-6xl">{title}</h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-background/80">{summary}</p>
@@ -841,7 +841,7 @@ function Process({ content }: { readonly content: SiteContent }) {
     <section id="process" className="bg-foreground text-background">
       <div className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
         <div className="max-w-3xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">{heading.eyebrow}</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary-onDark">{heading.eyebrow}</p>
           <h2 className="mt-2 font-display text-4xl font-bold tracking-wide text-background">{heading.title}</h2>
           <p className="mt-3 leading-7 text-background/70">{heading.summary}</p>
         </div>
@@ -936,7 +936,7 @@ function Footer({ content }: { readonly content: SiteContent }) {
           <ul className="mt-3 grid gap-2">
             {PAGE_NAV.map((route) => (
               <li key={route.href}>
-                <a href={route.href} className="text-background/70 transition-colors hover:text-primary">
+                <a href={route.href} className="text-background/70 transition-colors hover:text-primary-onDark">
                   {route.label}
                 </a>
               </li>
@@ -948,7 +948,7 @@ function Footer({ content }: { readonly content: SiteContent }) {
           <ul className="mt-3 grid gap-2">
             {SERVICE_NAV.map((route) => (
               <li key={route.href}>
-                <a href={route.href} className="text-background/70 transition-colors hover:text-primary">
+                <a href={route.href} className="text-background/70 transition-colors hover:text-primary-onDark">
                   {route.label}
                 </a>
               </li>
@@ -959,7 +959,7 @@ function Footer({ content }: { readonly content: SiteContent }) {
           <p className="font-semibold text-background">{chrome.footer.contactHeading}</p>
           <a
             href={`mailto:${email}`}
-            className="mt-3 inline-flex items-center gap-2 text-background/70 transition-colors hover:text-primary"
+            className="mt-3 inline-flex items-center gap-2 text-background/70 transition-colors hover:text-primary-onDark"
           >
             <Mail className="h-4 w-4" aria-hidden="true" />
             {email}
@@ -992,10 +992,10 @@ function Contact({
     <section id="kontakt" className="bg-foreground text-background">
       <div className="mx-auto grid w-full max-w-7xl gap-10 px-5 py-16 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:px-10">
         <div className="flex flex-col">
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Kontakt</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary-onDark">Kontakt</p>
           <h2 className="mt-2 font-display text-4xl font-bold tracking-wide text-background">{content.contact.title}</h2>
           <p className="mt-4 leading-7 text-background/75">{content.contact.summary}</p>
-          <div className="mt-6 inline-flex max-w-max items-center rounded-md bg-primary/15 px-4 py-3 text-sm font-medium text-primary">
+          <div className="mt-6 inline-flex max-w-max items-center rounded-md bg-primary/15 px-4 py-3 text-sm font-medium text-primary-onDark">
             <MapPinned className="mr-2 h-4 w-4" aria-hidden="true" />
             {content.contact.offertLabel}
           </div>
@@ -1004,10 +1004,10 @@ function Contact({
               <a
                 key={item.label}
                 href={item.href}
-                className="rounded-lg border border-background/15 bg-background/5 p-4 transition-colors hover:border-primary"
+                className="rounded-lg border border-background/15 bg-background/5 p-4 transition-colors hover:border-primary-onDark"
               >
                 <span className="flex items-center gap-2 text-sm text-background/70">
-                  <PhoneCall className="h-4 w-4 text-primary" aria-hidden="true" />
+                  <PhoneCall className="h-4 w-4 text-primary-onDark" aria-hidden="true" />
                   {item.label}
                 </span>
                 <span className="mt-2 block font-medium text-background">{item.value}</span>

@@ -4,7 +4,7 @@
 .inquiry-intro::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,hsl(var(--foreground)/.95),hsl(var(--foreground)/.8) 55%,hsl(var(--foreground)/.45))}
 .inquiry-crumb{font-size:13px;color:#c4ccd6}
 .inquiry-crumb a{color:#c4ccd6;transition:color .15s}
-.inquiry-crumb a:hover{color:hsl(var(--primary))}
+.inquiry-crumb a:hover{color:hsl(var(--primary-on-dark))}
 .inquiry-crumb-separator{margin:0 8px}
 .inquiry-crumb span[aria-hidden]{color:hsl(var(--background)/.4)}
 .inquiry-intro h1{font-family:var(--font-display);font-size:clamp(36px,4vw,56px);line-height:1.12;margin:28px 0 16px;max-width:760px}

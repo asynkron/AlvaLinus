@@ -9,8 +9,9 @@
   --card-foreground: 220 33% 16%;
   --popover: 0 0% 100%;
   --popover-foreground: 220 33% 16%;
-  --primary: 18 82% 52%;
+  --primary: 13 84% 41%;
   --primary-foreground: 0 0% 100%;
+  --primary-on-dark: 18 82% 58%;
   --secondary: 214 24% 93%;
   --secondary-foreground: 220 33% 18%;
   --muted: 210 20% 96%;
