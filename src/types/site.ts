@@ -173,6 +173,63 @@ export type SiteQuote = {
   readonly drainage: SiteQuoteDrainage;
 };
 
+export type SiteInquiryFieldKey =
+  | "company"
+  | "person"
+  | "email"
+  | "phone"
+  | "org"
+  | "work"
+  | "rate"
+  | "duration"
+  | "description";
+
+export type SiteInquiryFieldText = {
+  readonly label: string;
+  readonly placeholder: string;
+  readonly hint?: string;
+};
+
+export type SiteInquiryMail = {
+  readonly subject: string;
+  readonly emptyValue: string;
+  readonly bodyTemplate: string;
+};
+
+export type SiteInquiry = {
+  readonly breadcrumbLabel: string;
+  readonly heading: string;
+  readonly intro: string;
+  readonly formHeading: string;
+  readonly formNote: string;
+  readonly formAriaLabel: string;
+  readonly errorSummary: string;
+  readonly submitLabel: string;
+  readonly mailHelpTemplate: string;
+  readonly confirmationTemplate: string;
+  readonly reopenPrompt: string;
+  readonly reopenLinkLabel: string;
+  readonly asideAriaLabel: string;
+  readonly asideHeading: string;
+  readonly asideSummary: string;
+  readonly asideItems: readonly string[];
+  readonly optionalMark: string;
+  readonly fields: Readonly<Record<SiteInquiryFieldKey, SiteInquiryFieldText>>;
+  readonly validation: {
+    readonly companyRequired: string;
+    readonly personRequired: string;
+    readonly emailRequired: string;
+    readonly emailInvalid: string;
+    readonly workRequired: string;
+    readonly rateRequired: string;
+    readonly rateNotAmount: string;
+    readonly rateNegative: string;
+    readonly durationRequired: string;
+    readonly descriptionRequired: string;
+  };
+  readonly mail: SiteInquiryMail;
+};
+
 export type SiteBrand = {
   readonly name: string;
   readonly logoSrc: string;
@@ -271,5 +328,6 @@ export type SiteContent = {
     readonly items: readonly ContactItem[];
   };
   readonly quote: SiteQuote;
+  readonly inquiry: SiteInquiry;
   readonly chrome: SiteChrome;
 };
