@@ -1,6 +1,6 @@
 # F6: Calculate a preliminary quote
 
-Reviewed: 2026-11-06. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-07. Runtime: `ui`. Product role: `customer_outcome`.
 
 Visitors with a husdränering or driveway project can self-serve a preliminary
 cost picture before contacting the company. The calculators produce a

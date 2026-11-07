@@ -1,6 +1,6 @@
 # Feature catalog
 
-Reviewed against source: 2026-11-06.
+Reviewed against source: 2026-11-07.
 
 The catalog introduced in `f7b481f` already covers the current route inventory.
 The maintained catalog retains its published identities, including F4-US3 for
@@ -9,7 +9,9 @@ service-card link names shipped in `8c9af38` with F1-US1 evidence on home and th
 services index. F5 was added on 2026-11-04 for the company staffing inquiry
 route without changing any retained identity. F6 was added on 2026-11-06 for
 the two interactive quote calculators, which previously appeared only as
-navigation targets under F4-US1.
+navigation targets under F4-US1. After the 2026-11-06 13:43 review, `fk140`
+(calculator pages) and `fk144` (home chrome) moved Swedish page text into the
+typed registry without changing any route, section, job or published identity.
 
 This catalog maps the static Swedish Svärd Entreprenad site to visitor outcomes.
 It is product-development input, not a claim that construction work, email delivery
