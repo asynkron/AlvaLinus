@@ -1,6 +1,6 @@
 # F5: Prepare a company staffing inquiry
 
-Reviewed: 2026-11-04. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-07. Runtime: `ui`. Product role: `customer_outcome`.
 
 Companies that need hired help can prepare a staffing inquiry addressed to the
 company. The website cannot establish that an email was sent, delivered or
