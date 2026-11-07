@@ -3,9 +3,10 @@ import { useState, type ChangeEvent, type FormEvent } from "react";
 
 import { Button } from "../components/ui/button";
 import { siteContent } from "../data/siteContent";
+import type { SiteInquiry } from "../types/site";
 import "./InquiryPage.css";
 
-const inquiry = siteContent.inquiry;
+const inquiry: SiteInquiry = siteContent.inquiry;
 
 const inquiryDefaults = {
   company: "",
