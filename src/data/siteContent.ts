@@ -448,6 +448,74 @@ export const siteContent = {
       },
     },
   },
+  inquiry: {
+    breadcrumbLabel: "Inhyrning",
+    heading: "Söker ni en F-skattare?",
+    intro: "Berätta om ert företag och uppdrag, så får vi ett bra underlag för att återkomma till er.",
+    formHeading: "Skicka en förfrågan",
+    formNote: "Fyll i uppgifterna nedan. Alla fält är obligatoriska om inget annat anges.",
+    formAriaLabel: "Förfrågan om inhyrning",
+    errorSummary: "Formuläret kan inte skickas än. Kontrollera fälten med felmeddelanden nedan och försök igen.",
+    submitLabel: "Skicka förfrågan",
+    mailHelpTemplate:
+      "Öppnar ett utkast i ditt e-postprogram till {recipient}. Inget skickas automatiskt – ni skickar mejlet själva.",
+    confirmationTemplate:
+      "Webbplatsen har bett ditt e-postprogram öppna ett utkast till {recipient} med uppgifterna ifyllda. Granska utkastet och skicka mejlet själv – webbplatsen kan inte skicka eller bekräfta att mejlet har levererats.",
+    reopenPrompt: "Öppnas inte ditt e-postprogram?",
+    reopenLinkLabel: "Öppna utkastet igen",
+    asideAriaLabel: "Bra att veta inför förfrågan",
+    asideHeading: "En tydlig start",
+    asideSummary:
+      "Med information om företaget, uppdraget och tidsperioden kan vi ta ställning till förfrågan och kontakta er för en genomgång.",
+    asideItems: [
+      "Beskriv vilken hjälp ni behöver",
+      "Ange erbjudet timpris och tidsperiod",
+      "Lämna kontaktuppgifter så vi kan återkomma",
+    ],
+    optionalMark: "(valfritt)",
+    fields: {
+      company: { label: "Företagets namn", placeholder: "Företagets namn" },
+      person: { label: "Kontaktperson", placeholder: "För- och efternamn" },
+      email: { label: "E-post", placeholder: "namn@foretag.se" },
+      phone: { label: "Telefon", placeholder: "Telefonnummer" },
+      org: { label: "Organisationsnummer", placeholder: "Organisationsnummer" },
+      work: {
+        label: "Vad behöver ni inhyrd hjälp med?",
+        placeholder: "Till exempel grävmaskinist eller markarbete",
+      },
+      rate: {
+        label: "Erbjudet timpris",
+        placeholder: "Belopp i kr per timme",
+        hint: "Ange gärna i beskrivningen om priset är inklusive eller exklusive moms.",
+      },
+      duration: {
+        label: "Hur länge gäller uppdraget?",
+        placeholder: "Till exempel 3 veckor eller april–juni",
+      },
+      description: {
+        label: "Beskriv ärendet",
+        placeholder: "Beskriv uppdraget, platsen och övrigt som är bra för oss att veta.",
+      },
+    },
+    validation: {
+      companyRequired: "Ange företagets namn.",
+      personRequired: "Ange en kontaktperson.",
+      emailRequired: "Ange en e-postadress så att vi kan återkomma till er.",
+      emailInvalid: "Ange en giltig e-postadress, till exempel namn@foretag.se.",
+      workRequired: "Beskriv vad ni behöver inhyrd hjälp med.",
+      rateRequired: "Ange erbjudet timpris som ett belopp i kronor.",
+      rateNotAmount: "Timpriset ska vara ett belopp i kronor, till exempel 650.",
+      rateNegative: "Timpriset kan inte vara ett negativt belopp.",
+      durationRequired: "Ange hur länge uppdraget gäller.",
+      descriptionRequired: "Beskriv ärendet.",
+    },
+    mail: {
+      subject: "Förfrågan om inhyrning",
+      emptyValue: "–",
+      bodyTemplate:
+        "Förfrågan om inhyrning via webbplatsen.\n\nFöretag: {company}\nKontaktperson: {person}\nE-post: {email}\nTelefon: {phone}\nOrganisationsnummer: {org}\nBehov av inhyrning: {work}\nErbjudet timpris: {rate} kr/timme\nUppdragets längd: {duration}\nBeskriv ärendet:\n{description}",
+    },
+  },
   chrome: {
     brand: {
       name: "Svärd Entreprenad",
