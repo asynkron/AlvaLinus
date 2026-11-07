@@ -102,7 +102,8 @@ describe("quote lib money logic", () => {
     it("keeps unknown placeholders and encodes their braces in the body", () => {
       const href = buildQuoteMailto(mail, { length: "40" });
 
-      expect(href).toContain(encodeURIComponent("{length} m"));
+      expect(href).toContain(encodeURIComponent("40 m"));
+      expect(href).not.toContain(encodeURIComponent("{length}"));
       expect(href).toContain(encodeURIComponent("{total}"));
     });
   });
