@@ -320,14 +320,14 @@ describe("SiteHomePage", () => {
     const drainageMenu = menuFor(summary());
     expect(within(drainageMenu).getByRole("link", { name: "Dränering" })).toHaveAttribute("aria-current", "page");
     expect(within(drainageMenu).getByRole("link", { name: "Uppfart" })).not.toHaveAttribute("aria-current");
-    expect(summary()).toHaveClass("text-primary");
+    expect(summary()).toHaveClass("text-primary-onDark");
 
     rerender(<SiteHomePage currentPath="/offertberakning/" content={content} />);
 
     const drivewayMenu = menuFor(summary());
     expect(within(drivewayMenu).getByRole("link", { name: "Uppfart" })).toHaveAttribute("aria-current", "page");
     expect(within(drivewayMenu).getByRole("link", { name: "Dränering" })).not.toHaveAttribute("aria-current");
-    expect(summary()).toHaveClass("text-primary");
+    expect(summary()).toHaveClass("text-primary-onDark");
 
     rerender(<SiteHomePage currentPath="/" content={content} />);
 
