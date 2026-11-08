@@ -689,6 +689,13 @@
             {
               "framework": "vitest",
               "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "renders the shared page chrome from the typed registry",
+              "evidence_type": "direct",
+              "supports": "Checks the brand link and logo, the not-found heading, eyebrow, path summary and shortcuts label, the breadcrumb navigation name and Hem link, the service hero eyebrow and guidance heading, the contact band eyebrow and CTA destination, and the footer tagline, column headings, navigation names and copyright against content.chrome. Registry-attribute evidence only; it does not establish responsive layout or visual styling."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
               "name": "keeps the desktop Tjänster dropdown trigger focusable with its five registry-ordered service links",
               "evidence_type": "direct",
               "supports": "Checks the trigger's aria-haspopup declaration, focusability, uncancelled Tab/Shift+Tab events and the panel's five service links in registry order with their Swedish accessible names. JSDOM does not establish browser tab order or the panel's focus-only CSS reveal."
@@ -1094,6 +1101,7 @@
         "runtime_owners": [
           "src/pages/QuotePage.tsx",
           "src/pages/DrainageQuotePage.tsx",
+          "src/components/QuotePageShared.tsx",
           "src/lib/quote.ts",
           "src/data/siteContent.ts"
         ],

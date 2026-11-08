@@ -1,6 +1,6 @@
 # F6: Calculate a preliminary quote
 
-Reviewed: 2026-11-07. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-08. Runtime: `ui`. Product role: `customer_outcome`.
 
 Visitors with a husdränering or driveway project can self-serve a preliminary
 cost picture before contacting the company. The calculators produce a
@@ -31,7 +31,12 @@ deduction and payment terms are specified in the real quote. While input is
 valid, "Begär offert på underlaget" hands a `mailto:` draft to the configured
 contact address with the measurements and the preliminary total,
 "Skriv ut / spara som PDF" opens the browser print dialog, and the help line
-states "Öppnar ditt e-postprogram. Inget skickas automatiskt."
+states "Öppnar ditt e-postprogram. Inget skickas automatiskt." Both calculators
+render inside the same shared quote shell from
+[QuotePageShared](../../src/components/QuotePageShared.tsx), and every Swedish
+label above is registry-declared: `siteContent.quote.shared` holds the shared
+result-aside copy while `quote.uppfart` and `quote.drainage` hold each
+calculator's fields, errors and email draft.
 
 The totals are computed in [quote helpers](../../src/lib/quote.ts): the
 drainage total prices the first 55 löpmeter at a higher tier, a lower tier
@@ -62,16 +67,21 @@ website cannot confirm an email send, a real printout or a binding price.
 ## Source, states and evidence
 
 [Typed routes/content](../../src/data/siteContent.ts) declares both `quote`
-routes, their summaries, hero photos and visual metadata, and the registry
-`quoteCalculator` band on the drainage service.
-[QuotePage](../../src/pages/QuotePage.tsx) owns the choice view and driveway
-calculator, [DrainageQuotePage](../../src/pages/DrainageQuotePage.tsx) owns
+routes, their summaries, hero photos and visual metadata, the registry
+`quoteCalculator` band on the drainage service, and the Swedish calculator
+copy itself in `quote.shared`, `quote.uppfart` and `quote.drainage`, including
+both mail subjects and body templates.
+[QuotePageShared](../../src/components/QuotePageShared.tsx) owns the shared
+quote page shell, result aside, notes field and reset button that both
+calculators render, [QuotePage](../../src/pages/QuotePage.tsx) owns the choice
+view and driveway calculator,
+[DrainageQuotePage](../../src/pages/DrainageQuotePage.tsx) owns
 the drainage calculator, [quote helpers](../../src/lib/quote.ts) own the tier
 totals and Swedish money/number formatting, [types](../../src/types/site.ts)
-declare the route kinds and the calculator band contract, and
-[SiteHomePage](../../src/pages/SiteHomePage.tsx) lazily routes the two quote
-paths and renders the calculator band. There is no backend, storage, scheduled
-recalculation or price feed behind these pages.
+declare the route kinds, the `SiteQuote` copy contracts and the calculator
+band contract, and [SiteHomePage](../../src/pages/SiteHomePage.tsx) lazily
+routes the two quote paths and renders the calculator band. There is no
+backend, storage, scheduled recalculation or price feed behind these pages.
 
 The reviewed Vitest declarations in
 [QuotePage.test.tsx](../../src/pages/QuotePage.test.tsx) and
@@ -81,9 +91,14 @@ polite live region, the field descriptions, the invalid-input alerts and
 disabled controls, the reset behavior, the total-only discipline in the page
 and the email draft, and the cross-links. The story documents and the identity
 manifest carry the exact names and their bounded scope. No declaration
-exercises a real print dialog or an actual email program, and the
-[quote helpers](../../src/lib/quote.ts) have no dedicated unit test file;
-their tier totals are exercised through the page declarations only.
+exercises a real print dialog or an actual email program. The
+[quote helpers](../../src/lib/quote.ts) also carry a dedicated money-logic
+unit-test file, [quote.test.ts](../../src/lib/quote.test.ts), whose
+declarations check the drainage tier totals at and beyond the 55-meter
+boundary, the driveway area, asphalt and load pricing, the sv-SE money and
+number formatting, the VAT-status label constant and the mailto template
+filling and encoding; the page declarations above cover the rendered behavior
+around them.
 
 An invalid measurement keeps the previous total out of view and disables the
 email and print controls until corrected; "Återställ exempel" restores the

@@ -147,12 +147,16 @@
           "description": "Drainage length calculator with its scope summary, total, email handoff and print control."
         },
         {
+          "path": "src/components/QuotePageShared.tsx",
+          "description": "Shared quote page shell, result aside, notes field and reset button both calculators render."
+        },
+        {
           "path": "src/lib/quote.ts",
           "description": "Tiered drainage and driveway total helpers plus Swedish money and number formatting."
         },
         {
           "path": "src/data/siteContent.ts",
-          "description": "Typed quote routes with hero photos and visual metadata, and the drainage service's calculator band."
+          "description": "Typed quote routes with hero photos and visual metadata, the drainage service's calculator band, and the registry-declared Swedish quote copy in quote.shared, quote.uppfart and quote.drainage including mail subjects and body templates."
         },
         {
           "path": "src/pages/SiteHomePage.tsx",
@@ -160,10 +164,10 @@
         },
         {
           "path": "src/types/site.ts",
-          "description": "Quote route kind and calculator band contracts."
+          "description": "Quote route kind, the shared and per-calculator quote copy contracts and the calculator band contract."
         }
       ],
-      "reviewed_against_source": "2026-11-07",
+      "reviewed_against_source": "2026-11-08",
       "slice_refs": [],
       "entry_point_refs": []
     },
