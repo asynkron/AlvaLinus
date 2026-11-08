@@ -124,6 +124,7 @@ Usage: make <target>, make.cmd <target>, or node scripts/make.js <target>
   coverage        Run instrumented tests and emit Istanbul coverage separately
   build           Type-check and build deployable static assets in dist/
   frontend-build  Build static assets and verify routes and visuals
+  release-provenance  Compose release-provenance.v1: clean checkout, fresh build, verified manifest, accepted quality evidence
   frontend-dev    Start Vite on PORT (default 5173)
   start           Start Vite on PORT (default 5173)
   dev             Start Vite on PORT (default 5173)
@@ -147,6 +148,7 @@ Usage: make <target>, make.cmd <target>, or node scripts/make.js <target>
   coverage: () => tests(true),
   build,
   "frontend-build": frontendBuild,
+  "release-provenance": () => run(process.execPath, [path.join(root, "scripts/write-release-provenance.mjs")]),
   "frontend-dev": () => serve(),
   start: () => serve(),
   dev: () => serve(),
