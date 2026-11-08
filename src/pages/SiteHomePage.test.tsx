@@ -533,6 +533,11 @@ describe("SiteHomePage", () => {
     }
 
     const servicesRoute = content.routes.find((route) => route.id === "services");
+
+    if (!servicesRoute) {
+      throw new Error("Missing registry route services");
+    }
+
     expect(servicesRoute.heroPhotoSrcSet).toBe(
       "/page-visuals/services-hero-640.webp 640w, /page-visuals/services-hero-960.webp 960w, /page-visuals/services-hero.webp 1672w",
     );
