@@ -50,6 +50,8 @@ export declare function injectRouteHeroPreload(
 
 export declare function routeVisualAssetPaths(routes: readonly RouteRegistryRoute[]): string[];
 
+export declare function routeHeroPhotoAssetPaths(routes: readonly RouteRegistryRoute[]): string[];
+
 export declare function assertStaticRouteArtifacts(options: {
   routes: readonly RouteRegistryRoute[];
   distDir: string;
@@ -60,4 +62,4 @@ export declare function assertRouteVisualAssets(options: {
   routes: readonly RouteRegistryRoute[];
   publicDir: string;
   access: (filePath: string) => Promise<void>;
-}): Promise<string[]>;
+}): Promise<{ visualAssets: string[]; heroAssets: string[] }>;

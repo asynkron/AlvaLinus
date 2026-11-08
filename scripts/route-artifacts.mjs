@@ -545,6 +545,16 @@ export function routeVisualAssetPaths(routes) {
 }
 
 /**
+ * Root-relative hero image paths declared by each route's heroPhotoAssetPath,
+ * in route order. The rendered hero <img> and the stamped document's preload
+ * href both request this exact file, so the visual asset check must prove the
+ * file ships under public/ instead of trusting the format-valid declaration.
+ */
+export function routeHeroPhotoAssetPaths(routes) {
+  return requireRouteRegistry(routes).map((route, index) => requireRouteHeroPhotoAssetPath(route, index));
+}
+
+/**
  * Root-relative hero image paths declared through responsive variant srcsets,
  * deduplicated in route order. A srcset candidate the browser can select must
  * exist as a shipped file: a candidate that 404s after selection fires the
@@ -672,10 +682,12 @@ export async function assertStaticRouteArtifacts({ routes, distDir, readFile }) 
 
 export async function assertRouteVisualAssets({ routes, publicDir, access }) {
   const assetPaths = routeVisualAssetPaths(routes);
+  const heroAssetPaths = routeHeroPhotoAssetPaths(routes);
   const heroCandidatePaths = routeHeroSrcSetCandidatePaths(routes);
   const invalidAssets = assetPaths.filter((assetPath) => !isDeclaredVisualAssetPath(assetPath));
   const duplicateAssets = assetPaths.filter((assetPath, index) => assetPaths.indexOf(assetPath) !== index);
   const missingAssets = [];
+  const missingHeroAssets = [];
 
   for (const assetPath of assetPaths) {
     if (!isDeclaredVisualAssetPath(assetPath)) continue;
@@ -685,6 +697,19 @@ export async function assertRouteVisualAssets({ routes, publicDir, access }) {
     } catch (error) {
       if (isMissingEntryError(error)) {
         missingAssets.push(assetPath);
+        continue;
+      }
+
+      throw error;
+    }
+  }
+
+  for (const assetPath of heroAssetPaths) {
+    try {
+      await access(path.join(publicDir, assetPath.replace(/^\//, "")));
+    } catch (error) {
+      if (isMissingEntryError(error)) {
+        missingHeroAssets.push(assetPath);
         continue;
       }
 
@@ -705,10 +730,11 @@ export async function assertRouteVisualAssets({ routes, publicDir, access }) {
     }
   }
 
-  if (invalidAssets.length > 0 || missingAssets.length > 0 || duplicateAssets.length > 0) {
+  if (invalidAssets.length > 0 || missingAssets.length > 0 || missingHeroAssets.length > 0 || duplicateAssets.length > 0) {
     const details = [
       invalidAssets.length > 0 ? `invalid: ${invalidAssets.join(", ")}` : "",
       missingAssets.length > 0 ? `missing: ${missingAssets.join(", ")}` : "",
+      missingHeroAssets.length > 0 ? `missing heroes: ${missingHeroAssets.join(", ")}` : "",
       duplicateAssets.length > 0 ? `duplicate: ${duplicateAssets.join(", ")}` : "",
     ]
       .filter(Boolean)
@@ -717,5 +743,5 @@ export async function assertRouteVisualAssets({ routes, publicDir, access }) {
     throw new Error(`Route visual asset check failed (${details}).`);
   }
 
-  return assetPaths;
+  return { visualAssets: assetPaths, heroAssets: heroAssetPaths };
 }

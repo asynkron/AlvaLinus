@@ -85,7 +85,7 @@ export const siteContent = {
       href: "/om-oss/",
       summary:
         "Läs om Svärd Entreprenads arbetssätt, erfarenhet och ansvar från första spadtag till färdigt resultat.",
-      heroPhotoAssetPath: "/page-visuals/about-hero.webp",
+      heroPhotoAssetPath: "/page-visuals/svard-entreprenad-about.svg",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-about.svg",
         alt: "Arbetslag som planerar ett markprojekt vid arbetsplatsen",
@@ -169,7 +169,7 @@ export const siteContent = {
       label: "Kontakt",
       href: "/kontakt/",
       summary: "Egen kontaktsida för offertförfrågningar, platsbesök och nästa steg.",
-      heroPhotoAssetPath: "/page-visuals/contact-hero.webp",
+      heroPhotoAssetPath: "/page-visuals/svard-entreprenad-contact.svg",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-contact.svg",
         alt: "Anteckningar och offertunderlag inför platsbesök för markprojekt",
