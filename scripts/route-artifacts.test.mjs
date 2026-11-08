@@ -12,6 +12,10 @@ import {
   notFoundPageMetadata,
   requireRouteRegistry,
   routeHeroPreloadHref,
+  routeHeroPreloadImageSizes,
+  routeHeroPreloadImageSrcSet,
+  routeHeroPreloadLinkTag,
+  routeHeroSrcSetCandidatePaths,
   routePageMetadata,
   routeVisualAssetPaths,
   staticSubpagePaths,
@@ -36,6 +40,14 @@ const servicesRoute = fixtureRoute("services", "/tjanster/", "/page-visuals/svar
 const contactRoute = fixtureRoute("contact", "/kontakt/", "/page-visuals/svard-entreprenad-contact.svg");
 const addedRoute = fixtureRoute("nyheter", "/nyheter/", "/page-visuals/svard-entreprenad-nyheter.svg");
 const fixtureRoutes = [homeRoute, servicesRoute, contactRoute];
+
+const responsiveServicesSrcSet =
+  "/page-visuals/services-hero-640.webp 640w, /page-visuals/services-hero-960.webp 960w, /page-visuals/services-hero.webp 1672w";
+const responsiveServicesRoute = {
+  ...servicesRoute,
+  heroPhotoSrcSet: responsiveServicesSrcSet,
+  heroPhotoSizes: "100vw",
+};
 
 const rootTitle = "Svärd Entreprenad – Mark & anläggning i Örebro";
 const rootDescription = "Svärd Entreprenad utför professionella mark- och anläggningsarbeten i Örebro.";
@@ -87,6 +99,8 @@ function emittedSubpageHtml(route) {
   return injectRouteHeroPreload(
     stripHomeHeroPreload(applyRouteDocumentMetadata(rootHtml, routePageMetadata(route))),
     routeHeroPreloadHref(route),
+    routeHeroPreloadImageSrcSet(route),
+    routeHeroPreloadImageSizes(route),
   );
 }
 
@@ -203,6 +217,43 @@ describe("requireRouteRegistry", () => {
     ).rejects.toThrow('Route escape must not contain "." or ".." path segments.');
     expect(readFile).not.toHaveBeenCalled();
     expect(access).not.toHaveBeenCalled();
+  });
+
+  it("accepts a route that declares responsive hero variants and leaves undeclared routes untouched", () => {
+    expect(requireRouteRegistry([homeRoute, responsiveServicesRoute, contactRoute])).toEqual([
+      homeRoute,
+      responsiveServicesRoute,
+      contactRoute,
+    ]);
+  });
+
+  it("rejects hero variant declarations that are not declared together", () => {
+    expect(() =>
+      requireRouteRegistry([{ ...servicesRoute, heroPhotoSrcSet: "/page-visuals/services-hero-640.webp 640w" }]),
+    ).toThrow("Route services must declare heroPhotoSrcSet and heroPhotoSizes together.");
+    expect(() => requireRouteRegistry([{ ...servicesRoute, heroPhotoSizes: "100vw" }])).toThrow(
+      "Route services must declare heroPhotoSrcSet and heroPhotoSizes together.",
+    );
+  });
+
+  it("rejects malformed or non-renderable hero srcset declarations", () => {
+    expect(() =>
+      requireRouteRegistry([{ ...servicesRoute, heroPhotoSrcSet: "/page-visuals/services-hero-640.webp", heroPhotoSizes: "100vw" }]),
+    ).toThrow("Route services must declare heroPhotoSrcSet candidates as root-relative URLs");
+    expect(() =>
+      requireRouteRegistry([
+        { ...servicesRoute, heroPhotoSrcSet: "page-visuals/services-hero-640.webp 640w", heroPhotoSizes: "100vw" },
+      ]),
+    ).toThrow("Route services must declare heroPhotoSrcSet candidates as root-relative URLs");
+    expect(() =>
+      requireRouteRegistry([{ ...servicesRoute, heroPhotoSrcSet: '"/page-visuals/x.webp" 640w', heroPhotoSizes: "100vw" }]),
+    ).toThrow("Route services must keep heroPhotoSrcSet free of quote or angle characters.");
+    expect(() =>
+      requireRouteRegistry([{ ...servicesRoute, heroPhotoSrcSet: "/page-visuals/x.webp 640w", heroPhotoSizes: '"100vw"' }]),
+    ).toThrow("Route services must keep heroPhotoSizes free of quote or angle characters.");
+    expect(() =>
+      requireRouteRegistry([{ ...servicesRoute, heroPhotoSrcSet: "/page-visuals/x.webp 640w", heroPhotoSizes: "" }]),
+    ).toThrow("Route services must declare a nonempty heroPhotoSizes string.");
   });
 });
 
@@ -511,6 +562,49 @@ describe("assertStaticRouteArtifacts", () => {
     ).rejects.toThrow("Static route artifact check failed (mismatched: /kontakt/).");
   });
 
+  it("requires the imagesrcset/imagesizes-enriched preload link for a route with declared hero variants", async () => {
+    const routes = [homeRoute, responsiveServicesRoute, contactRoute];
+    const fileSystem = memoryFileSystem(distEntries(routes));
+    const emitted = await assertStaticRouteArtifacts({ routes, distDir: "dist", readFile: fileSystem.readFile });
+
+    expect(emitted).toEqual(["/tjanster/", "/kontakt/"]);
+    expect(fileSystem.readFile).toHaveBeenCalledWith(subpageArtifactPath("dist", "/tjanster/"), "utf8");
+    expect(distEntries(routes)[subpageArtifactPath("dist", "/tjanster/")]).toContain(routeHeroPreloadLinkTag(responsiveServicesRoute));
+  });
+
+  it("rejects a plain preload link on a document whose route declares responsive hero variants", async () => {
+    const routes = [homeRoute, responsiveServicesRoute, contactRoute];
+    const entries = distEntries(routes);
+    entries[subpageArtifactPath("dist", "/tjanster/")] = emittedSubpageHtml(servicesRoute);
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes,
+        distDir: "dist",
+        readFile: memoryFileSystem(entries).readFile,
+      }),
+    ).rejects.toThrow("Static route artifact check failed (mismatched: /tjanster/).");
+  });
+
+  it("rejects an enriched preload link whose srcset no longer matches the route declaration", async () => {
+    const routes = [homeRoute, responsiveServicesRoute, contactRoute];
+    const entries = distEntries(routes);
+    entries[subpageArtifactPath("dist", "/tjanster/")] = injectRouteHeroPreload(
+      stripHomeHeroPreload(applyRouteDocumentMetadata(rootHtml, routePageMetadata(responsiveServicesRoute))),
+      routeHeroPreloadHref(responsiveServicesRoute),
+      "/page-visuals/services-hero-640.webp 640w",
+      "100vw",
+    );
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes,
+        distDir: "dist",
+        readFile: memoryFileSystem(entries).readFile,
+      }),
+    ).rejects.toThrow("Static route artifact check failed (mismatched: /tjanster/).");
+  });
+
   it("rejects a subpage artifact without any hero preload link", async () => {
     const entries = distEntries(fixtureRoutes);
     entries[subpageArtifactPath("dist", "/tjanster/")] = stripHomeHeroPreload(
@@ -808,6 +902,69 @@ describe("injectRouteHeroPreload", () => {
       'Route hero preload injection requires a heroPhotoAssetPath that must declare a root-relative heroPhotoAssetPath starting with "/".',
     );
   });
+
+  it("injects the declared imagesrcset and imagesizes for a route with responsive hero variants", () => {
+    const document =
+      '<!doctype html><html lang="sv"><head><title>Titel</title></head><body>Svard Entreprenad</body></html>';
+
+    expect(
+      injectRouteHeroPreload(
+        document,
+        "/page-visuals/services-hero.webp",
+        responsiveServicesSrcSet,
+        "100vw",
+      ),
+    ).toBe(
+      '<!doctype html><html lang="sv"><head><title>Titel</title>' +
+        '<link rel="preload" as="image" href="/page-visuals/services-hero.webp" ' +
+        `imagesrcset="${responsiveServicesSrcSet}" ` +
+        'imagesizes="100vw" fetchpriority="high" /></head>' +
+        "<body>Svard Entreprenad</body></html>",
+    );
+  });
+
+  it("rejects a declared srcset without its matching sizes declaration", () => {
+    expect(() =>
+      injectRouteHeroPreload("<html><head></head></html>", "/page-visuals/services-hero.webp", "/page-visuals/services-hero-640.webp 640w"),
+    ).toThrow(
+      "Route hero preload injection requires hero image fields that must declare heroPhotoSrcSet and heroPhotoSizes together.",
+    );
+    expect(() =>
+      injectRouteHeroPreload("<html><head></head></html>", "/page-visuals/services-hero.webp", undefined, "100vw"),
+    ).toThrow(
+      "Route hero preload injection requires hero image fields that must declare heroPhotoSrcSet and heroPhotoSizes together.",
+    );
+  });
+});
+
+describe("routeHeroPreloadLinkTag", () => {
+  it("keeps the plain high-priority link for routes without declared variants", () => {
+    expect(routeHeroPreloadLinkTag(servicesRoute)).toBe(
+      '<link rel="preload" as="image" href="/page-visuals/services-hero.webp" fetchpriority="high" />',
+    );
+  });
+
+  it("enriches the link with imagesrcset and imagesizes, byte-identical to the injected emission", () => {
+    expect(routeHeroPreloadLinkTag(responsiveServicesRoute)).toBe(
+      '<link rel="preload" as="image" href="/page-visuals/services-hero.webp" ' +
+        `imagesrcset="${responsiveServicesSrcSet}" imagesizes="100vw" fetchpriority="high" />`,
+    );
+    expect(
+      injectRouteHeroPreload(
+        "<html><head></head></html>",
+        routeHeroPreloadHref(responsiveServicesRoute),
+        routeHeroPreloadImageSrcSet(responsiveServicesRoute),
+        routeHeroPreloadImageSizes(responsiveServicesRoute),
+      ),
+    ).toBe(`<html><head>${routeHeroPreloadLinkTag(responsiveServicesRoute)}</head></html>`);
+  });
+
+  it("returns undeclared hero image fields as undefined and declared ones verbatim", () => {
+    expect(routeHeroPreloadImageSrcSet(contactRoute)).toBeUndefined();
+    expect(routeHeroPreloadImageSizes(contactRoute)).toBeUndefined();
+    expect(routeHeroPreloadImageSrcSet(responsiveServicesRoute)).toBe(responsiveServicesSrcSet);
+    expect(routeHeroPreloadImageSizes(responsiveServicesRoute)).toBe("100vw");
+  });
 });
 
 describe("notFoundPageMetadata", () => {
@@ -858,6 +1015,44 @@ describe("assertRouteVisualAssets", () => {
         access: memoryFileSystem(publicEntries(fixtureRoutes)).access,
       }),
     ).rejects.toThrow("Route visual asset check failed (missing: /page-visuals/svard-entreprenad-nyheter.svg).");
+  });
+
+  it("requires every declared hero srcset candidate file to exist under public/", async () => {
+    const routes = [homeRoute, responsiveServicesRoute];
+
+    expect(routeHeroSrcSetCandidatePaths(routes)).toEqual([
+      "/page-visuals/services-hero-640.webp",
+      "/page-visuals/services-hero-960.webp",
+      "/page-visuals/services-hero.webp",
+    ]);
+
+    await expect(
+      assertRouteVisualAssets({
+        routes,
+        publicDir: "public",
+        access: memoryFileSystem(publicEntries(routes)).access,
+      }),
+    ).rejects.toThrow(
+      "Route visual asset check failed (missing: " +
+        "/page-visuals/services-hero-640.webp, /page-visuals/services-hero-960.webp, /page-visuals/services-hero.webp).",
+    );
+  });
+
+  it("passes when every declared hero srcset candidate exists beside the route visuals", async () => {
+    const routes = [homeRoute, responsiveServicesRoute];
+    const entries = {
+      ...publicEntries(routes),
+      [publicAssetPath("public", "/page-visuals/services-hero-640.webp")]: "<webp>",
+      [publicAssetPath("public", "/page-visuals/services-hero-960.webp")]: "<webp>",
+      [publicAssetPath("public", "/page-visuals/services-hero.webp")]: "<webp>",
+    };
+
+    await expect(
+      assertRouteVisualAssets({ routes, publicDir: "public", access: memoryFileSystem(entries).access }),
+    ).resolves.toEqual([
+      "/page-visuals/svard-entreprenad-home.svg",
+      "/page-visuals/svard-entreprenad-services.svg",
+    ]);
   });
 
   it("stops requiring the visual of a removed fixture route", async () => {
@@ -962,6 +1157,32 @@ describe("siteContent route registry", () => {
     }
 
     expect(routeHeroPreloadHref(siteContent.routes.find((route) => route.id === "home"))).toBe("/page-visuals/hero-photo.webp");
+  });
+
+  it("declares responsive variants on the services route only and keeps heroPhotoAssetPath the declared base", () => {
+    const servicesRouteRegistry = siteContent.routes.find((route) => route.id === "services");
+
+    expect(servicesRouteRegistry.heroPhotoAssetPath).toBe("/page-visuals/services-hero.webp");
+    expect(servicesRouteRegistry.heroPhotoSrcSet).toBe(
+      "/page-visuals/services-hero-640.webp 640w, /page-visuals/services-hero-960.webp 960w, /page-visuals/services-hero.webp 1672w",
+    );
+    expect(servicesRouteRegistry.heroPhotoSizes).toBe("100vw");
+
+    for (const route of siteContent.routes.filter((route) => route.id !== "services")) {
+      expect(route.heroPhotoSrcSet).toBeUndefined();
+      expect(route.heroPhotoSizes).toBeUndefined();
+    }
+
+    expect(routeHeroPreloadLinkTag(servicesRouteRegistry)).toBe(
+      '<link rel="preload" as="image" href="/page-visuals/services-hero.webp" ' +
+        'imagesrcset="/page-visuals/services-hero-640.webp 640w, /page-visuals/services-hero-960.webp 960w, /page-visuals/services-hero.webp 1672w" ' +
+        'imagesizes="100vw" fetchpriority="high" />',
+    );
+    expect(routeHeroSrcSetCandidatePaths(siteContent.routes)).toEqual([
+      "/page-visuals/services-hero-640.webp",
+      "/page-visuals/services-hero-960.webp",
+      "/page-visuals/services-hero.webp",
+    ]);
   });
 
   it("derives page metadata from every declared subpage's Swedish label and summary", () => {

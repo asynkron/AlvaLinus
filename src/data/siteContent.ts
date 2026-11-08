@@ -56,6 +56,9 @@ export const siteContent = {
       href: "/tjanster/",
       summary: "Samlad sida för de huvudsakliga mark-, bygg- och anläggningstjänsterna.",
       heroPhotoAssetPath: "/page-visuals/services-hero.webp",
+      heroPhotoSrcSet:
+        "/page-visuals/services-hero-640.webp 640w, /page-visuals/services-hero-960.webp 960w, /page-visuals/services-hero.webp 1672w",
+      heroPhotoSizes: "100vw",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-services.svg",
         alt: "Samlad vy över markarbeten, stensättning och dräneringstjänster",

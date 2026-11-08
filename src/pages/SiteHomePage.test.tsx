@@ -531,6 +531,17 @@ describe("SiteHomePage", () => {
     for (const route of content.routes) {
       expect(route.heroPhotoAssetPath).toBe(expectedHeroPhotosByRoute.get(route.id));
     }
+
+    const servicesRoute = content.routes.find((route) => route.id === "services");
+    expect(servicesRoute.heroPhotoSrcSet).toBe(
+      "/page-visuals/services-hero-640.webp 640w, /page-visuals/services-hero-960.webp 960w, /page-visuals/services-hero.webp 1672w",
+    );
+    expect(servicesRoute.heroPhotoSizes).toBe("100vw");
+
+    for (const route of content.routes.filter((route) => route.id !== "services")) {
+      expect(route.heroPhotoSrcSet).toBeUndefined();
+      expect(route.heroPhotoSizes).toBeUndefined();
+    }
   });
 
   it("fetches above-the-fold hero images at high priority while service card images stay lazy", () => {
@@ -541,6 +552,10 @@ describe("SiteHomePage", () => {
     expect(homeHero).toHaveAttribute("alt", "");
     expect(homeHero).toHaveAttribute("aria-hidden", "true");
     expect(homeHero).not.toHaveAttribute("loading");
+    expect(homeHero).toHaveAttribute(
+      "srcset",
+      "/page-visuals/hero-photo-640.webp 640w, /page-visuals/hero-photo-960.webp 960w, /page-visuals/hero-photo.webp 1600w",
+    );
 
     const serviceImage = within(serviceCard("stensattning")).getByRole("img");
     expect(serviceImage).toHaveAttribute("loading", "lazy");
@@ -552,6 +567,7 @@ describe("SiteHomePage", () => {
     expect(pageHero).toHaveAttribute("fetchpriority", "high");
     expect(pageHero).toHaveAttribute("alt", "");
     expect(pageHero).toHaveAttribute("aria-hidden", "true");
+    expect(pageHero).not.toHaveAttribute("srcset");
 
     fireEvent.error(pageHero);
     expect(pageHero).toHaveStyle({ display: "none" });
@@ -562,6 +578,18 @@ describe("SiteHomePage", () => {
     expect(serviceHero).toHaveAttribute("fetchpriority", "high");
     expect(serviceHero).toHaveAttribute("alt", "");
     expect(serviceHero).toHaveAttribute("aria-hidden", "true");
+
+    rerender(<SiteHomePage currentPath="/tjanster/" content={content} />);
+
+    const servicesHero = heroImage("/page-visuals/services-hero.webp");
+    expect(servicesHero).toHaveAttribute("fetchpriority", "high");
+    expect(servicesHero).toHaveAttribute("alt", "");
+    expect(servicesHero).toHaveAttribute("aria-hidden", "true");
+    expect(servicesHero).toHaveAttribute(
+      "srcset",
+      "/page-visuals/services-hero-640.webp 640w, /page-visuals/services-hero-960.webp 960w, /page-visuals/services-hero.webp 1672w",
+    );
+    expect(servicesHero).toHaveAttribute("sizes", "100vw");
   });
 
   it("falls back to the route SVG on the first photo error and removes the image when the fallback also fails", () => {

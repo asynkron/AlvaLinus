@@ -21,7 +21,6 @@ const socialMetaTagPatterns = [
 const linkTagPattern = /<link\b[^>]*>/gi;
 const preloadRelPattern = /\brel=(["'])preload\1/i;
 const imagePreloadAsPattern = /\bas=(["'])image\1/i;
-const linkHrefAttributePattern = /\bhref=(["'])([\s\S]*?)\1/i;
 const headClosePattern = /<\/head>/i;
 const homeHeroPreloadHrefPattern = /\bhref=(["'])\/page-visuals\/hero-photo\.webp\1/i;
 
@@ -150,6 +149,12 @@ export function requireRouteRegistry(routes) {
       throw new Error(`${routeLabel(route, index)} ${heroViolation}`);
     }
 
+    const imageFieldsViolation = declaredHeroPreloadImageViolation(route);
+
+    if (imageFieldsViolation !== null) {
+      throw new Error(`${routeLabel(route, index)} ${imageFieldsViolation}`);
+    }
+
     const destination = outputDestination(route.href);
 
     if (destinations.has(destination)) {
@@ -218,6 +223,115 @@ export function requireRouteHeroPhotoAssetPath(route, index) {
  */
 export function routeHeroPreloadHref(route) {
   return requireRouteHeroPhotoAssetPath(route, 0);
+}
+
+/**
+ * A declared responsive hero candidate list is optional per route. When a
+ * route declares it, heroPhotoSrcSet and heroPhotoSizes must be declared
+ * together so the rendered img srcset/sizes pair and the stamped preload
+ * link's imagesrcset/imagesizes pair always describe the same candidates.
+ * Each comma-separated srcset candidate must be a root-relative URL with a
+ * width or density descriptor, and both values must survive rendering inside
+ * quoted link attributes: no backslashes, quotes or angle characters.
+ */
+function declaredHeroPreloadImageViolation(route) {
+  const declaresSrcSet = route?.heroPhotoSrcSet !== undefined;
+  const declaresSizes = route?.heroPhotoSizes !== undefined;
+
+  if (declaresSrcSet !== declaresSizes) {
+    return "must declare heroPhotoSrcSet and heroPhotoSizes together.";
+  }
+
+  if (!declaresSrcSet) return null;
+
+  const srcSet = route.heroPhotoSrcSet;
+
+  if (typeof srcSet !== "string" || srcSet.length === 0) {
+    return "must declare a nonempty heroPhotoSrcSet string.";
+  }
+
+  if (srcSet.includes("\\")) {
+    return 'must use "/" directory separators in heroPhotoSrcSet.';
+  }
+
+  if (/["'<>]/.test(srcSet)) {
+    return "must keep heroPhotoSrcSet free of quote or angle characters.";
+  }
+
+  for (const candidate of srcSet.split(",")) {
+    const tokens = candidate.trim().split(/\s+/);
+    const assetPath = tokens[0];
+    const descriptor = tokens[tokens.length - 1];
+
+    if (tokens.length < 2 || !assetPath.startsWith("/") || !/^\d+[wx]$/.test(descriptor)) {
+      return 'must declare heroPhotoSrcSet candidates as root-relative URLs with a width or density descriptor, for example "/page-visuals/hero-640.webp 640w".';
+    }
+  }
+
+  const sizes = route.heroPhotoSizes;
+
+  if (typeof sizes !== "string" || sizes.length === 0) {
+    return "must declare a nonempty heroPhotoSizes string.";
+  }
+
+  if (/["'<>]/.test(sizes)) {
+    return "must keep heroPhotoSizes free of quote or angle characters.";
+  }
+
+  return null;
+}
+
+/**
+ * Validated declared hero image fields for one route: undefined for routes
+ * without responsive variants, or the declared srcset and sizes pair verbatim
+ * so the renderer and the stamper consume one declaration.
+ */
+function requireRouteHeroPreloadImageFields(route) {
+  const violation = declaredHeroPreloadImageViolation(route);
+
+  if (violation !== null) {
+    throw new Error(`${routeLabel(route, 0)} ${violation}`);
+  }
+
+  return { imageSrcSet: route.heroPhotoSrcSet, imageSizes: route.heroPhotoSizes };
+}
+
+export function routeHeroPreloadImageSrcSet(route) {
+  return requireRouteHeroPreloadImageFields(route).imageSrcSet;
+}
+
+export function routeHeroPreloadImageSizes(route) {
+  return requireRouteHeroPreloadImageFields(route).imageSizes;
+}
+
+function routeHeroPreloadLinkTagText(assetPath, imageSrcSet, imageSizes) {
+  const attributes = ['rel="preload"', 'as="image"', `href="${assetPath}"`];
+
+  if (typeof imageSrcSet === "string") {
+    attributes.push(`imagesrcset="${imageSrcSet}"`);
+  }
+
+  if (typeof imageSizes === "string") {
+    attributes.push(`imagesizes="${imageSizes}"`);
+  }
+
+  attributes.push('fetchpriority="high"');
+
+  return `<link ${attributes.join(" ")} />`;
+}
+
+/**
+ * Exact preload link tag required by one stamped subpage document: a plain
+ * high-priority link for routes without declared variants, and the same link
+ * enriched with imagesrcset/imagesizes when the route declares responsive
+ * hero candidates, so the browser preloads exactly the candidate the img
+ * srcset selects instead of downloading the base image twice.
+ */
+export function routeHeroPreloadLinkTag(route) {
+  const assetPath = requireRouteHeroPhotoAssetPath(route, 0);
+  const { imageSrcSet, imageSizes } = requireRouteHeroPreloadImageFields(route);
+
+  return routeHeroPreloadLinkTagText(assetPath, imageSrcSet, imageSizes);
 }
 
 /**
@@ -360,18 +474,18 @@ export function stripHomeHeroPreload(document) {
   return document.replace(linkTagPattern, (linkTag) => (isHomeHeroPreloadLinkTag(linkTag) ? "" : linkTag));
 }
 
-function routeHeroPreloadLinkTag(assetPath) {
-  return `<link rel="preload" as="image" href="${assetPath}" fetchpriority="high" />`;
-}
-
 /**
  * High-priority preload link for one stamped subpage document, inserted
  * directly before the head-close tag so the browser starts fetching the
  * route's LCP hero photo in parallel with the JavaScript bundle instead of
- * after it executes. Composed after stripHomeHeroPreload, which removed the
- * home document's own preload from the stamped source.
+ * after it executes. A route that declares responsive hero variants passes
+ * its registry srcset and sizes so the link's imagesrcset/imagesizes select
+ * the same candidate the rendered img picks; routes without declared
+ * variants keep the plain href emission byte-for-byte. Composed after
+ * stripHomeHeroPreload, which removed the home document's own preload from
+ * the stamped source.
  */
-export function injectRouteHeroPreload(document, assetPath) {
+export function injectRouteHeroPreload(document, assetPath, imageSrcSet, imageSizes) {
   if (typeof document !== "string" || document.length === 0) {
     throw new Error("Route hero preload injection requires a nonempty document string.");
   }
@@ -382,34 +496,35 @@ export function injectRouteHeroPreload(document, assetPath) {
     throw new Error(`Route hero preload injection requires a heroPhotoAssetPath that ${violation}`);
   }
 
+  const imageViolation = declaredHeroPreloadImageViolation({ heroPhotoSrcSet: imageSrcSet, heroPhotoSizes: imageSizes });
+
+  if (imageViolation !== null) {
+    throw new Error(`Route hero preload injection requires hero image fields that ${imageViolation}`);
+  }
+
   if (!headClosePattern.test(document)) {
     throw new Error("Route document must contain a </head> element to host the injected hero preload link.");
   }
 
-  return document.replace(headClosePattern, () => `${routeHeroPreloadLinkTag(assetPath)}</head>`);
+  return document.replace(headClosePattern, () => `${routeHeroPreloadLinkTagText(assetPath, imageSrcSet, imageSizes)}</head>`);
 }
 
 /**
- * Hrefs of every image preload link carried by a document, in document
- * order: the exact-equality base for "a document preloads exactly its own
- * route hero photo and nothing else".
+ * Image preload link tags carried by a document, in document order with their
+ * full attribute text, so the artifact assertion can compare the stamped
+ * emission byte-for-byte: a plain href link for routes without declared
+ * variants and the imagesrcset/imagesizes-enriched link for routes with them.
  */
-function documentImagePreloadHrefs(document) {
+function documentImagePreloadLinkTags(document) {
   const linkTags = document.match(linkTagPattern) ?? [];
 
-  return linkTags
-    .filter((linkTag) => preloadRelPattern.test(linkTag) && imagePreloadAsPattern.test(linkTag))
-    .map((linkTag) => {
-      const hrefMatch = linkTag.match(linkHrefAttributePattern);
-
-      return hrefMatch === null ? null : hrefMatch[2];
-    });
+  return linkTags.filter((linkTag) => preloadRelPattern.test(linkTag) && imagePreloadAsPattern.test(linkTag));
 }
 
-function documentCarriesExactlyOwnHeroPreload(document, heroPreloadHref) {
-  const imagePreloadHrefs = documentImagePreloadHrefs(document);
+function documentCarriesExactlyOwnHeroPreload(document, heroPreloadLinkTag) {
+  const imagePreloadLinkTags = documentImagePreloadLinkTags(document);
 
-  return imagePreloadHrefs.length === 1 && imagePreloadHrefs[0] === heroPreloadHref;
+  return imagePreloadLinkTags.length === 1 && imagePreloadLinkTags[0] === heroPreloadLinkTag;
 }
 
 function documentCarriesRouteMetadata(document, metadata) {
@@ -429,6 +544,31 @@ export function routeVisualAssetPaths(routes) {
   return requireRouteRegistry(routes).map((route) => route.visual.assetPath);
 }
 
+/**
+ * Root-relative hero image paths declared through responsive variant srcsets,
+ * deduplicated in route order. A srcset candidate the browser can select must
+ * exist as a shipped file: a candidate that 404s after selection fires the
+ * hero img's onError and hides the whole hero, so the visual asset check
+ * validates every declared candidate file, not only the fallback SVGs.
+ */
+export function routeHeroSrcSetCandidatePaths(routes) {
+  const candidates = [];
+
+  for (const route of requireRouteRegistry(routes)) {
+    const { imageSrcSet } = requireRouteHeroPreloadImageFields(route);
+
+    if (typeof imageSrcSet !== "string") continue;
+
+    for (const candidate of imageSrcSet.split(",")) {
+      const assetPath = candidate.trim().split(/\s+/)[0];
+
+      if (assetPath && !candidates.includes(assetPath)) candidates.push(assetPath);
+    }
+  }
+
+  return candidates;
+}
+
 function isDeclaredVisualAssetPath(assetPath) {
   return (
     assetPath.startsWith(visualAssetPrefix) &&
@@ -441,7 +581,7 @@ export async function assertStaticRouteArtifacts({ routes, distDir, readFile }) 
   const expectedPages = staticSubpageRoutes(routes).map((route) => ({
     href: route.href,
     metadata: routePageMetadata(route),
-    heroPreloadHref: routeHeroPreloadHref(route),
+    heroPreloadLinkTag: routeHeroPreloadLinkTag(route),
   }));
   const expectedRoutes = expectedPages.map((page) => page.href);
   const rootHtml = await readFile(path.join(distDir, "index.html"), "utf8");
@@ -487,7 +627,7 @@ export async function assertStaticRouteArtifacts({ routes, distDir, readFile }) 
     );
   }
 
-  if (documentImagePreloadHrefs(notFoundHtml).length > 0) {
+  if (documentImagePreloadLinkTags(notFoundHtml).length > 0) {
     throw new Error(
       `Static route artifact check failed: dist/${notFoundArtifactPath} must not carry any image preload link.`,
     );
@@ -502,7 +642,7 @@ export async function assertStaticRouteArtifacts({ routes, distDir, readFile }) 
 
         return documentCarriesRouteMetadata(routeHtml, page.metadata) &&
           !documentCarriesHomeHeroPreload(routeHtml) &&
-          documentCarriesExactlyOwnHeroPreload(routeHtml, page.heroPreloadHref)
+          documentCarriesExactlyOwnHeroPreload(routeHtml, page.heroPreloadLinkTag)
           ? "matched"
           : "mismatched";
       } catch (error) {
@@ -532,6 +672,7 @@ export async function assertStaticRouteArtifacts({ routes, distDir, readFile }) 
 
 export async function assertRouteVisualAssets({ routes, publicDir, access }) {
   const assetPaths = routeVisualAssetPaths(routes);
+  const heroCandidatePaths = routeHeroSrcSetCandidatePaths(routes);
   const invalidAssets = assetPaths.filter((assetPath) => !isDeclaredVisualAssetPath(assetPath));
   const duplicateAssets = assetPaths.filter((assetPath, index) => assetPaths.indexOf(assetPath) !== index);
   const missingAssets = [];
@@ -539,6 +680,19 @@ export async function assertRouteVisualAssets({ routes, publicDir, access }) {
   for (const assetPath of assetPaths) {
     if (!isDeclaredVisualAssetPath(assetPath)) continue;
 
+    try {
+      await access(path.join(publicDir, assetPath.replace(/^\//, "")));
+    } catch (error) {
+      if (isMissingEntryError(error)) {
+        missingAssets.push(assetPath);
+        continue;
+      }
+
+      throw error;
+    }
+  }
+
+  for (const assetPath of heroCandidatePaths) {
     try {
       await access(path.join(publicDir, assetPath.replace(/^\//, "")));
     } catch (error) {
