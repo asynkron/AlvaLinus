@@ -1,6 +1,6 @@
 # F4: Home, navigation and route recovery
 
-Reviewed: 2026-11-07. Runtime: `ui`. Product role: `surface`.
+Reviewed: 2026-11-08. Runtime: `ui`. Product role: `surface`.
 Supports **F1, F2, F3, F5 and F6**, all active customer-outcome features.
 
 Home and shared route handling make the service, company and inquiry outcomes
@@ -33,7 +33,17 @@ derive from the typed route registry: each page or service destination's
 Swedish label, href and link order is declared once in
 [typed content](../../src/data/siteContent.ts), and adding or renaming a route
 there updates every header and footer link without parallel markup edits. The
-registry order is the link order; the renderer only groups the five service
+shared chrome labels around them are declared in the same registry's
+`content.chrome` block: the Hoppa till innehåll skip link, the Huvudnavigation
+and Mobilnavigation nav names, the Öppna meny and Stäng meny toggle labels, the
+Kalkyler disclosure with its Dränering and Uppfart links, the Brödsmulor
+breadcrumb with its Hem link, the Sidan finns inte, Okänd sida and Genvägar
+not-found texts, the Nästa steg and Kontakta oss service contact band, the
+footer's Sidor, Tjänster and Kontakt headings with the Sidfotsnavigation nav
+name, and the Inget innehåll ännu empty state. A chrome copy edit is one
+registry declaration instead of a renderer markup edit; the renderer only maps
+registry entries to their landmarks.
+The registry order is the link order; the renderer only groups the five service
 detail routes under the Tjänster entry and the two quote routes under the
 Kalkyler disclosure, while the footer keeps the full page list.
 
@@ -100,7 +110,9 @@ Escape from a link and the toggle, focus restoration, reopening and click
 dismissal, uncancelled Tab/Shift+Tab events and Escape outside the menu/toggle,
 plus the decorative home hero photo's success and failure declarations and the
 above-the-fold fetch-priority declaration whose about-hero error case also
-covers subpage hero image hiding. The home page test file also carries the
+covers subpage hero image hiding. F4-US1 also maps the shared-page-chrome
+declaration that checks the brand, not-found, breadcrumb, service-band and
+footer texts against `content.chrome`. The home page test file also carries the
 deterministic desktop dropdown declaration: the Tjänster trigger keeps its
 `aria-haspopup` declaration and takes focus, its Tab/Shift+Tab events stay
 uncancelled, and the dropdown panel holds the five service links in registry

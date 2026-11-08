@@ -2,7 +2,7 @@
 
 Feature: [F4 — Home, navigation and route recovery](../../navigation-and-recovery.md)  
 Status: current  
-Reviewed: 2026-11-06
+Reviewed: 2026-11-08
 
 As a site visitor, I want to use route navigation so I can reach service selection, company information or inquiry preparation.
 
@@ -43,6 +43,7 @@ Use a known route or the home URL; repair/redeploy static route artifacts if mis
 
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `shows the requested primary navigation labels as real route links` (direct): Checks route-link destinations, not mobile-menu or dropdown interaction.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `derives header, mobile menu and footer navigation from the typed route registry` (direct): Checks desktop, mobile-menu and footer destinations, Swedish labels and link order against `content.routes` as the single declaration source; does not exercise dropdown interaction or responsive layout.
+- vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `renders the shared page chrome from the typed registry` (direct): Checks the brand link and logo, the not-found heading, eyebrow, path summary and shortcuts label, the breadcrumb navigation name and Hem link, the service hero eyebrow and guidance heading, the contact band eyebrow and CTA destination, and the footer tagline, column headings, navigation names and copyright against `content.chrome`. Registry-attribute evidence only; it does not establish responsive layout or visual styling.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `keeps the desktop Tjänster dropdown trigger focusable with its five registry-ordered service links` (direct): Checks the trigger's aria-haspopup declaration, focusability, uncancelled Tab/Shift+Tab events and the panel's five service links in registry order with their Swedish accessible names. JSDOM does not establish browser tab order or the panel's focus-only CSS reveal.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `opens the desktop Kalkyler disclosure straight to the drainage and driveway calculators` (direct): Checks the desktop details/summary disclosure exposes the Dränering and Uppfart calculator links with their registry destinations.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `keeps the same Kalkyler calculator links inside the mobile menu disclosure` (direct): Checks the mobile menu nests the same two calculator links with the same destinations.
