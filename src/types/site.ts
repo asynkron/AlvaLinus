@@ -17,6 +17,8 @@ export type SiteRoute = SiteLink & {
   readonly sourceId?: string;
   readonly summary: string;
   readonly heroPhotoAssetPath: string;
+  readonly heroPhotoSrcSet?: string;
+  readonly heroPhotoSizes?: string;
   readonly visual: SiteRouteVisual;
 };
 

@@ -39,7 +39,11 @@ Kalkyler disclosure, while the footer keeps the full page list.
 
 The decorative hero photographs on home and subpages are requested at high
 fetch priority without a lazy-loading attribute, so above-the-fold rendering is
-not deferred behind below-the-fold imagery; service-card images stay lazy.
+not deferred behind below-the-fold imagery; service-card images stay lazy. The
+Tjänster index hero additionally declares registry-owned 640w/960w/1672w WebP
+variants, so its rendered img srcset and the stamped preload link's
+imagesrcset/imagesizes describe the same candidates and a narrow viewport
+fetches one right-sized hero instead of the full-size base.
 
 [F4-US1](user-stories/F4/F4-US1.md) covers navigation from the home hero's two
 actions, route shortcuts and shared chrome. The inventory's six shortcuts

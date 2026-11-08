@@ -11,6 +11,8 @@ import {
   notFoundArtifactPath,
   notFoundPageMetadata,
   routeHeroPreloadHref,
+  routeHeroPreloadImageSizes,
+  routeHeroPreloadImageSrcSet,
   routePageMetadata,
   staticSubpageRoutes,
   stripHomeHeroPreload,
@@ -20,6 +22,8 @@ const staticRoutePages = staticSubpageRoutes(siteContent.routes).map((route) => 
   href: route.href,
   metadata: routePageMetadata(route),
   heroPreloadHref: routeHeroPreloadHref(route),
+  heroPreloadImageSrcSet: routeHeroPreloadImageSrcSet(route),
+  heroPreloadImageSizes: routeHeroPreloadImageSizes(route),
 }));
 
 function emitStaticRoutePages(): Plugin {
@@ -49,6 +53,8 @@ function emitStaticRoutePages(): Plugin {
           const routeHtml = injectRouteHeroPreload(
             stripHomeHeroPreload(applyRouteDocumentMetadata(html, routePage.metadata)),
             routePage.heroPreloadHref,
+            routePage.heroPreloadImageSrcSet,
+            routePage.heroPreloadImageSizes,
           );
 
           await fs.mkdir(routeDir, { recursive: true });

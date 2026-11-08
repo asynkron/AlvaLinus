@@ -3,6 +3,8 @@ export type RouteRegistryRoute = {
   readonly label: string;
   readonly summary: string;
   readonly heroPhotoAssetPath: string;
+  readonly heroPhotoSrcSet?: string;
+  readonly heroPhotoSizes?: string;
   readonly visual?: { readonly assetPath: string };
 };
 
@@ -21,6 +23,14 @@ export declare function requireRouteHeroPhotoAssetPath(route: RouteRegistryRoute
 
 export declare function routeHeroPreloadHref(route: RouteRegistryRoute): string;
 
+export declare function routeHeroPreloadImageSrcSet(route: RouteRegistryRoute): string | undefined;
+
+export declare function routeHeroPreloadImageSizes(route: RouteRegistryRoute): string | undefined;
+
+export declare function routeHeroPreloadLinkTag(route: RouteRegistryRoute): string;
+
+export declare function routeHeroSrcSetCandidatePaths(routes: readonly RouteRegistryRoute[]): string[];
+
 export declare function routePageMetadata(route: RouteRegistryRoute): RoutePageMetadata;
 
 export declare const notFoundArtifactPath: "404.html";
@@ -31,7 +41,12 @@ export declare function applyRouteDocumentMetadata(document: string, metadata: R
 
 export declare function stripHomeHeroPreload(document: string): string;
 
-export declare function injectRouteHeroPreload(document: string, assetPath: string): string;
+export declare function injectRouteHeroPreload(
+  document: string,
+  assetPath: string,
+  imageSrcSet?: string,
+  imageSizes?: string,
+): string;
 
 export declare function routeVisualAssetPaths(routes: readonly RouteRegistryRoute[]): string[];
 

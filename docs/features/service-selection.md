@@ -32,7 +32,10 @@ service id, so the contact form opens with the matching option preselected
 with typed route SVG fallback; if the fallback SVG also errors, the card image
 is removed with no retry loop while title, summary and Läs mer remain. Page hero
 photographs are requested at high fetch priority while service-card images stay
-lazy, and photograph errors hide the image and retain text. These decorative
+lazy, and photograph errors hide the image and retain text. The services-index
+hero declares 640w/960w registry variants of its 1672w base so narrow viewports
+fetch a right-sized hero once; a declared variant file missing from the build
+fails the route visual asset gate instead of blanking the hero. These decorative
 backgrounds are not project case-study evidence.
 
 ## Outcome and support

@@ -513,7 +513,14 @@ function Inventory({ content }: { readonly content: SiteContent }) {
 function ServicesIndexPage({ content, route }: { readonly content: SiteContent; readonly route: SiteRoute }) {
   return (
     <>
-      <PageHero title={route.label} summary={route.summary} imageSrc={route.heroPhotoAssetPath} breadcrumb={content.chrome.breadcrumb} />
+      <PageHero
+        title={route.label}
+        summary={route.summary}
+        imageSrc={route.heroPhotoAssetPath}
+        imageSrcSet={route.heroPhotoSrcSet}
+        imageSizes={route.heroPhotoSizes}
+        breadcrumb={content.chrome.breadcrumb}
+      />
       <Services content={content} />
       <Trust content={content} />
       <Partners content={content} />
@@ -525,7 +532,14 @@ function ServicesIndexPage({ content, route }: { readonly content: SiteContent; 
 function AboutPage({ content, route }: { readonly content: SiteContent; readonly route: SiteRoute }) {
   return (
     <>
-      <PageHero title={route.label} summary={route.summary} imageSrc={route.heroPhotoAssetPath} breadcrumb={content.chrome.breadcrumb} />
+      <PageHero
+        title={route.label}
+        summary={route.summary}
+        imageSrc={route.heroPhotoAssetPath}
+        imageSrcSet={route.heroPhotoSrcSet}
+        imageSizes={route.heroPhotoSizes}
+        breadcrumb={content.chrome.breadcrumb}
+      />
       <About content={content} />
       <ContactLinkBand content={content} />
     </>
@@ -548,6 +562,8 @@ function ServicePage({
         summary={route.summary}
         eyebrow={content.chrome.service.heroEyebrow}
         imageSrc={route.heroPhotoAssetPath}
+        imageSrcSet={route.heroPhotoSrcSet}
+        imageSizes={route.heroPhotoSizes}
         breadcrumb={content.chrome.breadcrumb}
       />
       <section className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-14 sm:px-8 lg:grid-cols-[1fr_0.72fr] lg:px-10">
@@ -609,7 +625,14 @@ function ContactPage({
 }) {
   return (
     <>
-      <PageHero title={route.label} summary={route.summary} imageSrc={route.heroPhotoAssetPath} breadcrumb={content.chrome.breadcrumb} />
+      <PageHero
+        title={route.label}
+        summary={route.summary}
+        imageSrc={route.heroPhotoAssetPath}
+        imageSrcSet={route.heroPhotoSrcSet}
+        imageSizes={route.heroPhotoSizes}
+        breadcrumb={content.chrome.breadcrumb}
+      />
       <Contact content={content} serviceOption={resolveInquiryServiceOption(content, inquiryServiceId)} />
     </>
   );
@@ -649,12 +672,16 @@ function PageHero({
   summary,
   eyebrow,
   imageSrc,
+  imageSrcSet,
+  imageSizes,
   breadcrumb,
 }: {
   readonly title: string;
   readonly summary: string;
   readonly eyebrow?: string;
   readonly imageSrc?: string;
+  readonly imageSrcSet?: string;
+  readonly imageSizes?: string;
   readonly breadcrumb: SiteBreadcrumb;
 }) {
   return (
@@ -662,8 +689,8 @@ function PageHero({
       {imageSrc ? (
         <img
           src={imageSrc}
-          srcSet={responsiveImageSrcSet(imageSrc)}
-          sizes="100vw"
+          srcSet={imageSrcSet ?? responsiveImageSrcSet(imageSrc)}
+          sizes={imageSizes ?? "100vw"}
           alt=""
           aria-hidden="true"
           fetchPriority="high"
