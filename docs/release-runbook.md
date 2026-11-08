@@ -39,6 +39,45 @@ Every release must stay traceable to four identities. Record them as you go
 Without all four identities, a live artifact cannot be connected back to the
 source that produced it and a rollback cannot prove what it restored.
 
+### One composed command
+
+The first three identities are composed into a single repo-owned command:
+
+```sh
+node scripts/write-release-provenance.mjs
+# or: make release-provenance (macOS/Linux), make.cmd release-provenance (Windows)
+```
+
+The command runs from a prepared checkout and, in order: refuses to run on a
+dirty working tree and captures the full source revision (`git status
+--porcelain`, `git rev-parse HEAD`); rebuilds `dist/` fresh from that clean
+revision (the same pipeline as `make build`); writes the checksum manifest to
+`artifacts/release.manifest.json` and verifies it against the built tree; reads
+the accepted `quality-evidence.v1` session under `FAKTORIAL_QUALITY_EVIDENCE_DIR`
+(default `.faktorial/quality`, outside Git) and requires it to be a complete
+session; then writes `artifacts/release-provenance.json` — a deterministic
+`release-provenance.v1` record joining the source revision, the artifact
+manifest's path and sha256 digest, and the quality evidence's digest, schema,
+producer, status, and test counts. It fails closed: if any precondition is
+unmet (dirty tree, failed build, manifest verification mismatch, missing,
+malformed, or incomplete quality evidence), it exits nonzero with a descriptive
+message and writes no provenance record. Re-running it on identical inputs
+yields a byte-identical record with no timestamps or machine paths.
+
+Optional positional arguments override the defaults:
+`node scripts/write-release-provenance.mjs [dist-root] [manifest-path]
+[record-path]`. The manifest and record paths must be written outside the
+`dist/` root; `artifacts/` is ignored by Git, so the record is an operator
+retained or published artifact, never committed source.
+
+The record's `publication` field stays a placeholder (`deployment_id`,
+`timestamp`, and `publisher` all `null`). Publication identity remains an
+operator-recorded host fact: fill those fields in from the hosting owner's
+records after publishing. The command never invents them.
+
+The manual steps below remain the underlying contract and the way to recover
+when the composed command reports a precondition failure.
+
 ## 1. Connect an accepted revision to an artifact
 
 1. Check out the exact commit the quality gate accepted (`git checkout
@@ -57,6 +96,12 @@ source that produced it and a rollback cannot prove what it restored.
    the artifact identity with
    `node scripts/write-artifact-manifest.mjs dist artifacts/release.manifest.json`
    (see [Recording the artifact checksum manifest](#recording-the-artifact-checksum-manifest)).
+
+Steps 2–4 compose into the single command
+`node scripts/write-release-provenance.mjs`, which additionally verifies the
+manifest and records the joined provenance; see
+[Release provenance](#release-provenance). The individual steps above remain
+the underlying contract.
 
 Faktorial task agents do not run quality themselves; they request verification
 and Faktorial's canonical gate executes `make quality`. Human operators run the
