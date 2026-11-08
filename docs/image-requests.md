@@ -29,7 +29,9 @@ photographs remain outstanding.
 - **Drop each file into `public/page-visuals/` using the exact filename below.**
   Set any new page hero through its `heroPhotoAssetPath` in
   `src/data/siteContent.ts`, preserving the typed route inventory. About and
-  Contact currently use the plain navy hero when their photographs are absent.
+  Contact currently use the abstract `svard-entreprenad-about.svg` /
+  `svard-entreprenad-contact.svg` placeholder heroes while their photographs
+  are outstanding.
 - You can deliver **JPG or PNG** and I will convert + downscale to WebP, or
   deliver **WebP** directly (preferred final format). Target the listed pixel
   size; larger is fine, I'll downscale.
@@ -86,6 +88,8 @@ and the `/gravjobb/` hero. No replacement image is needed.
 
 ### 4. `about-hero.webp` — Om oss hero
 - **Used for:** the `/om-oss/` page hero background (behind the navy overlay).
+  Until delivered, the page uses the abstract `svard-entreprenad-about.svg`
+  placeholder hero.
 - **Aspect / size:** 16:9 landscape, ≥ 1920 × 1080 px.
 - **Prompt:**
   > Wide professional photograph of a completed mark & anläggning project in
@@ -96,6 +100,8 @@ and the `/gravjobb/` hero. No replacement image is needed.
 
 ### 5. `contact-hero.webp` — Kontakt hero
 - **Used for:** the `/kontakt/` page hero background (behind the navy overlay).
+  Until delivered, the page uses the abstract `svard-entreprenad-contact.svg`
+  placeholder hero.
 - **Aspect / size:** 16:9 landscape, ≥ 1920 × 1080 px.
 - **Prompt:**
   > Wide professional photograph of a Swedish groundworks site at the start of a
@@ -126,6 +132,7 @@ and the `/gravjobb/` hero. No replacement image is needed.
 - [ ] `public/page-visuals/contact-hero.webp` (16:9)
 - [ ] `public/page-visuals/inhyrning-hero.webp` (16:9, optional upgrade; SVG hero in place)
 
-Once these land in `public/page-visuals/`, update the corresponding photo maps
-in `src/pages/SiteHomePage.tsx`. The abstract `svard-entreprenad-*.svg` placeholders stay
+Once these land in `public/page-visuals/`, set the page's `heroPhotoAssetPath`
+in the route registry `src/data/siteContent.ts`. The abstract
+`svard-entreprenad-*.svg` placeholders stay
 as the route-inventory assets and remain the safety fallback.

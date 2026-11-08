@@ -170,7 +170,10 @@ function distEntries(routes, { omit = [], mismatched = [], notFound = "emitted" 
 
 function publicEntries(routes) {
   return Object.fromEntries(
-    routes.map((route) => [publicAssetPath("public", route.visual.assetPath), "<svg></svg>"]),
+    routes.flatMap((route) => [
+      [publicAssetPath("public", route.visual.assetPath), "<svg></svg>"],
+      [publicAssetPath("public", route.heroPhotoAssetPath), "<hero></hero>"],
+    ]),
   );
 }
 
@@ -990,21 +993,34 @@ describe("notFoundPageMetadata", () => {
 });
 
 describe("assertRouteVisualAssets", () => {
-  it("requires every declared route visual asset to resolve under public/page-visuals", async () => {
+  it("requires every declared route visual and hero asset to resolve under public/page-visuals", async () => {
     const fileSystem = memoryFileSystem(publicEntries(fixtureRoutes));
 
     await expect(
       assertRouteVisualAssets({ routes: fixtureRoutes, publicDir: "public", access: fileSystem.access }),
-    ).resolves.toEqual([
-      "/page-visuals/svard-entreprenad-home.svg",
-      "/page-visuals/svard-entreprenad-services.svg",
-      "/page-visuals/svard-entreprenad-contact.svg",
-    ]);
+    ).resolves.toEqual({
+      visualAssets: [
+        "/page-visuals/svard-entreprenad-home.svg",
+        "/page-visuals/svard-entreprenad-services.svg",
+        "/page-visuals/svard-entreprenad-contact.svg",
+      ],
+      heroAssets: ["/page-visuals/home-hero.webp", "/page-visuals/services-hero.webp", "/page-visuals/contact-hero.webp"],
+    });
 
     expect(fileSystem.access).toHaveBeenCalledWith(
       publicAssetPath("public", "/page-visuals/svard-entreprenad-contact.svg"),
     );
-    expect(fileSystem.access).toHaveBeenCalledTimes(3);
+    expect(fileSystem.access).toHaveBeenCalledWith(publicAssetPath("public", "/page-visuals/contact-hero.webp"));
+    expect(fileSystem.access).toHaveBeenCalledTimes(6);
+  });
+
+  it("rejects a declared route hero asset that is missing under public/ with a clear message", async () => {
+    const entries = publicEntries(fixtureRoutes);
+    delete entries[publicAssetPath("public", "/page-visuals/contact-hero.webp")];
+
+    await expect(
+      assertRouteVisualAssets({ routes: fixtureRoutes, publicDir: "public", access: memoryFileSystem(entries).access }),
+    ).rejects.toThrow("Route visual asset check failed (missing heroes: /page-visuals/contact-hero.webp).");
   });
 
   it("requires the visual of an added fixture route automatically", async () => {
@@ -1014,7 +1030,10 @@ describe("assertRouteVisualAssets", () => {
         publicDir: "public",
         access: memoryFileSystem(publicEntries(fixtureRoutes)).access,
       }),
-    ).rejects.toThrow("Route visual asset check failed (missing: /page-visuals/svard-entreprenad-nyheter.svg).");
+    ).rejects.toThrow(
+      "Route visual asset check failed " +
+        "(missing: /page-visuals/svard-entreprenad-nyheter.svg; missing heroes: /page-visuals/nyheter-hero.webp).",
+    );
   });
 
   it("requires every declared hero srcset candidate file to exist under public/", async () => {
@@ -1034,7 +1053,7 @@ describe("assertRouteVisualAssets", () => {
       }),
     ).rejects.toThrow(
       "Route visual asset check failed (missing: " +
-        "/page-visuals/services-hero-640.webp, /page-visuals/services-hero-960.webp, /page-visuals/services-hero.webp).",
+        "/page-visuals/services-hero-640.webp, /page-visuals/services-hero-960.webp).",
     );
   });
 
@@ -1044,15 +1063,17 @@ describe("assertRouteVisualAssets", () => {
       ...publicEntries(routes),
       [publicAssetPath("public", "/page-visuals/services-hero-640.webp")]: "<webp>",
       [publicAssetPath("public", "/page-visuals/services-hero-960.webp")]: "<webp>",
-      [publicAssetPath("public", "/page-visuals/services-hero.webp")]: "<webp>",
     };
 
     await expect(
       assertRouteVisualAssets({ routes, publicDir: "public", access: memoryFileSystem(entries).access }),
-    ).resolves.toEqual([
-      "/page-visuals/svard-entreprenad-home.svg",
-      "/page-visuals/svard-entreprenad-services.svg",
-    ]);
+    ).resolves.toEqual({
+      visualAssets: [
+        "/page-visuals/svard-entreprenad-home.svg",
+        "/page-visuals/svard-entreprenad-services.svg",
+      ],
+      heroAssets: ["/page-visuals/home-hero.webp", "/page-visuals/services-hero.webp"],
+    });
   });
 
   it("stops requiring the visual of a removed fixture route", async () => {
@@ -1061,12 +1082,18 @@ describe("assertRouteVisualAssets", () => {
 
     await expect(
       assertRouteVisualAssets({ routes: remainingRoutes, publicDir: "public", access: fileSystem.access }),
-    ).resolves.toEqual([
-      "/page-visuals/svard-entreprenad-home.svg",
-      "/page-visuals/svard-entreprenad-services.svg",
-    ]);
+    ).resolves.toEqual({
+      visualAssets: [
+        "/page-visuals/svard-entreprenad-home.svg",
+        "/page-visuals/svard-entreprenad-services.svg",
+      ],
+      heroAssets: ["/page-visuals/home-hero.webp", "/page-visuals/services-hero.webp"],
+    });
     expect(fileSystem.access).not.toHaveBeenCalledWith(
       publicAssetPath("public", "/page-visuals/svard-entreprenad-contact.svg"),
+    );
+    expect(fileSystem.access).not.toHaveBeenCalledWith(
+      publicAssetPath("public", "/page-visuals/contact-hero.webp"),
     );
   });
 
@@ -1078,7 +1105,7 @@ describe("assertRouteVisualAssets", () => {
       assertRouteVisualAssets({
         routes: [...fixtureRoutes, escapeRoute, misplacedRoute],
         publicDir: "public",
-        access: memoryFileSystem(publicEntries(fixtureRoutes)).access,
+        access: memoryFileSystem(publicEntries([...fixtureRoutes, escapeRoute, misplacedRoute])).access,
       }),
     ).rejects.toThrow(
       "Route visual asset check failed " +
@@ -1140,14 +1167,14 @@ describe("siteContent route registry", () => {
       ["drainage-quote", "/page-visuals/draneringsberakning-hero.webp"],
       ["home", "/page-visuals/hero-photo.webp"],
       ["services", "/page-visuals/services-hero.webp"],
-      ["about", "/page-visuals/about-hero.webp"],
+      ["about", "/page-visuals/svard-entreprenad-about.svg"],
       ["inhyrning", "/page-visuals/inhyrning-hero.svg"],
       ["stensattning", "/page-visuals/stensattning-photo.webp"],
       ["markarbete", "/page-visuals/markarbete-photo.webp"],
       ["gravjobb", "/page-visuals/gravjobb-photo.webp"],
       ["dranering", "/page-visuals/dranering-photo.webp"],
       ["tradgard", "/page-visuals/tradgard-generated.webp"],
-      ["contact", "/page-visuals/contact-hero.webp"],
+      ["contact", "/page-visuals/svard-entreprenad-contact.svg"],
     ]);
 
     expect(new Set(siteContent.routes.map((route) => route.heroPhotoAssetPath)).size).toBe(12);

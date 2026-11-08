@@ -515,14 +515,14 @@ describe("SiteHomePage", () => {
       ["drainage-quote", "/page-visuals/draneringsberakning-hero.webp"],
       ["home", "/page-visuals/hero-photo.webp"],
       ["services", "/page-visuals/services-hero.webp"],
-      ["about", "/page-visuals/about-hero.webp"],
+      ["about", "/page-visuals/svard-entreprenad-about.svg"],
       ["inhyrning", "/page-visuals/inhyrning-hero.svg"],
       ["stensattning", "/page-visuals/stensattning-photo.webp"],
       ["markarbete", "/page-visuals/markarbete-photo.webp"],
       ["gravjobb", "/page-visuals/gravjobb-photo.webp"],
       ["dranering", "/page-visuals/dranering-photo.webp"],
       ["tradgard", "/page-visuals/tradgard-generated.webp"],
-      ["contact", "/page-visuals/contact-hero.webp"],
+      ["contact", "/page-visuals/svard-entreprenad-contact.svg"],
     ]);
 
     expect(content.routes).toHaveLength(12);
@@ -568,7 +568,7 @@ describe("SiteHomePage", () => {
 
     rerender(<SiteHomePage currentPath="/om-oss/" content={content} />);
 
-    const pageHero = heroImage("/page-visuals/about-hero.webp");
+    const pageHero = heroImage("/page-visuals/svard-entreprenad-about.svg");
     expect(pageHero).toHaveAttribute("fetchpriority", "high");
     expect(pageHero).toHaveAttribute("alt", "");
     expect(pageHero).toHaveAttribute("aria-hidden", "true");
