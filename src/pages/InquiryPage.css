@@ -16,7 +16,7 @@
 .inquiry-field{display:grid;gap:8px;font-size:14px;font-weight:600;margin-bottom:22px;min-width:0}
 .inquiry-field label{display:block}
 .inquiry-field small{font-weight:400;color:#526071}
-.inquiry-field input,.inquiry-field textarea{width:100%;min-width:0;border:1px solid #b5bfcc;border-radius:6px;background:#fff;padding:12px;font:400 16px/1.5 var(--font-sans);color:#253247}
+.inquiry-field input,.inquiry-field textarea{width:100%;min-width:0;border:1px solid #64748b;border-radius:6px;background:#fff;padding:12px;font:400 16px/1.5 var(--font-sans);color:#253247}
 .inquiry-field textarea{resize:vertical}
 .inquiry-field .inquiry-invalid{border-color:hsl(var(--destructive));border-width:2px;padding:11px}
 .inquiry-field input:focus-visible,.inquiry-field textarea:focus-visible,.inquiry-layout :is(button,a):focus-visible{outline:3px solid #bc4a12;outline-offset:3px}
