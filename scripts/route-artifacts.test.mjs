@@ -3,6 +3,7 @@ import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
 
 import { siteContent } from "../src/data/siteContent.ts";
+import indexTemplate from "../index.html?raw";
 import {
   applyRouteDocumentMetadata,
   assertRouteVisualAssets,
@@ -52,7 +53,9 @@ const responsiveServicesRoute = {
 const rootTitle = "Svärd Entreprenad – Mark & anläggning i Örebro";
 const rootDescription = "Svärd Entreprenad utför professionella mark- och anläggningsarbeten i Örebro.";
 const homeHeroPreloadLink =
-  '<link rel="preload" as="image" href="/page-visuals/hero-photo.webp" fetchpriority="high">';
+  '<link rel="preload" as="image" href="/page-visuals/hero-photo.webp" ' +
+  'imagesrcset="/page-visuals/hero-photo-640.webp 640w, /page-visuals/hero-photo-960.webp 960w, /page-visuals/hero-photo.webp 1600w" ' +
+  'imagesizes="100vw" fetchpriority="high">';
 const rootHtml =
   '<!doctype html><html lang="sv"><head><title>' +
   rootTitle +
@@ -1186,29 +1189,76 @@ describe("siteContent route registry", () => {
     expect(routeHeroPreloadHref(siteContent.routes.find((route) => route.id === "home"))).toBe("/page-visuals/hero-photo.webp");
   });
 
-  it("declares responsive variants on the services route only and keeps heroPhotoAssetPath the declared base", () => {
-    const servicesRouteRegistry = siteContent.routes.find((route) => route.id === "services");
+  it("declares responsive variants on the seven migrated hero routes plus services and keeps heroPhotoAssetPath the declared base", () => {
+    const expectedSrcSetsByRoute = new Map([
+      ["quote", "/page-visuals/quote-hero-640.webp 640w, /page-visuals/quote-hero-960.webp 960w, /page-visuals/quote-hero.webp 1672w"],
+      ["home", "/page-visuals/hero-photo-640.webp 640w, /page-visuals/hero-photo-960.webp 960w, /page-visuals/hero-photo.webp 1600w"],
+      ["services", "/page-visuals/services-hero-640.webp 640w, /page-visuals/services-hero-960.webp 960w, /page-visuals/services-hero.webp 1672w"],
+      ["stensattning", "/page-visuals/stensattning-photo-400.webp 400w, /page-visuals/stensattning-photo-640.webp 640w, /page-visuals/stensattning-photo.webp 900w"],
+      ["markarbete", "/page-visuals/markarbete-photo-400.webp 400w, /page-visuals/markarbete-photo-640.webp 640w, /page-visuals/markarbete-photo.webp 900w"],
+      ["gravjobb", "/page-visuals/gravjobb-photo-400.webp 400w, /page-visuals/gravjobb-photo-640.webp 640w, /page-visuals/gravjobb-photo.webp 900w"],
+      ["dranering", "/page-visuals/dranering-photo-400.webp 400w, /page-visuals/dranering-photo-640.webp 640w, /page-visuals/dranering-photo.webp 900w"],
+      ["tradgard", "/page-visuals/tradgard-generated-640.webp 640w, /page-visuals/tradgard-generated-960.webp 960w, /page-visuals/tradgard-generated.webp 1568w"],
+    ]);
 
-    expect(servicesRouteRegistry.heroPhotoAssetPath).toBe("/page-visuals/services-hero.webp");
-    expect(servicesRouteRegistry.heroPhotoSrcSet).toBe(
-      "/page-visuals/services-hero-640.webp 640w, /page-visuals/services-hero-960.webp 960w, /page-visuals/services-hero.webp 1672w",
-    );
-    expect(servicesRouteRegistry.heroPhotoSizes).toBe("100vw");
+    expect(expectedSrcSetsByRoute.size).toBe(8);
 
-    for (const route of siteContent.routes.filter((route) => route.id !== "services")) {
-      expect(route.heroPhotoSrcSet).toBeUndefined();
-      expect(route.heroPhotoSizes).toBeUndefined();
+    for (const route of siteContent.routes) {
+      const expectedSrcSet = expectedSrcSetsByRoute.get(route.id);
+
+      if (expectedSrcSet === undefined) {
+        expect(routeHeroPreloadImageSrcSet(route)).toBeUndefined();
+        expect(routeHeroPreloadImageSizes(route)).toBeUndefined();
+      } else {
+        expect(routeHeroPreloadImageSrcSet(route)).toBe(expectedSrcSet);
+        expect(routeHeroPreloadImageSizes(route)).toBe("100vw");
+        expect(routeHeroPreloadLinkTag(route)).toBe(
+          `<link rel="preload" as="image" href="${route.heroPhotoAssetPath}" ` +
+            `imagesrcset="${expectedSrcSet}" ` +
+            'imagesizes="100vw" fetchpriority="high" />',
+        );
+      }
     }
 
-    expect(routeHeroPreloadLinkTag(servicesRouteRegistry)).toBe(
-      '<link rel="preload" as="image" href="/page-visuals/services-hero.webp" ' +
-        'imagesrcset="/page-visuals/services-hero-640.webp 640w, /page-visuals/services-hero-960.webp 960w, /page-visuals/services-hero.webp 1672w" ' +
-        'imagesizes="100vw" fetchpriority="high" />',
+    const drainageQuoteRoute = siteContent.routes.find((route) => route.id === "drainage-quote");
+
+    expect(routeHeroPreloadLinkTag(drainageQuoteRoute)).toBe(
+      '<link rel="preload" as="image" href="/page-visuals/draneringsberakning-hero.webp" fetchpriority="high" />',
     );
+
     expect(routeHeroSrcSetCandidatePaths(siteContent.routes)).toEqual([
+      "/page-visuals/quote-hero-640.webp",
+      "/page-visuals/quote-hero-960.webp",
+      "/page-visuals/quote-hero.webp",
+      "/page-visuals/hero-photo-640.webp",
+      "/page-visuals/hero-photo-960.webp",
+      "/page-visuals/hero-photo.webp",
       "/page-visuals/services-hero-640.webp",
       "/page-visuals/services-hero-960.webp",
       "/page-visuals/services-hero.webp",
+      "/page-visuals/stensattning-photo-400.webp",
+      "/page-visuals/stensattning-photo-640.webp",
+      "/page-visuals/stensattning-photo.webp",
+      "/page-visuals/markarbete-photo-400.webp",
+      "/page-visuals/markarbete-photo-640.webp",
+      "/page-visuals/markarbete-photo.webp",
+      "/page-visuals/gravjobb-photo-400.webp",
+      "/page-visuals/gravjobb-photo-640.webp",
+      "/page-visuals/gravjobb-photo.webp",
+      "/page-visuals/dranering-photo-400.webp",
+      "/page-visuals/dranering-photo-640.webp",
+      "/page-visuals/dranering-photo.webp",
+      "/page-visuals/tradgard-generated-640.webp",
+      "/page-visuals/tradgard-generated-960.webp",
+      "/page-visuals/tradgard-generated.webp",
+    ]);
+  });
+
+  it("emits the home document's hero preload from the same registry declaration as the rendered home hero", () => {
+    const registryHomeRoute = siteContent.routes.find((route) => route.id === "home");
+
+    expect(indexTemplate.match(/<link rel="preload" as="image"[^>]*>/g)).toEqual([
+      routeHeroPreloadLinkTag(registryHomeRoute),
     ]);
   });
 

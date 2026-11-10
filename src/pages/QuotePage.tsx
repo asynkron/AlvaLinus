@@ -21,6 +21,7 @@ function selectedKind(): "choice" | "uppfart" {
 export function QuotePage({ content = siteContent }: { readonly content?: SiteContent }) {
   const shared = content.quote.shared;
   const text = content.quote.uppfart;
+  const quoteRoute = content.routes.find((route) => route.href === quotePath);
   const [kind, setKind] = useState(selectedKind);
   const [values, setValues] = useState<Values>(defaults);
   const [includeAsphalt, setIncludeAsphalt] = useState(true);
@@ -47,7 +48,7 @@ export function QuotePage({ content = siteContent }: { readonly content?: SiteCo
   function quantity(key: keyof Values, label: string, unit: string, min: string, step: string) {
     return <label className="quote-field"><span>{label}</span><span className="quote-input"><input type="number" min={min} max={maximumQuantity} step={step} value={values[key]} onChange={event => setValues({ ...values, [key]: event.target.value })} aria-invalid={!valid} aria-describedby="quote-quantity-help" /><span>{unit}</span></span></label>;
   }
-  return <QuotePageShell homeLabel={content.chrome.breadcrumb.homeLabel} formAriaLabel={shared.formAriaLabel} hero={{ src: "/page-visuals/quote-hero.webp", srcSet: "/page-visuals/quote-hero-640.webp 640w, /page-visuals/quote-hero-960.webp 960w, /page-visuals/quote-hero.webp 1672w", sizes: "100vw" }} breadcrumbLabel={text.breadcrumbLabel} heading={text.heading} intro={text.intro} resultAside={<QuoteResultAside shared={shared} error={text.error} valid={valid} total={money(total)} email={email} hidden={kind !== "uppfart"} />}>
+  return <QuotePageShell homeLabel={content.chrome.breadcrumb.homeLabel} formAriaLabel={shared.formAriaLabel} hero={{ src: "/page-visuals/quote-hero.webp", srcSet: quoteRoute?.heroPhotoSrcSet, sizes: quoteRoute?.heroPhotoSizes }} breadcrumbLabel={text.breadcrumbLabel} heading={text.heading} intro={text.intro} resultAside={<QuoteResultAside shared={shared} error={text.error} valid={valid} total={money(total)} email={email} hidden={kind !== "uppfart"} />}>
     <div className="quote-choice" hidden={kind === "uppfart"}>
       <h2>{text.choiceHeading}</h2>
       <p>{text.choiceSummary}</p>

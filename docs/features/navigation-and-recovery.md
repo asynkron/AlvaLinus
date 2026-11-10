@@ -51,11 +51,13 @@ The decorative hero images on home and subpages are requested at high
 fetch priority without a lazy-loading attribute, so above-the-fold rendering is
 not deferred behind below-the-fold imagery; service-card images stay lazy.
 Home, services and calculator heroes are photographs, while the staffing, about
-and contact heroes are in-tree SVG illustrations. The
-Tjänster index hero additionally declares registry-owned 640w/960w/1672w WebP
-variants, so its rendered img srcset and the stamped preload link's
-imagesrcset/imagesizes describe the same candidates and a narrow viewport
-fetches one right-sized hero instead of the full-size base.
+and contact heroes are in-tree SVG illustrations. The home, Tjänster index,
+four service-photo, garden-planning and rental-calculation heroes declare
+registry-owned responsive WebP variants, so each rendered img srcset and that
+route document's stamped preload link's imagesrcset/imagesizes describe the
+same candidates and a narrow viewport fetches one right-sized hero instead of
+the full-size base. The drainage-calculation hero has no variant family and
+keeps its plain preload, which already describes its only candidate.
 
 [F4-US1](user-stories/F4/F4-US1.md) covers navigation from the home hero's two
 actions, route shortcuts and shared chrome. The inventory's six shortcuts

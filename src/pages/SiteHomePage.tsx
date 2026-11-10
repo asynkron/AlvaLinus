@@ -411,7 +411,12 @@ function RoutedPage({
 
   return (
     <>
-      <Hero content={content} imageSrc={route.heroPhotoAssetPath} />
+      <Hero
+        content={content}
+        imageSrc={route.heroPhotoAssetPath}
+        imageSrcSet={route.heroPhotoSrcSet}
+        imageSizes={route.heroPhotoSizes}
+      />
       <Inventory content={content} />
       <Services content={content} />
       <Process content={content} />
@@ -422,13 +427,23 @@ function RoutedPage({
   );
 }
 
-function Hero({ content, imageSrc }: { readonly content: SiteContent; readonly imageSrc: string }) {
+function Hero({
+  content,
+  imageSrc,
+  imageSrcSet,
+  imageSizes,
+}: {
+  readonly content: SiteContent;
+  readonly imageSrc: string;
+  readonly imageSrcSet?: string;
+  readonly imageSizes?: string;
+}) {
   return (
     <section className="relative isolate overflow-hidden bg-foreground text-background">
       <img
         src={imageSrc}
-        srcSet={responsiveImageSrcSet(imageSrc)}
-        sizes="100vw"
+        srcSet={imageSrcSet}
+        sizes={imageSizes}
         width={1600}
         height={905}
         alt=""
