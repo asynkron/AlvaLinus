@@ -1,6 +1,6 @@
 # Feature catalog
 
-Reviewed against source: 2026-11-07.
+Reviewed against source: 2026-11-10.
 
 The catalog introduced in `f7b481f` already covers the current route inventory.
 The maintained catalog retains its published identities, including F4-US3 for
@@ -12,6 +12,12 @@ the two interactive quote calculators, which previously appeared only as
 navigation targets under F4-US1. After the 2026-11-06 13:43 review, `fk140`
 (calculator pages) and `fk144` (home chrome) moved Swedish page text into the
 typed registry without changing any route, section, job or published identity.
+`fk135` then consolidated the quote pages' shared structure into the
+[QuotePageShared](../../src/components/QuotePageShared.tsx) shell, and the
+2026-11-08 `fk162` reconciliation named that shell and the registry-owned quote
+copy in the F6 records. `fk164` re-pointed the about and contact heroes to
+in-tree SVGs; this 2026-11-10 review re-verified the F2/F4/F6 records against
+that base and corrected the remaining hero wording.
 
 This catalog maps the static Swedish Svärd Entreprenad site to visitor outcomes.
 It is product-development input, not a claim that construction work, email delivery

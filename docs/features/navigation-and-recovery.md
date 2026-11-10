@@ -1,6 +1,6 @@
 # F4: Home, navigation and route recovery
 
-Reviewed: 2026-11-08. Runtime: `ui`. Product role: `surface`.
+Reviewed: 2026-11-10. Runtime: `ui`. Product role: `surface`.
 Supports **F1, F2, F3, F5 and F6**, all active customer-outcome features.
 
 Home and shared route handling make the service, company and inquiry outcomes
@@ -47,9 +47,11 @@ The registry order is the link order; the renderer only groups the five service
 detail routes under the Tjänster entry and the two quote routes under the
 Kalkyler disclosure, while the footer keeps the full page list.
 
-The decorative hero photographs on home and subpages are requested at high
+The decorative hero images on home and subpages are requested at high
 fetch priority without a lazy-loading attribute, so above-the-fold rendering is
-not deferred behind below-the-fold imagery; service-card images stay lazy. The
+not deferred behind below-the-fold imagery; service-card images stay lazy.
+Home, services and calculator heroes are photographs, while the staffing, about
+and contact heroes are in-tree SVG illustrations. The
 Tjänster index hero additionally declares registry-owned 640w/960w/1672w WebP
 variants, so its rendered img srcset and the stamped preload link's
 imagesrcset/imagesizes describe the same candidates and a narrow viewport
