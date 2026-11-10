@@ -1,6 +1,6 @@
 # F5: Prepare a company staffing inquiry
 
-Reviewed: 2026-11-07. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-10. Runtime: `ui`. Product role: `customer_outcome`.
 
 Companies that need hired help can prepare a staffing inquiry addressed to the
 company. The website cannot establish that an email was sent, delivered or
@@ -55,9 +55,24 @@ the page's single submission channel.
 ## Source, states and evidence
 
 [Typed routes/content](../../src/data/siteContent.ts) owns the route, its
-summary and the shared recipient address. [The inquiry page](../../src/pages/InquiryPage.tsx)
-owns the field specs, validation, mailto composition and confirmation, and
-receives the draft opener for tests; [SiteHomePage](../../src/pages/SiteHomePage.tsx)
+summary and the shared recipient address. Since fk154 its typed registry
+declaration `inquiry` (the `SiteInquiry` shape in
+[site types](../../src/types/site.ts)) declares the page's Swedish copy: the
+breadcrumb label, heading and intro, the form heading, note and aria label,
+the error summary and submit label, the per-field Swedish labels, placeholders
+and the rate's VAT hint with the optional mark, every validation message, the
+mail subject, the body template with `{placeholder}` substitution and the
+empty-value dash, the `{recipient}` mail-help and confirmation templates, the
+reopen prompt and link label, and the aside copy.
+[The inquiry page](../../src/pages/InquiryPage.tsx) keeps the runtime
+ownership: the input attribute specs in `inquiryFields` (optional flags, input
+types, autocomplete tokens, `inputMode`, `min`/`step` and textarea rows), the
+field order and email pattern, `validateInquiry` execution,
+`inquiryMailtoHref` composition using the shared recipient from
+`contact.form.recipientEmail`, rendering with `aria-invalid` and
+`aria-describedby` wiring, the alert summary and focus management, and the
+status confirmation with the reopen fallback, and receives the draft opener
+for tests; [SiteHomePage](../../src/pages/SiteHomePage.tsx)
 routes `/inhyrning/` to the lazily loaded page inside the shared landmarks.
 [ADR 0006](../adrs/0006-static-email-contact-handoff.md) remains the accepted
 runtime boundary: no server, third-party form endpoint, database, secrets,

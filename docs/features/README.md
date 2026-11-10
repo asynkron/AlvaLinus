@@ -17,7 +17,11 @@ typed registry without changing any route, section, job or published identity.
 2026-11-08 `fk162` reconciliation named that shell and the registry-owned quote
 copy in the F6 records. `fk164` re-pointed the about and contact heroes to
 in-tree SVGs; this 2026-11-10 review re-verified the F2/F4/F6 records against
-that base and corrected the remaining hero wording.
+that base and corrected the remaining hero wording. The 2026-11-10 `fk176`
+reconciliation then re-stamped the F5 staffing-inquiry records from a fresh
+source read, naming the registry-declared Swedish inquiry copy in
+`content.inquiry` (`fk154`) beside the inquiry page's remaining runtime
+ownership.
 
 This catalog maps the static Swedish Svärd Entreprenad site to visitor outcomes.
 It is product-development input, not a claim that construction work, email delivery
