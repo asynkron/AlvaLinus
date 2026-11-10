@@ -532,20 +532,29 @@ describe("SiteHomePage", () => {
       expect(route.heroPhotoAssetPath).toBe(expectedHeroPhotosByRoute.get(route.id));
     }
 
-    const servicesRoute = content.routes.find((route) => route.id === "services");
+    const declaredHeroSrcSetsByRoute = new Map([
+      ["quote", "/page-visuals/quote-hero-640.webp 640w, /page-visuals/quote-hero-960.webp 960w, /page-visuals/quote-hero.webp 1672w"],
+      ["home", "/page-visuals/hero-photo-640.webp 640w, /page-visuals/hero-photo-960.webp 960w, /page-visuals/hero-photo.webp 1600w"],
+      ["services", "/page-visuals/services-hero-640.webp 640w, /page-visuals/services-hero-960.webp 960w, /page-visuals/services-hero.webp 1672w"],
+      ["stensattning", "/page-visuals/stensattning-photo-400.webp 400w, /page-visuals/stensattning-photo-640.webp 640w, /page-visuals/stensattning-photo.webp 900w"],
+      ["markarbete", "/page-visuals/markarbete-photo-400.webp 400w, /page-visuals/markarbete-photo-640.webp 640w, /page-visuals/markarbete-photo.webp 900w"],
+      ["gravjobb", "/page-visuals/gravjobb-photo-400.webp 400w, /page-visuals/gravjobb-photo-640.webp 640w, /page-visuals/gravjobb-photo.webp 900w"],
+      ["dranering", "/page-visuals/dranering-photo-400.webp 400w, /page-visuals/dranering-photo-640.webp 640w, /page-visuals/dranering-photo.webp 900w"],
+      ["tradgard", "/page-visuals/tradgard-generated-640.webp 640w, /page-visuals/tradgard-generated-960.webp 960w, /page-visuals/tradgard-generated.webp 1568w"],
+    ]);
 
-    if (!servicesRoute) {
-      throw new Error("Missing registry route services");
-    }
+    expect(declaredHeroSrcSetsByRoute.size).toBe(8);
 
-    expect(servicesRoute.heroPhotoSrcSet).toBe(
-      "/page-visuals/services-hero-640.webp 640w, /page-visuals/services-hero-960.webp 960w, /page-visuals/services-hero.webp 1672w",
-    );
-    expect(servicesRoute.heroPhotoSizes).toBe("100vw");
+    for (const route of content.routes) {
+      const declaredSrcSet = declaredHeroSrcSetsByRoute.get(route.id);
 
-    for (const route of content.routes.filter((route) => route.id !== "services")) {
-      expect(route.heroPhotoSrcSet).toBeUndefined();
-      expect(route.heroPhotoSizes).toBeUndefined();
+      if (declaredSrcSet === undefined) {
+        expect(route.heroPhotoSrcSet).toBeUndefined();
+        expect(route.heroPhotoSizes).toBeUndefined();
+      } else {
+        expect(route.heroPhotoSrcSet).toBe(declaredSrcSet);
+        expect(route.heroPhotoSizes).toBe("100vw");
+      }
     }
   });
 
@@ -561,6 +570,7 @@ describe("SiteHomePage", () => {
       "srcset",
       "/page-visuals/hero-photo-640.webp 640w, /page-visuals/hero-photo-960.webp 960w, /page-visuals/hero-photo.webp 1600w",
     );
+    expect(homeHero).toHaveAttribute("sizes", "100vw");
 
     const serviceImage = within(serviceCard("stensattning")).getByRole("img");
     expect(serviceImage).toHaveAttribute("loading", "lazy");
@@ -583,6 +593,23 @@ describe("SiteHomePage", () => {
     expect(serviceHero).toHaveAttribute("fetchpriority", "high");
     expect(serviceHero).toHaveAttribute("alt", "");
     expect(serviceHero).toHaveAttribute("aria-hidden", "true");
+    expect(serviceHero).toHaveAttribute(
+      "srcset",
+      "/page-visuals/stensattning-photo-400.webp 400w, /page-visuals/stensattning-photo-640.webp 640w, /page-visuals/stensattning-photo.webp 900w",
+    );
+    expect(serviceHero).toHaveAttribute("sizes", "100vw");
+
+    rerender(<SiteHomePage currentPath="/tradgardsplanering/" content={content} />);
+
+    const tradgardHero = heroImage("/page-visuals/tradgard-generated.webp");
+    expect(tradgardHero).toHaveAttribute("fetchpriority", "high");
+    expect(tradgardHero).toHaveAttribute("alt", "");
+    expect(tradgardHero).toHaveAttribute("aria-hidden", "true");
+    expect(tradgardHero).toHaveAttribute(
+      "srcset",
+      "/page-visuals/tradgard-generated-640.webp 640w, /page-visuals/tradgard-generated-960.webp 960w, /page-visuals/tradgard-generated.webp 1568w",
+    );
+    expect(tradgardHero).toHaveAttribute("sizes", "100vw");
 
     rerender(<SiteHomePage currentPath="/tjanster/" content={content} />);
 

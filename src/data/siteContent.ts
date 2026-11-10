@@ -23,6 +23,9 @@ export const siteContent = {
     {
       id: "quote", kind: "quote", label: "Offertberäkning", href: "/offertberakning/",
       heroPhotoAssetPath: "/page-visuals/quote-hero.webp",
+      heroPhotoSrcSet:
+        "/page-visuals/quote-hero-640.webp 640w, /page-visuals/quote-hero-960.webp 960w, /page-visuals/quote-hero.webp 1672w",
+      heroPhotoSizes: "100vw",
       summary: "Välj kalkyl för husdränering eller uppfart och få en preliminär totalsumma att prata vidare om.",
       visual: { assetPath: "/page-visuals/svard-entreprenad-quote.svg", alt: "Måttsatt uppfart", intent: "Visar ytan som ligger till grund för kalkylen." },
     },
@@ -43,6 +46,9 @@ export const siteContent = {
       href: "/",
       summary: "Startsida med översikt över tjänster, arbetsprocess och offertkontakt.",
       heroPhotoAssetPath: "/page-visuals/hero-photo.webp",
+      heroPhotoSrcSet:
+        "/page-visuals/hero-photo-640.webp 640w, /page-visuals/hero-photo-960.webp 960w, /page-visuals/hero-photo.webp 1600w",
+      heroPhotoSizes: "100vw",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-home.svg",
         alt: "Entreprenadmaskin vid färdigplanerad tomt för Svärd Entreprenads startsida",
@@ -100,6 +106,9 @@ export const siteContent = {
       href: "/stensattning/",
       summary: "Egen tjänstesida för stensättning, marksten och stenmurar.",
       heroPhotoAssetPath: "/page-visuals/stensattning-photo.webp",
+      heroPhotoSrcSet:
+        "/page-visuals/stensattning-photo-400.webp 400w, /page-visuals/stensattning-photo-640.webp 640w, /page-visuals/stensattning-photo.webp 900w",
+      heroPhotoSizes: "100vw",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-stensattning.svg",
         alt: "Stenmur längs en trädgård under anläggningsarbete",
@@ -114,6 +123,9 @@ export const siteContent = {
       href: "/markarbete/",
       summary: "Egen tjänstesida för mark och anläggning.",
       heroPhotoAssetPath: "/page-visuals/markarbete-photo.webp",
+      heroPhotoSrcSet:
+        "/page-visuals/markarbete-photo-400.webp 400w, /page-visuals/markarbete-photo-640.webp 640w, /page-visuals/markarbete-photo.webp 900w",
+      heroPhotoSizes: "100vw",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-markarbete.svg",
         alt: "Planerad jordyta och stenlagd gång vid markarbete",
@@ -128,6 +140,9 @@ export const siteContent = {
       href: "/gravjobb/",
       summary: "Egen tjänstesida för maskin- och grävarbeten, inklusive poolgrävning.",
       heroPhotoAssetPath: "/page-visuals/gravjobb-photo.webp",
+      heroPhotoSrcSet:
+        "/page-visuals/gravjobb-photo-400.webp 400w, /page-visuals/gravjobb-photo-640.webp 640w, /page-visuals/gravjobb-photo.webp 900w",
+      heroPhotoSizes: "100vw",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-gravjobb.svg",
         alt: "Grävmaskin vid pågående markarbete intill en byggnad",
@@ -143,6 +158,9 @@ export const siteContent = {
       summary:
         "Toppsida för dränering med fuktsäkra markarbeten, schakt, återfyllnad och trygg hantering runt husgrund och mur.",
       heroPhotoAssetPath: "/page-visuals/dranering-photo.webp",
+      heroPhotoSrcSet:
+        "/page-visuals/dranering-photo-400.webp 400w, /page-visuals/dranering-photo-640.webp 640w, /page-visuals/dranering-photo.webp 900w",
+      heroPhotoSizes: "100vw",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-dranering.svg",
         alt: "Dräneringsschakt intill husgrund med rör och återfyllnad",
@@ -157,6 +175,9 @@ export const siteContent = {
       href: "/tradgardsplanering/",
       summary: "Egen tjänstesida för tomt- och trädgårdsplanering.",
       heroPhotoAssetPath: "/page-visuals/tradgard-generated.webp",
+      heroPhotoSrcSet:
+        "/page-visuals/tradgard-generated-640.webp 640w, /page-visuals/tradgard-generated-960.webp 960w, /page-visuals/tradgard-generated.webp 1568w",
+      heroPhotoSizes: "100vw",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-tradgardsplanering.svg",
         alt: "Planerad trädgård med nivåer, gångar och färdiga utemiljöer",
