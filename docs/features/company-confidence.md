@@ -1,6 +1,6 @@
 # F2: Assess the company and working approach
 
-Reviewed: 2026-11-07. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-10. Runtime: `ui`. Product role: `customer_outcome`.
 
 Prospective customers need to understand the stated approach and decide whether
 to discuss a project. This feature presents information; it does not certify
@@ -8,7 +8,8 @@ the business or track construction progress.
 
 ## Entry points and current behavior
 
-`/om-oss/` has a decorative photo hero, breadcrumb, paragraphs on experience,
+`/om-oss/` has a decorative hero image (an in-tree SVG illustration since
+`fk164`), breadcrumb, paragraphs on experience,
 equipment, communication and responsibility, a contact link band and footer.
 [F2-US1](user-stories/F2/F2-US1.md) covers reading that approach.
 
