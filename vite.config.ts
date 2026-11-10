@@ -78,7 +78,7 @@ export default defineConfig({
     globals: true,
     setupFiles: ["./src/test/setup.ts"],
     css: {
-      include: [/styles\.css\?raw/],
+      include: [/\.css\?raw$/],
     },
     coverage: {
       provider: "v8",
