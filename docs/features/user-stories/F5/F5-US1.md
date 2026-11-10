@@ -2,7 +2,7 @@
 
 Feature: [F5 — Prepare a company staffing inquiry](../../staffing-inquiry.md)  
 Status: current  
-Reviewed: 2026-11-04
+Reviewed: 2026-11-10
 
 As a company representative, I want to enter company details, needed help, offered hourly rate, duration and a description in the staffing inquiry form so the company receives a useful basis to reply.
 

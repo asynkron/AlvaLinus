@@ -109,11 +109,11 @@
       "code_paths": [
         {
           "path": "src/data/siteContent.ts",
-          "description": "Typed route registry entry, summary and shared recipient address."
+          "description": "Typed route registry entry, summary and shared recipient address, and the registry-declared Swedish inquiry copy in inquiry: field labels, placeholders and the rate VAT hint, validation messages, the mail subject and body template with {placeholder} substitution, and the mail-help, confirmation and aside copy."
         },
         {
           "path": "src/pages/InquiryPage.tsx",
-          "description": "Staffing inquiry form: field specs, Swedish validation, mailto draft composition and confirmation."
+          "description": "Staffing inquiry form rendering the declared fields: input attribute specs, validation execution, mailto draft composition and the self-send confirmation."
         },
         {
           "path": "src/pages/SiteHomePage.tsx",
@@ -124,7 +124,7 @@
           "description": "Static content and route contracts, including the inquiry route kind."
         }
       ],
-      "reviewed_against_source": "2026-11-07",
+      "reviewed_against_source": "2026-11-10",
       "slice_refs": [],
       "entry_point_refs": []
     },

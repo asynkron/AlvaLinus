@@ -2,7 +2,7 @@
 
 Feature: [F5 — Prepare a company staffing inquiry](../../staffing-inquiry.md)  
 Status: current  
-Reviewed: 2026-11-04
+Reviewed: 2026-11-10
 
 As a company representative, I want the staffing inquiry handed to my own email program as a draft addressed to the company, so I can review and send it myself.
 
