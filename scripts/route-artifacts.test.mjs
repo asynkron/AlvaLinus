@@ -18,6 +18,7 @@ import {
   routeHeroPreloadLinkTag,
   routeHeroSrcSetCandidatePaths,
   routePageMetadata,
+  routeSocialCardImagePaths,
   routeVisualAssetPaths,
   staticSubpagePaths,
   staticSubpageRoutes,
@@ -41,6 +42,12 @@ const servicesRoute = fixtureRoute("services", "/tjanster/", "/page-visuals/svar
 const contactRoute = fixtureRoute("contact", "/kontakt/", "/page-visuals/svard-entreprenad-contact.svg");
 const addedRoute = fixtureRoute("nyheter", "/nyheter/", "/page-visuals/svard-entreprenad-nyheter.svg");
 const fixtureRoutes = [homeRoute, servicesRoute, contactRoute];
+const svgHeroRoute = fixtureRoute(
+  "svghero",
+  "/svghero/",
+  "/page-visuals/svard-entreprenad-svghero.svg",
+  "/page-visuals/inhyrning-hero.svg",
+);
 
 const responsiveServicesSrcSet =
   "/page-visuals/services-hero-640.webp 640w, /page-visuals/services-hero-960.webp 960w, /page-visuals/services-hero.webp 1672w";
@@ -172,12 +179,15 @@ function distEntries(routes, { omit = [], mismatched = [], notFound = "emitted" 
 }
 
 function publicEntries(routes) {
-  return Object.fromEntries(
-    routes.flatMap((route) => [
-      [publicAssetPath("public", route.visual.assetPath), "<svg></svg>"],
-      [publicAssetPath("public", route.heroPhotoAssetPath), "<hero></hero>"],
-    ]),
-  );
+  return {
+    [publicAssetPath("public", "/page-visuals/hero-photo.webp")]: "<home-hero></home-hero>",
+    ...Object.fromEntries(
+      routes.flatMap((route) => [
+        [publicAssetPath("public", route.visual.assetPath), "<svg></svg>"],
+        [publicAssetPath("public", route.heroPhotoAssetPath), "<hero></hero>"],
+      ]),
+    ),
+  };
 }
 
 describe("requireRouteRegistry", () => {
@@ -421,6 +431,71 @@ describe("assertStaticRouteArtifacts", () => {
         readFile: memoryFileSystem(entries).readFile,
       }),
     ).rejects.toThrow("Static route artifact check failed (mismatched: /kontakt/).");
+  });
+
+  it("rejects a subpage artifact whose og:image still carries the home hero photo", async () => {
+    const entries = distEntries(fixtureRoutes);
+    entries[subpageArtifactPath("dist", "/tjanster/")] = emittedSubpageHtml(servicesRoute).replace(
+      '<meta property="og:image" content="/page-visuals/services-hero.webp">',
+      '<meta property="og:image" content="/page-visuals/hero-photo.webp">',
+    );
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: fixtureRoutes,
+        distDir: "dist",
+        readFile: memoryFileSystem(entries).readFile,
+      }),
+    ).rejects.toThrow("Static route artifact check failed (mismatched: /tjanster/).");
+  });
+
+  it("rejects a subpage artifact whose twitter:image diverges from the route's declared hero photo", async () => {
+    const entries = distEntries(fixtureRoutes);
+    entries[subpageArtifactPath("dist", "/kontakt/")] = emittedSubpageHtml(contactRoute).replace(
+      '<meta name="twitter:image" content="/page-visuals/contact-hero.webp">',
+      '<meta name="twitter:image" content="/page-visuals/services-hero.webp">',
+    );
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: fixtureRoutes,
+        distDir: "dist",
+        readFile: memoryFileSystem(entries).readFile,
+      }),
+    ).rejects.toThrow("Static route artifact check failed (mismatched: /kontakt/).");
+  });
+
+  it("rejects a subpage artifact whose og:image:alt still carries the home hero text", async () => {
+    const entries = distEntries(fixtureRoutes);
+    entries[subpageArtifactPath("dist", "/tjanster/")] = emittedSubpageHtml(servicesRoute).replace(
+      '<meta property="og:image:alt" content="services alt">',
+      '<meta property="og:image:alt" content="Grävmaskin på en mark- och anläggningsplats i solnedgång">',
+    );
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: fixtureRoutes,
+        distDir: "dist",
+        readFile: memoryFileSystem(entries).readFile,
+      }),
+    ).rejects.toThrow("Static route artifact check failed (mismatched: /tjanster/).");
+  });
+
+  it("requires the shared home hero social image for a route with a declared SVG hero", async () => {
+    const routes = [homeRoute, svgHeroRoute];
+    const entries = distEntries(routes);
+    const emitted = await assertStaticRouteArtifacts({ routes, distDir: "dist", readFile: memoryFileSystem(entries).readFile });
+
+    expect(emitted).toEqual(["/svghero/"]);
+    expect(entries[subpageArtifactPath("dist", "/svghero/")]).toContain(
+      '<meta property="og:image" content="/page-visuals/hero-photo.webp">',
+    );
+    expect(entries[subpageArtifactPath("dist", "/svghero/")]).toContain(
+      '<meta name="twitter:image" content="/page-visuals/hero-photo.webp">',
+    );
+    expect(entries[subpageArtifactPath("dist", "/svghero/")]).toContain(
+      '<meta property="og:image:alt" content="svghero – Svärd Entreprenad">',
+    );
   });
 
   it("fails when an artifact carries the expected title but a stale description", async () => {
@@ -707,6 +782,15 @@ describe("routePageMetadata", () => {
     expect(routePageMetadata(servicesRoute)).toEqual({
       title: "services – Svärd Entreprenad",
       description: "services summary",
+      socialImage: { assetPath: "/page-visuals/services-hero.webp", alt: "services alt" },
+    });
+  });
+
+  it("falls back to the shared raster home hero for a route with a declared SVG hero", () => {
+    expect(routePageMetadata(svgHeroRoute)).toEqual({
+      title: "svghero – Svärd Entreprenad",
+      description: "svghero summary",
+      socialImage: { assetPath: "/page-visuals/hero-photo.webp", alt: "svghero – Svärd Entreprenad" },
     });
   });
 
@@ -720,6 +804,28 @@ describe("routePageMetadata", () => {
     expect(() => routePageMetadata({ id: "broken", href: "/broken/", label: "  " })).toThrow(
       "Route broken must declare a nonempty label string for page metadata.",
     );
+  });
+
+  it("rejects a raster-hero route without a registry-declared visual alt for the social card image", () => {
+    expect(() =>
+      routePageMetadata({
+        id: "altless",
+        href: "/altless/",
+        label: "Altless",
+        summary: "altless summary",
+        heroPhotoAssetPath: "/page-visuals/altless-hero.webp",
+      }),
+    ).toThrow("Route altless must declare a nonempty visual alt string for the social card image.");
+    expect(() =>
+      routePageMetadata({
+        id: "altless",
+        href: "/altless/",
+        label: "Altless",
+        summary: "altless summary",
+        heroPhotoAssetPath: "/page-visuals/altless-hero.webp",
+        visual: { assetPath: "/page-visuals/svard-entreprenad-altless.svg", alt: "  " },
+      }),
+    ).toThrow("Route altless must declare a nonempty visual alt string for the social card image.");
   });
 });
 
@@ -738,17 +844,24 @@ describe("applyRouteDocumentMetadata", () => {
     expect(emitted).toContain('<meta property="og:type" content="website">');
     expect(emitted).toContain('<meta property="og:locale" content="sv_SE">');
     expect(emitted).toContain('<meta property="og:site_name" content="Svärd Entreprenad">');
-    expect(emitted).toContain('<meta property="og:image" content="/page-visuals/hero-photo.webp">');
+    expect(emitted).toContain('<meta property="og:image" content="/page-visuals/contact-hero.webp">');
     expect(emitted).toContain('<meta property="og:image:width" content="1600">');
     expect(emitted).toContain('<meta property="og:image:height" content="905">');
-    expect(emitted).toContain(
-      '<meta property="og:image:alt" content="Grävmaskin på en mark- och anläggningsplats i solnedgång">',
-    );
+    expect(emitted).toContain('<meta property="og:image:alt" content="contact alt">');
     expect(emitted).toContain('<meta name="twitter:card" content="summary_large_image">');
-    expect(emitted).toContain('<meta name="twitter:image" content="/page-visuals/hero-photo.webp">');
+    expect(emitted).toContain('<meta name="twitter:image" content="/page-visuals/contact-hero.webp">');
     expect(emitted).toContain(homeHeroPreloadLink);
     expect(emitted).toContain("<body>Svard Entreprenad</body>");
     expect(emitted).toMatch(/^<!doctype html>/);
+  });
+
+  it("substitutes the shared home hero photo and page-title alt for a route with a declared SVG hero", () => {
+    const emitted = applyRouteDocumentMetadata(rootHtml, routePageMetadata(svgHeroRoute));
+
+    expect(emitted).toContain('<meta property="og:image" content="/page-visuals/hero-photo.webp">');
+    expect(emitted).toContain('<meta property="og:image:alt" content="svghero – Svärd Entreprenad">');
+    expect(emitted).toContain('<meta name="twitter:image" content="/page-visuals/hero-photo.webp">');
+    expect(emitted).not.toContain("/page-visuals/inhyrning-hero.svg");
   });
 
   it("rejects a document without a title element or a description meta", () => {
@@ -784,6 +897,23 @@ describe("applyRouteDocumentMetadata", () => {
     expect(() => applyRouteDocumentMetadata(rootHtml, { title: "Titel", description: "" })).toThrow(
       "Route page metadata requires nonempty title and description strings.",
     );
+  });
+
+  it("rejects metadata whose social card image lacks a nonempty path or alt", () => {
+    expect(() =>
+      applyRouteDocumentMetadata(rootHtml, {
+        title: "Titel",
+        description: "Beskrivning",
+        socialImage: { assetPath: "", alt: "Alttext" },
+      }),
+    ).toThrow("Route page metadata requires a social card image with nonempty assetPath and alt strings.");
+    expect(() =>
+      applyRouteDocumentMetadata(rootHtml, {
+        title: "Titel",
+        description: "Beskrivning",
+        socialImage: { assetPath: "/page-visuals/services-hero.webp" },
+      }),
+    ).toThrow("Route page metadata requires a social card image with nonempty assetPath and alt strings.");
   });
 });
 
@@ -990,6 +1120,11 @@ describe("notFoundPageMetadata", () => {
       '<meta name="description" content="Sidan du sökte matchar ingen aktuell sida. Välj en av genvägarna eller kontakta oss för offert.">',
     );
     expect(emitted).not.toContain("Svärd Entreprenad – Mark & anläggning i Örebro");
+    expect(emitted).toContain('<meta property="og:image" content="/page-visuals/hero-photo.webp">');
+    expect(emitted).toContain(
+      '<meta property="og:image:alt" content="Grävmaskin på en mark- och anläggningsplats i solnedgång">',
+    );
+    expect(emitted).toContain('<meta name="twitter:image" content="/page-visuals/hero-photo.webp">');
     expect(emitted).toContain("<body>Svard Entreprenad</body>");
     expect(emitted).toMatch(/^<!doctype html>/);
   });
@@ -1008,13 +1143,14 @@ describe("assertRouteVisualAssets", () => {
         "/page-visuals/svard-entreprenad-contact.svg",
       ],
       heroAssets: ["/page-visuals/home-hero.webp", "/page-visuals/services-hero.webp", "/page-visuals/contact-hero.webp"],
+      socialCardImages: ["/page-visuals/services-hero.webp", "/page-visuals/contact-hero.webp"],
     });
 
     expect(fileSystem.access).toHaveBeenCalledWith(
       publicAssetPath("public", "/page-visuals/svard-entreprenad-contact.svg"),
     );
     expect(fileSystem.access).toHaveBeenCalledWith(publicAssetPath("public", "/page-visuals/contact-hero.webp"));
-    expect(fileSystem.access).toHaveBeenCalledTimes(6);
+    expect(fileSystem.access).toHaveBeenCalledTimes(8);
   });
 
   it("rejects a declared route hero asset that is missing under public/ with a clear message", async () => {
@@ -1023,7 +1159,10 @@ describe("assertRouteVisualAssets", () => {
 
     await expect(
       assertRouteVisualAssets({ routes: fixtureRoutes, publicDir: "public", access: memoryFileSystem(entries).access }),
-    ).rejects.toThrow("Route visual asset check failed (missing heroes: /page-visuals/contact-hero.webp).");
+    ).rejects.toThrow(
+      "Route visual asset check failed " +
+        "(missing: /page-visuals/contact-hero.webp; missing heroes: /page-visuals/contact-hero.webp).",
+    );
   });
 
   it("requires the visual of an added fixture route automatically", async () => {
@@ -1035,8 +1174,32 @@ describe("assertRouteVisualAssets", () => {
       }),
     ).rejects.toThrow(
       "Route visual asset check failed " +
-        "(missing: /page-visuals/svard-entreprenad-nyheter.svg; missing heroes: /page-visuals/nyheter-hero.webp).",
+        "(missing: /page-visuals/svard-entreprenad-nyheter.svg, /page-visuals/nyheter-hero.webp; missing heroes: /page-visuals/nyheter-hero.webp).",
     );
+  });
+
+  it("requires the shared home hero file when a route's social card image falls back to it", async () => {
+    const routes = [homeRoute, svgHeroRoute];
+    const entries = publicEntries(routes);
+    delete entries[publicAssetPath("public", "/page-visuals/hero-photo.webp")];
+
+    await expect(
+      assertRouteVisualAssets({ routes, publicDir: "public", access: memoryFileSystem(entries).access }),
+    ).rejects.toThrow("Route visual asset check failed (missing: /page-visuals/hero-photo.webp).");
+  });
+
+  it("passes when every emitted social card image exists beside the route visuals", async () => {
+    const routes = [homeRoute, svgHeroRoute];
+
+    expect(routeSocialCardImagePaths(routes)).toEqual(["/page-visuals/hero-photo.webp"]);
+
+    await expect(
+      assertRouteVisualAssets({ routes, publicDir: "public", access: memoryFileSystem(publicEntries(routes)).access }),
+    ).resolves.toEqual({
+      visualAssets: ["/page-visuals/svard-entreprenad-home.svg", "/page-visuals/svard-entreprenad-svghero.svg"],
+      heroAssets: ["/page-visuals/home-hero.webp", "/page-visuals/inhyrning-hero.svg"],
+      socialCardImages: ["/page-visuals/hero-photo.webp"],
+    });
   });
 
   it("requires every declared hero srcset candidate file to exist under public/", async () => {
@@ -1076,6 +1239,7 @@ describe("assertRouteVisualAssets", () => {
         "/page-visuals/svard-entreprenad-services.svg",
       ],
       heroAssets: ["/page-visuals/home-hero.webp", "/page-visuals/services-hero.webp"],
+      socialCardImages: ["/page-visuals/services-hero.webp"],
     });
   });
 
@@ -1091,6 +1255,7 @@ describe("assertRouteVisualAssets", () => {
         "/page-visuals/svard-entreprenad-services.svg",
       ],
       heroAssets: ["/page-visuals/home-hero.webp", "/page-visuals/services-hero.webp"],
+      socialCardImages: ["/page-visuals/services-hero.webp"],
     });
     expect(fileSystem.access).not.toHaveBeenCalledWith(
       publicAssetPath("public", "/page-visuals/svard-entreprenad-contact.svg"),
@@ -1271,13 +1436,45 @@ describe("siteContent route registry", () => {
       expect(routePageMetadata(route)).toEqual({
         title: `${route.label} – Svärd Entreprenad`,
         description: route.summary,
+        socialImage: route.heroPhotoAssetPath.endsWith(".svg")
+          ? { assetPath: "/page-visuals/hero-photo.webp", alt: `${route.label} – Svärd Entreprenad` }
+          : { assetPath: route.heroPhotoAssetPath, alt: route.visual.alt },
       });
     }
 
     expect(routePageMetadata(siteContent.routes.find((route) => route.id === "services"))).toEqual({
       title: "Tjänster – Svärd Entreprenad",
       description: siteContent.routes.find((route) => route.id === "services").summary,
+      socialImage: {
+        assetPath: "/page-visuals/services-hero.webp",
+        alt: "Samlad vy över markarbeten, stensättning och dräneringstjänster",
+      },
     });
+    expect(routePageMetadata(siteContent.routes.find((route) => route.id === "contact")).socialImage).toEqual({
+      assetPath: "/page-visuals/hero-photo.webp",
+      alt: "Kontakt – Svärd Entreprenad",
+    });
+  });
+
+  it("emits each subpage's social card image from its declared hero photo with the shared home hero for SVG heroes", () => {
+    expect(routeSocialCardImagePaths(siteContent.routes)).toEqual([
+      "/page-visuals/quote-hero.webp",
+      "/page-visuals/draneringsberakning-hero.webp",
+      "/page-visuals/services-hero.webp",
+      "/page-visuals/hero-photo.webp",
+      "/page-visuals/stensattning-photo.webp",
+      "/page-visuals/markarbete-photo.webp",
+      "/page-visuals/gravjobb-photo.webp",
+      "/page-visuals/dranering-photo.webp",
+      "/page-visuals/tradgard-generated.webp",
+    ]);
+
+    for (const routeId of ["inhyrning", "about", "contact"]) {
+      const route = siteContent.routes.find((route) => route.id === routeId);
+
+      expect(route.heroPhotoAssetPath.endsWith(".svg")).toBe(true);
+      expect(routePageMetadata(route).socialImage.assetPath).toBe("/page-visuals/hero-photo.webp");
+    }
   });
 
   it("validates emitted per-route artifacts for the real route inventory and rejects a stale artifact", async () => {

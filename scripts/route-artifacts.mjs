@@ -18,11 +18,20 @@ const socialMetaTagPatterns = [
   twitterTitleMetaTagPattern,
   twitterDescriptionMetaTagPattern,
 ];
+const ogImageMetaTagPattern = /<meta\b[^>]*\bproperty=(["'])og:image\1[^>]*>/i;
+const ogImageAltMetaTagPattern = /<meta\b[^>]*\bproperty=(["'])og:image:alt\1[^>]*>/i;
+const twitterImageMetaTagPattern = /<meta\b[^>]*\bname=(["'])twitter:image\1[^>]*>/i;
+const socialImageMetaTagPatterns = [
+  [ogImageMetaTagPattern, "assetPath"],
+  [ogImageAltMetaTagPattern, "alt"],
+  [twitterImageMetaTagPattern, "assetPath"],
+];
 const linkTagPattern = /<link\b[^>]*>/gi;
 const preloadRelPattern = /\brel=(["'])preload\1/i;
 const imagePreloadAsPattern = /\bas=(["'])image\1/i;
 const headClosePattern = /<\/head>/i;
 const homeHeroPreloadHrefPattern = /\bhref=(["'])\/page-visuals\/hero-photo\.webp\1/i;
+const homeHeroPhotoAssetPath = "/page-visuals/hero-photo.webp";
 
 function isMissingEntryError(error) {
   return error instanceof Error && "code" in error && error.code === "ENOENT";
@@ -61,6 +70,9 @@ function extractDocumentMetadata(document) {
     ogDescription: metaTagContent(document, ogDescriptionMetaTagPattern),
     twitterTitle: metaTagContent(document, twitterTitleMetaTagPattern),
     twitterDescription: metaTagContent(document, twitterDescriptionMetaTagPattern),
+    ogImage: metaTagContent(document, ogImageMetaTagPattern),
+    ogImageAlt: metaTagContent(document, ogImageAltMetaTagPattern),
+    twitterImage: metaTagContent(document, twitterImageMetaTagPattern),
   };
 }
 
@@ -335,12 +347,57 @@ export function routeHeroPreloadLinkTag(route) {
 }
 
 /**
+ * Social card image for one emitted subpage document. The route's declared
+ * hero photo feeds og:image and twitter:image when social crawlers can render
+ * it; a declared SVG hero falls back to the shared raster home hero, because
+ * SVG og:image values render unreliably in social crawlers. The alt names the
+ * emitted image with registry-owned Swedish text: the route's declared visual
+ * alt for its own photo, and the composed page title for the shared home hero.
+ */
+function routeSocialCardImage(route) {
+  const declaredHeroPath = requireRouteHeroPhotoAssetPath(route, 0);
+
+  if (declaredHeroPath.endsWith(".svg")) {
+    return { assetPath: homeHeroPhotoAssetPath, alt: `${route.label} – ${siteName}` };
+  }
+
+  const alt = route?.visual?.alt;
+  const routeName = typeof route?.id === "string" && route.id.length > 0 ? `Route ${route.id}` : "Route";
+
+  if (typeof alt !== "string" || alt.trim().length === 0) {
+    throw new Error(`${routeName} must declare a nonempty visual alt string for the social card image.`);
+  }
+
+  return { assetPath: declaredHeroPath, alt };
+}
+
+/**
+ * Emitted social card image paths for the declared subpage routes,
+ * deduplicated in route order. Each emitted og:image is either a declared
+ * heroPhotoAssetPath or the shared home hero, so the visual asset check must
+ * prove the file ships under public/ instead of trusting the composed value.
+ */
+export function routeSocialCardImagePaths(routes) {
+  const assetPaths = [];
+
+  for (const route of staticSubpageRoutes(routes)) {
+    const assetPath = routeSocialCardImage(route).assetPath;
+
+    if (!assetPaths.includes(assetPath)) assetPaths.push(assetPath);
+  }
+
+  return assetPaths;
+}
+
+/**
  * Declared page-metadata composition for emitted subpage documents: the title
- * combines the route's Swedish label with the site name, and the description
- * is the route's registry summary verbatim. The same composed strings feed the
- * title element, the description meta and the og/twitter social card tags, so
- * the registry stays the single owner of the Swedish text; this function only
- * declares how the document strings are composed from it.
+ * combines the route's Swedish label with the site name, the description is
+ * the route's registry summary verbatim, and the social card image describes
+ * the route's own hero photo (the shared raster home hero for SVG-hero
+ * routes). The same composed strings feed the title element, the description
+ * meta, the og/twitter social card tags and their image tags, so the registry
+ * stays the single owner of the Swedish text; this function only declares how
+ * the document strings are composed from it.
  */
 export function routePageMetadata(route) {
   const routeName = typeof route?.id === "string" && route.id.length > 0 ? `Route ${route.id}` : "Route";
@@ -353,7 +410,10 @@ export function routePageMetadata(route) {
     throw new Error(`${routeName} must declare a nonempty summary string for page metadata.`);
   }
 
-  return requirePageMetadata({ title: `${route.label} – ${siteName}`, description: route.summary });
+  return {
+    ...requirePageMetadata({ title: `${route.label} – ${siteName}`, description: route.summary }),
+    socialImage: routeSocialCardImage(route),
+  };
 }
 
 function requirePageMetadata(metadata) {
@@ -369,6 +429,19 @@ function requirePageMetadata(metadata) {
   return metadata;
 }
 
+function requireSocialCardImage(socialImage) {
+  if (
+    typeof socialImage?.assetPath !== "string" ||
+    socialImage.assetPath.length === 0 ||
+    typeof socialImage?.alt !== "string" ||
+    socialImage.alt.length === 0
+  ) {
+    throw new Error("Route page metadata requires a social card image with nonempty assetPath and alt strings.");
+  }
+
+  return socialImage;
+}
+
 /**
  * The emitted not-found recovery artifact is a dist-root document, not a
  * declared route: it must never enter requireRouteRegistry validation or the
@@ -381,8 +454,10 @@ export const notFoundArtifactPath = "404.html";
  * Declared Swedish page metadata for the not-found recovery artifact: the
  * title combines the in-app "Sidan finns inte" recovery heading with the site
  * name, and the description mirrors the in-app not-found guidance toward the
- * route shortcuts. The site name stays the single brand owner; this function
- * only declares how the document strings are composed from it.
+ * route shortcuts. It declares no social card image, so the emitted artifact
+ * keeps the root document's home-branded og:image and twitter:image set. The
+ * site name stays the single brand owner; this function only declares how the
+ * document strings are composed from it.
  */
 export function notFoundPageMetadata() {
   return requirePageMetadata({
@@ -421,7 +496,7 @@ function replaceDescriptionMetaTag(document, description) {
 }
 
 function replaceSocialMetaTags(document, metadata) {
-  return socialMetaTagPatterns.reduce(
+  const documentWithSocialText = socialMetaTagPatterns.reduce(
     (updatedDocument, metaTagPattern) =>
       replaceMetaTagContent(
         updatedDocument,
@@ -432,6 +507,21 @@ function replaceSocialMetaTags(document, metadata) {
         "Route document must contain og:title, og:description, twitter:title and twitter:description meta tags with content attributes to replace.",
       ),
     document,
+  );
+
+  if (metadata.socialImage === undefined) return documentWithSocialText;
+
+  const socialImage = requireSocialCardImage(metadata.socialImage);
+
+  return socialImageMetaTagPatterns.reduce(
+    (updatedDocument, [metaTagPattern, socialImageField]) =>
+      replaceMetaTagContent(
+        updatedDocument,
+        metaTagPattern,
+        socialImage[socialImageField],
+        "Route document must contain og:image, og:image:alt and twitter:image meta tags with content attributes to replace.",
+      ),
+    documentWithSocialText,
   );
 }
 
@@ -464,7 +554,7 @@ function documentCarriesHomeHeroPreload(document) {
  * without the link are returned unchanged, so the static route emission can
  * apply it uniformly to every non-root document regardless of source shape.
  * Composed separately from applyRouteDocumentMetadata, which owns only the
- * title, description and social card text.
+ * title, description and social card text and image tags.
  */
 export function stripHomeHeroPreload(document) {
   if (typeof document !== "string" || document.length === 0) {
@@ -529,14 +619,21 @@ function documentCarriesExactlyOwnHeroPreload(document, heroPreloadLinkTag) {
 
 function documentCarriesRouteMetadata(document, metadata) {
   const extracted = extractDocumentMetadata(document);
-
-  return (
+  const textMatched =
     extracted.title === metadata.title &&
     extracted.description === metadata.description &&
     extracted.ogTitle === metadata.title &&
     extracted.ogDescription === metadata.description &&
     extracted.twitterTitle === metadata.title &&
-    extracted.twitterDescription === metadata.description
+    extracted.twitterDescription === metadata.description;
+
+  if (metadata.socialImage === undefined) return textMatched;
+
+  return (
+    textMatched &&
+    extracted.ogImage === metadata.socialImage.assetPath &&
+    extracted.ogImageAlt === metadata.socialImage.alt &&
+    extracted.twitterImage === metadata.socialImage.assetPath
   );
 }
 
@@ -684,6 +781,7 @@ export async function assertRouteVisualAssets({ routes, publicDir, access }) {
   const assetPaths = routeVisualAssetPaths(routes);
   const heroAssetPaths = routeHeroPhotoAssetPaths(routes);
   const heroCandidatePaths = routeHeroSrcSetCandidatePaths(routes);
+  const socialCardImagePaths = routeSocialCardImagePaths(routes);
   const invalidAssets = assetPaths.filter((assetPath) => !isDeclaredVisualAssetPath(assetPath));
   const duplicateAssets = assetPaths.filter((assetPath, index) => assetPaths.indexOf(assetPath) !== index);
   const missingAssets = [];
@@ -730,6 +828,19 @@ export async function assertRouteVisualAssets({ routes, publicDir, access }) {
     }
   }
 
+  for (const assetPath of socialCardImagePaths) {
+    try {
+      await access(path.join(publicDir, assetPath.replace(/^\//, "")));
+    } catch (error) {
+      if (isMissingEntryError(error)) {
+        missingAssets.push(assetPath);
+        continue;
+      }
+
+      throw error;
+    }
+  }
+
   if (invalidAssets.length > 0 || missingAssets.length > 0 || missingHeroAssets.length > 0 || duplicateAssets.length > 0) {
     const details = [
       invalidAssets.length > 0 ? `invalid: ${invalidAssets.join(", ")}` : "",
@@ -743,5 +854,5 @@ export async function assertRouteVisualAssets({ routes, publicDir, access }) {
     throw new Error(`Route visual asset check failed (${details}).`);
   }
 
-  return { visualAssets: assetPaths, heroAssets: heroAssetPaths };
+  return { visualAssets: assetPaths, heroAssets: heroAssetPaths, socialCardImages: socialCardImagePaths };
 }
