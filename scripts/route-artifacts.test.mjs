@@ -1251,8 +1251,6 @@ describe("siteContent route registry", () => {
       "/page-visuals/gravjobb-photo-400.webp",
       "/page-visuals/gravjobb-photo-640.webp",
       "/page-visuals/gravjobb-photo.webp",
-      "/page-visuals/dranering-photo-400.webp",
-      "/page-visuals/dranering-photo-640.webp",
       "/page-visuals/dranering-photo.webp",
       "/page-visuals/tradgard-generated-640.webp",
       "/page-visuals/tradgard-generated-960.webp",
