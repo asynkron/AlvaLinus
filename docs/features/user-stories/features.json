@@ -1095,7 +1095,14 @@
               "path": "src/styles.primary-contrast.test.ts",
               "name": "keeps white primary-foreground labels readable on primary buttons at WCAG AA",
               "evidence_type": "technical",
-              "supports": "Token-level stylesheet check pins the white --primary-foreground label against the --primary button surface at 4.5:1, the pairing this story's Skicka förfrågan submit button renders through the shared primary button variant. It reads the root tokens only; the quote pages' send button uses its own hardcoded colors and is not covered by this declaration."
+              "supports": "Token-level stylesheet check pins the white --primary-foreground label against the --primary button surface at 4.5:1, the pairing this story's Skicka förfrågan submit button renders through the shared primary button variant. It reads the root tokens only; the quote pages' send button override is pinned separately by the page-accent check below."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/styles.page-accent-contrast.test.ts",
+              "name": "keeps the quote send CTA white label readable on its primary token surface at WCAG AA",
+              "evidence_type": "technical",
+              "supports": "Page-level stylesheet check resolves the quote send button's token-based background and label declarations against the root tokens and pins the white-on-primary pairing at 4.5:1, covering the page override that the shared primary button variant alone did not."
             }
           ],
           "entry_point_refs": [],
@@ -1518,6 +1525,13 @@
               "name": "keeps unknown placeholders and encodes their braces in the body",
               "evidence_type": "technical",
               "supports": "Helper-level check pins brace encoding of leftover unknown placeholders so the draft URL stays valid."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/styles.page-accent-contrast.test.ts",
+              "name": "keeps the quote send CTA white label readable on its primary token surface at WCAG AA",
+              "evidence_type": "technical",
+              "supports": "Page-level stylesheet check pins the white label on the token-based Begär offert send button surface at 4.5:1."
             }
           ],
           "entry_point_refs": [],
