@@ -13,6 +13,7 @@ const meters = formatNumber;
 export function DrainageQuotePage({ content = siteContent }: { readonly content?: SiteContent }) {
   const shared = content.quote.shared;
   const text = content.quote.drainage;
+  const drainageRoute = content.routes.find((route) => route.id === "drainage-quote");
   const [length, setLength] = useState(defaultLength);
   const [notes, setNotes] = useState("");
   const lengthValue = Number(length);
@@ -24,7 +25,7 @@ export function DrainageQuotePage({ content = siteContent }: { readonly content?
     vat: vatStatusLabel.toLowerCase(),
     notes,
   });
-  return <QuotePageShell homeLabel={content.chrome.breadcrumb.homeLabel} formAriaLabel={shared.formAriaLabel} hero={{ src: "/page-visuals/draneringsberakning-hero.webp" }} breadcrumbLabel={text.breadcrumbLabel} heading={text.heading} intro={text.intro} resultAside={<QuoteResultAside shared={shared} error={text.error} valid={valid} total={money(total)} email={email} />}>
+  return <QuotePageShell homeLabel={content.chrome.breadcrumb.homeLabel} formAriaLabel={shared.formAriaLabel} hero={{ src: "/page-visuals/draneringsberakning-hero.webp", srcSet: drainageRoute?.heroPhotoSrcSet, sizes: drainageRoute?.heroPhotoSizes }} breadcrumbLabel={text.breadcrumbLabel} heading={text.heading} intro={text.intro} resultAside={<QuoteResultAside shared={shared} error={text.error} valid={valid} total={money(total)} email={email} />}>
     <h2>{text.workHeading}</h2><p>{text.workSummary}</p>
     <label className="quote-field">
       <span>{text.lengthLabel}</span>

@@ -32,6 +32,9 @@ export const siteContent = {
     {
       id: "drainage-quote", kind: "quote", label: "Dräneringsberäkning", href: "/draneringsberakning/",
       heroPhotoAssetPath: "/page-visuals/draneringsberakning-hero.webp",
+      heroPhotoSrcSet:
+        "/page-visuals/dranering-photo-400.webp 400w, /page-visuals/dranering-photo-640.webp 640w, /page-visuals/draneringsberakning-hero.webp 900w",
+      heroPhotoSizes: "100vw",
       summary: "Preliminär dräneringskalkyl per löpmeter med direkt totalsumma och e-postförfrågan.",
       visual: {
         assetPath: "/page-visuals/svard-entreprenad-draneringsberakning.svg",

@@ -1189,9 +1189,10 @@ describe("siteContent route registry", () => {
     expect(routeHeroPreloadHref(siteContent.routes.find((route) => route.id === "home"))).toBe("/page-visuals/hero-photo.webp");
   });
 
-  it("declares responsive variants on the seven migrated hero routes plus services and keeps heroPhotoAssetPath the declared base", () => {
+  it("declares responsive variants on the seven migrated hero routes plus services and drainage-quote and keeps heroPhotoAssetPath the declared base", () => {
     const expectedSrcSetsByRoute = new Map([
       ["quote", "/page-visuals/quote-hero-640.webp 640w, /page-visuals/quote-hero-960.webp 960w, /page-visuals/quote-hero.webp 1672w"],
+      ["drainage-quote", "/page-visuals/dranering-photo-400.webp 400w, /page-visuals/dranering-photo-640.webp 640w, /page-visuals/draneringsberakning-hero.webp 900w"],
       ["home", "/page-visuals/hero-photo-640.webp 640w, /page-visuals/hero-photo-960.webp 960w, /page-visuals/hero-photo.webp 1600w"],
       ["services", "/page-visuals/services-hero-640.webp 640w, /page-visuals/services-hero-960.webp 960w, /page-visuals/services-hero.webp 1672w"],
       ["stensattning", "/page-visuals/stensattning-photo-400.webp 400w, /page-visuals/stensattning-photo-640.webp 640w, /page-visuals/stensattning-photo.webp 900w"],
@@ -1201,7 +1202,7 @@ describe("siteContent route registry", () => {
       ["tradgard", "/page-visuals/tradgard-generated-640.webp 640w, /page-visuals/tradgard-generated-960.webp 960w, /page-visuals/tradgard-generated.webp 1568w"],
     ]);
 
-    expect(expectedSrcSetsByRoute.size).toBe(8);
+    expect(expectedSrcSetsByRoute.size).toBe(9);
 
     for (const route of siteContent.routes) {
       const expectedSrcSet = expectedSrcSetsByRoute.get(route.id);
@@ -1223,13 +1224,18 @@ describe("siteContent route registry", () => {
     const drainageQuoteRoute = siteContent.routes.find((route) => route.id === "drainage-quote");
 
     expect(routeHeroPreloadLinkTag(drainageQuoteRoute)).toBe(
-      '<link rel="preload" as="image" href="/page-visuals/draneringsberakning-hero.webp" fetchpriority="high" />',
+      '<link rel="preload" as="image" href="/page-visuals/draneringsberakning-hero.webp" ' +
+        'imagesrcset="/page-visuals/dranering-photo-400.webp 400w, /page-visuals/dranering-photo-640.webp 640w, /page-visuals/draneringsberakning-hero.webp 900w" ' +
+        'imagesizes="100vw" fetchpriority="high" />',
     );
 
     expect(routeHeroSrcSetCandidatePaths(siteContent.routes)).toEqual([
       "/page-visuals/quote-hero-640.webp",
       "/page-visuals/quote-hero-960.webp",
       "/page-visuals/quote-hero.webp",
+      "/page-visuals/dranering-photo-400.webp",
+      "/page-visuals/dranering-photo-640.webp",
+      "/page-visuals/draneringsberakning-hero.webp",
       "/page-visuals/hero-photo-640.webp",
       "/page-visuals/hero-photo-960.webp",
       "/page-visuals/hero-photo.webp",
@@ -1245,8 +1251,6 @@ describe("siteContent route registry", () => {
       "/page-visuals/gravjobb-photo-400.webp",
       "/page-visuals/gravjobb-photo-640.webp",
       "/page-visuals/gravjobb-photo.webp",
-      "/page-visuals/dranering-photo-400.webp",
-      "/page-visuals/dranering-photo-640.webp",
       "/page-visuals/dranering-photo.webp",
       "/page-visuals/tradgard-generated-640.webp",
       "/page-visuals/tradgard-generated-960.webp",

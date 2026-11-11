@@ -137,4 +137,20 @@ describe("DrainageQuotePage", () => {
 
     expect(link).toHaveAttribute("href", "/offertberakning/");
   });
+
+  it("serves the decorative hero from responsive WebP variants of the registry asset", () => {
+    render(<DrainageQuotePage />);
+
+    const hero = document.querySelector("img.quote-hero-image") as HTMLImageElement;
+
+    expect(hero).toHaveAttribute("src", "/page-visuals/draneringsberakning-hero.webp");
+    expect(hero).toHaveAttribute(
+      "srcSet",
+      "/page-visuals/dranering-photo-400.webp 400w, /page-visuals/dranering-photo-640.webp 640w, /page-visuals/draneringsberakning-hero.webp 900w",
+    );
+    expect(hero).toHaveAttribute("sizes", "100vw");
+    expect(hero).toHaveAttribute("alt", "");
+    expect(hero).toHaveAttribute("aria-hidden", "true");
+    expect(hero).toHaveAttribute("fetchpriority", "high");
+  });
 });
