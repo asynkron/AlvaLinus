@@ -534,6 +534,7 @@ describe("SiteHomePage", () => {
 
     const declaredHeroSrcSetsByRoute = new Map([
       ["quote", "/page-visuals/quote-hero-640.webp 640w, /page-visuals/quote-hero-960.webp 960w, /page-visuals/quote-hero.webp 1672w"],
+      ["drainage-quote", "/page-visuals/dranering-photo-400.webp 400w, /page-visuals/dranering-photo-640.webp 640w, /page-visuals/draneringsberakning-hero.webp 900w"],
       ["home", "/page-visuals/hero-photo-640.webp 640w, /page-visuals/hero-photo-960.webp 960w, /page-visuals/hero-photo.webp 1600w"],
       ["services", "/page-visuals/services-hero-640.webp 640w, /page-visuals/services-hero-960.webp 960w, /page-visuals/services-hero.webp 1672w"],
       ["stensattning", "/page-visuals/stensattning-photo-400.webp 400w, /page-visuals/stensattning-photo-640.webp 640w, /page-visuals/stensattning-photo.webp 900w"],
@@ -543,7 +544,7 @@ describe("SiteHomePage", () => {
       ["tradgard", "/page-visuals/tradgard-generated-640.webp 640w, /page-visuals/tradgard-generated-960.webp 960w, /page-visuals/tradgard-generated.webp 1568w"],
     ]);
 
-    expect(declaredHeroSrcSetsByRoute.size).toBe(8);
+    expect(declaredHeroSrcSetsByRoute.size).toBe(9);
 
     for (const route of content.routes) {
       const declaredSrcSet = declaredHeroSrcSetsByRoute.get(route.id);
