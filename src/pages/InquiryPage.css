@@ -20,7 +20,7 @@
 .inquiry-field textarea{resize:vertical}
 .inquiry-field .inquiry-invalid{border-color:hsl(var(--destructive));border-width:2px;padding:11px}
 .inquiry-field input:focus-visible,.inquiry-field textarea:focus-visible,.inquiry-layout :is(button,a):focus-visible{outline:3px solid #bc4a12;outline-offset:3px}
-.inquiry-field input{accent-color:#bf4911;caret-color:#bf4911}
+.inquiry-field input{accent-color:hsl(var(--primary));caret-color:hsl(var(--primary))}
 .inquiry-hint{display:block;line-height:1.6}
 .inquiry-error{color:#9c2918;font-size:13px;font-weight:400}
 .inquiry-alert{border:1px solid hsl(var(--destructive)/.4);background:hsl(var(--destructive)/.08);color:#9c2918;border-radius:8px;padding:14px 16px;font-size:14px;font-weight:400;line-height:1.6;margin:0 0 24px}
