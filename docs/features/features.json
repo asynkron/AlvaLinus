@@ -30,7 +30,7 @@
           "description": "Static content and route contracts."
         }
       ],
-      "reviewed_against_source": "2026-11-07",
+      "reviewed_against_source": "2026-11-11",
       "slice_refs": [],
       "entry_point_refs": []
     },
@@ -124,7 +124,7 @@
           "description": "Static content and route contracts, including the inquiry route kind."
         }
       ],
-      "reviewed_against_source": "2026-11-10",
+      "reviewed_against_source": "2026-11-11",
       "slice_refs": [],
       "entry_point_refs": []
     },
@@ -167,7 +167,7 @@
           "description": "Quote route kind, the shared and per-calculator quote copy contracts and the calculator band contract."
         }
       ],
-      "reviewed_against_source": "2026-11-10",
+      "reviewed_against_source": "2026-11-11",
       "slice_refs": [],
       "entry_point_refs": []
     },
@@ -206,7 +206,7 @@
           "description": "Emits static HTML entry artifacts for declared subpages."
         }
       ],
-      "reviewed_against_source": "2026-11-10",
+      "reviewed_against_source": "2026-11-11",
       "slice_refs": [],
       "entry_point_refs": []
     }

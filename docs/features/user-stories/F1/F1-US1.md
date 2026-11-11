@@ -2,7 +2,7 @@
 
 Feature: [F1 — Choose a suitable groundworks service](../../service-selection.md)  
 Status: current  
-Reviewed: 2026-10-28
+Reviewed: 2026-11-11
 
 As a project visitor, I want to compare service summaries and tags so I can find the relevant area before reading details.
 
@@ -37,12 +37,14 @@ Reload after a content deployment; use the header links to choose a route.
 
 - [src/data/siteContent.ts](../../../../src/data/siteContent.ts)
 - [src/pages/SiteHomePage.tsx](../../../../src/pages/SiteHomePage.tsx)
+- [src/styles.primary-contrast.test.ts](../../../../src/styles.primary-contrast.test.ts)
 
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `renders owner-approved home content, service, process, partner, and contact areas` (direct): Checks the home service and process areas, not the services-index rendering.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `renders representative service tags including pool digging under Grävjobb` (direct): Checks representative service tags on home.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `names every service-card link by its destination on %s` (direct): Parameterized home and services-index cases check all five accessible names, matching hrefs and unchanged visible Läs mer text. Does not establish other index sections, browser layout or a complete assistive-technology flow.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `falls back to the route SVG on the first photo error and removes the image when the fallback also fails` (direct): Checks the home Stensättning card's photo/SVG failures, retained title, summary and service link, and terminal image removal. Does not render the services index or subpage heroes.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `keeps neighboring service cards and their successful images untouched when one card image fails twice` (direct): Checks that failure of the home Stensättning card leaves Markarbete and Grävjobb images and content available; does not establish dedicated detail-page rendering.
+- vitest, [src/styles.primary-contrast.test.ts](../../../../src/styles.primary-contrast.test.ts), declaration `keeps the primary accent readable on white card surfaces at WCAG AA` (technical): Token-level stylesheet check pins the `--primary` accent against the white `--card` surface at 4.5:1, the pairing each service card's primary-colored Läs mer link renders. It reads the root tokens only; it does not render a card, cover other primary-on-card instances or establish a browser measurement.
 
 Backend entry-point references: none (frontend-only). Test mappings were reviewed as source declarations; this document is not an execution receipt.
 

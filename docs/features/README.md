@@ -1,6 +1,6 @@
 # Feature catalog
 
-Reviewed against source: 2026-11-10.
+Reviewed against source: 2026-11-11.
 
 The catalog introduced in `f7b481f` already covers the current route inventory.
 The maintained catalog retains its published identities, including F4-US3 for
@@ -21,7 +21,12 @@ that base and corrected the remaining hero wording. The 2026-11-10 `fk176`
 reconciliation then re-stamped the F5 staffing-inquiry records from a fresh
 source read, naming the registry-declared Swedish inquiry copy in
 `content.inquiry` (`fk154`) beside the inquiry page's remaining runtime
-ownership.
+ownership. The 2026-11-11 reconciliation then mapped the three source-pinned
+styles accessibility tests — the field-border contrast test introduced by
+PR #125's WCAG AA form-field repair, the primary-contrast token test and the
+reduced-motion test — and the quote helper declarations in `quote.test.ts`
+into the touched story records, and re-stamped the F1, F4, F5 and F6 records
+from that fresh source read.
 
 This catalog maps the static Swedish Svärd Entreprenad site to visitor outcomes.
 It is product-development input, not a claim that construction work, email delivery
@@ -118,13 +123,21 @@ does not provide persistence, delivery assurance or a privacy/compliance verdict
   story files and both feature manifests against the renderer and typed registry.
   Record source review date; do not treat schema validity as product accuracy.
 - Test references name reviewed declarations in
-  [SiteHomePage.test.tsx](../../src/pages/SiteHomePage.test.tsx) plus, for the
-  quote calculators, [QuotePage.test.tsx](../../src/pages/QuotePage.test.tsx)
-  and [DrainageQuotePage.test.tsx](../../src/pages/DrainageQuotePage.test.tsx).
+  [SiteHomePage.test.tsx](../../src/pages/SiteHomePage.test.tsx),
+  [InquiryPage.test.tsx](../../src/pages/InquiryPage.test.tsx), for the
+  quote calculators [QuotePage.test.tsx](../../src/pages/QuotePage.test.tsx)
+  and [DrainageQuotePage.test.tsx](../../src/pages/DrainageQuotePage.test.tsx),
+  the quote helper tests in [quote.test.ts](../../src/lib/quote.test.ts), and
+  the stylesheet tests
+  [styles.field-border-contrast.test.ts](../../src/styles.field-border-contrast.test.ts),
+  [styles.primary-contrast.test.ts](../../src/styles.primary-contrast.test.ts)
+  and [styles.reduced-motion.test.ts](../../src/styles.reduced-motion.test.ts).
   `direct` means
   the assertion checks the stated user-visible facet, not every step of a story.
-  `technical` checks supporting metadata. No test was executed for this source
-  review. F4-US1 maps the mobile-menu declaration for Escape from a link
+  `technical` checks supporting metadata, including the token-level stylesheet
+  and quote-helper declarations mapped in the 2026-11-11 reconciliation. No
+  test was executed for this source review. F4-US1 maps the mobile-menu
+  declaration for Escape from a link
   or the focused toggle, focus restoration, reopening and click dismissal;
   Tab/Shift+Tab are not cancelled and Escape elsewhere in the header leaves
   the menu and focus unchanged. F4-US1 also maps the decorative home hero

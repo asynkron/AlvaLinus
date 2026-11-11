@@ -1,6 +1,6 @@
 # F4: Home, navigation and route recovery
 
-Reviewed: 2026-11-10. Runtime: `ui`. Product role: `surface`.
+Reviewed: 2026-11-11. Runtime: `ui`. Product role: `surface`.
 Supports **F1, F2, F3, F5 and F6**, all active customer-outcome features.
 
 Home and shared route handling make the service, company and inquiry outcomes
@@ -127,9 +127,17 @@ uncancelled, and the dropdown panel holds the five service links in registry
 order with their distinct Swedish accessible names.
 JSDOM does not move focus on Tab, so those event assertions do not establish
 actual browser tab order, and DOM evidence does not establish the panel's
-focus-only CSS reveal. F4-US3 maps the two skip-link declarations separately
-from menu behavior. Neither mapping establishes responsive CSS or browser
-anchor activation. Normalization variants and production-host fallback remain
+focus-only CSS reveal. The 2026-11-11 review adds two stylesheet-level
+technical mappings: F4-US1 maps the `--primary-on-dark` and brand-hue token
+declarations in
+[styles.primary-contrast.test.ts](../../src/styles.primary-contrast.test.ts)
+for the navy header, hero and footer accents, and F4-US3 maps the two
+reduced-motion declarations in
+[styles.reduced-motion.test.ts](../../src/styles.reduced-motion.test.ts),
+which pin the smooth-scroll default and its single
+`prefers-reduced-motion` override in styles.css. F4-US3 maps the two
+skip-link declarations separately from menu behavior. Neither mapping
+establishes responsive CSS or browser anchor activation. Normalization variants and production-host fallback remain
 unmapped, not claimed as executed acceptance. F1-US1 owns the service-card
 failure mappings; this supporting surface points to F1 rather than duplicating
 those story references.

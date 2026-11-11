@@ -90,6 +90,13 @@
               "name": "keeps neighboring service cards and their successful images untouched when one card image fails twice",
               "evidence_type": "direct",
               "supports": "Checks that failure of the home Stensättning card leaves Markarbete and Grävjobb images and content available; does not establish dedicated detail-page rendering."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/styles.primary-contrast.test.ts",
+              "name": "keeps the primary accent readable on white card surfaces at WCAG AA",
+              "evidence_type": "technical",
+              "supports": "Token-level stylesheet check pins the --primary accent against the white --card surface at 4.5:1, the pairing each service card's primary-colored Läs mer link renders. It reads the root tokens only; it does not render a card, cover other primary-on-card instances or establish a browser measurement."
             }
           ],
           "entry_point_refs": [],
@@ -776,6 +783,20 @@
               "name": "hides a failing home hero photo without a retry loop and keeps the hero intact",
               "evidence_type": "direct",
               "supports": "Checks display:none hiding across repeated image errors while the headline, intro, actions and stats remain. Does not establish browser image loading or CSS visibility."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/styles.primary-contrast.test.ts",
+              "name": "keeps the on-dark accent readable on the navy header, hero, and footer surfaces at WCAG AA",
+              "evidence_type": "technical",
+              "supports": "Token-level stylesheet check pins the --primary-on-dark accent against the foreground token at 4.5:1, the pairing the shared navy header, hero and footer chrome renders. It reads the root tokens only and does not render chrome or measure a browser."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/styles.primary-contrast.test.ts",
+              "name": "keeps both accent tokens in the orange brand hue family",
+              "evidence_type": "technical",
+              "supports": "Token-level stylesheet check pins the primary and on-dark accent hues to the declared orange band, the shared brand identity behind the chrome accents. It constrains hue only; it does not itself re-check contrast or any rendered element."
             }
           ],
           "entry_point_refs": [],
@@ -891,6 +912,20 @@
               "name": "keeps exactly one stable content target in the $label state",
               "evidence_type": "direct",
               "supports": "Parameterized ready home, subpage, unknown-route and empty cases check one matching target; ready targets have tabindex=-1. Does not assert focusability of the empty-services section or browser scrolling."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/styles.reduced-motion.test.ts",
+              "name": "keeps html smooth scrolling as the unconditional default rule",
+              "evidence_type": "technical",
+              "supports": "Raw-CSS check pins html scroll-behavior: smooth as the unconditional default rule before the reduced-motion block in styles.css. It inspects stylesheet text and does not exercise browser scrolling or the skip link itself."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/styles.reduced-motion.test.ts",
+              "name": "sets html scroll-behavior to auto only inside the prefers-reduced-motion block",
+              "evidence_type": "technical",
+              "supports": "Raw-CSS check pins the single prefers-reduced-motion override to html scroll-behavior: auto, so keyboard skip navigation stays unanimated for reduced-motion visitors. It inspects stylesheet text and does not exercise browser scrolling."
             }
           ],
           "entry_point_refs": [],
@@ -1000,6 +1035,13 @@
               "name": "keeps validation in helper functions so optional fields stay out of the error set",
               "evidence_type": "direct",
               "supports": "Checks the validation helper directly: error key order, the missing-rate and non-numeric-rate messages, the malformed-email message and optional fields staying outside the set."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/styles.field-border-contrast.test.ts",
+              "name": "keeps quote and inquiry form field boundaries at WCAG AA non-text contrast on white",
+              "evidence_type": "technical",
+              "supports": "Stylesheet check pins the 1px hex border color of the inquiry input and textarea boundary rule at 3:1 non-text contrast on white, alongside the quote-page equivalents. It reads the page CSS only and does not render the form."
             }
           ],
           "entry_point_refs": [],
@@ -1047,6 +1089,13 @@
               "name": "marks empty optional fields with a dash in the mail draft without blocking the handoff",
               "evidence_type": "direct",
               "supports": "Checks the dash placeholders for empty optional fields and the absence of an alert on the successful handoff."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/styles.primary-contrast.test.ts",
+              "name": "keeps white primary-foreground labels readable on primary buttons at WCAG AA",
+              "evidence_type": "technical",
+              "supports": "Token-level stylesheet check pins the white --primary-foreground label against the --primary button surface at 4.5:1, the pairing this story's Skicka förfrågan submit button renders through the shared primary button variant. It reads the root tokens only; the quote pages' send button uses its own hardcoded colors and is not covered by this declaration."
             }
           ],
           "entry_point_refs": [],
@@ -1230,6 +1279,83 @@
               "name": "describes the length field and announces updates in a polite live region",
               "evidence_type": "direct",
               "supports": "Checks the field description association and the polite atomic live region announcing the updated total."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/styles.field-border-contrast.test.ts",
+              "name": "keeps quote and inquiry form field boundaries at WCAG AA non-text contrast on white",
+              "evidence_type": "technical",
+              "supports": "Stylesheet check pins the 1px hex border color of the quote input and select/textarea boundary rules at 3:1 non-text contrast on white, alongside the inquiry-page equivalents. It reads the page CSS only and does not render the calculator."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote.test.ts",
+              "name": "bills the first 55 meters at 3 500 kr per meter plus the fixed cost",
+              "evidence_type": "technical",
+              "supports": "Helper-level check pins the first drainage tier at 3 500 kr per meter plus the 6 900 kr fixed cost; the page declarations above check the rendered totals built on it."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote.test.ts",
+              "name": "bills only meters above the 55 meter boundary at 3 000 kr per meter",
+              "evidence_type": "technical",
+              "supports": "Helper-level check pins the above-boundary drainage tier at 3 000 kr per meter, including fractional lengths."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote.test.ts",
+              "name": "keeps the 6 900 kr fixed cost at zero meters",
+              "evidence_type": "technical",
+              "supports": "Helper-level check pins the fixed establishment amount at zero meters."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote.test.ts",
+              "name": "accepts fractional meters like the page input allows",
+              "evidence_type": "technical",
+              "supports": "Helper-level check that decimal lengths price through the same drainage tiers, matching the decimal input the page accepts."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote.test.ts",
+              "name": "charges the area at 950 kr per square meter plus fixed and load costs without asphalt",
+              "evidence_type": "technical",
+              "supports": "Helper-level check pins driveway pricing at 950 kr per square meter plus the fixed preparation amount and per-load costs without asphalt."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote.test.ts",
+              "name": "adds 667 kr per square meter when asphalt is included",
+              "evidence_type": "technical",
+              "supports": "Helper-level check pins the asphalt surcharge at 667 kr per square meter; the page declarations check the rendered asphalt totals."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote.test.ts",
+              "name": "adds 2 000 kr per load",
+              "evidence_type": "technical",
+              "supports": "Helper-level check pins the per-load cost at 2 000 kr."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote.test.ts",
+              "name": "formats money in kronor with non-breaking grouping and a decimal comma",
+              "evidence_type": "technical",
+              "supports": "Helper-level check pins sv-SE money formatting with non-breaking grouping and a decimal comma, the format the rendered total and email body carry."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote.test.ts",
+              "name": "formats numbers with grouping and a decimal comma without a currency unit",
+              "evidence_type": "technical",
+              "supports": "Helper-level check pins sv-SE number formatting without a currency unit, used for the measurements in the email draft."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote.test.ts",
+              "name": "exports the exact VAT status label constant",
+              "evidence_type": "technical",
+              "supports": "Helper-level check pins the exact Momsstatus ej bekräftad constant that the rendered result aside and the email body carry."
             }
           ],
           "entry_point_refs": [],
@@ -1364,6 +1490,34 @@
               "name": "supports decimal lengths and keeps the same precision in the email",
               "evidence_type": "direct",
               "supports": "Checks the decimal length's precision in the email body."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote.test.ts",
+              "name": "replaces every known {key} placeholder with its value",
+              "evidence_type": "technical",
+              "supports": "Helper-level check pins template substitution for every known placeholder in the draft body template."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote.test.ts",
+              "name": "keeps unknown placeholders untouched",
+              "evidence_type": "technical",
+              "supports": "Helper-level check pins that unknown placeholders stay literal instead of vanishing from the draft body."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote.test.ts",
+              "name": "percent-encodes the subject and the filled body in a mailto URL",
+              "evidence_type": "technical",
+              "supports": "Helper-level check pins the mailto URL construction with its percent-encoded subject and filled body that the Begär offert control hands to the email program."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote.test.ts",
+              "name": "keeps unknown placeholders and encodes their braces in the body",
+              "evidence_type": "technical",
+              "supports": "Helper-level check pins brace encoding of leftover unknown placeholders so the draft URL stays valid."
             }
           ],
           "entry_point_refs": [],

@@ -2,7 +2,7 @@
 
 Feature: [F4 — Home, navigation and route recovery](../../navigation-and-recovery.md)  
 Status: current  
-Reviewed: 2026-11-10
+Reviewed: 2026-11-11
 
 As a site visitor, I want to use route navigation so I can reach service selection, company information or inquiry preparation.
 
@@ -40,6 +40,7 @@ Use a known route or the home URL; repair/redeploy static route artifacts if mis
 
 - [src/data/siteContent.ts](../../../../src/data/siteContent.ts)
 - [src/pages/SiteHomePage.tsx](../../../../src/pages/SiteHomePage.tsx)
+- [src/styles.primary-contrast.test.ts](../../../../src/styles.primary-contrast.test.ts)
 
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `shows the requested primary navigation labels as real route links` (direct): Checks route-link destinations, not mobile-menu or dropdown interaction.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `derives header, mobile menu and footer navigation from the typed route registry` (direct): Checks desktop, mobile-menu and footer destinations, Swedish labels and link order against `content.routes` as the single declaration source; does not exercise dropdown interaction or responsive layout.
@@ -56,5 +57,7 @@ Use a known route or the home URL; repair/redeploy static route artifacts if mis
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `fetches above-the-fold hero images at high priority while service card images stay lazy` (direct): Checks fetchpriority=high, decorative alt/aria-hidden and no lazy-loading attribute on the home and about heroes, lazy service-card images without fetchpriority, and that a failing about-hero image hides via display:none. DOM-attribute evidence only; it does not establish real network scheduling or an LCP improvement.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `keeps the decorative home hero photo on the success path` (direct): Checks the home hero photo's src and its empty decorative alt/aria-hidden treatment.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `hides a failing home hero photo without a retry loop and keeps the hero intact` (direct): Checks display:none hiding across repeated image errors while the headline, intro, actions and stats remain. Does not establish browser image loading or CSS visibility.
+- vitest, [src/styles.primary-contrast.test.ts](../../../../src/styles.primary-contrast.test.ts), declaration `keeps the on-dark accent readable on the navy header, hero, and footer surfaces at WCAG AA` (technical): Token-level stylesheet check pins the `--primary-on-dark` accent against the foreground token at 4.5:1, the pairing the shared navy header, hero and footer chrome renders. It reads the root tokens only and does not render chrome or measure a browser.
+- vitest, [src/styles.primary-contrast.test.ts](../../../../src/styles.primary-contrast.test.ts), declaration `keeps both accent tokens in the orange brand hue family` (technical): Token-level stylesheet check pins the primary and on-dark accent hues to the declared orange band, the shared brand identity behind the chrome accents. It constrains hue only; it does not itself re-check contrast or any rendered element.
 
 Backend entry-point references: none (frontend-only). Test mappings were reviewed as source declarations; this document is not an execution receipt.
