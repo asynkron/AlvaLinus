@@ -2,7 +2,7 @@
 
 Feature: [F5 — Prepare a company staffing inquiry](../../staffing-inquiry.md)  
 Status: current  
-Reviewed: 2026-11-10
+Reviewed: 2026-11-11
 
 As a company representative, I want to enter company details, needed help, offered hourly rate, duration and a description in the staffing inquiry form so the company receives a useful basis to reply.
 
@@ -39,10 +39,12 @@ The page cannot verify company details beyond shape checks. A visitor stuck on v
 - [src/data/siteContent.ts](../../../../src/data/siteContent.ts)
 - [src/pages/InquiryPage.tsx](../../../../src/pages/InquiryPage.tsx)
 - [src/pages/SiteHomePage.tsx](../../../../src/pages/SiteHomePage.tsx)
+- [src/styles.field-border-contrast.test.ts](../../../../src/styles.field-border-contrast.test.ts)
 
 - vitest, [src/pages/InquiryPage.test.tsx](../../../../src/pages/InquiryPage.test.tsx), declaration `collects the nine fields in mockup order with required and optional marks` (direct): Checks field order, required/optional attributes, autocomplete hints, the rate input minimum, the VAT note association and the handoff note. Does not establish visual layout.
 - vitest, [src/pages/InquiryPage.test.tsx](../../../../src/pages/InquiryPage.test.tsx), declaration `explains every missing required field in Swedish and focuses the first invalid field` (direct): Checks the alert summary, the seven per-field messages, aria-invalid/aria-describedby wiring, optional fields staying unmarked and focus on the first invalid control.
 - vitest, [src/pages/InquiryPage.test.tsx](../../../../src/pages/InquiryPage.test.tsx), declarations `explains an invalid email address and clears the error when the address is corrected` and `rejects a negative offered hourly rate with a Swedish message` (direct): Check the specific Swedish messages and that no draft opens for invalid input.
 - vitest, [src/pages/InquiryPage.test.tsx](../../../../src/pages/InquiryPage.test.tsx), declaration `keeps validation in helper functions so optional fields stay out of the error set` (direct): Checks the validation helper directly, including the error key order and optional fields staying outside the set.
+- vitest, [src/styles.field-border-contrast.test.ts](../../../../src/styles.field-border-contrast.test.ts), declaration `keeps quote and inquiry form field boundaries at WCAG AA non-text contrast on white` (technical): Stylesheet check pins the 1px hex border color of the inquiry input and textarea boundary rule at 3:1 non-text contrast on white, alongside the quote-page equivalents. It reads the page CSS only and does not render the form.
 
 Backend entry-point references: none (frontend-only). Test mappings were reviewed as source declarations; this document is not an execution receipt.

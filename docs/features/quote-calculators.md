@@ -1,6 +1,6 @@
 # F6: Calculate a preliminary quote
 
-Reviewed: 2026-11-08. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-11. Runtime: `ui`. Product role: `customer_outcome`.
 
 Visitors with a husdränering or driveway project can self-serve a preliminary
 cost picture before contacting the company. The calculators produce a
@@ -98,7 +98,14 @@ declarations check the drainage tier totals at and beyond the 55-meter
 boundary, the driveway area, asphalt and load pricing, the sv-SE money and
 number formatting, the VAT-status label constant and the mailto template
 filling and encoding; the page declarations above cover the rendered behavior
-around them.
+around them. The 2026-11-11 review maps those helper declarations as
+technical evidence into F6-US2 (tier totals, sv-SE formatting and the
+VAT-status constant) and F6-US5 (template filling and mailto encoding) in
+the story documents and the identity manifest. The same review maps the
+stylesheet declaration in
+[styles.field-border-contrast.test.ts](../../src/styles.field-border-contrast.test.ts),
+which pins the quote field boundaries at WCAG AA non-text contrast on white,
+to F6-US2.
 
 An invalid measurement keeps the previous total out of view and disables the
 email and print controls until corrected; "Återställ exempel" restores the

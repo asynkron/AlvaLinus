@@ -1,6 +1,6 @@
 # F1: Choose a suitable groundworks service
 
-Reviewed: 2026-11-07. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-11. Runtime: `ui`. Product role: `customer_outcome`.
 
 Visitors need to identify which service fits a property or construction project
 before asking for a discussion. The current result is service understanding and
@@ -81,7 +81,11 @@ destinations are each checked by the parameterized F3-US1 declaration listed in
 [project-inquiry.md](project-inquiry.md). These mappings do not establish
 services-index image fallback behavior and are not test execution receipts;
 above-the-fold hero fetch priority and subpage-hero image hiding are mapped
-once through [F4-US1](user-stories/F4/F4-US1.md).
+once through [F4-US1](user-stories/F4/F4-US1.md). The 2026-11-11 review also
+maps the token-level declaration in
+[styles.primary-contrast.test.ts](../../src/styles.primary-contrast.test.ts)
+that pins the `--primary` accent against the white `--card` surface at WCAG AA
+to F1-US1, where the service cards' primary Läs mer links render that pairing.
 
 ## What Works Less Well
 
