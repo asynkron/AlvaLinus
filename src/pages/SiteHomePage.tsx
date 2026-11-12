@@ -847,7 +847,7 @@ function Services({ content }: { readonly content: SiteContent }) {
                 <a
                   href={service.href}
                   aria-label={`${section.readMoreAriaPrefix} ${service.title}`}
-                  className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary/80"
+                  className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary-hover"
                 >
                   {section.readMoreLabel}
                   <ArrowRight className="ml-1.5 h-3.5 w-3.5" aria-hidden="true" />

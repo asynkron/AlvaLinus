@@ -482,6 +482,26 @@ describe("SiteHomePage", () => {
     }
   });
 
+  it("pins every service-card link hover to the AA-enforced primary-hover token on home and the services index", () => {
+    const { rerender } = render(<SiteHomePage content={content} />);
+
+    for (const currentPath of ["/", "/tjanster/"]) {
+      if (currentPath !== "/") {
+        rerender(<SiteHomePage currentPath={currentPath} content={content} />);
+      }
+
+      for (const service of content.services) {
+        const link = screen.getByRole("link", { name: readMoreName(service) });
+        expect(link).toHaveClass("text-primary", "hover:text-primary-hover");
+        expect(
+          link.className
+            .split(" ")
+            .filter((className) => /^hover:text-primary(?:\/|$)/.test(className)),
+        ).toEqual([]);
+      }
+    }
+  });
+
   it("keeps every current route aligned with a page-specific visual asset", () => {
     const expectedVisualsByRoute = new Map([
       ["quote", "/page-visuals/svard-entreprenad-quote.svg"],

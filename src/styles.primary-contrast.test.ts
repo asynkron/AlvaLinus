@@ -50,12 +50,17 @@ function contrastRatio(a: HslToken, b: HslToken): number {
 const primary = parseRootToken("primary");
 const primaryForeground = parseRootToken("primary-foreground");
 const primaryOnDark = parseRootToken("primary-on-dark");
+const primaryHover = parseRootToken("primary-hover");
 const card = parseRootToken("card");
 const foreground = parseRootToken("foreground");
 
 describe("styles.css primary accent contrast", () => {
   it("keeps the primary accent readable on white card surfaces at WCAG AA", () => {
     expect(contrastRatio(primary, card)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it("keeps the primary hover shade readable on white card surfaces at WCAG AA", () => {
+    expect(contrastRatio(primaryHover, card)).toBeGreaterThanOrEqual(4.5);
   });
 
   it("keeps white primary-foreground labels readable on primary buttons at WCAG AA", () => {
