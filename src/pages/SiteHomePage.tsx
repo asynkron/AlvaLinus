@@ -1018,7 +1018,7 @@ function Footer({ content }: { readonly content: SiteContent }) {
 }
 
 const CONTACT_FIELD_BASE_CLASS =
-  "rounded-md border bg-card px-3 py-2 text-base font-normal text-foreground outline-none transition-colors focus:border-primary focus-visible:ring-2 focus-visible:ring-ring sm:text-sm";
+  "rounded-md border bg-card px-3 py-2 text-base font-normal text-foreground outline-none transition-colors focus:border-primary focus-visible:ring-2 focus-visible:ring-ring";
 
 function Contact({
   content,
