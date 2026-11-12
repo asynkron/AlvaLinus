@@ -1,6 +1,6 @@
 # F4: Home, navigation and route recovery
 
-Reviewed: 2026-11-11. Runtime: `ui`. Product role: `surface`.
+Reviewed: 2026-11-12. Runtime: `ui`. Product role: `surface`.
 Supports **F1, F2, F3, F5 and F6**, all active customer-outcome features.
 
 Home and shared route handling make the service, company and inquiry outcomes
@@ -52,12 +52,14 @@ fetch priority without a lazy-loading attribute, so above-the-fold rendering is
 not deferred behind below-the-fold imagery; service-card images stay lazy.
 Home, services and calculator heroes are photographs, while the staffing, about
 and contact heroes are in-tree SVG illustrations. The home, Tjänster index,
-four service-photo, garden-planning and rental-calculation heroes declare
-registry-owned responsive WebP variants, so each rendered img srcset and that
-route document's stamped preload link's imagesrcset/imagesizes describe the
-same candidates and a narrow viewport fetches one right-sized hero instead of
-the full-size base. The drainage-calculation hero has no variant family and
-keeps its plain preload, which already describes its only candidate.
+four service-photo, garden-planning, rental-calculation and drainage-calculation
+heroes declare registry-owned responsive WebP variants, so each rendered img
+srcset and that route document's stamped preload link's imagesrcset/imagesizes
+describe the same candidates and a narrow viewport fetches one right-sized hero
+instead of the full-size base; the drainage calculator's family pairs
+dranering-photo-400.webp 400w and dranering-photo-640.webp 640w with its own
+draneringsberakning-hero.webp 900w base at sizes 100vw. Only the staffing, about
+and contact SVG heroes lack variants.
 
 [F4-US1](user-stories/F4/F4-US1.md) covers navigation from the home hero's two
 actions, route shortcuts and shared chrome. The inventory's six shortcuts

@@ -1,6 +1,6 @@
 # F6: Calculate a preliminary quote
 
-Reviewed: 2026-11-11. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-12. Runtime: `ui`. Product role: `customer_outcome`.
 
 Visitors with a husdränering or driveway project can self-serve a preliminary
 cost picture before contacting the company. The calculators produce a
@@ -67,13 +67,19 @@ website cannot confirm an email send, a real printout or a binding price.
 ## Source, states and evidence
 
 [Typed routes/content](../../src/data/siteContent.ts) declares both `quote`
-routes, their summaries, hero photos and visual metadata, the registry
-`quoteCalculator` band on the drainage service, and the Swedish calculator
-copy itself in `quote.shared`, `quote.uppfart` and `quote.drainage`, including
-both mail subjects and body templates.
+routes, their summaries, registry-owned responsive hero photo variants and
+visual metadata: `/offertberakning/` pairs quote-hero-640.webp 640w and
+quote-hero-960.webp 960w with its quote-hero.webp 1672w base, and
+`/draneringsberakning/` pairs dranering-photo-400.webp 400w and
+dranering-photo-640.webp 640w with its draneringsberakning-hero.webp 900w base,
+each route declaring `heroPhotoSrcSet` and `heroPhotoSizes` (`"100vw"`). The
+same registry holds the `quoteCalculator` band on the drainage service and the
+Swedish calculator copy itself in `quote.shared`, `quote.uppfart` and
+`quote.drainage`, including both mail subjects and body templates.
 [QuotePageShared](../../src/components/QuotePageShared.tsx) owns the shared
-quote page shell, result aside, notes field and reset button that both
-calculators render, [QuotePage](../../src/pages/QuotePage.tsx) owns the choice
+quote page shell — including the hero img that renders each route's declared
+`heroPhotoSrcSet` and `heroPhotoSizes` — result aside, notes field and reset
+button that both calculators render, [QuotePage](../../src/pages/QuotePage.tsx) owns the choice
 view and driveway calculator,
 [DrainageQuotePage](../../src/pages/DrainageQuotePage.tsx) owns
 the drainage calculator, [quote helpers](../../src/lib/quote.ts) own the tier
@@ -105,7 +111,11 @@ the story documents and the identity manifest. The same review maps the
 stylesheet declaration in
 [styles.field-border-contrast.test.ts](../../src/styles.field-border-contrast.test.ts),
 which pins the quote field boundaries at WCAG AA non-text contrast on white,
-to F6-US2.
+to F6-US2. The 2026-11-11 `fk189` accent change then mapped the page-level
+stylesheet declaration in
+[styles.page-accent-contrast.test.ts](../../src/styles.page-accent-contrast.test.ts),
+which pins the white Begär offert label on its token-based send-button surface
+at WCAG AA, into F6-US5.
 
 An invalid measurement keeps the previous total out of view and disables the
 email and print controls until corrected; "Återställ exempel" restores the

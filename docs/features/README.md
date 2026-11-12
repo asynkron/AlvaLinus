@@ -1,6 +1,6 @@
 # Feature catalog
 
-Reviewed against source: 2026-11-11.
+Reviewed against source: 2026-11-12.
 
 The catalog introduced in `f7b481f` already covers the current route inventory.
 The maintained catalog retains its published identities, including F4-US3 for
@@ -26,7 +26,14 @@ styles accessibility tests — the field-border contrast test introduced by
 PR #125's WCAG AA form-field repair, the primary-contrast token test and the
 reduced-motion test — and the quote helper declarations in `quote.test.ts`
 into the touched story records, and re-stamped the F1, F4, F5 and F6 records
-from that fresh source read.
+from that fresh source read. `fk185` (PR #130) then gave the drainage-calculation
+hero the same registry-owned responsive WebP variant family as the other photo
+heroes, and `fk189` mapped its new page-accent stylesheet declaration into the
+F6-US5 and F5-US2 story records; this 2026-11-12 reconciliation folded that
+drainage hero into the F4 variant prose, named both quote routes' declared
+`heroPhotoSrcSet`/`heroPhotoSizes` in the F6 record, and re-stamped the F4 and
+F6 records from a fresh source read, with `fk188`'s per-route og:image artifact
+emission leaving the route table unchanged.
 
 This catalog maps the static Swedish Svärd Entreprenad site to visitor outcomes.
 It is product-development input, not a claim that construction work, email delivery
@@ -130,8 +137,9 @@ does not provide persistence, delivery assurance or a privacy/compliance verdict
   the quote helper tests in [quote.test.ts](../../src/lib/quote.test.ts), and
   the stylesheet tests
   [styles.field-border-contrast.test.ts](../../src/styles.field-border-contrast.test.ts),
-  [styles.primary-contrast.test.ts](../../src/styles.primary-contrast.test.ts)
-  and [styles.reduced-motion.test.ts](../../src/styles.reduced-motion.test.ts).
+  [styles.primary-contrast.test.ts](../../src/styles.primary-contrast.test.ts),
+  [styles.reduced-motion.test.ts](../../src/styles.reduced-motion.test.ts)
+  and [styles.page-accent-contrast.test.ts](../../src/styles.page-accent-contrast.test.ts).
   `direct` means
   the assertion checks the stated user-visible facet, not every step of a story.
   `technical` checks supporting metadata, including the token-level stylesheet
