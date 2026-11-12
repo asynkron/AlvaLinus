@@ -933,6 +933,35 @@ describe("SiteHomePage", () => {
     expect(screen.queryByRole("link", { name: /Källa/ })).not.toBeInTheDocument();
   });
 
+  it("keeps every contact form control at the 16px base text size on home and /kontakt/", () => {
+    const fields = [
+      { label: "Namn", name: "name" },
+      { label: "Kundtyp", name: "customerType" },
+      { label: "Tjänst", name: "service" },
+      { label: "Meddelande", name: "message" },
+    ] as const;
+    const { rerender } = render(<SiteHomePage content={content} />);
+
+    for (const currentPath of ["/", "/kontakt/"]) {
+      if (currentPath !== "/") {
+        rerender(<SiteHomePage currentPath={currentPath} content={content} />);
+      }
+
+      const formScope = within(screen.getByRole("form", { name: "Offertförfrågan via e-post" }));
+
+      for (const field of fields) {
+        const control = formScope.getByLabelText(field.label);
+        expect(control).toHaveAttribute("name", field.name);
+        expect(control.className).toContain("text-base");
+        expect(
+          control.className
+            .split(" ")
+            .filter((className) => /^(?:sm|md|lg|xl|2xl):text-(?:xs|sm)$/.test(className)),
+        ).toEqual([]);
+      }
+    }
+  });
+
   it.each([
     { id: "stensattning", path: "/stensattning/" },
     { id: "markarbete", path: "/markarbete/" },
