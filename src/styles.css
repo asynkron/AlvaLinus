@@ -13,6 +13,8 @@
   --primary-foreground: 0 0% 100%;
   --primary-hover: 18 84% 33%;
   --primary-on-dark: 18 82% 58%;
+  --selection-background: 21 83% 82%;
+  --selection-foreground: 217 31% 21%;
   --secondary: 214 24% 93%;
   --secondary-foreground: 220 33% 18%;
   --muted: 210 20% 96%;
