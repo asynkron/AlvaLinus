@@ -85,7 +85,9 @@ function flattenColors(colors: Record<string, unknown>, prefix = ""): Record<str
 const tailwindColors = flattenColors(tailwindConfig.theme.extend.colors as Record<string, unknown>);
 
 function resolveTextToken(colorName: string): { readonly token: HslToken; readonly alpha: number } {
-  const [baseName, modifier] = colorName.split("/");
+  const slashIndex = colorName.indexOf("/");
+  const baseName = slashIndex === -1 ? colorName : colorName.slice(0, slashIndex);
+  const modifier = slashIndex === -1 ? undefined : colorName.slice(slashIndex + 1);
   const value = tailwindColors[baseName];
 
   if (value === undefined) {
