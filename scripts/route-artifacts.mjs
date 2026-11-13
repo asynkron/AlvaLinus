@@ -33,6 +33,16 @@ const headClosePattern = /<\/head>/i;
 const homeHeroPreloadHrefPattern = /\bhref=(["'])\/page-visuals\/hero-photo\.webp\1/i;
 const homeHeroPhotoAssetPath = "/page-visuals/hero-photo.webp";
 
+/**
+ * Byte budget for each route's preloaded full-size hero asset, the file the
+ * stamped preload link fetches before first paint. It sits above the largest
+ * current preloaded hero (stensattning-photo.webp at 385,866 B) and below the
+ * 501,858 B tradgard-generated.webp baseline that the 2026-11-13 recompression
+ * removed, so the gate trips exactly when an oversized preloaded hero
+ * reappears instead of policing already-efficient srcset variants.
+ */
+export const heroAssetByteBudget = 400000;
+
 function isMissingEntryError(error) {
   return error instanceof Error && "code" in error && error.code === "ENOENT";
 }
@@ -777,7 +787,7 @@ export async function assertStaticRouteArtifacts({ routes, distDir, readFile }) 
   return expectedRoutes;
 }
 
-export async function assertRouteVisualAssets({ routes, publicDir, access }) {
+export async function assertRouteVisualAssets({ routes, publicDir, access, stat }) {
   const assetPaths = routeVisualAssetPaths(routes);
   const heroAssetPaths = routeHeroPhotoAssetPaths(routes);
   const heroCandidatePaths = routeHeroSrcSetCandidatePaths(routes);
@@ -786,6 +796,7 @@ export async function assertRouteVisualAssets({ routes, publicDir, access }) {
   const duplicateAssets = assetPaths.filter((assetPath, index) => assetPaths.indexOf(assetPath) !== index);
   const missingAssets = [];
   const missingHeroAssets = [];
+  const oversizedHeroAssets = [];
 
   for (const assetPath of assetPaths) {
     if (!isDeclaredVisualAssetPath(assetPath)) continue;
@@ -841,12 +852,35 @@ export async function assertRouteVisualAssets({ routes, publicDir, access }) {
     }
   }
 
-  if (invalidAssets.length > 0 || missingAssets.length > 0 || missingHeroAssets.length > 0 || duplicateAssets.length > 0) {
+  if (typeof stat === "function") {
+    for (const assetPath of heroAssetPaths) {
+      try {
+        const stats = await stat(path.join(publicDir, assetPath.replace(/^\//, "")));
+
+        if (stats.size > heroAssetByteBudget) {
+          oversizedHeroAssets.push(`${assetPath} at ${stats.size} B exceeds the ${heroAssetByteBudget} B hero budget`);
+        }
+      } catch (error) {
+        if (isMissingEntryError(error)) continue;
+
+        throw error;
+      }
+    }
+  }
+
+  if (
+    invalidAssets.length > 0 ||
+    missingAssets.length > 0 ||
+    missingHeroAssets.length > 0 ||
+    duplicateAssets.length > 0 ||
+    oversizedHeroAssets.length > 0
+  ) {
     const details = [
       invalidAssets.length > 0 ? `invalid: ${invalidAssets.join(", ")}` : "",
       missingAssets.length > 0 ? `missing: ${missingAssets.join(", ")}` : "",
       missingHeroAssets.length > 0 ? `missing heroes: ${missingHeroAssets.join(", ")}` : "",
       duplicateAssets.length > 0 ? `duplicate: ${duplicateAssets.join(", ")}` : "",
+      oversizedHeroAssets.length > 0 ? `oversized: ${oversizedHeroAssets.join(", ")}` : "",
     ]
       .filter(Boolean)
       .join("; ");

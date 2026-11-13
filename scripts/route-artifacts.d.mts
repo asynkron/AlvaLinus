@@ -58,8 +58,11 @@ export declare function assertStaticRouteArtifacts(options: {
   readFile: (filePath: string, encoding: "utf8") => Promise<string>;
 }): Promise<string[]>;
 
+export declare const heroAssetByteBudget: number;
+
 export declare function assertRouteVisualAssets(options: {
   routes: readonly RouteRegistryRoute[];
   publicDir: string;
   access: (filePath: string) => Promise<void>;
+  stat?: (filePath: string) => Promise<{ readonly size: number }>;
 }): Promise<{ visualAssets: string[]; heroAssets: string[] }>;
