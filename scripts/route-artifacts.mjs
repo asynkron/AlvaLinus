@@ -858,7 +858,7 @@ export async function assertRouteVisualAssets({ routes, publicDir, access, stat 
         const stats = await stat(path.join(publicDir, assetPath.replace(/^\//, "")));
 
         if (stats.size > heroAssetByteBudget) {
-          oversizedHeroAssets.push(`${assetPath} (${stats.size} B > ${heroAssetByteBudget} B hero budget)`);
+          oversizedHeroAssets.push(`${assetPath} at ${stats.size} B exceeds the ${heroAssetByteBudget} B hero budget`);
         }
       } catch (error) {
         if (isMissingEntryError(error)) continue;

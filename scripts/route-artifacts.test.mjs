@@ -1322,8 +1322,8 @@ describe("assertRouteVisualAssets", () => {
     await expect(
       assertRouteVisualAssets({ routes, publicDir: "public", access: fileSystem.access, stat: fileSystem.stat }),
     ).rejects.toThrow(
-      "Route visual asset check failed (oversized: /page-visuals/services-hero.webp " +
-        `(${heroAssetByteBudget + 1} B > ${heroAssetByteBudget} B hero budget).`,
+      `Route visual asset check failed (oversized: /page-visuals/services-hero.webp at ` +
+        `${heroAssetByteBudget + 1} B exceeds the ${heroAssetByteBudget} B hero budget).`,
     );
     expect(fileSystem.stat).toHaveBeenCalledWith(publicAssetPath("public", "/page-visuals/services-hero.webp"));
   });
