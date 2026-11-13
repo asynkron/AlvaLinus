@@ -1,26 +1,27 @@
 # Product and operation roadmap
 
-Reviewed: 2026-11-12 (fk197), source baseline
-`9e7dd70bec977155d7d043bd3e587e8d0975b9de` (this task's prepared base,
-which is fk195's merge — the tip at this refresh's reads). The previous
-generation was read in full from this checkout's committed copy, which
-holds exactly the fk187 refresh (PR #131, merge `7eb567e`). Since fk187's
-own delivery closed at 16:47Z on November 11, main advanced through
-fk188's, fk193's and fk195's merges (fk189's had already landed beneath
-fk187's own merge), and every affected row below is re-baselined from
-fresh owning reads at the `9e7dd70` tip instead of copying the snapshot.
+Reviewed: 2026-11-13 (fk207), source baseline
+`eb2711dbfb0418484e37724adeacbeb19ae594eb` (this task's prepared base,
+which is fk205's merge — the origin/main tip re-read at these build
+reads). The previous generation was read in full from this checkout's
+committed copy, which holds exactly the fk197 refresh (PR #138, merge
+`6242e9e`). Since fk197's own delivery closed at 17:35Z on November 12,
+main advanced through fk203's and fk205's merges — while fk199's and
+fk198's merges landed after fk197's document was written but before its
+own merge — and every affected row below is re-baselined from fresh
+owning reads at the `eb2711d` tip instead of copying the snapshot.
 
 This roadmap connects the Swedish Svärd Entreprenad website to operating a
 product with minimal human intervention. Source capability, task delivery,
 accepted quality and observed production operation are separate evidence.
 Goals are proposed work, not authorization to expand the site's runtime.
-This refresh supersedes fk187's November 11 assessment (PR #131, merge
-`7eb567e`) and continues the ownership chain fk44 → fk54 → fk66 → fk72 →
+This refresh supersedes fk197's November 12 assessment (PR #138, merge
+`6242e9e`) and continues the ownership chain fk44 → fk54 → fk66 → fk72 →
 fk76 → fk87 → fk96 → fk105 → fk113 → fk123 → fk153 → fk163 → fk173 →
-fk187 → fk197: the previous document was read in full and reconciled with
-exact merge receipts and current source. Earlier assessments remain in
-Git; their ownership is reconciled below and their retained read logs are
-compressed to pointers (see Evidence boundaries).
+fk187 → fk197 → fk207: the previous document was read in full and
+reconciled with exact merge receipts and current source. Earlier
+assessments remain in Git; their ownership is reconciled below and their
+retained read logs are compressed to pointers (see Evidence boundaries).
 
 ## Where we are
 
@@ -33,78 +34,86 @@ AlvaLinus is a static React/TypeScript/Vite site with twelve routes:
 There is no application backend, database, authentication or serverless runtime
 ([ADR 0001](adrs/0001-static-react-frontend-foundation.md)).
 
-Since the November 11 review, main advanced from `5465b66` (fk187's
-reviewed baseline) to `9e7dd70` (this baseline) through five merges in
+Since the November 12 review, main advanced from `9e7dd70` (fk197's
+reviewed baseline) to `eb2711d` (this baseline) through five merges in
 order:
 
-- **fk189** (PR #132, head `7d21a757` → merge `3440d65`, closed
-  2026-11-11T16:46Z; run-quality pass at head `7d21a757`) pinned the
-  quote and inquiry accent palette to the test-enforced primary tokens:
-  the hardcoded `#bf4911`/`#9f390b`/`#bc4811` hexes in both page
-  stylesheets became `hsl(var(--primary))`/`hsl(var(--primary-hover))`
-  declarations (a new `--primary-hover: 18 84% 33%` token joined
-  `:root`), and
-  [styles.page-accent-contrast.test.ts](../src/styles.page-accent-contrast.test.ts)
-  now pins the `.quote-send` white-on-background pairing at ≥4.5:1 with
-  a hue-family guard — resolving the F6-US5 catalog exclusion fk183 had
-  documented and mapping the test into F6-US5/F5-US2's story records.
-- **fk187** (PR #131, head `1ec5bac` → merge `7eb567e`, on fk189's
-  `3440d65` base, closed 2026-11-11T16:47Z; run-quality pass at head
-  `1ec5bac`) delivered the previous roadmap refresh that this document
-  supersedes.
-- **fk188** (PR #133, head `71f21f79` → merge `36d7cba`, closed
-  2026-11-11T16:53Z; run-quality pass at head `71f21f79`) completed the
-  social-card class fk88 started: the per-subpage emitter now
-  substitutes `og:image`, `og:image:alt` and `twitter:image` from each
-  route's registry-declared `heroPhotoAssetPath` with registry-declared
-  Swedish alt text, the three SVG-hero routes (`/inhyrning/`,
-  `/om-oss/`, `/kontakt/`) keep the shared raster home hero because
-  social crawlers render SVG unreliably, and the static artifact gate
-  existence-checks every emitted image path (fk164's pattern extended).
-- **fk193** (PR #134, head `802f378b` → merge `c131651`, closed
-  2026-11-12T09:26Z; run-quality pass at head `802f378b`; its required
-  `validate-features` proof passed at acceptance) reconciled the feature
-  catalog with the delivered source: navigation-and-recovery.md's stale
-  "drainage hero has no variant family" claim became the registry-owned
-  responsive-variants paragraph, quote-calculators.md now names both
-  quote routes' declared hero srcsets and fk189's accent-contrast test
-  mapping, F4/F6 re-stamped 2026-11-12, and the README review history
-  records the fk185/fk188/fk189 deltas.
-- **fk195** (PR #135, head `636126c` → merge `9e7dd70`, this baseline,
-  closed 2026-11-12T15:25Z; run-quality pass at head `636126c`) removed
-  the contact form's ≥640px `sm:text-sm` downgrade so every
-  offertförfrågan control holds `text-base` (16px) at all viewport
-  widths — eliminating iOS Safari's automatic page zoom on field focus
-  for landscape-phone and split-view users — with a focused
-  rendered-class regression test covering both the home and `/kontakt/`
-  renderings.
+- **fk199** (PR #136, head `b1a3c989` → merge `aa4fdb6`, closed
+  2026-11-12T17:19Z; run-quality pass at head `b1a3c989`) raised both
+  quote calculators' select and textarea onto the 16px iOS focus-zoom
+  floor: the shared `.quote-field select,.quote-field textarea` rule now
+  declares `font-size:16px` ([QuotePage.css](../src/pages/QuotePage.css):18)
+  so neither control inherits the 14px container size, and a new focused
+  stylesheet test ([styles.quote-focus-zoom.test.ts](../src/styles.quote-focus-zoom.test.ts))
+  pins the floor in fk171's raw-CSS pattern — closing the quote-page half
+  of the defect class fk195 fixed on the contact form.
+- **fk198** (PR #137, head `35eccacb` → merge `9631338`, closed
+  2026-11-12T17:27Z; run-quality pass at head `35eccacb`) pinned the
+  services "Läs mer" hover to the AA-enforced hover token: the anchor now
+  carries `text-primary hover:text-primary-hover`
+  ([SiteHomePage.tsx](../src/pages/SiteHomePage.tsx):850),
+  [tailwind.config.ts](../tailwind.config.ts) maps `primary.hover` to
+  `hsl(var(--primary-hover))`, a new compiled-utility test
+  ([tailwind.primary-hover-utility.test.ts](../src/tailwind.primary-hover-utility.test.ts))
+  proves the utility actually generates the token's CSS, and the classes
+  are pinned at SiteHomePage.test.tsx:495 — the 80%-alpha hover wash that
+  computed ≈4.0:1 no longer occurs anywhere in src/.
+- **fk197** (PR #138, head `55e5d0ff` → merge `6242e9e`, closed
+  2026-11-12T17:35Z; run-quality pass at head `55e5d0ff`) delivered the
+  previous roadmap refresh that this document supersedes.
+- **fk203** (PR #139, head `0e8012cf` → merge `2e3245f`, closed
+  2026-11-13T09:56Z; run-quality pass at head `0e8012cf`; its required
+  `validate-features` proof passed on its candidate and its delivery
+  records the verifier rerunning it independently on the merged
+  candidate) reconciled the feature catalog with the three styling
+  deliveries: F3-US1 maps fk195's contact-form 16px declaration,
+  F6-US2 maps fk199's quote-page ≥16px floor (adding
+  styles.quote-focus-zoom.test.ts to the README's named test list), and
+  F1-US1 gains four fk198 hover-token declarations (plus the two
+  Tailwind utility-generation checks and
+  tailwind.primary-hover-utility.test.ts); F1/F3/F6 and the README were
+  re-stamped 2026-11-13, with F2/F4/F5 deliberately untouched.
+- **fk205** (PR #140, head `de546201` → merge `eb2711d`, this baseline,
+  closed 2026-11-13T15:56Z; run-quality pass at head `de546201` after a
+  strict-typecheck repair commit) completed the recurring
+  frontend-optimization closeout of the read-more hover: fk198's fix was
+  already in its base, so its recorded merge delta is the new 187-line
+  [styles.read-more-hover-contrast.test.ts](../src/styles.read-more-hover-contrast.test.ts),
+  which locates the anchor structurally through its Swedish aria-label,
+  resolves its hover utility through the token system (rejecting any
+  hardcoded color), alpha-composites any `/NN` modifier over the card
+  surface and asserts the hover pairing at ≥4.5:1 — restoring the old
+  `hover:text-primary/80` computes 3.96:1 and fails by design.
 
 The visitor-facing baseline is a complete self-service surface whose Swedish
 text is declared in the typed registry on every delivered surface, whose
-accent, CTA and form-field contrast are test-enforced, whose quote money
-logic is unit-tested, every declared hero asset exists with the gate
-keeping it that way, every photo-hero route's stamped preload describes
-exactly the candidates its img selects (fk177/fk185), every subpage's
-social card now previews that page's own imagery (fk188), and the primary
-conversion form no longer zooms on iOS focus (fk195). What remains inside
-the delivered surface is the two newly linked debts (the hover-contrast
-ceiling fk198 and the quote-page focus-zoom floor fk199, both created
-during this refresh), the small hardcoded focus/selection hex residue
-fk189 deliberately left out of its enumerated scope, and the declared but
-undelivered editorial photography — not new visitor capability.
+accent, CTA and form-field contrast are test-enforced — now including the
+"Läs mer" hover state, enforced twice over (fk198's token pinning plus
+fk205's pairing test) — whose quote money logic is unit-tested, every
+declared hero asset exists with the gate keeping it that way, every
+photo-hero route's stamped preload describes exactly the candidates its
+img selects (fk177/fk185), every subpage's social card previews that
+page's own imagery (fk188), and no delivered form control zooms on iOS
+focus anymore (fk195 on the contact form, fk199 on both quote pages).
+What remains inside the delivered surface is the two newly linked debts —
+the focus/selection accent tokens fk208 and the tradgard hero byte
+weight fk209, both created during this refresh — and the declared but
+undelivered editorial photography, not new visitor capability.
 
 No unclaimed feature work is open at this refresh's closing reads
-(November 12, ~17:04Z): the open inventory holds 36 records — this task,
-the two links this refresh created (fk198 and fk199, read back open at
-17:03Z with labels `priority: medium` and `size:medium` and not yet
-picked up at the inventory read), the operator-owned worker-host
-maintenance pair (fk181 waiting on host disk space with fk182 as its
-question notice — platform work, not site work) and 31 delivery-notice
-records, with no other feature work open or in flight. The
-dependency-management automation has still not produced a child since
-fk149 on November 7 — that automation runs weekly (`task_recurrence` 1w),
-so the silence is cadence, not a stall; its vitest-5, major-jump and
-audit prompts stay on fk149's record, re-read unconsumed on November 12.
+(November 13, ~17:52Z): just before the two links below were created, the
+open inventory held exactly three records — this task and the two
+delivery-notice records fk204 (fk203) and fk206 (fk205). The
+worker-host maintenance pair from fk187's generation is gone: fk181 and
+fk182 read closed at 2026-11-12T22:19Z, with fk181's embedded question
+form showing no recorded answer, so the pair is resolved as closed
+platform records — whether the operator freed C: space or relocated the
+consumer is not recorded on the readable record, and neither belongs to
+site work. The dependency-management automation has still not produced a
+child since fk149 on November 7 — that automation runs weekly
+(`task_recurrence` 1w) and its cadence is next due about November 14, so
+the silence is cadence, not a stall; fk149's vitest-5, major-jump and
+audit prompts stay on its record, re-read unconsumed on November 13.
 
 ### What works well
 
@@ -140,32 +149,32 @@ audit prompts stay on fk149's record, re-read unconsumed on November 12.
   `vatStatusLabel`, plus fk135's `fillTemplate`/`buildQuoteMailto`
   placeholder contract, so formula or formatting changes are caught directly
   rather than only at the DOM boundary.
-- Contrast is enforced by test rather than by one-off repairs on both fronts
-  it was repaired: fk151 (PR #114) darkened the light-surface `--primary`
-  token, added `--primary-on-dark` for the navy surfaces, reclassified every
-  dark-surface accent usage, and
+- Contrast and form-field sizing are enforced by test rather than by one-off
+  repairs on every front they were repaired: fk151 (PR #114) darkened the
+  light-surface `--primary` token, added `--primary-on-dark` for the navy
+  surfaces, reclassified every dark-surface accent usage, and
   [its deterministic test](../src/styles.primary-contrast.test.ts) parses the
   stylesheet tokens and asserts the ≥4.5:1 pairings with a hue-family guard;
-  and since fk171 (PR #125) the quote and inquiry form-field
+  since fk171 (PR #125) the quote and inquiry form-field
   boundaries draw `#64748b` (~4.8:1 on white, up from ~1.8:1), guarded by
   [a focused test](../src/styles.field-border-contrast.test.ts) that imports
-  both page stylesheets with `?raw`, extracts each boundary declaration by
-  selector text, computes the WCAG relative-luminance ratio against white and
-  requires ≥3:1. fk183 (PR #129) then mapped all three styles tests and the
-  quote money-logic test into the feature catalog as technical evidence at
-  their strongest owning stories, so the catalog's evidence map now names
-  the real owning tests. fk189 (PR #132) extended enforcement to the quote
-  pages' own accent: the hardcoded orange hexes became
-  `hsl(var(--primary))`/`hsl(var(--primary-hover))` declarations (a new
-  `--primary-hover: 18 84% 33%` token joined `:root`), and
-  [styles.page-accent-contrast.test.ts](../src/styles.page-accent-contrast.test.ts)
-  resolves the `.quote-send` rule's var references against `:root` and
-  pins the white-on-background pairing at ≥4.5:1 with a hue-family guard,
-  so the CTA joined the test-enforced contrast surface. fk195 (PR #135)
-  gave the primary conversion form the same by-construction guarantee on
-  the zoom axis: every offertförfrågan control holds the 16px text floor
-  at all viewport widths, pinned by a rendered-class assertion on both
-  its home and `/kontakt/` renderings.
+  both page stylesheets with `?raw` and requires ≥3:1; fk189 (PR #132)
+  tokenized the quote/inquiry CTA accent and pinned the `.quote-send`
+  pairing at ≥4.5:1
+  ([styles.page-accent-contrast.test.ts](../src/styles.page-accent-contrast.test.ts));
+  fk195 (PR #135) put the contact form's controls on the 16px zoom floor
+  with a rendered-class assertion on both its home and `/kontakt/`
+  renderings; fk198 (PR #137) pinned the services "Läs mer" hover to the
+  AA-enforced `--primary-hover` token (7.10:1 on its white card) with a
+  compiled-utility test proving the Tailwind mapping actually generates the
+  token's CSS; fk199 (PR #136) put both quote calculators' select and
+  textarea on the same 16px floor under a focused stylesheet test; and
+  fk205 (PR #140) added the read-more pairing test that alpha-composites
+  any opacity modifier over the card, so a wash like the retired `/80`
+  hover (≈3.96:1) fails by construction. fk183 (PR #129) and fk203 (PR
+  #139) mapped the delivered tests into the feature catalog as technical
+  evidence at their strongest owning stories, so the catalog's evidence map
+  names the real owning tests.
 - The quote pages' structure is owned once: [QuotePageShared.tsx](../src/components/QuotePageShared.tsx)
   (fk135) owns the result-aside, page shell, notes field, reset button and
   mailto composition, so a caption or template fix lands in one file while
@@ -177,8 +186,8 @@ audit prompts stay on fk149's record, re-read unconsumed on November 12.
   Swedish and hands a complete mail draft to the visitor's own email program.
 - Existing tests cover the delivered behavior:
   [SiteHomePage.test.tsx](../src/pages/SiteHomePage.test.tsx) pins route and
-  content structure, chrome and the registry-owned hero map;
-  [QuotePage.test.tsx](../src/pages/QuotePage.test.tsx) and
+  content structure, chrome, the registry-owned hero map and the fk198
+  hover classes; [QuotePage.test.tsx](../src/pages/QuotePage.test.tsx) and
   [DrainageQuotePage.test.tsx](../src/pages/DrainageQuotePage.test.tsx) pin
   both calculators with registry-derived pins — fk185 added the drainage
   page's rendered hero srcset/sizes assertion, mirroring QuotePage's;
@@ -196,31 +205,32 @@ audit prompts stay on fk149's record, re-read unconsumed on November 12.
    [artifact-manifest.test.mjs](../scripts/artifact-manifest.test.mjs),
    [quality-evidence.test.mjs](../scripts/quality-evidence.test.mjs)); the
    reduced-motion override, the primary-contrast tokens, the form-field
-   borders, the quote-page CTA accent pairing (fk189) and the contact
-   form's 16px field floor (fk195) have their own focused tests, and the
-   quote lib boundary is covered by
-   [quote.test.ts](../src/lib/quote.test.ts). This refresh
+   borders, the quote-page CTA accent pairing (fk189), the contact form's
+   16px field floor (fk195), the quote pages' 16px floor (fk199), the
+   compiled primary-hover utility (fk198) and the read-more hover pairing
+   (fk205) have their own focused tests, and the quote lib boundary is
+   covered by [quote.test.ts](../src/lib/quote.test.ts). This refresh
    inspected source and owning records; it did not execute those tests.
 - The feature catalog covers the whole route surface: six features F1–F6
-  with the quote calculators documented as F6 (fk133), validate-features
-  passes recorded in fk162's, fk172's, fk176's, fk183's and fk193's
-  deliveries (the closed records' issue-level proof projections still
-  report `missing_evidence`; the owning records are closed/done and the
-  projections do not reopen them), the README reconciliation note covering
-  fk135/fk162/fk164/fk176, fk183's 2026-11-11 evidence-map line and
-  fk193's 2026-11-12 review history, the README evidence-contract sentence
-  naming all eight mapped test files after fk183 (fk193 added the
-  accent-contrast test to the named list),
-  F1/F4/F5/F6 re-stamped 2026-11-11 from fresh reads (F2/F3
-  deliberately deferred to fk183's queued follow-up), F4/F6 re-stamped
-  2026-11-12 by fk193 after it folded fk185's drainage-hero variants into
-  navigation-and-recovery.md, named both quote routes' declared srcsets
-  and fk189's accent-test mapping in quote-calculators.md, and recorded
-  that fk188's og:image emission left the route table unchanged, and the
-  [route inventory](current-public-route-inventory.md) (checked 2026-11-04)
-  matching the twelve-route registry. The catalog's one known open item is
-  the decorative-hero WebP test reference, an honestly unmapped gap by
-  fk172's recorded disposition.
+   with the quote calculators documented as F6 (fk133), validate-features
+   passes recorded in fk162's, fk172's, fk176's, fk183's, fk193's and
+   fk203's deliveries (the closed records' issue-level proof projections
+   still report `missing_evidence`; the owning records are closed/done and
+   the projections do not reopen them), the README reconciliation note
+   covering fk135/fk162/fk164/fk176, fk183's 2026-11-11 evidence-map line,
+   fk193's 2026-11-12 review history and fk203's 2026-11-13
+   reconciliation paragraph (which added styles.quote-focus-zoom.test.ts
+   and tailwind.primary-hover-utility.test.ts to the named test-file
+   list), F1/F4/F5/F6 re-stamped 2026-11-11 from fresh reads (F2/F3
+   deliberately deferred to fk183's queued follow-up), F4/F6 re-stamped
+   2026-11-12 by fk193 after it folded fk185's drainage-hero variants into
+   navigation-and-recovery.md, F1/F3/F6 re-stamped 2026-11-13 by fk203
+   after it folded fk195/fk198/fk199's declarations into F3-US1/F6-US2/
+   F1-US1 (F2/F4/F5 deliberately untouched), and the
+   [route inventory](current-public-route-inventory.md) (checked
+   2026-11-04) matching the twelve-route registry. The catalog's one known
+   open item is the decorative-hero WebP test reference, an honestly
+   unmapped gap by fk172's recorded disposition.
 - Image handling is layered and now consistent: every photo-hero route
   declares its responsive WebP variants in the registry (fk161/fk177/fk185),
   each emitted document preloads its hero at high priority with
@@ -235,17 +245,19 @@ audit prompts stay on fk149's record, re-read unconsumed on November 12.
   which have no preload. Since fk188 the declared hero paths also become
   every emitted subpage's `og:image`/`twitter:image`, existence-checked by
   the same gate, with the three SVG-hero routes carrying the shared raster
-  home hero so no emitted social image is an SVG.
+  home hero so no emitted social image is an SVG. The declared variants
+  are themselves efficiently sized; the one oversized full-size asset is
+  the tradgard hero's byte weight, now fk209's linked scope below.
 - Dependency hygiene stays continuous and documented: fk149's caret-range
   refresh left zero in-range drift (`npm outdated` wanted == current after
   its refresh), every major-version jump is deferred with a recorded reason,
   and the vitest 5 migration carries its own follow-up prompt on fk149's
   record. The dependency-management automation runs weekly
-  (`task_recurrence` 1w), so no child since fk149 on November 7 is its
-  cadence, not a stall — re-read on November 12: fk149's record still
-  carries the deferrals, the 3 moderate audit findings and the vitest-5
-  prompt unconsumed, and the vitest/coverage-v8 pins still read 4.1.9 at
-  this baseline.
+  (`task_recurrence` 1w; the last child ran November 7, so the next is due
+  about November 14), so no child since then is its cadence, not a stall —
+  re-read on November 13: fk149's record still carries the deferrals, the
+  3 moderate audit findings and the vitest-5 prompt unconsumed, and the
+  vitest/coverage-v8 pins still read 4.1.9 at this baseline.
 - [README](../README.md) and [the runner](../scripts/make.js) define Node 24+,
   locked dependencies, strict TypeScript, static artifact checks and one
   Vitest session. Process exit remains the gate authority.
@@ -256,63 +268,62 @@ audit prompts stay on fk149's record, re-read unconsumed on November 12.
   closed instead of emitting a partial record, with publication identity
   left as an operator-recorded host fact.
 - The autonomous factory keeps shipping through reviewed, merge-receipted
-  tasks: this is the fourteenth consecutive roadmap refresh, each reconciling
-  the previous one against owning records before linking new work. The
-  loop's throughput is visible in this baseline: five merges landed between
-  fk187's review and this tip in about a day (fk189, fk187 itself, fk188,
-  fk193 and fk195), and the steering loop closes in minutes-to-hours:
-  fk188 was created at 16:20:23Z on November 11 and closed delivered with
-  its merge at 16:53Z the same evening (about half an hour), and fk195 was
-  created at 15:06Z on November 12 and closed at 15:25Z, about nineteen
-  minutes later. The loop also survives adverse timing without losing
-  accuracy: fk187's own PR landed between two of the tasks it had linked
-  (fk189 merged beneath it, fk188 after it), and this refresh's base is
-  exactly the resulting tip, so no re-baselining was needed.
+  tasks: this is the fifteenth consecutive roadmap refresh, each
+  reconciling the previous one against owning records before linking new
+  work. The loop's throughput is visible in this baseline: five merges
+  landed between fk197's review and this tip in about a day and a half
+  (fk199, fk198, fk197 itself, fk203 and fk205), and the steering loop
+  keeps tightening: fk199 and fk198 were closed delivered sixteen and
+  twenty-four minutes after fk197 linked them on November 12, and this
+  refresh's own links were picked up within seconds — fk208's pipeline had
+  initialized its investigate stage about 23 seconds after creation at the
+  read-back, and fk209 was already queued for planning. The loop also
+  survives adverse timing without losing accuracy: fk197's own PR merged
+  after the merges of both tasks it had linked (fk199 and fk198 landed
+  beneath it), and this refresh's base is exactly the resulting tip, so no
+  re-baselining was needed.
 
 ### What works less well and what to improve
 
-- fk189's delivery removed the enumerated accent-role hexes, but a small
-  hardcoded-color residue remains deliberately outside its token system:
-  the `:focus-visible` outlines draw `#bc4a12`
+- The last accent-family members outside the token system are the focus
+  and selection accents fk189 deliberately scoped out of its enumerated
+  delivery: the `:focus-visible` outlines draw `#bc4a12`
   ([QuotePage.css](../src/pages/QuotePage.css):20,
   [InquiryPage.css](../src/pages/InquiryPage.css):22 and :27) and the
-  quote page's `::selection` draws `#f7c5aa` (:22). fk189's task scoped
-  these out explicitly, and outline/selection colors are not AA text
-  pairings — this is token-consistency residue, not a contrast failure.
-  No task carries it; folding it into a future accent pass stays a
-  candidate for the recurring frontend-optimization automation.
-- fk151's delivery summary recorded one remaining hover-state contrast
-  ceiling — the Services card "Läs mer" link's `hover:text-primary/80`
-  pairing, still present at
-  [SiteHomePage.tsx](../src/pages/SiteHomePage.tsx):850 (re-verified
-  November 12: the resting `text-primary` pairing computes ≈5.5:1 on its
-  white card, but the 80%-alpha hover composites to ≈4.0:1, below the
-  4.5:1 AA threshold for 14px normal text; fk151 recorded ≈3.7:1) — and
-  this refresh linked it:
-  [fk198](https://app.faktorial.ai/projects/alvalinus/tasks/fk198)
-  (created and read back open 2026-11-12T17:03Z with labels
-  `priority: medium` and `size:medium`) pins the hover state to a
-  test-enforced AA-compliant token in the fk151/fk171/fk189 pattern.
-  Owned by fk198's record; recorded once here, not awaited or duplicated.
-- The quote pages still carry the iOS focus-zoom defect class fk195 fixed
-  on the contact form: `.quote-field` sets `font-size:14px` on the field
-  container ([QuotePage.css](../src/pages/QuotePage.css):13), the input
-  rule raises only `input` to 18px (:16), and the select/textarea rule
-  (:18) declares no font-size, so both controls inherit 14px and trigger
-  iOS Safari's automatic page zoom on focus on both `/offertberakning/`
-  and `/draneringsberakning/`. The inquiry form already enforces 16px
-  ([InquiryPage.css](../src/pages/InquiryPage.css):19), making the quote
-  pages the remaining sub-16px form surface. This refresh linked it:
-  [fk199](https://app.faktorial.ai/projects/alvalinus/tasks/fk199)
-  (created and read back open 2026-11-12T17:03Z with labels
-  `priority: medium` and `size:medium`) raises the controls to the 16px
-  floor and adds an fk195-style deterministic regression test. Owned by
-  fk199's record; recorded once here, not awaited or duplicated.
+  quote page's `::selection` draws `#f7c5aa` on `#253247` (:22).
+  fk189's task scoped these out explicitly, and outline/selection colors
+  are not AA text pairings — this is token-consistency residue, not a
+  contrast failure. No task carried it through two refreshes and the
+  frontend-optimization automation's November 13 run (fk205) hardened the
+  read-more test instead, so this refresh linked it:
+  [fk208](https://app.faktorial.ai/projects/alvalinus/tasks/fk208)
+  (created and read back open 2026-11-13T17:51Z with labels
+  `priority: medium` and `size:medium`) brings the three outline rules and
+  the selection pair into the styles.css token system with a deterministic
+  test in the fk151/fk171/fk189/fk205 pattern. Owned by fk208's record;
+  recorded once here, not awaited or duplicated.
+- The largest shipped asset is the tradgard hero:
+  `public/page-visuals/tradgard-generated.webp` measures 501,858 bytes at
+  this baseline, and the `/tradgardsplanering/` hero's declared srcset
+  selects it as the 1568w candidate
+  ([siteContent.ts](../src/data/siteContent.ts):182) behind a stamped
+  preload, so a desktop visitor downloads ~502 KB for that page's first
+  paint. The route's `-640` (101,718 B) and `-960` (220,062 B) variants
+  are efficiently sized, and the sibling full-size heroes sit at
+  345,948–385,866 B; only this base file is oversized. No task carried
+  the byte weight, so this refresh linked it:
+  [fk209](https://app.faktorial.ai/projects/alvalinus/tasks/fk209)
+  (created and read back open 2026-11-13T17:51Z with labels
+  `priority: medium` and `size:medium`) recompresses the file in place —
+  same path, dimensions and registry role, materially fewer bytes. Owned
+  by fk209's record; recorded once here, not awaited or duplicated.
 - Photography remains partially editorial: the three delivered canvas
   photographs, the responsive quote hero and the responsive services hero sit
   beside still-outstanding requests — a real Trädgårdsplanering photo (the
-  AI-generated `tradgard-generated.webp`, ~502 KB, remains), the About and
-  Contact photographs (the `svard-entreprenad-about.svg`/`-contact.svg`
+  AI-generated `tradgard-generated.webp` remains in place; its byte weight
+  is fk209's linked scope above, while replacing the image itself stays
+  editorial), the About and Contact photographs (the
+  `svard-entreprenad-about.svg`/`-contact.svg`
   placeholders have served as their heroes since fk164) and an optional
   Inhyrning photo upgrade. Acquisition and approval stay editorial work
   ([image requests](image-requests.md)), distinct from delivered
@@ -328,15 +339,15 @@ audit prompts stay on fk149's record, re-read unconsumed on November 12.
 - fk120's static-client caveat stands: the calculators' internal prices and
   formulas are readable in the shipped source; truly secret prices cannot be
   kept in a static client, so the totals stay estimates pending a real quote.
-- fk149's documented deferrals stand, re-verified on November 12 with no
-  newer dependency child having run (weekly cadence): the vitest 5 +
-  coverage-v8 5 migration carries fk149's own follow-up prompt, the other
-  major jumps (tailwindcss 4, tailwind-merge 3, lucide-react 1.x, jest-dom 7,
-  main typescript 7, @types/node 26) keep their recorded deferral reasons,
-  and the 3 moderate npm-audit findings remain documented rather than forced
-  (`npm audit fix --force` would pull exactly the excluded majors). These
-  stay on fk149's record for the recurring automation; this refresh creates
-  no duplicate issue for them.
+- fk149's documented deferrals stand, re-verified on November 13 with no
+  newer dependency child having run (weekly cadence, next due about
+  November 14): the vitest 5 + coverage-v8 5 migration carries fk149's own
+  follow-up prompt, the other major jumps (tailwindcss 4, tailwind-merge 3,
+  lucide-react 1.x, jest-dom 7, main typescript 7, @types/node 26) keep
+  their recorded deferral reasons, and the 3 moderate npm-audit findings
+  remain documented rather than forced (`npm audit fix --force` would pull
+  exactly the excluded majors). These stay on fk149's record for the
+  recurring automation; this refresh creates no duplicate issue for them.
 
 ## Delivered work and ownership reconciliation
 
@@ -346,19 +357,19 @@ October 31 during fk87's refresh, on November 1 during fk96's refresh, on
 November 2 during fk105's refresh, on November 3 during fk113's refresh, on
 November 6 during the fk123 refresh, on November 7 during the fk153 refresh,
 on November 8 during the fk163 refresh, on November 10 during the fk173
-refresh, on November 11 during the fk187 refresh, and again on November 12
-during this fk197 refresh. The checkout advanced from fk187's reviewed
-`5465b66` baseline to `9e7dd70` (this baseline) through the fk189, fk187,
-fk188, fk193 and fk195 merges in that order (PRs #132, #131, #133, #134
-and #135). All five are closed/done with merge receipts and passed native
-run-quality runs (receipts below); fk193's required
-`feature-manifest-integrity` proof passed at its acceptance, and the other
-four carry no proof obligations beyond ordinary quality. During the
-November 12 owning reads, fk198 and fk199 — the two follow-up issues this
-refresh creates — read back open at 17:03Z with labels `priority: medium`
-and `size:medium` and were not yet picked up at the ~17:04Z inventory
-read; they are owned by their own records and recorded once in the
-short-term section below.
+refresh, on November 11 during the fk187 refresh, on November 12 during the
+fk197 refresh, and again on November 13 during this fk207 refresh. The
+checkout advanced from fk197's reviewed `9e7dd70` baseline to `eb2711d`
+(this baseline) through the fk199, fk198, fk197, fk203 and fk205 merges in
+that order (PRs #136, #137, #138, #139 and #140). All five are closed/done
+with merge receipts and passed native run-quality runs (receipts below);
+fk203's required `validate-features` proof passed on its candidate, and the
+other four carry no proof obligations beyond ordinary quality. During the
+November 13 owning reads, fk208 and fk209 — the two follow-up issues this
+refresh creates — read back open at 17:51Z with labels `priority: medium`
+and `size:medium`; fk208's pipeline had already initialized its investigate
+stage and fk209 was queued for planning at the read, so both are owned by
+their own records and recorded once in the short-term section below.
 
 | Work | Current owning evidence | Disposition |
 | --- | --- | --- |
@@ -404,8 +415,8 @@ short-term section below.
 | [fk140](https://app.faktorial.ai/projects/alvalinus/tasks/fk140), quote calculators on registry copy | Closed/done 2026-11-06T19:28Z; PR #110, head `1a154a1` → merge `7d78282`; native run-quality pass at head `1a154a1`. Verified in source at this baseline: both quote pages render `content.quote.shared/.uppfart/.drainage` with placeholder-filled mailto drafts, and both quote test files derive pinned strings from the registry. | Delivered. The former "renderer-side quote copy" gap is retired. |
 | [fk144](https://app.faktorial.ai/projects/alvalinus/tasks/fk144), chrome strings in the registry | Closed/done 2026-11-06T19:50Z; PR #111, head `3ab8bea` → merge `e3a4eef`; native run-quality pass at head `3ab8bea`. Verified in source at this baseline: SiteHomePage renders all eight inventoried chrome strings from the registry and its test pins derive from it. | Delivered. The former "leftover chrome set" gap is retired. |
 | [fk135](https://app.faktorial.ai/projects/alvalinus/tasks/fk135), quote-page structure consolidation | Closed/done 2026-11-06T20:15Z; PR #112, head `5dda9b9` → merge `718f19e`; native run-quality pass at head `5dda9b9`. Verified in source at this baseline: [QuotePageShared.tsx](../src/components/QuotePageShared.tsx) exists and both quote pages import and render through its shared shell, aside, notes field, reset button. | Delivered. fk123's "open next step, sequenced after fk134" description is retired; the structural duplication is consolidated. |
-| [fk149](https://app.faktorial.ai/projects/alvalinus/tasks/fk149), caret-range lockfile refresh | Closed/done 2026-11-07T12:54Z; PR #113, head `f52b1e1` → merge `7d1b3dc` (fk153's baseline); native run-quality pass at head `f52b1e1` (run `feb68668-448c-4c79-a52d-5b8da2634927-build-dmoznfv2hosg-quality`, re-read November 11). Lockfile-only diff (eight in-range bumps); every major-version jump deliberately deferred with recorded reasons, the vitest 5 migration carries fk149's own follow-up prompt, and its record documents the 3 moderate npm-audit findings left unfixed because `npm audit fix --force` would pull the excluded majors. | Delivered. Routine dependency maintenance with documented deferrals; the deferrals and prompt stay on fk149's record for the weekly dependency-management automation (re-verified unconsumed on November 11). |
-| [fk151](https://app.faktorial.ai/projects/alvalinus/tasks/fk151), WCAG AA contrast repair | Closed/done 2026-11-07T14:09Z; PR #114, head `283488f` → merge `ba032ac`; native run-quality pass at head `283488f`. Verified in source at this baseline: the darkened `--primary`, the `--primary-on-dark` token and the deterministic contrast test are in [styles.css](../src/styles.css) and [its test](../src/styles.primary-contrast.test.ts). | Delivered. fk153's "in review" description is retired; the two-shade accent repair and its enforcement test are merged. The "Läs mer" hover follow-up from its delivery summary is re-verified November 12 (still at SiteHomePage.tsx:850) and linked as fk198 in the short-term section below. |
+| [fk149](https://app.faktorial.ai/projects/alvalinus/tasks/fk149), caret-range lockfile refresh | Closed/done 2026-11-07T12:54Z; PR #113, head `f52b1e1` → merge `7d1b3dc` (fk153's baseline); native run-quality pass at head `f52b1e1` (run `feb68668-448c-4c79-a52d-5b8da2634927-build-dmoznfv2hosg-quality`, re-read November 13). Lockfile-only diff (eight in-range bumps); every major-version jump deliberately deferred with recorded reasons, the vitest 5 migration carries fk149's own follow-up prompt, and its record documents the 3 moderate npm-audit findings left unfixed because `npm audit fix --force` would pull the excluded majors. | Delivered. Routine dependency maintenance with documented deferrals; the deferrals and prompt stay on fk149's record for the weekly dependency-management automation (re-verified unconsumed on November 13). |
+| [fk151](https://app.faktorial.ai/projects/alvalinus/tasks/fk151), WCAG AA contrast repair | Closed/done 2026-11-07T14:09Z; PR #114, head `283488f` → merge `ba032ac`; native run-quality pass at head `283488f`. Verified in source at this baseline: the darkened `--primary`, the `--primary-on-dark` token and the deterministic contrast test are in [styles.css](../src/styles.css) and [its test](../src/styles.primary-contrast.test.ts). | Delivered. fk153's "in review" description is retired; the two-shade accent repair and its enforcement test are merged. The "Läs mer" hover follow-up from its delivery summary was delivered by fk198 (receipt below) and double-enforced by fk205's pairing test (also below). |
 | [fk152](https://app.faktorial.ai/projects/alvalinus/tasks/fk152), feature-catalog stamp refresh | Closed/done 2026-11-07T14:17Z; PR #115, head `81093b5` → merge `18da5d9`; native run-quality pass at head `81093b5`; its delivery summary records the validate-features pass at that head while the closed record's issue-level proof projection still reports `missing_evidence` (the owning record is closed/done and the projection does not reopen it). Verified in source at this baseline: `features.json` stamps read 2026-11-07 on all six features. | Delivered. fk153's "in build" description is retired; the story-document stamp re-read it deferred was absorbed by the later fk162/fk172/fk183 reconciliations. |
 | [fk153](https://app.faktorial.ai/projects/alvalinus/tasks/fk153), previous roadmap | Closed/done 2026-11-07T14:25Z; PR #116, head `89705da` → merge `e2ca438`; native run-quality pass at head `89705da`. Document read in full during the fk163 refresh. | Superseded assessment; its Next 1/Next 2 shipped as fk154/fk155, and its in-flight fk151/fk152 reservations are delivered above. |
 | [fk155](https://app.faktorial.ai/projects/alvalinus/tasks/fk155), quote money-logic unit tests | Closed/done 2026-11-07T14:35Z; PR #117, head `41dac58` → merge `2fdfc82`; native run-quality pass at head `41dac58`. Verified in source at this baseline: [quote.test.ts](../src/lib/quote.test.ts) pins both totals' tiering and flags, the sv-SE formatting and the template placeholder contract. | Delivered. The former "money logic exercised only through DOM assertions" gap is retired. |
@@ -416,22 +427,26 @@ short-term section below.
 | [fk164](https://app.faktorial.ai/projects/alvalinus/tasks/fk164), dead-hero re-point and gate extension | Closed/done 2026-11-08T15:35Z; PR #122, head `ade983b` → merge `3b19a91`; native run-quality pass at head `ade983b`. Verified in source at this baseline: `/om-oss/` and `/kontakt/` declare the in-tree `svard-entreprenad-about.svg`/`-contact.svg` heroes ([siteContent.ts](../src/data/siteContent.ts):88/:172), no `about-hero.webp`/`contact-hero.webp` exists or is declared, and the gate rejects any route whose declared hero path is missing. | Delivered. fk163's "open next step" description is retired; the dead-reference class is closed at the declaration and gate level. |
 | [fk165](https://app.faktorial.ai/projects/alvalinus/tasks/fk165), release-provenance command | Closed/done 2026-11-08T15:44Z; PR #123, head `063e171` → merge `72af228`; native run-quality pass at head `063e171`. Verified in source at this baseline: [release-provenance.mjs](../scripts/release-provenance.mjs), the `write-release-provenance` CLI and its fixture tests exist, and [release-runbook.md](release-runbook.md) references the composed path with publication identity kept operator-recorded. | Delivered. fk163's "open next step" description is retired; the four-identity sequence is one fail-closed command. |
 | [fk172](https://app.faktorial.ai/projects/alvalinus/tasks/fk172), feature-catalog re-verification | Closed/done 2026-11-10T08:02Z; PR #124, head `69d1bec` → merge `7931e16`; native run-quality pass at head `69d1bec`; its delivery records the validate-features pass on the candidate (digest `b7527970…`) while the closed record's issue-level proof projection still reports `missing_evidence` — the owning record is closed/done and the projection does not reopen it. Verified in source at this baseline: the README reconciliation note and 2026-11-10 stamps on F2/F4/F6, the SVG-hero prose corrections in company-confidence.md and navigation-and-recovery.md, and F5 left at 2026-11-07 on a rationale its own record states ("nothing touched their documented behavior"). | Delivered. The November 9 feature-refinement child, merged November 10. Its F5 rationale did not hold against fk154's post-stamp merge; fk176's delivery corrected the F5 records instead of reopening fk172 work. |
-| [fk171](https://app.faktorial.ai/projects/alvalinus/tasks/fk171), WCAG field-border contrast | Closed/done 2026-11-10T14:36Z; PR #125, head `1f6aba4` → merge `ea2d472` (fk173's baseline); native run-quality pass 235/235 at head `1f6aba4`. Verified in source at this baseline: the three field-boundary declarations draw `#64748b` ([QuotePage.css](../src/pages/QuotePage.css):15/:18, [InquiryPage.css](../src/pages/InquiryPage.css):19), [the focused contrast test](../src/styles.field-border-contrast.test.ts) computes the ratio from raw CSS, and `test.css.include` is generalized. | Delivered. The November 9 frontend-optimization child, merged November 10 (after the investigation snapshot recorded it as in build, per the stop-if re-baseline rule). Its delivery summary's follow-up prompt — hardening the contrast test's selector matching against CSS formatting churn — stays on fk171's record; no duplicate issue is created. |
-| [fk173](https://app.faktorial.ai/projects/alvalinus/tasks/fk173), previous roadmap | Closed/done 2026-11-10T16:04Z; PR #128, head `e51ccf3` → merge `74ef9ae` (on fk177's `719a11e` base); native run-quality pass at head `e51ccf3`. Document read in full during the fk187 refresh. | Superseded assessment; its two linked next steps were both delivered before it closed — fk176 merged at 15:24Z and fk177 at 15:53Z on November 10 (receipts above and below) — and its works-less-well rows are re-baselined here onto the `9e7dd70` tip. |
+| [fk171](https://app.faktorial.ai/projects/alvalinus/tasks/fk171), WCAG field-border contrast | Closed/done 2026-11-10T14:36Z; PR #125, head `1f6aba4` → merge `ea2d472` (fk173's baseline); native run-quality pass 235/235 at head `1f6aba4`. Verified in source at this baseline: the three field-boundary declarations draw `#64748b` ([QuotePage.css](../src/pages/QuotePage.css):15/:18, [InquiryPage.css](../src/pages/InquiryPage.css):19), [the focused contrast test](../src/styles.field-border-contrast.test.ts) computes the ratio from raw CSS, and `test.css.include` is generalized. | Delivered. The November 9 frontend-optimization child, merged November 10 (after the investigation snapshot recorded it as in build, per the stop-if re-baseline rule). Its delivery summary's follow-up prompt — hardening the contrast test's selector matching against CSS formatting churn — stays on fk171's record; the recurring frontend-optimization automation's November 13 run (fk205) delivered a different hardening instead, so the prompt remains queued there unconsumed. |
+| [fk173](https://app.faktorial.ai/projects/alvalinus/tasks/fk173), previous roadmap | Closed/done 2026-11-10T16:04Z; PR #128, head `e51ccf3` → merge `74ef9ae` (on fk177's `719a11e` base); native run-quality pass at head `e51ccf3`. Document read in full during the fk187 refresh. | Superseded assessment; its two linked next steps were both delivered before it closed — fk176 merged at 15:24Z and fk177 at 15:53Z on November 10 (receipts above and below) — and its works-less-well rows are re-baselined here onto the `eb2711d` tip. |
 | [fk176](https://app.faktorial.ai/projects/alvalinus/tasks/fk176), F5 catalog reconciliation | Closed/done 2026-11-10T15:24Z; PR #126, head `b71a47a` → merge `ab28b45` (fk173's baseline); native run-quality pass 235/235 at head `b71a47a`; the required `validate-features` proof passed on its candidate (aggregate digest `f2589022…`, no findings). Verified in source at this baseline: [staffing-inquiry.md](features/staffing-inquiry.md) stamped 2026-11-10 names the registry-declared `inquiry` copy with InquiryPage.tsx's remaining runtime ownership, the shared inventory's F5 code-path descriptions match the fk154 split, and the README carries the fk176 reconciliation sentence. | Delivered. Created and linked by the fk173 refresh at 14:49:33Z (read back open with labels `priority: medium` and `size:medium`), picked up from the roadmap and merged within roughly half an hour — consuming fk162's dropped F5 follow-up. |
 | [fk177](https://app.faktorial.ai/projects/alvalinus/tasks/fk177), remaining hero srcset declarations | Closed/done 2026-11-10T15:53Z; PR #127, head `6a1d0f9` → merge `719a11e` (fk173's base); native run-quality pass at head `6a1d0f9` (run `3fb3ed43-7d2f-4ea2-8b2b-5f86efda0797-build-dmrnb0rhdqyc-quality`, re-read November 11). Verified in source at this baseline: the home, four `*-photo` service-detail, `/tradgardsplanering/` and `/offertberakning/` routes declare `heroPhotoSrcSet`/`heroPhotoSizes` byte-identical to the candidates their heroes rendered before, QuotePage.tsx reads the registry declaration instead of the inline literal, and `/draneringsberakning/` was deliberately left undeclared at that point (no variant family existed and its plain preload already matched). Its own investigation corrected fk173's nine-route count to seven mismatching heroes. | Delivered. fk173's linked Next 2, created and linked at 14:49:50Z (read back open with labels `priority: medium` and `size:medium`), delivered about an hour later. This was the last plain-preload mismatch class; fk185's delivery below completed the declaration set by adding the drainage-quote route. |
-| [fk183](https://app.faktorial.ai/projects/alvalinus/tasks/fk183), feature-catalog evidence mapping | Closed/done 2026-11-11T08:52Z; PR #129, head `8c50f1b` → merge `74475bb`; native run-quality pass at head `8c50f1b`; the delivery records the validate-features pass at that head (digest `63fd5b48…`, valid with no findings) while the closed record's issue-level proof projection still reports `missing_evidence` — the owning record is closed/done and the projection does not reopen it. Verified in source at this baseline: the identity manifest maps the three styles accessibility tests and `quote.test.ts` as 22 technical references at their strongest owning stories (border-contrast → F6-US2/F5-US1, reduced-motion → F4-US3, primary-contrast per declaration, quote totals/formatting → F6-US2 and template/mailto → F6-US5), seven story documents mirror the mappings, F1/F4/F5/F6 and the touched docs carry 2026-11-11 stamps, and the README names all eight mapped test files. | Delivered. The November 11 feature-refinement child. Its documented `.quote-send` token exclusion (delivery-summary comment only — no catalog prose names it, verified November 11) was resolved by fk189's delivery (receipt below). Its follow-up prompt — re-reading F2/F3's source and re-stamping their records to match F1/F4/F5/F6's generation — stays queued on fk183's record. |
+| [fk183](https://app.faktorial.ai/projects/alvalinus/tasks/fk183), feature-catalog evidence mapping | Closed/done 2026-11-11T08:52Z; PR #129, head `8c50f1b` → merge `74475bb`; native run-quality pass at head `8c50f1b`; the delivery records the validate-features pass at that head (digest `63fd5b48…`, valid with no findings) while the closed record's issue-level proof projection still reports `missing_evidence` — the owning record is closed/done and the projection does not reopen it. Verified in source at this baseline: the identity manifest maps the three styles accessibility tests and `quote.test.ts` as 22 technical references at their strongest owning stories (border-contrast → F6-US2/F5-US1, reduced-motion → F4-US3, primary-contrast per declaration, quote totals/formatting → F6-US2 and template/mailto → F6-US5), seven story documents mirror the mappings, F1/F4/F5/F6 and the touched docs carry 2026-11-11 stamps, and the README names all eight mapped test files. | Delivered. The November 11 feature-refinement child. Its documented `.quote-send` token exclusion (delivery-summary comment only — no catalog prose names it, verified November 11) was resolved by fk189's delivery (receipt below). Its follow-up prompt — re-reading F2/F3's source and re-stamping their records — was partially consumed on November 13: fk203 re-stamped F3 (alongside F1/F6) against the fk195/fk198/fk199 deltas, while F2 stays deliberately untouched and that remainder stays queued on fk183's record for the recurring feature-refinement automation. |
 | [fk185](https://app.faktorial.ai/projects/alvalinus/tasks/fk185), drainage-quote hero srcset | Closed/done 2026-11-11T15:05Z; PR #130, head `3392f82` (after a one-array test-expectation repair) → merge `5465b66` (fk187's baseline); native run-quality pass at head `3392f82` (run `4089a89a-f737-451b-8978-57a0a2992125-build-dmsgykgpc8wo-quality`, re-read November 11 during the fk187 refresh). Verified in source at this baseline: the drainage-quote route declares `heroPhotoSrcSet` reusing the byte-identical `dranering-photo-400/-640.webp` variants (SHA-256 `d2c8b5f0…78760`, no new binaries) plus the 900w base, DrainageQuotePage reads the registry through QuotePageShell's hero props, and a focused test pins the rendered srcset/sizes. | Delivered. The November 11 frontend-optimization child; with fk177 it closes the whole preload/srcset mismatch class — all nine photo-hero routes now declare registry variants. **Its delivery summary's follow-up prompt is retired as factually stale**: it claims `/offertberakning/` "still hardcodes its srcset with a preload mismatch", but fk177 (PR #127, merge `719a11e`, closed 2026-11-10) already declared that route's srcset and moved QuotePage.tsx onto the registry — verified at this tip (siteContent.ts:25–28, QuotePage.tsx:51, no inline literal). Recorded once so the frontend-optimization automation does not redo delivered work. |
-| [fk189](https://app.faktorial.ai/projects/alvalinus/tasks/fk189), accent palette tokenization | Closed/done 2026-11-11T16:46Z; PR #132, head `7d21a757` → merge `3440d65` (directly on fk185's `5465b66`); native run-quality pass at head `7d21a757` (run `3d615243-ae57-4f41-a194-903ea77a62a5-build-dmsj3iyzdvz4-quality`, re-read November 12). Verified in source at this baseline: the quote/inquiry accent roles declare `hsl(var(--primary))`/`hsl(var(--primary-hover))` ([QuotePage.css](../src/pages/QuotePage.css):21/:28/:29/:35-36, [InquiryPage.css](../src/pages/InquiryPage.css):23), `--primary-hover: 18 84% 33%` joined `:root` ([styles.css](../src/styles.css)), [styles.page-accent-contrast.test.ts](../src/styles.page-accent-contrast.test.ts) pins the `.quote-send` white-on-background pairing at ≥4.5:1, and the F6-US5/F5-US2 story records and identity manifest name the test. | Delivered. fk187's linked Next 2, created 16:20:36Z November 11 and delivered within about half an hour of its link. The fk183-documented F6-US5 exclusion is resolved; the focus/selection hex residue fk189 scoped out is recorded under works-less-well above. |
-| [fk187](https://app.faktorial.ai/projects/alvalinus/tasks/fk187), previous roadmap | Closed/done 2026-11-11T16:47Z; PR #131, head `1ec5bac` → merge `7eb567e` (on fk189's `3440d65`); native run-quality pass at head `1ec5bac` (run `179d297e-c222-45f7-8ab5-2f620d1b5770-build-dmsj2litfsvo-quality`, re-read November 12). Document read in full during this refresh. | Superseded assessment; its two linked next steps shipped around its own merge — fk189 at 16:46Z and fk188 at 16:53Z on November 11 (receipts above and below) — and its works-less-well rows are re-baselined here onto the `9e7dd70` tip. |
+| [fk189](https://app.faktorial.ai/projects/alvalinus/tasks/fk189), accent palette tokenization | Closed/done 2026-11-11T16:46Z; PR #132, head `7d21a757` → merge `3440d65` (directly on fk185's `5465b66`); native run-quality pass at head `7d21a757` (run `3d615243-ae57-4f41-a194-903ea77a62a5-build-dmsj3iyzdvz4-quality`, re-read November 12). Verified in source at this baseline: the quote/inquiry accent roles declare `hsl(var(--primary))`/`hsl(var(--primary-hover))` ([QuotePage.css](../src/pages/QuotePage.css):21/:28/:29/:35-36, [InquiryPage.css](../src/pages/InquiryPage.css):23), `--primary-hover: 18 84% 33%` joined `:root` ([styles.css](../src/styles.css)), [styles.page-accent-contrast.test.ts](../src/styles.page-accent-contrast.test.ts) pins the `.quote-send` white-on-background pairing at ≥4.5:1, and the F6-US5/F5-US2 story records and identity manifest name the test. | Delivered. fk187's linked Next 2, created 16:20:36Z November 11 and delivered within about half an hour of its link. The fk183-documented F6-US5 exclusion is resolved; the focus/selection hex residue fk189 scoped out stayed unowned through two refreshes until this refresh linked fk208 (short-term section below). |
+| [fk187](https://app.faktorial.ai/projects/alvalinus/tasks/fk187), previous roadmap | Closed/done 2026-11-11T16:47Z; PR #131, head `1ec5bac` → merge `7eb567e` (on fk189's `3440d65`); native run-quality pass at head `1ec5bac` (run `179d297e-c222-45f7-8ab5-2f620d1b5770-build-dmsj2litfsvo-quality`, re-read November 12). Document read in full during the fk197 refresh. | Superseded assessment; its two linked next steps shipped around its own merge — fk189 at 16:46Z and fk188 at 16:53Z on November 11 (receipts above and below) — and its works-less-well rows were re-baselined by fk197 and again by this refresh onto the `eb2711d` tip. |
 | [fk188](https://app.faktorial.ai/projects/alvalinus/tasks/fk188), per-route social-card imagery | Closed/done 2026-11-11T16:53Z; PR #133, head `71f21f79` → merge `36d7cba` (on fk187's `7eb567e`); native run-quality pass at head `71f21f79` (run `511c7c94-5af9-405a-8acf-1c5635c85136-build-dmsj80kgw840-quality`, re-read November 12). Verified in source at this baseline: the emitter substitutes `og:image`/`og:image:alt`/`twitter:image` from each route's registry-declared `heroPhotoAssetPath` with registry-declared Swedish alt text, the three SVG-hero routes carry the shared raster home hero, the root and 404 documents keep their home-branded sets, and the static gate existence-checks every emitted image path (fk164's pattern extended). | Delivered. fk187's linked Next 1, created 16:20:23Z November 11 and closed delivered about half an hour later. The former "home-branded social cards on every subpage" gap is retired for imagery as fk88 retired it for text. |
 | [fk193](https://app.faktorial.ai/projects/alvalinus/tasks/fk193), feature-catalog reconciliation | Closed/done 2026-11-12T09:26Z; PR #134, head `802f378b` → merge `c131651` (on fk188's `36d7cba`); native run-quality pass at head `802f378b` (run `64920971-6743-41d2-a965-6d8fabe9d755-build-dmt4btwcgr4g-quality`, re-read November 12); its required `feature-manifest-integrity` proof passed at acceptance. Verified in source at this baseline: navigation-and-recovery.md describes the drainage-hero variant family with the stale no-variant sentence gone, quote-calculators.md names both quote routes' declared srcsets and fk189's accent-test mapping, features.json carries 2026-11-12 stamps on F4/F6 only, and the README review history records the fk185/fk188/fk189 deltas. | Delivered. The November 12 feature-refinement child. F5 keeps its 2026-11-11 stamp because no reviewed task touched its surfaces beyond fk189's own story-record mapping. |
-| [fk195](https://app.faktorial.ai/projects/alvalinus/tasks/fk195), 16px contact-form floor | Closed/done 2026-11-12T15:25Z; PR #135, head `636126c` → merge `9e7dd70` (this baseline, on fk193's `c131651`); native run-quality pass at head `636126c` (run `89ffb78b-1e2d-4f93-859d-b85b1511a4ad-build-dmtc0elqw268-quality`, re-read November 12). Verified in source at this baseline: `CONTACT_FIELD_BASE_CLASS` no longer carries the `sm:text-sm` downgrade, and the focused test pins `text-base` with no responsive text-size override on both the home and `/kontakt/` renderings. | Delivered. The November 12 frontend-optimization child; its delivery summary's real-device verification prompt stays on fk195's record (jsdom cannot reproduce iOS focus zoom). The same defect class on the quote pages is the linked fk199 below. |
-| [fk197](https://app.faktorial.ai/projects/alvalinus/tasks/fk197), this roadmap refresh | Open in build at these reads; this document is its candidate. The prepared base is `9e7dd70`, fk195's merge — the exact tip at this refresh's reads, so no re-baselining was needed. | This refresh; supersedes fk187's assessment above. |
+| [fk195](https://app.faktorial.ai/projects/alvalinus/tasks/fk195), 16px contact-form floor | Closed/done 2026-11-12T15:25Z; PR #135, head `636126c` → merge `9e7dd70` (fk197's baseline, on fk193's `c131651`); native run-quality pass at head `636126c` (run `89ffb78b-1e2d-4f93-859d-b85b1511a4ad-build-dmtc0elqw268-quality`, re-read November 12). Verified in source at this baseline: `CONTACT_FIELD_BASE_CLASS` no longer carries the `sm:text-sm` downgrade, and the focused test pins `text-base` with no responsive text-size override on both the home and `/kontakt/` renderings. | Delivered. The November 12 frontend-optimization child; its delivery summary's real-device verification prompt stays on fk195's record (jsdom cannot reproduce iOS focus zoom). The same defect class on the quote pages was delivered by fk199 (receipt below). |
+| [fk199](https://app.faktorial.ai/projects/alvalinus/tasks/fk199), quote-page 16px focus-zoom floor | Closed/done 2026-11-12T17:19Z; PR #136, head `b1a3c989` → merge `aa4fdb6` (on fk195's `9e7dd70`, fk197's baseline); native run-quality pass at head `b1a3c989` (run `54a24b2f-f8ad-4fee-9c9a-c39b8b2e178f-build-dmteg2wb9kd4-quality`, re-read November 13). Verified in source at this baseline: the `.quote-field select,.quote-field textarea` rule declares `font-size:16px` ([QuotePage.css](../src/pages/QuotePage.css):18) so neither control inherits the 14px container size, the fk171-asserted border declaration survived the edit, and the new [styles.quote-focus-zoom.test.ts](../src/styles.quote-focus-zoom.test.ts) pins the floor on the shared stylesheet both quote pages render through. | Delivered. fk197's linked Next 2, created 17:03:23Z November 12 and closed sixteen minutes later — the fastest link-to-close in the chain so far. The quote-page half of fk195's defect class is closed; both quote routes now hold the 16px floor. |
+| [fk198](https://app.faktorial.ai/projects/alvalinus/tasks/fk198), read-more hover on the AA-enforced token | Closed/done 2026-11-12T17:27Z; PR #137, head `35eccacb` → merge `9631338` (on fk199's `aa4fdb6`); native run-quality pass at head `35eccacb` (run `200ceed5-c0b4-4c57-8765-c1fd24fb8f14-build-dmtejrx8n70k-quality`, re-read November 13). Verified in source at this baseline: the anchor carries `text-primary hover:text-primary-hover` ([SiteHomePage.tsx](../src/pages/SiteHomePage.tsx):850), [tailwind.config.ts](../tailwind.config.ts) maps `primary.hover` to `hsl(var(--primary-hover))` (7.10:1 on the white card), [tailwind.primary-hover-utility.test.ts](../src/tailwind.primary-hover-utility.test.ts) proves the utility compiles from the token, SiteHomePage.test.tsx:495 pins the classes, and no `text-primary/<alpha>` hover remains anywhere in src/. | Delivered. fk197's linked Next 1, created 17:03:11Z November 12 and closed twenty-four minutes later. fk151's recorded hover ceiling is closed and — via fk205's pairing test below — enforced against alpha-composited regressions. |
+| [fk197](https://app.faktorial.ai/projects/alvalinus/tasks/fk197), previous roadmap | Closed/done 2026-11-12T17:35Z; PR #138, head `55e5d0ff` → merge `6242e9e` (on fk198's `9631338`); native run-quality pass at head `55e5d0ff` (run `6fd58277-32e6-42a5-bb52-ba2299cbd340-build-dmtervedrwyo-quality`, re-read November 13). Document read in full during this refresh. | Superseded assessment — the generation this refresh supersedes. Its own PR merged after the merges of both tasks it had linked (fk199 and fk198 landed beneath it, as fk187's had), and its works-less-well rows are re-baselined here onto the `eb2711d` tip: its two links delivered, its recorded hex residue became fk208, and the byte-weight observation became fk209. |
+| [fk203](https://app.faktorial.ai/projects/alvalinus/tasks/fk203), feature-catalog reconciliation | Closed/done 2026-11-13T09:56Z; PR #139, head `0e8012cf` → merge `2e3245f` (on fk197's `6242e9e`); native run-quality pass at head `0e8012cf` (run `aa362c0c-b5d2-49a8-8da6-dee27de073d9-build-dmtzn7r88ot0-quality`, re-read November 13); its required `validate-features` proof returned valid/pass/complete with zero findings on its edited candidate, and its delivery records the verifier rerunning the proof independently on the merged candidate while the closed record's issue-level proof projection still reports `missing_evidence` — the owning record is closed/done and the projection does not reopen it. Verified in source at this baseline: F3-US1 maps fk195's contact-form 16px declaration, F6-US2 maps fk199's quote ≥16px floor, F1-US1 gains four fk198 hover-token declarations plus the two Tailwind utility-generation checks, the README names both new test files, and F1/F3/F6 plus the README carry 2026-11-13 stamps with F2/F4/F5 deliberately untouched. | Delivered. The November 13 feature-refinement child — its own investigation caught that its branch carried the two newer source commits and extended the reconciliation beyond its original F3-only scope, exactly as its stop-if required. fk183's queued F3 re-stamp was consumed by this delivery; the F2 remainder stays queued on fk183's record. |
+| [fk205](https://app.faktorial.ai/projects/alvalinus/tasks/fk205), read-more hover pairing hardening | Closed/done 2026-11-13T15:56Z; PR #140, head `de546201` → merge `eb2711d` (this baseline, on fk203's `2e3245f`); native run-quality pass at head `de546201` (run `82a0525c-2faf-413f-b0ec-51ab51364d35-build-dmu7a1wtz7qs-quality`, re-read November 13) after one strict-typecheck repair commit (`split()` destructuring violates `noUncheckedIndexedAccess`; replaced with `indexOf`/`slice`, no behavior change). Verified in source at this baseline: [styles.read-more-hover-contrast.test.ts](../src/styles.read-more-hover-contrast.test.ts) (187 lines) finds the anchor structurally via its Swedish aria-label marker, resolves its hover utility through a flattened tailwind config map (rejecting any hardcoded color), alpha-composites `/NN` modifiers over the card surface, asserts ≥4.5:1 and that hover stays strictly darker than rest — restoring the retired `hover:text-primary/80` computes 3.96:1 and fails by design. fk198's fix itself was already in its base, so its merge delta is the test alone. | Delivered. The November 13 frontend-optimization child — it targeted the same surface fk198 had just fixed, recognized the fix in its base, and delivered the one missing acceptance piece (the pairing test) instead of redoing delivered work. The "Läs mer" hover contract is now enforced twice over, at two independent boundaries. |
 
 The prior roadmap's older Done references were checked against current owning
 membership on October 29 and again during each later refresh through this
-November 12 one, and no row above was reopened or recreated by this refresh:
+November 13 one, and no row above was reopened or recreated by this refresh:
 fk3/fk24/fk35 (roadmaps), fk10 (reporter), fk11 (runbook), fk5/fk23/fk34
 (mobile), fk8 (dependencies), fk25/fk26 (image/registry recovery), fk32
 (catalog), fk36/fk37 (route validation/checksums), fk43/fk44 (mobile/roadmap),
@@ -444,8 +459,9 @@ fk114/fk115/fk112/fk120/fk121/fk127/fk128 heads, the passed runs at the
 fk122/fk133/fk140/fk144/fk135/fk149 heads, the passed runs at the
 fk151/fk152/fk153/fk155/fk154 heads, the passed runs at the
 fk161/fk162/fk163/fk164/fk165/fk172/fk171/fk176 heads, the passed runs at
-the fk177/fk173/fk183/fk185 heads, and the passed runs at the
-fk189/fk187/fk188/fk193/fk195 heads above) are historical, not
+the fk177/fk173/fk183/fk185 heads, the passed runs at the
+fk189/fk187/fk188/fk193/fk195 heads, and the passed runs at the
+fk199/fk198/fk197/fk203/fk205 heads above) are historical, not
 current totals, and no acceptance is claimed for this roadmap candidate,
 current main or any deployment.
 
@@ -468,59 +484,75 @@ delivered (PR #115), the November 8 occurrence (fk162) closed delivered with
 its own fresh record (PR #120), the November 9 children closed delivered on
 November 10 (fk172 PR #124, fk171 PR #125), the November 10–11 children
 closed delivered the same way (fk183 PR #129 at 08:52Z, fk185 PR #130 at
-15:05Z), and the November 11–12 children followed the same pattern (fk193
-PR #134 at 09:26Z, fk195 PR #135 at 15:25Z on November 12). The steering
-loop itself is now the fastest path in the chain: fk176,
-linked by fk173 at 14:49Z, was picked up and merged within roughly half an
-hour; the previous refresh's two links — fk188 and fk189, both created
-16:20Z on November 11 — were closed delivered at 16:53Z and 16:46Z
-respectively, about half an hour after creation; and fk195 was created
-15:06Z on November 12 and closed at 15:25Z, nineteen minutes later. This
-refresh's own two links — fk198 created 17:03:11Z, fk199 17:03:23Z on
-November 12 — read back open with exact labels and had not been picked up
-at the ~17:04Z inventory read, with their owning records carrying the work
-forward. The incident receipts come from
-fk153's November 7 owning reads, retained for provenance; no duplicate record
-is created for any of them.
+15:05Z), the November 11–12 children followed the same pattern (fk193
+PR #134 at 09:26Z, fk195 PR #135 at 15:25Z on November 12), and the
+November 12–13 children continued it (fk203 PR #139 at 09:56Z and fk205
+PR #140 at 15:56Z on November 13). The steering loop itself is now the
+fastest path in the chain: fk176, linked by fk173 at 14:49Z, was picked up
+and merged within roughly half an hour; fk188 and fk189, both created
+16:20Z on November 11, were closed delivered at 16:53Z and 16:46Z
+respectively; fk195 was created 15:06Z on November 12 and closed at
+15:25Z, nineteen minutes later; and fk197's links closed even faster —
+fk199 sixteen minutes and fk198 twenty-four minutes after their 17:03Z
+creation. This refresh's own two links — fk208 created 17:51:33Z and fk209
+17:51:54Z on November 13 — read back open with exact labels, and fk208's
+pipeline had already initialized its investigate stage about 23 seconds
+after creation at the read-back while fk209 was queued for planning, with
+their owning records carrying the work forward. Separately, the
+worker-host maintenance pair from the November 10 monitor incident (fk181
+with fk182 as its question notice) read closed on November 13 at
+2026-11-12T22:19Z, with fk181's question form showing no recorded answer —
+resolved as closed platform records, not site work. The incident receipts
+come from fk153's November 7 owning reads, retained for provenance; no
+duplicate record is created for any of them.
 
 ## Short-term priorities and issue ownership
 
-fk187's two short-term priorities both shipped with passed native quality
-runs, each in about half an hour from link to merge: the per-route
-social-card imagery landed through fk188 (PR #133, merge `36d7cba`, closed
-16:53Z November 11), and the quote/inquiry accent palette joined the
-test-enforced token system through fk189 (PR #132, merge `3440d65`, closed
-16:46Z November 11). Both records are reconciled in the table above.
+fk197's two short-term priorities both shipped with passed native quality
+runs, minutes after their links: the quote-page select/textarea 16px
+floor landed through fk199 (PR #136, merge `aa4fdb6`, closed 17:19Z
+November 12, sixteen minutes after creation), and the services "Läs mer"
+hover token pinning landed through fk198 (PR #137, merge `9631338`,
+closed 17:27Z the same evening, twenty-four minutes after creation) —
+with fk205's November 13 pairing test adding a second, alpha-compositing
+enforcement on top. Both records are reconciled in the table above.
 
 The two follow-up issues created during this refresh cycle (this roadmap
-task's own worker writes on November 12, read back open before linking)
-target the two concrete recorded debts the delivered work left behind, and
-neither had been picked up at the ~17:04Z inventory read:
+task's own worker writes on November 13, read back open before linking)
+target the two concrete recorded debts the delivered work left behind,
+and the just-before-creation inventory read held no other feature work:
 
-1. [fk198](https://app.faktorial.ai/projects/alvalinus/tasks/fk198) —
-   pin the services "Läs mer" hover contrast to a test-enforced AA token:
-   the link at [SiteHomePage.tsx](../src/pages/SiteHomePage.tsx):850 keeps
-   `text-primary` at rest (≈5.5:1 on its white card) but drops the
-   `hover:text-primary/80` pairing to ≈4.0:1 (fk151 recorded ≈3.7:1),
-   below the 4.5:1 AA threshold for 14px normal text and invisible to the
-   token-pinning contrast tests; fk151's delivery summary recorded the
-   follow-up on November 7 and no automation child consumed it. The task
-   pins the hover state to an AA-compliant token with a deterministic
-   test in the fk151/fk171/fk189 pattern. Created and read back open at
-   17:03:11Z with labels `priority: medium` and `size:medium`. Owned by
-   fk198's record; recorded once here, not awaited or duplicated.
-2. [fk199](https://app.faktorial.ai/projects/alvalinus/tasks/fk199) —
-   keep the quote-page select and textarea at the 16px iOS focus-zoom
-   floor: `.quote-field` sets 14px on the field container
-   ([QuotePage.css](../src/pages/QuotePage.css):13) and the
-   select/textarea rule (:18) declares no font-size, so both controls
-   inherit 14px while inputs render 18px (:16) — the same defect class
-   fk195 fixed on the contact form, affecting both `/offertberakning/`
-   and `/draneringsberakning/` on iOS Safari. The task raises the
-   controls to the 16px floor and adds an fk195-style deterministic
-   regression test. Created and read back open at 17:03:23Z with labels
-   `priority: medium` and `size:medium`. Owned by fk199's record;
-   recorded once here, not awaited or duplicated.
+1. [fk208](https://app.faktorial.ai/projects/alvalinus/tasks/fk208) —
+   bring the quote/inquiry focus-visible and selection accents into the
+   test-enforced token system: the `:focus-visible` outlines still draw
+   hardcoded `#bc4a12` ([QuotePage.css](../src/pages/QuotePage.css):20,
+   [InquiryPage.css](../src/pages/InquiryPage.css):22/:27) and the quote
+   page's `::selection` draws `#f7c5aa` on `#253247`
+   ([QuotePage.css](../src/pages/QuotePage.css):22) — the residue fk189
+   deliberately scoped out of its tokenization, carried through two
+   refreshes, verified still present at this baseline, and unconsumed by
+   the frontend-optimization automation whose November 13 run (fk205)
+   hardened a different surface. The task tokenizes the three outline
+   rules and the selection pair and pins them with a deterministic test
+   in the fk151/fk171/fk189/fk205 pattern. Created and read back open at
+   17:51:33Z with labels `priority: medium` and `size:medium`; fk208's
+   pipeline had already initialized its investigate stage at the
+   read-back. Owned by fk208's record; recorded once here, not awaited
+   or duplicated.
+2. [fk209](https://app.faktorial.ai/projects/alvalinus/tasks/fk209) —
+   recompress the 502 KB tradgard hero in place:
+   `tradgard-generated.webp` measures 501,858 bytes at this baseline and
+   serves `/tradgardsplanering/` first paint as the declared 1568w
+   srcset candidate behind a stamped preload, the largest shipped asset
+   on the site, while its own `-640`/`-960` variants (101,718 B /
+   220,062 B) are efficiently sized and no task carried the byte
+   weight. The task re-encodes the single binary in place — same path,
+   dimensions and registry role — targeting ≥30% reduction with the
+   exact before/after sizes recorded, leaving the editorial photo
+   replacement on [image-requests.md](image-requests.md). Created and
+   read back open at 17:51:54Z with labels `priority: medium` and
+   `size:medium`; it was queued for planning at the read-back. Owned by
+   fk209's record; recorded once here, not awaited or duplicated.
 
 Remaining candidates were judged and dispositioned above: the missing
 photographs stay editorial ([docs/image-requests.md](image-requests.md): a
@@ -530,19 +562,20 @@ await explicit operator decisions; fk149's deferred major-version jumps,
 their vitest-5 assessment prompt and the 3 moderate audit findings carry
 their own recorded follow-ups on fk149's record for the weekly
 dependency-management automation (no newer dependency child has run as of
-these reads — cadence, not a stall); fk171's recorded contrast-test
-hardening prompt stays on its own delivery record for the recurring
-frontend-optimization automation; the factory loop demonstrably consumes
-linked work fast, having closed the linked fk188 and fk189 delivered
-within about half an hour of their creation; fk183's F2/F3 re-stamp
-prompt stays queued on its record for the recurring feature-refinement
-automation; fk161's, fk162's and fk176's recorded follow-up prompts were
-consumed by delivered work rather than duplicated; and fk185's follow-up
-prompt is retired above as factually stale. No further issue is created
-in this refresh: every remaining candidate is either operator/editorial
-work, carries its own recorded owner, or is already delivered — a
-synthetic third task would duplicate one of those queues rather than
-steer new work.
+these reads; the cadence is next due about November 14, so no
+escalation issue is created on a missed-cadence claim that cannot yet be
+made); fk171's recorded contrast-test hardening prompt stays on its own
+delivery record for the recurring frontend-optimization automation,
+whose November 13 run delivered a different hardening instead; fk183's
+F2 re-stamp prompt stays queued on its record after fk203 consumed the
+F3 half of it; fk161's, fk162's and fk176's recorded follow-up prompts
+were consumed by delivered work rather than duplicated; fk195's
+real-device verification prompt stays on its own record; and fk185's
+follow-up prompt is retired above as factually stale. No further issue is
+created in this refresh: every remaining candidate is either
+operator/editorial work, carries its own recorded owner, or is already
+delivered — a synthetic third task would duplicate one of those queues
+rather than steer new work.
 
 ## Long-term goals
 
@@ -550,18 +583,19 @@ steer new work.
    and task ownership, prove behavior at deterministic owner boundaries, and
    let native quality accept each candidate. The fk44 → fk54 → fk66 → fk72 →
    fk76 → fk87 → fk96 → fk105 → fk113 → fk123 → fk153 → fk163 → fk173 →
-   fk187 → fk197 refresh chain shows the working loop: reconcile, ship,
-   re-verify, retire. Separate source delivery, task closure and
+   fk187 → fk197 → fk207 refresh chain shows the working loop: reconcile,
+   ship, re-verify, retire. Separate source delivery, task closure and
    acceptance; missing evidence stays unknown. The loop also absorbs
    stalled deliveries without losing work (fk134's salvage into plan
-   fk139), stale starting points without losing accuracy (fk187's
-   re-baseline onto the re-prepared tip), and interleaved merges without
-   misattributing receipts: fk187's own PR landed between the merges of
-   the two tasks it had linked, and this refresh's base is exactly the
-   resulting tip. Its steering latency is now measured in minutes to
-   hours: fk188 and fk189 were closed delivered about half an hour after
-   their links and fk195 nineteen minutes after its automation run
-   started, with the owning records carrying the work forward.
+   fk139), stale starting points without losing accuracy (fk187's and
+   fk197's re-baselines onto re-prepared tips), and interleaved merges
+   without misattributing receipts: fk187's and fk197's own PRs each
+   landed after the merges of the tasks they had linked, and this
+   refresh's base is exactly the resulting tip. Its steering latency
+   keeps tightening — half an hour around fk188/fk189, nineteen minutes
+   for fk195, sixteen and twenty-four minutes for fk199/fk198, and
+   fk208's investigate stage initialized about 23 seconds after this
+   refresh linked it — with the owning records carrying the work forward.
 2. **Repeatable product operation.** fk165's composed command delivered the
    local half of this goal: one deterministic `release-provenance.v1` record
    joining the accepted source revision, the checksum manifest identity and
@@ -583,89 +617,94 @@ steer new work.
    variants on every photo-hero route with a stamped preload that matches
    the selected candidate (fk161/fk177/fk185), the test-enforced AA
    two-shade accent with the tokenized quote/inquiry CTA palette
-   (fk151/fk171/fk189), the 16px field-text floors on the inquiry and
-   contact forms (fk195) that stop iOS focus zoom, existing hero
-   assets on every route with the gate keeping them that way, and the
-   unit-tested money logic are delivered. The remaining visitor-visible
-   work is the hover-contrast ceiling (fk198) and the quote-page
-   focus-zoom floor (fk199) linked by this refresh, the small hardcoded
-   focus/selection hex residue, and approved missing imagery; the
-   maintainer-facing catalog records are truthful after fk176's, fk183's
-   and fk193's reconciliations. Define useful
-   inquiry signals and privacy needs before promising delivery or
-   telemetry.
+   (fk151/fk171/fk189), the "Läs mer" hover pinned to the AA-enforced
+   hover token with double enforcement (fk198/fk205), the 16px field-text
+   floors on the inquiry, contact and both quote forms (fk195/fk199) that
+   stop iOS focus zoom, existing hero assets on every route with the gate
+   keeping them that way, and the unit-tested money logic are delivered.
+   The remaining visitor-visible work is the focus/selection accent
+   tokens (fk208) and the tradgard hero byte weight (fk209) linked by
+   this refresh, and approved missing imagery; the maintainer-facing
+   catalog records are truthful after fk176's, fk183's, fk193's and
+   fk203's reconciliations. Define useful inquiry signals and privacy
+   needs before promising delivery or telemetry.
 4. **Evidence-led cross-product learning.** Compare booking and
    Asynkron.JsEngine when their repositories and operational evidence are
-   available; both remain absent — re-verified on November 12, this
-   checkout's parent holds only the fk193/fk195/fk197 worktrees. Transfer
-   demonstrated practices with explicit owners. The autonomous factory
-   operates around this static product; it is not an application backend
-   to install here.
+   available; both remain absent — re-verified on November 13, this
+   checkout's parent holds exactly the fk203/fk205/fk207/fk208/fk209
+   worktrees. Transfer demonstrated practices with explicit owners. The
+   autonomous factory operates around this static product; it is not an
+   application backend to install here.
 
 ## Evidence boundaries and update triggers
 
-- Reads made on November 12 during this fk197 refresh: the previous roadmap
-  in full (the committed fk187 generation at this checkout's prepared base
-  `9e7dd70`, the generation this document supersedes); Git history across
-  the `5465b66..9e7dd70` delta — five merges in order: fk189 PR #132 head
-  `7d21a757` merge `3440d65`, fk187 PR #131 head `1ec5bac` merge `7eb567e`,
-  fk188 PR #133 head `71f21f79` merge `36d7cba`, fk193 PR #134 head
-  `802f378b` merge `c131651`, fk195 PR #135 head `636126c` merge `9e7dd70`;
-  the prepared base equals fk195's recorded merge commit (its delivery
-  receipt names base `c131651` and merge `9e7dd70`), so no re-baselining
-  was needed — whether main advanced after these owning reads stays
-  unobserved here, not claimed either way. Source verification at this
-  HEAD: the `text-primary … hover:text-primary/80` "Läs mer" pairing at
-  [SiteHomePage.tsx](../src/pages/SiteHomePage.tsx):850 with its white
-  card surface (`--card: 0 0% 100%`; the resting pairing computes ≈5.5:1
-  and the 80%-alpha hover ≈4.0:1, fk151 having recorded ≈3.7:1), the
-  quote-page field sizing (`font-size:14px` on `.quote-field` at
-  [QuotePage.css](../src/pages/QuotePage.css):13, `input` 18px at :16,
-  select/textarea with no font-size at :18), fk189's tokenized accent
-  roles at :21/:28/:29/:35-36 and InquiryPage.css:23, the residue
-  fk189 deliberately left untouched (`#bc4a12` focus outlines at
-  QuotePage.css:20 and InquiryPage.css:22/:27, `#f7c5aa` `::selection` at
-  QuotePage.css:22), the 16px inquiry field font at
-  [InquiryPage.css](../src/pages/InquiryPage.css):19,
-  `--primary-hover: 18 84% 33%` in `:root` of
-  [styles.css](../src/styles.css), the vitest/coverage-v8 pins still
-  4.1.9 in package.json, and fk189's merged diff (PR #132) covering the
-  enumerated accent roles only. Owning `get_task` reads confirmed fk188,
-  fk189, fk193, fk195, fk187 and fk149 closed/done with the receipts in
-  the table (fk193's validate-features pass recorded at acceptance;
-  fk149's deferrals, audit findings and vitest-5 prompt re-read
-  unconsumed), the two created tasks fk198/fk199 read back open at
-  17:03Z with exact labels, and the open-task inventory (read November
-  12, ~17:04Z) held 36 open records: this task, fk198, fk199, the
-  worker-host maintenance pair (fk181 waiting with fk182 as its question
-  notice — platform work, not site work), and 31 delivery-notice
-  records, with no other feature work open or in flight. This checkout's
-  parent holds exactly the fk193/fk195/fk197 worktrees (re-verified
-  November 12); `../booking` and `../Asynkron.JsEngine` are absent.
-  Unchanged structural claims carried from the October 28–November 11
-  reviews keep that provenance.
-- One-day Faktorial API usage read on November 12 (17:01:24Z) reported
-  113,289 calls across 10 endpoints, led by task-record reads
-  (GET /api/tasks/{issue_ref}, 112,818), canvas context checks (220) and
-  worker-settings reads (92). The same caveats as previous refreshes stand
-  and this read is again thinner than its window: the volatile in-memory
-  retention covered only 16:58:16Z–17:01:24Z against the one-day request
-  (TTL 3600 s), the sampling state is unknown, the retained population was
-  truncated by a store cap, and revision comparability is unavailable; the
-  364 retained spans that joined to durable route identities did so
-  exactly (none unmatched), but that population is a thin window, not a
-  demand estimate.
-- The serving-process database telemetry read at 17:01:35Z on November 12
-  covered a fresh collector epoch (reset 15:55:01Z): at the read its
-  cumulative counters span about 1.1 hours — 207,368 calls, 179,879
-  queries and 6 errors (2 on architecture source reads, 4 on a
-  projected-task upsert), led by the DuePage agent-run reads (15,617
-  calls, ≈93.9 MB received), the task-record reads (12,791 calls), the
-  claim attempts (9,875 calls driving 39,500 queries) and the paired
-  scheduling/command revision reads (15,381 calls each). Cumulative
-  counters are not comparable across collector resets. Both populations
-  are Cloud serving-process scope, not this static site, and none can be
-  combined into an error rate or demand estimate.
+- Reads made on November 13 during this fk207 refresh: the previous roadmap
+  in full (the committed fk197 generation at this checkout's prepared base
+  `eb2711d`, the generation this document supersedes); Git history across
+  the `9e7dd70..eb2711d` delta — five merges in order: fk199 PR #136 head
+  `b1a3c989` merge `aa4fdb6`, fk198 PR #137 head `35eccacb` merge
+  `9631338`, fk197 PR #138 head `55e5d0ff` merge `6242e9e`, fk203 PR #139
+ head `0e8012cf` merge `2e3245f`, fk205 PR #140 head
+  `de546201` merge `eb2711d` — plus a fresh `git fetch` at
+  17:48Z showing origin/main at exactly the prepared base `eb2711d`, so
+  no re-baselining was needed (whether main advances after these owning
+  reads stays unobserved here, not claimed either way). Source
+  verification at this HEAD: the four accent declarations fk189 left out
+  (`#bc4a12` focus-visible outlines at
+  [QuotePage.css](../src/pages/QuotePage.css):20 and
+  [InquiryPage.css](../src/pages/InquiryPage.css):22/:27, the
+  `#f7c5aa`-on-`#253247` `::selection` at QuotePage.css:22), fk198's
+  `text-primary hover:text-primary-hover` anchor at
+  [SiteHomePage.tsx](../src/pages/SiteHomePage.tsx):850 with the
+  `primary.hover: hsl(var(--primary-hover))` mapping in
+  [tailwind.config.ts](../tailwind.config.ts), fk199's
+  `font-size:16px` on the `.quote-field select,.quote-field textarea`
+  rule (QuotePage.css:18) with the fk171-asserted border intact, the
+  new test files present (styles.quote-focus-zoom.test.ts,
+  tailwind.primary-hover-utility.test.ts,
+  styles.read-more-hover-contrast.test.ts), the tradgard hero asset
+  listing (`tradgard-generated.webp` 501,858 B; `-960` 220,062 B; `-640`
+  101,718 B; sibling full-size heroes quote-hero 362,898 B, services-hero
+  345,948 B, stensattning-photo 385,866 B) and its registry srcset at
+  [siteContent.ts](../src/data/siteContent.ts):180–183, and the
+  vitest/coverage-v8 pins still 4.1.9 in package.json. Owning `get_task`
+  reads confirmed fk199, fk198, fk197, fk203, fk205, fk149, fk181 and
+  fk182 at the states recorded above (fk203's validate-features pass
+  recorded on its candidate; fk149's deferrals, audit findings and
+  vitest-5 prompt re-read unconsumed; fk181's question form showing no
+  recorded answer), the label registry was read (`priority: medium`,
+  `size:medium` among the six exact names), the open-task inventory read
+  just before creation held 3 records (this task plus the fk204/fk206
+  delivery notices), and the created tasks fk208/fk209 read back open at
+  17:51Z with exact labels (fk208's investigate stage initialized about
+  23 seconds after creation; fk209 queued for planning at the read).
+  This checkout's parent holds exactly the fk203/fk205/fk207/fk208/fk209
+  worktrees (re-verified November 13); `../booking` and
+  `../Asynkron.JsEngine` are absent. Unchanged structural claims carried
+  from the October 28–November 12 reviews keep that provenance.
+- One-day Faktorial API usage read on November 13 (17:52:07Z) reported
+  26,323 calls across 9 endpoints, led by task-record reads
+  (GET /api/tasks/{issue_ref}, 26,056), queue reads (75),
+  agent-management reads (72) and worker-settings reads (71). The same
+  caveats as previous refreshes stand and this read is again thinner
+  than its window: the volatile in-memory retention covered only
+  17:40:27Z–17:52:07Z against the one-day request (TTL 3600 s), the
+  sampling state is unknown, the retained population was truncated by a
+  store cap, and revision comparability is unavailable; the 351
+  retained spans that joined to durable route identities did so exactly
+  (none unmatched), but that population is a thin window, not a demand
+  estimate.
+- The serving-process database telemetry read at 17:52:09Z on November 13
+  covered a fresh collector epoch (reset 2026-11-12T22:55:26Z): at the
+  read its cumulative counters span about 18.9 hours — 1,946,564 calls,
+  1,533,758 queries, 3 errors (all on projectarchitecture SourceSync
+  read-selection queries) and ≈2.02 GB received, led by the DuePage
+  agent-run reads (271,974 calls, ≈1.66 GB received), the paired
+  scheduling/command revision reads (271,502 calls each), and the
+  worker-settings reads (135,752 calls). Cumulative counters are not
+  comparable across collector resets. Both populations are Cloud
+  serving-process scope, not this static site, and none can be combined
+  into an error rate or demand estimate.
 - Website traffic, inquiry outcomes and production logs remain unavailable;
   the application has no database. No new privacy or compliance verdict is
   claimed. Exact `../booking` and `../Asynkron.JsEngine` paths are absent in
@@ -682,6 +721,16 @@ steer new work.
   API-usage and database-telemetry reads — are compressed to the pointers
   below; each generation's full text stays in Git history at its delivery
   commit (`git log -p -- docs/roadmap.md` from the listed merge).
+  - fk197 (November 12): the previous roadmap read in full at the
+    prepared `9e7dd70` tip (fk195's merge), the `5465b66..9e7dd70` delta
+    (fk189/fk187/fk188/fk193/fk195), source verification of the hover
+    pairing, quote-page field sizing and tokenized accent roles, owning
+    reads of fk188/fk189/fk193/fk195/fk187/fk149, the fk198/fk199
+    creation read-backs, the 36-record open inventory, API usage
+    (113,289 calls/10 endpoints) and database telemetry (207,368 calls /
+    179,879 queries / 6 errors on a fresh 15:55:01Z epoch) under the
+    serving-process caveats — full text in Git history at merge `6242e9e`
+    (PR #138).
   - fk187 (November 11): the previous roadmap read in full after
     re-baselining from a stale fk163-generation checkout onto the
     re-prepared `5465b66` tip, the `ab28b45..5465b66` delta
