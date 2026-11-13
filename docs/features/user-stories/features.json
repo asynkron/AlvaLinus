@@ -97,6 +97,34 @@
               "name": "keeps the primary accent readable on white card surfaces at WCAG AA",
               "evidence_type": "technical",
               "supports": "Token-level stylesheet check pins the --primary accent against the white --card surface at 4.5:1, the pairing each service card's primary-colored Läs mer link renders. It reads the root tokens only; it does not render a card, cover other primary-on-card instances or establish a browser measurement."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "pins every service-card link hover to the AA-enforced primary-hover token on home and the services index",
+              "evidence_type": "technical",
+              "supports": "Class-level check pins text-primary with the hover:text-primary-hover token utility on all five read-more links on home and the services index and rejects opacity-variant hover classes. It inspects rendered classNames only and does not render a browser hover state."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/styles.primary-contrast.test.ts",
+              "name": "keeps the primary hover shade readable on white card surfaces at WCAG AA",
+              "evidence_type": "technical",
+              "supports": "Token-level stylesheet check pins the --primary-hover accent against the white --card surface at 4.5:1, the pairing each service card's hovered Läs mer link renders. It reads the root tokens only; it does not render a card or establish a browser measurement."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/tailwind.primary-hover-utility.test.ts",
+              "name": "generates the read-more hover utility from the AA-pinned --primary-hover token",
+              "evidence_type": "technical",
+              "supports": "Compiles the Tailwind utilities and checks that hover:text-primary-hover generates a :hover rule colored by the AA-pinned --primary-hover token. It checks generated CSS, not a rendered hover."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/tailwind.primary-hover-utility.test.ts",
+              "name": "generates the resting read-more utility from the AA-pinned --primary token",
+              "evidence_type": "technical",
+              "supports": "Compiles the Tailwind utilities and checks that text-primary generates the resting color rule from the --primary token behind the read-more links. It checks generated CSS, not a rendered link."
             }
           ],
           "entry_point_refs": [],
@@ -540,6 +568,13 @@
               "name": "retains the default service selection when a recognized service has no matching typed option",
               "evidence_type": "direct",
               "supports": "Checks that a recognized service id without a matching configured option retains the first option and the unchanged option list."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "keeps every contact form control at the 16px base text size on home and /kontakt/",
+              "evidence_type": "technical",
+              "supports": "Class-level check pins text-base on the Namn, Kundtyp, Tjänst and Meddelande controls on home and /kontakt/ and rejects responsive sm/md/lg/xl/2xl text-size classes that would shrink them below the iOS Safari 16px focus-zoom floor. It inspects rendered classNames only and does not execute the iOS zoom behavior."
             }
           ],
           "entry_point_refs": [],
@@ -1293,6 +1328,13 @@
               "name": "keeps quote and inquiry form field boundaries at WCAG AA non-text contrast on white",
               "evidence_type": "technical",
               "supports": "Stylesheet check pins the 1px hex border color of the quote input and select/textarea boundary rules at 3:1 non-text contrast on white, alongside the inquiry-page equivalents. It reads the page CSS only and does not render the calculator."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/styles.quote-focus-zoom.test.ts",
+              "name": "keeps quote form text-entry controls at a font size of at least 16px",
+              "evidence_type": "technical",
+              "supports": "Stylesheet check pins an explicit px font-size of at least 16 on the quote quantity-input rule and the shared quote-field select/textarea rule in the page CSS, the iOS Safari focus-zoom floor fk199 delivered. It reads the stylesheet source only and does not render the calculator or execute iOS zoom behavior."
             },
             {
               "framework": "vitest",

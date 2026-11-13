@@ -1,6 +1,6 @@
 # F3: Prepare an initial project inquiry
 
-Reviewed: 2026-11-07. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-13. Runtime: `ui`. Product role: `customer_outcome`.
 
 The current outcome is preparing an addressed inquiry with useful project
 details. The website cannot establish that an email was sent, delivered or read.
@@ -69,7 +69,15 @@ preserves a later manual change` follows the rendered link's URL into
 `/kontakt/`, checks the recognized preselection in the named select and keeps
 a manual change. The missing-context, unrecognized-context and
 recognized-service-without-option declarations check default retention and
-that context text never becomes a new option or form content.
+that context text never becomes a new option or form content. The `fk195`
+repair then kept every contact form control at the 16px base size on home and
+`/kontakt/` by removing `sm:text-sm` from `CONTACT_FIELD_BASE_CLASS`; the new
+declaration `keeps every contact form control at the 16px base text size on
+home and /kontakt/` maps into F3-US1 as technical evidence. It checks rendered
+classNames only — `text-base` on the Namn, Kundtyp, Tjänst and Meddelande
+controls and no responsive text-size class that would shrink them below the
+iOS Safari 16px focus-zoom floor — and does not execute the iOS zoom behavior
+itself.
 
 The contact body stays available when
 the services list is empty. A mail handler can fail without
@@ -92,6 +100,9 @@ includes.
 - Fix (delivered 2026-10-28): service-page inquiry actions carry the typed
   service id into `/kontakt/` and the form preselects the matching option;
   manual selection and the static boundary are preserved.
+- Fix (delivered 2026-11-12): the `fk195` repair keeps every contact form
+  control at the 16px base size on home and `/kontakt/`, so iOS Safari no
+  longer zooms a focused field.
 - Expand: assess reliable submission, reply details, spam handling and
   confirmation only in a separately approved runtime/service decision, as
   required by ADR 0006. Stored inquiries or CRM integration are not implemented here.

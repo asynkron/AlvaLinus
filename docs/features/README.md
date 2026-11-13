@@ -1,6 +1,6 @@
 # Feature catalog
 
-Reviewed against source: 2026-11-12.
+Reviewed against source: 2026-11-13.
 
 The catalog introduced in `f7b481f` already covers the current route inventory.
 The maintained catalog retains its published identities, including F4-US3 for
@@ -33,7 +33,14 @@ F6-US5 and F5-US2 story records; this 2026-11-12 reconciliation folded that
 drainage hero into the F4 variant prose, named both quote routes' declared
 `heroPhotoSrcSet`/`heroPhotoSizes` in the F6 record, and re-stamped the F4 and
 F6 records from a fresh source read, with `fk188`'s per-route og:image artifact
-emission leaving the route table unchanged.
+emission leaving the route table unchanged. `fk195` then kept the contact form
+controls at the 16px base size on home and `/kontakt/` by removing `sm:text-sm`
+from `CONTACT_FIELD_BASE_CLASS`, and `fk199` pinned the quote pages' select and
+textarea at the same 16px iOS focus-zoom floor, while `fk198` pinned the service
+cards' Läs mer hover to the AA-enforced `primary-hover` token. This
+2026-11-13 reconciliation maps the three new declarations into the F3, F6 and
+F1 story records and re-stamps the F1, F3 and F6 records from a fresh source
+read, with the route table unchanged.
 
 This catalog maps the static Swedish Svärd Entreprenad site to visitor outcomes.
 It is product-development input, not a claim that construction work, email delivery
@@ -138,8 +145,10 @@ does not provide persistence, delivery assurance or a privacy/compliance verdict
   the stylesheet tests
   [styles.field-border-contrast.test.ts](../../src/styles.field-border-contrast.test.ts),
   [styles.primary-contrast.test.ts](../../src/styles.primary-contrast.test.ts),
-  [styles.reduced-motion.test.ts](../../src/styles.reduced-motion.test.ts)
-  and [styles.page-accent-contrast.test.ts](../../src/styles.page-accent-contrast.test.ts).
+  [styles.reduced-motion.test.ts](../../src/styles.reduced-motion.test.ts),
+  [styles.page-accent-contrast.test.ts](../../src/styles.page-accent-contrast.test.ts),
+  [styles.quote-focus-zoom.test.ts](../../src/styles.quote-focus-zoom.test.ts)
+  and [tailwind.primary-hover-utility.test.ts](../../src/tailwind.primary-hover-utility.test.ts).
   `direct` means
   the assertion checks the stated user-visible facet, not every step of a story.
   `technical` checks supporting metadata, including the token-level stylesheet

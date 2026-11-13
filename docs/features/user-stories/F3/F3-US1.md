@@ -2,7 +2,7 @@
 
 Feature: [F3 — Prepare an initial project inquiry](../../project-inquiry.md)  
 Status: current  
-Reviewed: 2026-10-28
+Reviewed: 2026-11-13
 
 As a property owner or project representative, I want to enter initial project details in the inquiry form so I can prepare a useful first discussion.
 
@@ -49,5 +49,6 @@ Use the address linked in the explanation or copy it into working email software
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `follows a service page inquiry action into contact, selects that service and preserves a later manual change` (direct): Follows the rendered link's URL into /kontakt/, checks the recognized Dränering preselection in the named service select and a manual change to Annat. Does not send mail.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `keeps the typed default service selection on home and direct contact without inquiry context` (direct): Checks the first typed option without context on home and /kontakt/.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declarations `retains the default service selection for unrecognized inquiry context $context` and `retains the default service selection when a recognized service has no matching typed option` (direct): Check default retention and that context text never becomes a new option, element or script content.
+- vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `keeps every contact form control at the 16px base text size on home and /kontakt/` (technical): Class-level check pins text-base on the Namn, Kundtyp, Tjänst and Meddelande controls on home and /kontakt/ and rejects responsive sm/md/lg/xl/2xl text-size classes that would shrink them below the iOS Safari 16px focus-zoom floor. It inspects rendered classNames only and does not execute the iOS zoom behavior.
 
 Backend entry-point references: none (frontend-only). Test mappings were reviewed as source declarations; this document is not an execution receipt.
