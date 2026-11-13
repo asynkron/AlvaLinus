@@ -1,6 +1,6 @@
 # F6: Calculate a preliminary quote
 
-Reviewed: 2026-11-12. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-13. Runtime: `ui`. Product role: `customer_outcome`.
 
 Visitors with a husdränering or driveway project can self-serve a preliminary
 cost picture before contacting the company. The calculators produce a
@@ -115,7 +115,14 @@ to F6-US2. The 2026-11-11 `fk189` accent change then mapped the page-level
 stylesheet declaration in
 [styles.page-accent-contrast.test.ts](../../src/styles.page-accent-contrast.test.ts),
 which pins the white Begär offert label on its token-based send-button surface
-at WCAG AA, into F6-US5.
+at WCAG AA, into F6-US5. The 2026-11-12 `fk199` repair then pinned the shared
+quote stylesheet's text-entry controls at the iOS Safari focus-zoom floor: the
+quantity-input rule keeps its explicit 18px font size and the `.quote-field`
+select/textarea rule gained an explicit 16px, and the declaration
+`keeps quote form text-entry controls at a font size of at least 16px` in
+[styles.quote-focus-zoom.test.ts](../../src/styles.quote-focus-zoom.test.ts)
+maps into F6-US2 as technical evidence. It reads the stylesheet source only
+and does not render the calculators or execute iOS zoom behavior.
 
 An invalid measurement keeps the previous total out of view and disables the
 email and print controls until corrected; "Återställ exempel" restores the

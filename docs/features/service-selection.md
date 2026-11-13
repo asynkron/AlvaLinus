@@ -1,6 +1,6 @@
 # F1: Choose a suitable groundworks service
 
-Reviewed: 2026-11-11. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-13. Runtime: `ui`. Product role: `customer_outcome`.
 
 Visitors need to identify which service fits a property or construction project
 before asking for a discussion. The current result is service understanding and
@@ -86,6 +86,16 @@ maps the token-level declaration in
 [styles.primary-contrast.test.ts](../../src/styles.primary-contrast.test.ts)
 that pins the `--primary` accent against the white `--card` surface at WCAG AA
 to F1-US1, where the service cards' primary Läs mer links render that pairing.
+The 2026-11-12 `fk198` repair then pinned those links' hover to the AA-enforced
+`--primary-hover` token: F1-US1 now maps the className declaration
+`pins every service-card link hover to the AA-enforced primary-hover token on
+home and the services index`, the token-level `keeps the primary hover shade
+readable on white card surfaces at WCAG AA` in
+[styles.primary-contrast.test.ts](../../src/styles.primary-contrast.test.ts),
+and the generated-utility declarations in
+[tailwind.primary-hover-utility.test.ts](../../src/tailwind.primary-hover-utility.test.ts).
+These are source-reviewed class, token and compiled-utility checks; no browser
+hover state is rendered or measured.
 
 ## What Works Less Well
 
