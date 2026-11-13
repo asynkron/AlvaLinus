@@ -8,6 +8,7 @@ import {
   applyRouteDocumentMetadata,
   assertRouteVisualAssets,
   assertStaticRouteArtifacts,
+  heroAssetByteBudget,
   injectRouteHeroPreload,
   notFoundArtifactPath,
   notFoundPageMetadata,
@@ -158,6 +159,10 @@ function memoryFileSystem(entries = {}) {
     }),
     access: vi.fn(async (filePath) => {
       if (!Object.hasOwn(entries, filePath)) throw missingEntryError(filePath);
+    }),
+    stat: vi.fn(async (filePath) => {
+      if (!Object.hasOwn(entries, filePath)) throw missingEntryError(filePath);
+      return { size: Buffer.byteLength(entries[filePath], "utf8") };
     }),
   };
 }
@@ -1304,6 +1309,61 @@ describe("assertRouteVisualAssets", () => {
     await expect(
       assertRouteVisualAssets({ routes: fixtureRoutes, publicDir: "public", access }),
     ).rejects.toThrow(denied);
+  });
+
+  it("rejects a declared hero asset exceeding the hero byte budget with its measured size", async () => {
+    const routes = [homeRoute, servicesRoute];
+    const entries = {
+      ...publicEntries(routes),
+      [publicAssetPath("public", "/page-visuals/services-hero.webp")]: "<hero>" + "x".repeat(heroAssetByteBudget - 5),
+    };
+    const fileSystem = memoryFileSystem(entries);
+
+    await expect(
+      assertRouteVisualAssets({ routes, publicDir: "public", access: fileSystem.access, stat: fileSystem.stat }),
+    ).rejects.toThrow(
+      "Route visual asset check failed (oversized: /page-visuals/services-hero.webp " +
+        `(${heroAssetByteBudget + 1} B > ${heroAssetByteBudget} B hero budget).`,
+    );
+    expect(fileSystem.stat).toHaveBeenCalledWith(publicAssetPath("public", "/page-visuals/services-hero.webp"));
+  });
+
+  it("passes declared hero assets sized within the hero byte budget when stat is provided", async () => {
+    const fileSystem = memoryFileSystem(publicEntries(fixtureRoutes));
+
+    await expect(
+      assertRouteVisualAssets({ routes: fixtureRoutes, publicDir: "public", access: fileSystem.access, stat: fileSystem.stat }),
+    ).resolves.toEqual({
+      visualAssets: [
+        "/page-visuals/svard-entreprenad-home.svg",
+        "/page-visuals/svard-entreprenad-services.svg",
+        "/page-visuals/svard-entreprenad-contact.svg",
+      ],
+      heroAssets: ["/page-visuals/home-hero.webp", "/page-visuals/services-hero.webp", "/page-visuals/contact-hero.webp"],
+      socialCardImages: ["/page-visuals/services-hero.webp", "/page-visuals/contact-hero.webp"],
+    });
+    expect(fileSystem.stat).toHaveBeenCalledTimes(3);
+  });
+
+  it("leaves hero sizes unchecked when no stat function is provided", async () => {
+    const routes = [homeRoute, servicesRoute];
+    const entries = {
+      ...publicEntries(routes),
+      [publicAssetPath("public", "/page-visuals/services-hero.webp")]: "<hero>" + "x".repeat(heroAssetByteBudget - 5),
+    };
+    const fileSystem = memoryFileSystem(entries);
+
+    await expect(
+      assertRouteVisualAssets({ routes, publicDir: "public", access: fileSystem.access }),
+    ).resolves.toEqual({
+      visualAssets: [
+        "/page-visuals/svard-entreprenad-home.svg",
+        "/page-visuals/svard-entreprenad-services.svg",
+      ],
+      heroAssets: ["/page-visuals/home-hero.webp", "/page-visuals/services-hero.webp"],
+      socialCardImages: ["/page-visuals/services-hero.webp"],
+    });
+    expect(fileSystem.stat).not.toHaveBeenCalled();
   });
 });
 
