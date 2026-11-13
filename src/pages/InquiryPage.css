@@ -19,12 +19,12 @@
 .inquiry-field input,.inquiry-field textarea{width:100%;min-width:0;border:1px solid #64748b;border-radius:6px;background:#fff;padding:12px;font:400 16px/1.5 var(--font-sans);color:#253247}
 .inquiry-field textarea{resize:vertical}
 .inquiry-field .inquiry-invalid{border-color:hsl(var(--destructive));border-width:2px;padding:11px}
-.inquiry-field input:focus-visible,.inquiry-field textarea:focus-visible,.inquiry-layout :is(button,a):focus-visible{outline:3px solid #bc4a12;outline-offset:3px}
+.inquiry-field input:focus-visible,.inquiry-field textarea:focus-visible,.inquiry-layout :is(button,a):focus-visible{outline:3px solid hsl(var(--primary-hover));outline-offset:3px}
 .inquiry-field input{accent-color:hsl(var(--primary));caret-color:hsl(var(--primary))}
 .inquiry-hint{display:block;line-height:1.6}
 .inquiry-error{color:#9c2918;font-size:13px;font-weight:400}
 .inquiry-alert{border:1px solid hsl(var(--destructive)/.4);background:hsl(var(--destructive)/.08);color:#9c2918;border-radius:8px;padding:14px 16px;font-size:14px;font-weight:400;line-height:1.6;margin:0 0 24px}
-.inquiry-alert:focus-visible{outline:3px solid #bc4a12;outline-offset:3px}
+.inquiry-alert:focus-visible{outline:3px solid hsl(var(--primary-hover));outline-offset:3px}
 .inquiry-confirmation{border:1px solid #9dbb9f;background:#eef6ee;color:#1f4d26;border-radius:8px;padding:16px 18px;font-size:14px;font-weight:400;line-height:1.7;margin:0 0 24px}
 .inquiry-confirmation a{color:inherit;font-weight:600;text-decoration:underline;text-underline-offset:3px}
 .inquiry-send{width:100%;gap:10px;white-space:normal;height:auto;min-height:48px;text-align:center}

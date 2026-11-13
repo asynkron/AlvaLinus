@@ -76,6 +76,15 @@ function accentToken(value: string, context: string): HslToken {
   return parseRootToken(name);
 }
 
+function outlineAccentToken(rule: string, context: string): HslToken {
+  const outline = declaration(rule, "outline", context);
+  const color = outline.match(/^3px solid (hsl\(var\(--[\w-]+\)\))$/)?.[1];
+  if (color === undefined) {
+    throw new Error(`${context} must keep a 3px solid outline through a styles.css token reference, found "${outline}"`);
+  }
+  return accentToken(color, context);
+}
+
 const primary = parseRootToken("primary");
 const primaryHover = parseRootToken("primary-hover");
 const primaryForeground = parseRootToken("primary-foreground");
@@ -90,6 +99,17 @@ const quoteInputAccent = accentToken(declaration(ruleBody(quoteStyles, ".quote-l
 const quoteInputCaret = accentToken(declaration(ruleBody(quoteStyles, ".quote-layout input"), "caret-color", ".quote-layout input"), ".quote-layout input caret-color");
 const inquiryInputAccent = accentToken(declaration(ruleBody(inquiryStyles, ".inquiry-field input"), "accent-color", ".inquiry-field input"), ".inquiry-field input accent-color");
 const inquiryInputCaret = accentToken(declaration(ruleBody(inquiryStyles, ".inquiry-field input"), "caret-color", ".inquiry-field input"), ".inquiry-field input caret-color");
+
+const quoteFocusRule = ruleBody(quoteStyles, ".quote-layout :is(input,select,textarea,button,a,summary):focus-visible");
+const inquiryFocusRule = ruleBody(inquiryStyles, ".inquiry-field input:focus-visible,.inquiry-field textarea:focus-visible,.inquiry-layout :is(button,a):focus-visible");
+const inquiryAlertFocusRule = ruleBody(inquiryStyles, ".inquiry-alert:focus-visible");
+const quoteSelectionRule = ruleBody(quoteStyles, ".quote-layout ::selection");
+
+const quoteFocusAccent = outlineAccentToken(quoteFocusRule, ".quote-layout :focus-visible outline");
+const inquiryFocusAccent = outlineAccentToken(inquiryFocusRule, ".inquiry focus-visible outline");
+const inquiryAlertAccent = outlineAccentToken(inquiryAlertFocusRule, ".inquiry-alert :focus-visible outline");
+const selectionBackground = accentToken(declaration(quoteSelectionRule, "background", ".quote-layout ::selection"), ".quote-layout ::selection background");
+const selectionColor = accentToken(declaration(quoteSelectionRule, "color", ".quote-layout ::selection"), ".quote-layout ::selection color");
 
 describe("page accent token consistency and contrast", () => {
   it("keeps the quote send CTA white label readable on its primary token surface at WCAG AA", () => {
@@ -117,5 +137,28 @@ describe("page accent token consistency and contrast", () => {
       expect(token.hue).toBeGreaterThanOrEqual(10);
       expect(token.hue).toBeLessThanOrEqual(25);
     }
+  });
+});
+
+describe("quote and inquiry focus and selection accent tokens", () => {
+  it("keeps every focus-visible outline on a 3px solid token outline with a 3px offset", () => {
+    for (const [accent, rule, label] of [
+      [quoteFocusAccent, quoteFocusRule, ".quote-layout focus-visible rule"],
+      [inquiryFocusAccent, inquiryFocusRule, ".inquiry-field/.inquiry-layout focus-visible rule"],
+      [inquiryAlertAccent, inquiryAlertFocusRule, ".inquiry-alert focus-visible rule"],
+    ] as const) {
+      expect(declaration(rule, "outline-offset", label)).toBe("3px");
+      expect(accent.hue, label).toBeGreaterThanOrEqual(10);
+      expect(accent.hue, label).toBeLessThanOrEqual(25);
+    }
+  });
+
+  it("keeps the quote selection pair an AA-readable declared token pairing", () => {
+    expect(contrastRatio(selectionColor, selectionBackground)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it("keeps the quote selection background in the orange brand hue family", () => {
+    expect(selectionBackground.hue).toBeGreaterThanOrEqual(10);
+    expect(selectionBackground.hue).toBeLessThanOrEqual(25);
   });
 });

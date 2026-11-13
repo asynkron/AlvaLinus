@@ -17,9 +17,9 @@
 .quote-input>span{padding-right:12px;white-space:nowrap;font-weight:400;color:#526071;font-size:13px}
 .quote-field select,.quote-field textarea{border:1px solid #64748b;background:white;border-radius:6px;padding:12px;width:100%;font-size:16px;font-weight:400}
 .quote-field textarea{resize:vertical}
-.quote-layout :is(input,select,textarea,button,a,summary):focus-visible{outline:3px solid #bc4a12;outline-offset:3px}
+.quote-layout :is(input,select,textarea,button,a,summary):focus-visible{outline:3px solid hsl(var(--primary-hover));outline-offset:3px}
 .quote-layout input{accent-color:hsl(var(--primary));caret-color:hsl(var(--primary))}
-.quote-layout ::selection{background:#f7c5aa;color:#253247}
+.quote-layout ::selection{background:hsl(var(--selection-background));color:hsl(var(--selection-foreground))}
 .quote-check{display:flex;gap:12px;align-items:flex-start;margin:0 0 28px;font-weight:600;font-size:15px}
 .quote-check input{width:20px;height:20px;margin-top:2px}
 .quote-help{display:block;font-size:13px;font-weight:400;color:#526071;margin-top:4px}
