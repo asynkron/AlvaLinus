@@ -316,9 +316,18 @@ function ContentSurface({
   const route = getRouteForPath(content, currentPath);
 
   if (routeDependsOnServices(route) && content.services.length === 0) {
+    const contactRoute = content.routes.find((item) => item.kind === "contact");
+    const action = contactRoute
+      ? { label: content.chrome.emptyStateActionLabel, href: contactRoute.href }
+      : undefined;
+
     return (
       <main id="content" className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-10">
-        <StaticState title={content.chrome.emptyStateTitle} message={content.chrome.emptyStateMessage} />
+        <StaticState
+          title={content.chrome.emptyStateTitle}
+          message={content.chrome.emptyStateMessage}
+          action={action}
+        />
       </main>
     );
   }

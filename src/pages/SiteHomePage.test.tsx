@@ -14,6 +14,7 @@ const mobileNavLabel = chrome.mobileNavAriaLabel;
 const menuOpenLabel = chrome.menuOpenLabel;
 const menuCloseLabel = chrome.menuCloseLabel;
 const emptyStateTitle = chrome.emptyStateTitle;
+const emptyStateActionLabel = chrome.emptyStateActionLabel;
 
 function readMoreName(service: ServiceArea): string {
   return `${content.sectionHeadings.services.readMoreAriaPrefix} ${service.title}`;
@@ -740,6 +741,18 @@ describe("SiteHomePage", () => {
 
     expect(screen.getByRole("heading", { name: emptyStateTitle })).toBeInTheDocument();
     expect(screen.queryByRole("form", { name: "Offertförfrågan via e-post" })).not.toBeInTheDocument();
+
+    const contactRoute = content.routes.find((route) => route.kind === "contact");
+
+    if (!contactRoute) {
+      throw new Error("Missing registry contact route");
+    }
+
+    const action = screen.getByRole("link", { name: emptyStateActionLabel });
+
+    expect(action.tagName).toBe("A");
+    expect(action).toHaveAttribute("href", contactRoute.href);
+    expect(action).not.toHaveAttribute("tabindex", "-1");
   });
 
   it("keeps about and contact bodies available when services are empty", () => {
