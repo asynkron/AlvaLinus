@@ -555,6 +555,7 @@ export const siteContent = {
     menuCloseLabel: "Stäng meny",
     emptyStateTitle: "Inget innehåll ännu",
     emptyStateMessage: "Lägg till statiska dataposter i src/data.",
+    emptyStateActionLabel: "Kontakta oss",
     quoteFallback: "Laddar offertberäkningen…",
     inquiryFallback: "Laddar förfrågan om inhyrning…",
     breadcrumb: {

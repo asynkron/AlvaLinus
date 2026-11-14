@@ -256,6 +256,7 @@ export type SiteChrome = {
   readonly menuCloseLabel: string;
   readonly emptyStateTitle: string;
   readonly emptyStateMessage: string;
+  readonly emptyStateActionLabel: string;
   readonly quoteFallback: string;
   readonly inquiryFallback: string;
   readonly breadcrumb: SiteBreadcrumb;
