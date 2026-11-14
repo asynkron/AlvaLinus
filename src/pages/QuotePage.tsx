@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { QuoteNotesField, QuotePageShell, QuoteResetButton, QuoteResultAside } from "../components/QuotePageShared";
 import { siteContent } from "../data/siteContent";
@@ -33,6 +33,13 @@ export function QuotePage({ content = siteContent }: { readonly content?: SiteCo
     return () => window.removeEventListener("hashchange", syncKind);
   }, []);
 
+  const previousKind = useRef(kind);
+  useEffect(() => {
+    if (previousKind.current === kind) return;
+    previousKind.current = kind;
+    document.getElementById(kind === "uppfart" ? "quote-work-heading" : "quote-choice-heading")?.focus();
+  }, [kind]);
+
   const area = Number(values.area);
   const loads = Number(values.loads);
   const valid = values.area.trim() !== "" && values.loads.trim() !== "" && Number.isFinite(area) && area > 0 && area <= maximumQuantity && Number.isFinite(loads) && loads >= 0 && Number.isInteger(loads) && loads <= maximumQuantity;
@@ -50,7 +57,7 @@ export function QuotePage({ content = siteContent }: { readonly content?: SiteCo
   }
   return <QuotePageShell homeLabel={content.chrome.breadcrumb.homeLabel} formAriaLabel={shared.formAriaLabel} hero={{ src: "/page-visuals/quote-hero.webp", srcSet: quoteRoute?.heroPhotoSrcSet, sizes: quoteRoute?.heroPhotoSizes }} breadcrumbLabel={text.breadcrumbLabel} heading={text.heading} intro={text.intro} resultAside={<QuoteResultAside shared={shared} error={text.error} valid={valid} total={money(total)} email={email} hidden={kind !== "uppfart"} />}>
     <div className="quote-choice" hidden={kind === "uppfart"}>
-      <h2>{text.choiceHeading}</h2>
+      <h2 id="quote-choice-heading" tabIndex={-1}>{text.choiceHeading}</h2>
       <p>{text.choiceSummary}</p>
       <div className="choice-buttons">
         <a href="/draneringsberakning/">{text.drainageChoiceLabel}<ArrowRight size={16} aria-hidden="true" /></a>
@@ -59,7 +66,7 @@ export function QuotePage({ content = siteContent }: { readonly content?: SiteCo
     </div>
     {kind === "uppfart" ? <a className="quote-back-choice" href={quotePath}>{text.backLinkLabel}</a> : null}
     <div className="quote-work" hidden={kind !== "uppfart"}>
-      <h2>{text.workHeading}</h2><p>{text.workSummary}</p>
+      <h2 id="quote-work-heading" tabIndex={-1}>{text.workHeading}</h2><p>{text.workSummary}</p>
       <div className="quote-fields">{quantity("area", text.areaLabel, text.areaUnit, "0.1", "any")}{quantity("loads", text.loadsLabel, text.loadsUnit, "0", "1")}</div>
       <p id="quote-quantity-help" className="quote-help">{text.quantityHelp}</p>
       <label className="quote-check"><input type="checkbox" checked={includeAsphalt} onChange={event => setIncludeAsphalt(event.target.checked)} /><span>{text.asphaltLabel}<span className="quote-help">{text.asphaltHelp}</span></span></label>

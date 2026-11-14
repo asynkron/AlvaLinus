@@ -78,6 +78,21 @@ describe("QuotePage", () => {
     expect(screen.getByRole("link", { name: text.backLinkLabel })).toHaveAttribute("href", "/offertberakning/");
   });
 
+  it("moves keyboard focus to the revealed view heading on hash switches", () => {
+    render(<QuotePage />);
+
+    expect(document.activeElement).toBe(document.body);
+
+    chooseUppfart();
+
+    expect(screen.getByRole("heading", { name: text.workHeading })).toHaveFocus();
+
+    window.location.hash = "";
+    fireEvent(window, new Event("hashchange"));
+
+    expect(screen.getByRole("heading", { name: text.choiceHeading })).toHaveFocus();
+  });
+
   it("recalculates the reused driveway calculation into a preliminary total", () => {
     render(<QuotePage />);
     chooseUppfart();
