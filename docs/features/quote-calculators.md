@@ -1,6 +1,6 @@
 # F6: Calculate a preliminary quote
 
-Reviewed: 2026-11-13. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-14. Runtime: `ui`. Product role: `customer_outcome`.
 
 Visitors with a husdränering or driveway project can self-serve a preliminary
 cost picture before contacting the company. The calculators produce a
@@ -122,7 +122,18 @@ select/textarea rule gained an explicit 16px, and the declaration
 `keeps quote form text-entry controls at a font size of at least 16px` in
 [styles.quote-focus-zoom.test.ts](../../src/styles.quote-focus-zoom.test.ts)
 maps into F6-US2 as technical evidence. It reads the stylesheet source only
-and does not render the calculators or execute iOS zoom behavior.
+and does not render the calculators or execute iOS zoom behavior. The
+2026-11-13 `fk208` change (PR #142, `2dddae4`) then tokenized the quote and
+inquiry focus-visible outlines and the quote text-selection accents while
+keeping the existing send-CTA declaration byte-identical, and this 2026-11-14
+review maps its three new declarations in
+[styles.page-accent-contrast.test.ts](../../src/styles.page-accent-contrast.test.ts)
+into F6-US5 as technical evidence: the 3px solid token focus-visible outline
+with a 3px offset across the `.quote-layout` input, select, textarea, button,
+a and summary rules, the AA-readable declared `::selection` token pairing, and
+the selection background's orange brand hue. The inquiry-side focus-visible
+rules of that same declaration map under F5-US2 in
+[staffing-inquiry.md](staffing-inquiry.md).
 
 An invalid measurement keeps the previous total out of view and disables the
 email and print controls until corrected; "Återställ exempel" restores the

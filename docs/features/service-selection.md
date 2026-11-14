@@ -1,6 +1,6 @@
 # F1: Choose a suitable groundworks service
 
-Reviewed: 2026-11-13. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-14. Runtime: `ui`. Product role: `customer_outcome`.
 
 Visitors need to identify which service fits a property or construction project
 before asking for a discussion. The current result is service understanding and
@@ -95,7 +95,15 @@ readable on white card surfaces at WCAG AA` in
 and the generated-utility declarations in
 [tailwind.primary-hover-utility.test.ts](../../src/tailwind.primary-hover-utility.test.ts).
 These are source-reviewed class, token and compiled-utility checks; no browser
-hover state is rendered or measured.
+hover state is rendered or measured. The 2026-11-13 `fk205` change (PR #140,
+`eb2711d`) then added
+[styles.read-more-hover-contrast.test.ts](../../src/styles.read-more-hover-contrast.test.ts),
+whose two declarations this 2026-11-14 review maps into F1-US1 as technical
+evidence: they read the read-more anchor's className from the SiteHomePage
+source text, resolve the hovered utility to a styles.css HSL token and pin it
+against the white card surface at WCAG AA, and require the hovered color's
+luminance to sit below the resting color's. They inspect source text and token
+math only and do not render a browser hover.
 
 ## What Works Less Well
 

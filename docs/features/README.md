@@ -1,6 +1,6 @@
 # Feature catalog
 
-Reviewed against source: 2026-11-13.
+Reviewed against source: 2026-11-14.
 
 The catalog introduced in `f7b481f` already covers the current route inventory.
 The maintained catalog retains its published identities, including F4-US3 for
@@ -40,6 +40,14 @@ textarea at the same 16px iOS focus-zoom floor, while `fk198` pinned the service
 cards' Läs mer hover to the AA-enforced `primary-hover` token. This
 2026-11-13 reconciliation maps the three new declarations into the F3, F6 and
 F1 story records and re-stamps the F1, F3 and F6 records from a fresh source
+read, with the route table unchanged. `fk205` (PR #140, `eb2711d`) then added
+the read-more hover-contrast test, `fk207` (PR #141, `c1051ec`) refreshed
+[docs/roadmap.md](../roadmap.md) to the 2026-11-13 `eb2711d` baseline without
+changing the feature catalog, and `fk208` (PR #142, `2dddae4`) tokenized the
+quote and inquiry focus-visible outlines and the quote text-selection accents
+while keeping the existing send-CTA declaration byte-identical. This
+2026-11-14 reconciliation maps those five new declarations into the F1, F5 and
+F6 story records and re-stamps the F1, F5 and F6 records from a fresh source
 read, with the route table unchanged.
 
 This catalog maps the static Swedish Svärd Entreprenad site to visitor outcomes.
@@ -145,6 +153,7 @@ does not provide persistence, delivery assurance or a privacy/compliance verdict
   the stylesheet tests
   [styles.field-border-contrast.test.ts](../../src/styles.field-border-contrast.test.ts),
   [styles.primary-contrast.test.ts](../../src/styles.primary-contrast.test.ts),
+  [styles.read-more-hover-contrast.test.ts](../../src/styles.read-more-hover-contrast.test.ts),
   [styles.reduced-motion.test.ts](../../src/styles.reduced-motion.test.ts),
   [styles.page-accent-contrast.test.ts](../../src/styles.page-accent-contrast.test.ts),
   [styles.quote-focus-zoom.test.ts](../../src/styles.quote-focus-zoom.test.ts)

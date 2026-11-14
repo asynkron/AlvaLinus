@@ -2,7 +2,7 @@
 
 Feature: [F1 — Choose a suitable groundworks service](../../service-selection.md)  
 Status: current  
-Reviewed: 2026-11-13
+Reviewed: 2026-11-14
 
 As a project visitor, I want to compare service summaries and tags so I can find the relevant area before reading details.
 
@@ -39,6 +39,7 @@ Reload after a content deployment; use the header links to choose a route.
 - [src/pages/SiteHomePage.tsx](../../../../src/pages/SiteHomePage.tsx)
 - [src/styles.primary-contrast.test.ts](../../../../src/styles.primary-contrast.test.ts)
 - [src/tailwind.primary-hover-utility.test.ts](../../../../src/tailwind.primary-hover-utility.test.ts)
+- [src/styles.read-more-hover-contrast.test.ts](../../../../src/styles.read-more-hover-contrast.test.ts)
 
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `renders owner-approved home content, service, process, partner, and contact areas` (direct): Checks the home service and process areas, not the services-index rendering.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `renders representative service tags including pool digging under Grävjobb` (direct): Checks representative service tags on home.
@@ -49,6 +50,8 @@ Reload after a content deployment; use the header links to choose a route.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `pins every service-card link hover to the AA-enforced primary-hover token on home and the services index` (technical): Class-level check pins text-primary with the hover:text-primary-hover token utility on all five read-more links on home and the services index and rejects opacity-variant hover classes. It inspects rendered classNames only and does not render a browser hover state.
 - vitest, [src/styles.primary-contrast.test.ts](../../../../src/styles.primary-contrast.test.ts), declaration `keeps the primary hover shade readable on white card surfaces at WCAG AA` (technical): Token-level stylesheet check pins the `--primary-hover` accent against the white `--card` surface at 4.5:1, the pairing each service card's hovered Läs mer link renders. It reads the root tokens only; it does not render a card or establish a browser measurement.
 - vitest, [src/tailwind.primary-hover-utility.test.ts](../../../../src/tailwind.primary-hover-utility.test.ts), declarations `generates the read-more hover utility from the AA-pinned --primary-hover token` and `generates the resting read-more utility from the AA-pinned --primary token` (technical): Compile the Tailwind utilities and check that the hover and resting read-more color rules are generated from the AA-pinned tokens. They check generated CSS, not a rendered hover.
+- vitest, [src/styles.read-more-hover-contrast.test.ts](../../../../src/styles.read-more-hover-contrast.test.ts), declaration `keeps the read-more hover pairing an AA-readable styles.css token color on the white card` (technical): Source-level check reads the read-more anchor's className from the SiteHomePage.tsx source text, resolves its hover:text-* utility through the Tailwind color mapping to a styles.css HSL token and pins the composited hover color against the white --card surface at 4.5:1. It inspects source text and token math only and does not render a browser hover state.
+- vitest, [src/styles.read-more-hover-contrast.test.ts](../../../../src/styles.read-more-hover-contrast.test.ts), declaration `keeps the hovered read-more color visibly darker than its resting color` (technical): Source-level check resolves the same anchor's hovered and resting token colors over the white card surface and requires the hovered color's relative luminance to be lower than the resting color's. It checks token math on source-declared utilities only, not a rendered hover transition.
 
 Backend entry-point references: none (frontend-only). Test mappings were reviewed as source declarations; this document is not an execution receipt.
 
