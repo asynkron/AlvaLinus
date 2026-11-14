@@ -1,6 +1,6 @@
 # F5: Prepare a company staffing inquiry
 
-Reviewed: 2026-11-11. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-14. Runtime: `ui`. Product role: `customer_outcome`.
 
 Companies that need hired help can prepare a staffing inquiry addressed to the
 company. The website cannot establish that an email was sent, delivered or
@@ -94,7 +94,16 @@ pins the inquiry input and textarea boundary borders at WCAG AA non-text
 contrast on white (F5-US1), and the token declaration in
 [styles.primary-contrast.test.ts](../../src/styles.primary-contrast.test.ts)
 pins the white submit-button label against its primary surface at WCAG AA
-(F5-US2).
+(F5-US2). The 2026-11-13 `fk208` change (PR #142, `2dddae4`) then tokenized the
+form's focus-visible accents, and this 2026-11-14 review maps the declaration
+`keeps every focus-visible outline on a 3px solid token outline with a 3px
+offset` in
+[styles.page-accent-contrast.test.ts](../../src/styles.page-accent-contrast.test.ts)
+into F5-US2 as technical evidence: it pins the `.inquiry-field` inputs and
+textarea, the `.inquiry-layout` buttons and links and the `.inquiry-alert`
+summary to a 3px solid token outline with a 3px offset in the orange brand hue
+band, reading the page CSS only. The same declaration's quote-side rules map
+under F6-US5 in [quote-calculators.md](quote-calculators.md).
 
 A mail handler can fail without a website error state. Recovery is copying the
 displayed address and details into a working email tool, or using the
