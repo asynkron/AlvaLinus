@@ -1,6 +1,6 @@
 # Feature catalog
 
-Reviewed against source: 2026-11-14.
+Reviewed against source: 2026-11-15.
 
 The catalog introduced in `f7b481f` already covers the current route inventory.
 The maintained catalog retains its published identities, including F4-US3 for
@@ -48,7 +48,11 @@ quote and inquiry focus-visible outlines and the quote text-selection accents
 while keeping the existing send-CTA declaration byte-identical. This
 2026-11-14 reconciliation maps those five new declarations into the F1, F5 and
 F6 story records and re-stamps the F1, F5 and F6 records from a fresh source
-read, with the route table unchanged.
+read, with the route table unchanged. `fk215` (PR #145, `c3f9ede`) then moved
+keyboard focus to the revealed view's heading on `/offertberakning/` hash
+switches. This 2026-11-15 reconciliation maps its new direct declaration into
+the F6-US1 records and re-stamps the F6 records from a fresh source read, with
+the route table unchanged.
 
 This catalog maps the static Swedish Svärd Entreprenad site to visitor outcomes.
 It is product-development input, not a claim that construction work, email delivery
