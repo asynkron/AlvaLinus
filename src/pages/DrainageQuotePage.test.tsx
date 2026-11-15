@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { siteContent } from "../data/siteContent";
 import { formatNumber, vatStatusLabel } from "../lib/quote";
+import { quoteShareParams } from "../lib/quote-share";
 import { DrainageQuotePage } from "./DrainageQuotePage";
 
 const shared = siteContent.quote.shared;
@@ -37,6 +38,10 @@ function decodedEmailHref(): string {
 
   return decodeURIComponent(link.getAttribute("href") ?? "").replace(/[\u00a0\u202f]/g, " ");
 }
+
+beforeEach(() => {
+  window.history.replaceState(null, "", "/draneringsberakning/");
+});
 
 describe("DrainageQuotePage", () => {
   it("presents the drainage estimate without internal prices or part amounts", () => {
@@ -152,5 +157,41 @@ describe("DrainageQuotePage", () => {
     expect(hero).toHaveAttribute("alt", "");
     expect(hero).toHaveAttribute("aria-hidden", "true");
     expect(hero).toHaveAttribute("fetchpriority", "high");
+  });
+
+  it("produces a share link that encodes the drainage length", () => {
+    render(<DrainageQuotePage />);
+    fireEvent.change(lengthInput(), { target: { value: "62.5" } });
+
+    expect(screen.getByText(money(221900))).toBeInTheDocument();
+
+    const shareHref = `${window.location.origin}/draneringsberakning/?${quoteShareParams.length}=62.5`;
+
+    expect(screen.queryByRole("link", { name: shareHref })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: shared.shareLabel }));
+
+    expect(window.location.search).toBe(`?${quoteShareParams.length}=62.5`);
+    expect(screen.getByRole("link", { name: shareHref })).toHaveAttribute("href", shareHref);
+  });
+
+  it("restores the shared length and recomputes the same total on load", () => {
+    window.history.replaceState(null, "", `/draneringsberakning/?${quoteShareParams.length}=62.5`);
+    render(<DrainageQuotePage />);
+
+    expect(lengthInput()).toHaveValue(62.5);
+    expect(screen.getByText(money(221900))).toBeInTheDocument();
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("degrades an invalid shared length through the existing invalid-input path", () => {
+    window.history.replaceState(null, "", `/draneringsberakning/?${quoteShareParams.length}=-5`);
+    render(<DrainageQuotePage />);
+
+    expect(screen.getByRole("alert")).toHaveTextContent(text.error);
+    expect(screen.queryByText(shared.totalLabel)).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: shared.sendInvalidLabel })).toBeDisabled();
+    expect(screen.getByRole("button", { name: shared.printLabel })).toBeDisabled();
+    expect(screen.getByRole("button", { name: shared.shareLabel })).toBeDisabled();
   });
 });

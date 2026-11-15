@@ -155,6 +155,10 @@
           "description": "Tiered drainage and driveway total helpers plus Swedish money and number formatting."
         },
         {
+          "path": "src/lib/quote-share.ts",
+          "description": "Quote share-link helpers: fixed URL parameter names, measurement search encoding, tolerant decoding and absolute share href building."
+        },
+        {
           "path": "src/data/siteContent.ts",
           "description": "Typed quote routes with hero photos and visual metadata, the drainage service's calculator band, and the registry-declared Swedish quote copy in quote.shared, quote.uppfart and quote.drainage including mail subjects and body templates."
         },

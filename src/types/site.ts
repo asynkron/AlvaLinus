@@ -118,6 +118,8 @@ export type SiteQuoteShared = {
   readonly sendInvalidLabel: string;
   readonly mailHelp: string;
   readonly printLabel: string;
+  readonly shareLabel: string;
+  readonly shareHelp: string;
 };
 
 export type SiteQuoteUppfartPricing = {

@@ -48,13 +48,29 @@ parameters are source constants, not maintainer-editable content. The email
 bodies carry the entered measurements, the total and "Omfattning behöver
 bekräftas", and never internal prices.
 
+While the input is valid, "Skapa delbar länk" writes the measurements into the
+page URL — yta, lass and the asphalt choice on `/offertberakning/`, where the
+`#uppfart` hash is kept so the recipient lands on the driveway view with the
+total visible, and längd on `/draneringsberakning/` — and renders the same
+absolute URL as a copyable link below the control, copying it through the
+browser clipboard when that API is available and staying usable as a plain
+link when it is not. Opening a quote URL that carries those parameters
+restores the inputs once on load and recomputes the identical total; missing
+parameters fall back to the example defaults, invalid values go through the
+existing invalid-input alert, and the share control is disabled alongside the
+email and print controls while the input is invalid. The share URL parameters
+(`yta`, `lass`, `asfalt`, `langd`) are fixed source constants in
+[quote-share helpers](../../src/lib/quote-share.ts), and the share copy is
+registry-declared in `siteContent.quote.shared`.
+
 Visitors reach the calculators from the header's Kalkyler disclosure and the
 footer ([F4](navigation-and-recovery.md) owns that chrome), from the drainage
 service page's calculator link band ([F1](service-selection.md) owns that
 band), from not-found shortcuts, and from the cross-links inside the
 calculators themselves. Both quote pages render lazily inside the shared
-landmarks; refresh returns the example values because no calculation state is
-persisted or shareable.
+landmarks; a calculation survives a reload or being sent onward only through
+the share link, while a URL without encoded inputs still returns the example
+values because nothing is persisted beyond that link.
 
 ## Outcome and support
 
@@ -85,7 +101,10 @@ button that both calculators render, [QuotePage](../../src/pages/QuotePage.tsx) 
 view and driveway calculator,
 [DrainageQuotePage](../../src/pages/DrainageQuotePage.tsx) owns
 the drainage calculator, [quote helpers](../../src/lib/quote.ts) own the tier
-totals and Swedish money/number formatting, [types](../../src/types/site.ts)
+totals and Swedish money/number formatting,
+[quote-share helpers](../../src/lib/quote-share.ts) own the share URL
+parameter names, search encoding, tolerant decoding and absolute href
+building, [types](../../src/types/site.ts)
 declare the route kinds, the `SiteQuote` copy contracts and the calculator
 band contract, and [SiteHomePage](../../src/pages/SiteHomePage.tsx) lazily
 routes the two quote paths and renders the calculator band. There is no
@@ -140,7 +159,17 @@ rules of that same declaration map under F5-US2 in
 on `/offertberakning/` hash switches, and this 2026-11-15 review maps its new
 direct declaration `moves keyboard focus to the revealed view heading on hash
 switches` in [QuotePage.test.tsx](../../src/pages/QuotePage.test.tsx) into
-F6-US1 in the story document and the identity manifest.
+F6-US1 in the story document and the identity manifest. The 2026-11-15
+`fk233` change then added the share-link behavior above with the declarations
+in [quote-share.test.ts](../../src/lib/quote-share.test.ts) (fixed URL
+parameter names, driveway and drainage search encoding, tolerant decoding and
+absolute href building) and in
+[QuotePage.test.tsx](../../src/pages/QuotePage.test.tsx) and
+[DrainageQuotePage.test.tsx](../../src/pages/DrainageQuotePage.test.tsx)
+(producing the encoded share URL and copyable link from a filled form,
+restoring the shared inputs with the recomputed total on load, and the
+invalid-shared-input degradation through the existing alert and disabled
+controls).
 
 An invalid measurement keeps the previous total out of view and disables the
 email and print controls until corrected; "Återställ exempel" restores the
@@ -152,9 +181,10 @@ the text stays on the dark background, like other subpage heroes.
 The standing "Momsstatus ej bekräftad" label means visitors cannot tell
 whether the preliminary total includes VAT, which weakens the number as a
 budgeting input. The calculation parameters are fixed source constants, so a
-price change is a code change rather than a content edit. Refreshing or
-leaving the page loses the entered measurements and the total; there is no
-save or share-a-calculation link. The drainage calculator prices length only,
+price change is a code change rather than a content edit. A calculation only
+survives a reload or being sent onward through a share link the visitor
+explicitly creates; refreshing without one still starts from the example
+values. The drainage calculator prices length only,
 so depth, soil and access variations stay invisible to the visitor even though
 the disclaimer says scope is assessed later.
 
@@ -164,7 +194,5 @@ the disclaimer says scope is assessed later.
   the calculator instead of the standing unconfirmed label.
 - Fix: move the tier prices and fixed amounts behind maintainer-editable
   content so price updates no longer require source changes.
-- Expand: let visitors save or share a calculation (for example a link that
-  carries the measurements) so the estimate survives a page reload.
 - Expand: add further calculator choices for new offered project types when
   the company defines them.
