@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { siteContent } from "../data/siteContent";
 import { vatStatusLabel } from "../lib/quote";
+import { quoteShareParams } from "../lib/quote-share";
 import { QuotePage } from "./QuotePage";
 
 const shared = siteContent.quote.shared;
@@ -42,6 +43,7 @@ function decodedEmailHref(): string {
 }
 
 beforeEach(() => {
+  window.history.replaceState(null, "", "/offertberakning/");
   window.location.hash = "";
 });
 
@@ -188,5 +190,48 @@ describe("QuotePage", () => {
     expect(hero).toHaveAttribute("alt", "");
     expect(hero).toHaveAttribute("aria-hidden", "true");
     expect(hero).toHaveAttribute("fetchpriority", "high");
+  });
+
+  it("produces a share link that encodes the driveway inputs and lands on the uppfart view", () => {
+    render(<QuotePage />);
+    chooseUppfart();
+    fireEvent.change(areaInput(), { target: { value: "50" } });
+    fireEvent.change(loadsInput(), { target: { value: "2" } });
+    fireEvent.click(asphaltCheckbox());
+
+    expect(screen.getByText(money(56400))).toBeInTheDocument();
+
+    const shareHref = `${window.location.origin}/offertberakning/?${quoteShareParams.area}=50&${quoteShareParams.loads}=2&${quoteShareParams.asphalt}=0#uppfart`;
+
+    expect(screen.queryByRole("link", { name: shareHref })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: shared.shareLabel }));
+
+    expect(window.location.search).toBe(`?${quoteShareParams.area}=50&${quoteShareParams.loads}=2&${quoteShareParams.asphalt}=0`);
+    expect(window.location.hash).toBe("#uppfart");
+    expect(screen.getByRole("link", { name: shareHref })).toHaveAttribute("href", shareHref);
+  });
+
+  it("restores the shared driveway inputs and recomputes the same total on load", () => {
+    window.history.replaceState(null, "", `/offertberakning/?${quoteShareParams.area}=50&${quoteShareParams.loads}=2&${quoteShareParams.asphalt}=0#uppfart`);
+    render(<QuotePage />);
+
+    expect(document.activeElement).toBe(document.body);
+    expect(areaInput()).toHaveValue(50);
+    expect(loadsInput()).toHaveValue(2);
+    expect(asphaltCheckbox()).not.toBeChecked();
+    expect(screen.getByText(money(56400))).toBeInTheDocument();
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("degrades invalid shared inputs through the existing invalid-input path", () => {
+    window.history.replaceState(null, "", `/offertberakning/?${quoteShareParams.area}=-5&${quoteShareParams.loads}=2#uppfart`);
+    render(<QuotePage />);
+
+    expect(screen.getByRole("alert")).toHaveTextContent(text.error);
+    expect(screen.queryByText(shared.totalLabel)).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: shared.sendInvalidLabel })).toBeDisabled();
+    expect(screen.getByRole("button", { name: shared.printLabel })).toBeDisabled();
+    expect(screen.getByRole("button", { name: shared.shareLabel })).toBeDisabled();
   });
 });

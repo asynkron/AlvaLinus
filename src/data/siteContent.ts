@@ -413,6 +413,8 @@ export const siteContent = {
       sendInvalidLabel: "Kontrollera dina uppgifter",
       mailHelp: "Öppnar ditt e-postprogram. Inget skickas automatiskt.",
       printLabel: "Skriv ut / spara som PDF",
+      shareLabel: "Skapa delbar länk",
+      shareHelp: "Länken innehåller dina mått. Den som öppnar den ser samma beräkning.",
     },
     uppfart: {
       breadcrumbLabel: "Offertberäkning",

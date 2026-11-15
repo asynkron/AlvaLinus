@@ -1,4 +1,5 @@
-import { ArrowRight, Printer, RotateCcw } from "lucide-react";
+import { ArrowRight, Link2, Printer, RotateCcw } from "lucide-react";
+import { useState } from "react";
 import type { ChangeEvent, ReactNode } from "react";
 import { vatStatusLabel } from "../lib/quote";
 import type { SiteQuoteShared } from "../types/site";
@@ -41,9 +42,18 @@ type QuoteResultAsideProps = {
   readonly total: string;
   readonly email: string;
   readonly hidden?: boolean;
+  readonly shareHref: string;
 };
 
-export function QuoteResultAside({ shared, error, valid, total, email, hidden }: QuoteResultAsideProps) {
+export function QuoteResultAside({ shared, error, valid, total, email, hidden, shareHref }: QuoteResultAsideProps) {
+  const [shareLink, setShareLink] = useState<string | null>(null);
+
+  function share() {
+    window.history.replaceState(null, "", shareHref);
+    setShareLink(shareHref);
+    void navigator.clipboard?.writeText(shareHref).catch(() => undefined);
+  }
+
   return <aside className="quote-result" aria-label={shared.resultAriaLabel} hidden={hidden}>
     <h2>{shared.resultHeading}</h2>
     <p className="quote-result-caption">{shared.resultCaption}</p>
@@ -56,6 +66,9 @@ export function QuoteResultAside({ shared, error, valid, total, email, hidden }:
     <Button asChild disabled={!valid} className="quote-send">{valid ? <a href={email}>{shared.sendLabel}<ArrowRight size={18} aria-hidden="true" /></a> : <button disabled>{shared.sendInvalidLabel}</button>}</Button>
     <p className="quote-mail-help">{shared.mailHelp}</p>
     <button className="quote-print" onClick={() => window.print()} disabled={!valid}><Printer size={16} aria-hidden="true" />{shared.printLabel}</button>
+    <button className="quote-share" onClick={share} disabled={!valid}><Link2 size={16} aria-hidden="true" />{shared.shareLabel}</button>
+    {shareLink ? <p className="quote-share-link"><a href={shareLink}>{shareLink}</a></p> : null}
+    <p className="quote-share-help">{shared.shareHelp}</p>
   </aside>;
 }
 
