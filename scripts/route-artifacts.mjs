@@ -27,8 +27,10 @@ const socialImageMetaTagPatterns = [
   [twitterImageMetaTagPattern, "assetPath"],
 ];
 const linkTagPattern = /<link\b[^>]*>/gi;
-const preloadRelPattern = /\brel=(["'])preload\1/i;
-const imagePreloadAsPattern = /\bas=(["'])image\1/i;
+const preloadRelPattern = /\brel=([\"'])preload\1/i;
+const imagePreloadAsPattern = /\bas=([\"'])image\1/i;
+const fontPreloadAsPattern = /\bas=([\"'])font\1/i;
+const fontAssetSuffix = ".woff2";
 const headClosePattern = /<\/head>/i;
 const homeHeroPreloadHrefPattern = /\bhref=(["'])\/page-visuals\/hero-photo\.webp\1/i;
 const homeHeroPhotoAssetPath = "/page-visuals/hero-photo.webp";
@@ -610,6 +612,139 @@ export function injectRouteHeroPreload(document, assetPath, imageSrcSet, imageSi
 }
 
 /**
+ * A font preload href is the root-relative path of one emitted font asset:
+ * hashed bundler file names are root-relative by construction and must stay
+ * free of characters that cannot survive inside a quoted href attribute.
+ */
+function fontPreloadHrefViolation(href) {
+  if (typeof href !== "string" || href.length === 0) {
+    return "must be a nonempty string.";
+  }
+
+  if (!href.startsWith("/")) {
+    return 'must be root-relative, starting with "/".';
+  }
+
+  if (!href.endsWith(fontAssetSuffix)) {
+    return `must reference an emitted ${fontAssetSuffix} asset.`;
+  }
+
+  if (href.includes("\\")) {
+    return 'must use "/" directory separators.';
+  }
+
+  if (/[\s"'<>]/.test(href)) {
+    return "must stay free of whitespace and quote or angle characters.";
+  }
+
+  return null;
+}
+
+function sortedUniqueFontAssetHrefs(fileNames) {
+  const hrefs = [];
+
+  for (const fileName of fileNames) {
+    if (typeof fileName !== "string" || !fileName.endsWith(fontAssetSuffix)) continue;
+
+    const href = `/${fileName}`;
+
+    if (!hrefs.includes(href)) hrefs.push(href);
+  }
+
+  return hrefs.sort();
+}
+
+/**
+ * Root-relative preload hrefs for the emitted .woff2 font assets of one build
+ * output bundle, deduplicated and sorted by fileName so the emitted link order
+ * stays deterministic regardless of bundler emission order. Only asset
+ * entries count: chunks never carry fonts, and a bundle without emitted
+ * woff2 assets (for example fonts inlined below Vite's asset-inline limit)
+ * yields an empty set so the injection becomes a deterministic no-op.
+ */
+export function bundleFontPreloadHrefs(bundle) {
+  return sortedUniqueFontAssetHrefs(
+    Object.values(bundle ?? {}).flatMap((entry) =>
+      entry?.type === "asset" && typeof entry?.fileName === "string" ? [entry.fileName] : [],
+    ),
+  );
+}
+
+/**
+ * Root-relative preload hrefs for the emitted .woff2 assets of one built
+ * output directory, from its plain asset file names. The static route
+ * assertion reads the built dist/ asset directory listing and derives the
+ * same expectation the build-time injection composed from the bundle.
+ */
+export function distFontPreloadHrefs(assetFileNames) {
+  return sortedUniqueFontAssetHrefs(Array.isArray(assetFileNames) ? assetFileNames : []);
+}
+
+function fontPreloadLinkTagText(href) {
+  return `<link rel="preload" as="font" type="font/woff2" href="${href}" crossorigin />`;
+}
+
+/**
+ * Exact font preload link tag for one emitted font asset. Font requests are
+ * CORS-mode even same-origin, so the crossorigin attribute is required for
+ * the preload fetch to match the @font-face request instead of being
+ * discarded as mismatched; type="font/woff2" lets the browser skip
+ * unsupported types without fetching.
+ */
+export function fontPreloadLinkTag(href) {
+  const violation = fontPreloadHrefViolation(href);
+
+  if (violation !== null) {
+    throw new Error(`Font preload link requires a font asset href that ${violation}`);
+  }
+
+  return fontPreloadLinkTagText(href);
+}
+
+/**
+ * Injects one preload link per emitted font asset directly before the
+ * head-close tag so every font fetch starts at HTML parse time instead of
+ * after the stylesheet bundle arrives and parses. The tags are single-line
+ * so the emit pipeline's whitespace collapsing stays byte-safe, and a
+ * document built without emitted woff2 assets is returned unchanged.
+ */
+export function injectFontPreloadLinks(document, fontHrefs) {
+  const linkTags = (Array.isArray(fontHrefs) ? fontHrefs : []).map(fontPreloadLinkTag);
+
+  if (linkTags.length === 0) return document;
+
+  if (typeof document !== "string" || document.length === 0) {
+    throw new Error("Font preload link injection requires a nonempty document string.");
+  }
+
+  if (!headClosePattern.test(document)) {
+    throw new Error("Route document must contain a </head> element to host the injected font preload links.");
+  }
+
+  return document.replace(headClosePattern, () => `${linkTags.join("")}</head>`);
+}
+
+/**
+ * Font preload link tags carried by a document, in document order with their
+ * full attribute text, so the artifact assertion can compare the injected
+ * emission byte-for-byte without matching image preload links.
+ */
+function documentFontPreloadLinkTags(document) {
+  const linkTags = document.match(linkTagPattern) ?? [];
+
+  return linkTags.filter((linkTag) => preloadRelPattern.test(linkTag) && fontPreloadAsPattern.test(linkTag));
+}
+
+function carriesExactlyExpectedFontPreloadLinkTags(document, expectedLinkTags) {
+  const fontPreloadLinkTags = documentFontPreloadLinkTags(document);
+
+  return (
+    fontPreloadLinkTags.length === expectedLinkTags.length &&
+    expectedLinkTags.every((linkTag, index) => fontPreloadLinkTags[index] === linkTag)
+  );
+}
+
+/**
  * Image preload link tags carried by a document, in document order with their
  * full attribute text, so the artifact assertion can compare the stamped
  * emission byte-for-byte: a plain href link for routes without declared
@@ -694,13 +829,15 @@ function isDeclaredVisualAssetPath(assetPath) {
   );
 }
 
-export async function assertStaticRouteArtifacts({ routes, distDir, readFile }) {
+export async function assertStaticRouteArtifacts({ routes, distDir, readFile, fontPreloadHrefs }) {
   const expectedPages = staticSubpageRoutes(routes).map((route) => ({
     href: route.href,
     metadata: routePageMetadata(route),
     heroPreloadLinkTag: routeHeroPreloadLinkTag(route),
   }));
   const expectedRoutes = expectedPages.map((page) => page.href);
+  const expectFontPreloads = Array.isArray(fontPreloadHrefs);
+  const expectedFontPreloadLinkTags = expectFontPreloads ? fontPreloadHrefs.map(fontPreloadLinkTag) : [];
   const rootHtml = await readFile(path.join(distDir, "index.html"), "utf8");
 
   const rootMetadata = extractDocumentMetadata(rootHtml);
@@ -719,6 +856,13 @@ export async function assertStaticRouteArtifacts({ routes, distDir, readFile }) 
   if (!documentCarriesHomeHeroPreload(rootHtml)) {
     throw new Error(
       "Static route artifact check failed: the root document must carry the home hero preload link for /page-visuals/hero-photo.webp.",
+    );
+  }
+
+  if (expectFontPreloads && !carriesExactlyExpectedFontPreloadLinkTags(rootHtml, expectedFontPreloadLinkTags)) {
+    throw new Error(
+      "Static route artifact check failed: the root document must preload exactly the emitted font assets " +
+        `(${expectedFontPreloadLinkTags.length === 0 ? "none" : expectedFontPreloadLinkTags.join("")}).`,
     );
   }
 
@@ -750,6 +894,13 @@ export async function assertStaticRouteArtifacts({ routes, distDir, readFile }) 
     );
   }
 
+  if (expectFontPreloads && !carriesExactlyExpectedFontPreloadLinkTags(notFoundHtml, expectedFontPreloadLinkTags)) {
+    throw new Error(
+      `Static route artifact check failed: dist/${notFoundArtifactPath} must preload exactly the emitted font assets ` +
+        `(${expectedFontPreloadLinkTags.length === 0 ? "none" : expectedFontPreloadLinkTags.join("")}).`,
+    );
+  }
+
   const outcomes = await Promise.all(
     expectedPages.map(async (page) => {
       const routeHtmlPath = path.join(distDir, page.href.replace(/^\/+|\/+$/g, ""), "index.html");
@@ -759,7 +910,8 @@ export async function assertStaticRouteArtifacts({ routes, distDir, readFile }) 
 
         return documentCarriesRouteMetadata(routeHtml, page.metadata) &&
           !documentCarriesHomeHeroPreload(routeHtml) &&
-          documentCarriesExactlyOwnHeroPreload(routeHtml, page.heroPreloadLinkTag)
+          documentCarriesExactlyOwnHeroPreload(routeHtml, page.heroPreloadLinkTag) &&
+          (!expectFontPreloads || carriesExactlyExpectedFontPreloadLinkTags(routeHtml, expectedFontPreloadLinkTags))
           ? "matched"
           : "mismatched";
       } catch (error) {

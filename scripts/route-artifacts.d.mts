@@ -48,6 +48,16 @@ export declare function injectRouteHeroPreload(
   imageSizes?: string,
 ): string;
 
+export declare function bundleFontPreloadHrefs(
+  bundle?: { readonly [fileName: string]: { readonly type?: unknown; readonly fileName?: unknown } },
+): string[];
+
+export declare function distFontPreloadHrefs(assetFileNames?: readonly unknown[]): string[];
+
+export declare function fontPreloadLinkTag(href: string): string;
+
+export declare function injectFontPreloadLinks(document: string, fontHrefs?: readonly string[]): string;
+
 export declare function routeVisualAssetPaths(routes: readonly RouteRegistryRoute[]): string[];
 
 export declare function routeHeroPhotoAssetPaths(routes: readonly RouteRegistryRoute[]): string[];
@@ -56,6 +66,7 @@ export declare function assertStaticRouteArtifacts(options: {
   routes: readonly RouteRegistryRoute[];
   distDir: string;
   readFile: (filePath: string, encoding: "utf8") => Promise<string>;
+  fontPreloadHrefs?: readonly string[];
 }): Promise<string[]>;
 
 export declare const heroAssetByteBudget: number;

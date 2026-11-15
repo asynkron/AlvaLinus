@@ -7,6 +7,8 @@ import { defineConfig } from "vitest/config";
 import { siteContent } from "./src/data/siteContent";
 import {
   applyRouteDocumentMetadata,
+  bundleFontPreloadHrefs,
+  injectFontPreloadLinks,
   injectRouteHeroPreload,
   notFoundArtifactPath,
   notFoundPageMetadata,
@@ -34,9 +36,11 @@ function emitStaticRoutePages(): Plugin {
     apply: "build",
     transformIndexHtml: {
       order: "post",
-      handler(html) {
+      handler(html, ctx) {
         // The document shell contains no whitespace-sensitive body content.
-        return html.replace(/>\s+</g, "><").trim();
+        const collapsed = html.replace(/>\s+</g, "><").trim();
+
+        return injectFontPreloadLinks(collapsed, bundleFontPreloadHrefs(ctx.bundle));
       },
     },
     configResolved(config: ResolvedConfig) {
