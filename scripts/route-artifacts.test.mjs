@@ -8,7 +8,11 @@ import {
   applyRouteDocumentMetadata,
   assertRouteVisualAssets,
   assertStaticRouteArtifacts,
+  bundleFontPreloadHrefs,
+  distFontPreloadHrefs,
+  fontPreloadLinkTag,
   heroAssetByteBudget,
+  injectFontPreloadLinks,
   injectRouteHeroPreload,
   notFoundArtifactPath,
   notFoundPageMetadata,
@@ -57,6 +61,40 @@ const responsiveServicesRoute = {
   heroPhotoSrcSet: responsiveServicesSrcSet,
   heroPhotoSizes: "100vw",
 };
+
+const emittedFontAssetFileNames = {
+  "assets/index-a1b2c3d4.js": { type: "chunk", fileName: "assets/index-a1b2c3d4.js" },
+  "assets/index-e5f6a7b8.css": { type: "asset", fileName: "assets/index-e5f6a7b8.css" },
+  "assets/inter-latin-wght-normal-Bq5tR8xN2k.woff2": {
+    type: "asset",
+    fileName: "assets/inter-latin-wght-normal-Bq5tR8xN2k.woff2",
+  },
+  "assets/oswald-latin-wght-normal-Hj3wL9pQ4m.woff2": {
+    type: "asset",
+    fileName: "assets/oswald-latin-wght-normal-Hj3wL9pQ4m.woff2",
+  },
+};
+const emittedFontPreloadHrefs = [
+  "/assets/inter-latin-wght-normal-Bq5tR8xN2k.woff2",
+  "/assets/oswald-latin-wght-normal-Hj3wL9pQ4m.woff2",
+];
+const emittedFontPreloadLinkTags = [
+  '<link rel="preload" as="font" type="font/woff2" href="/assets/inter-latin-wght-normal-Bq5tR8xN2k.woff2" crossorigin />',
+  '<link rel="preload" as="font" type="font/woff2" href="/assets/oswald-latin-wght-normal-Hj3wL9pQ4m.woff2" crossorigin />',
+];
+
+function emittedDocumentWithFontPreloads(document) {
+  return injectFontPreloadLinks(document, emittedFontPreloadHrefs);
+}
+
+function distEntriesWithFontPreloads(routes, options = {}) {
+  return Object.fromEntries(
+    Object.entries(distEntries(routes, options)).map(([filePath, document]) => [
+      filePath,
+      emittedDocumentWithFontPreloads(document),
+    ]),
+  );
+}
 
 const rootTitle = "Svärd Entreprenad – Mark & anläggning i Örebro";
 const rootDescription = "Svärd Entreprenad utför professionella mark- och anläggningsarbeten i Örebro.";
@@ -780,6 +818,112 @@ describe("assertStaticRouteArtifacts", () => {
       assertStaticRouteArtifacts({ routes: fixtureRoutes, distDir: "dist", readFile }),
     ).rejects.toThrow(denied);
   });
+
+  it("requires exactly the emitted font preloads on every emitted document when the build emitted font assets", async () => {
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: fixtureRoutes,
+        distDir: "dist",
+        readFile: memoryFileSystem(distEntriesWithFontPreloads(fixtureRoutes)).readFile,
+        fontPreloadHrefs: emittedFontPreloadHrefs,
+      }),
+    ).resolves.toEqual(["/tjanster/", "/kontakt/"]);
+  });
+
+  it("requires zero font preloads on every emitted document when the build emitted no font assets", async () => {
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: fixtureRoutes,
+        distDir: "dist",
+        readFile: memoryFileSystem(distEntries(fixtureRoutes)).readFile,
+        fontPreloadHrefs: [],
+      }),
+    ).resolves.toEqual(["/tjanster/", "/kontakt/"]);
+  });
+
+  it("rejects a root document that dropped the emitted font preloads", async () => {
+    const entries = distEntriesWithFontPreloads(fixtureRoutes);
+    entries[path.join("dist", "index.html")] = rootHtml;
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: fixtureRoutes,
+        distDir: "dist",
+        readFile: memoryFileSystem(entries).readFile,
+        fontPreloadHrefs: emittedFontPreloadHrefs,
+      }),
+    ).rejects.toThrow("Static route artifact check failed: the root document must preload exactly the emitted font assets");
+  });
+
+  it("rejects a route artifact carrying only part of the emitted font preloads", async () => {
+    const entries = distEntriesWithFontPreloads(fixtureRoutes);
+    entries[subpageArtifactPath("dist", "/kontakt/")] = injectFontPreloadLinks(
+      emittedSubpageHtml(contactRoute),
+      [emittedFontPreloadHrefs[0]],
+    );
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: fixtureRoutes,
+        distDir: "dist",
+        readFile: memoryFileSystem(entries).readFile,
+        fontPreloadHrefs: emittedFontPreloadHrefs,
+      }),
+    ).rejects.toThrow("Static route artifact check failed (mismatched: /kontakt/).");
+  });
+
+  it("rejects a not-found artifact whose font preloads diverge from the emitted font assets", async () => {
+    const entries = distEntriesWithFontPreloads(fixtureRoutes);
+    entries[notFoundArtifactFile("dist")] = injectFontPreloadLinks(emittedNotFoundHtml(), [
+      "/assets/wrong-latin-wght-normal-Xx9Xx9Xx9x.woff2",
+    ]);
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: fixtureRoutes,
+        distDir: "dist",
+        readFile: memoryFileSystem(entries).readFile,
+        fontPreloadHrefs: emittedFontPreloadHrefs,
+      }),
+    ).rejects.toThrow(
+      "Static route artifact check failed: dist/404.html must preload exactly the emitted font assets",
+    );
+  });
+
+  it("keeps the not-found no-image-preload gate passing when the artifact carries only font preloads", async () => {
+    const notFoundWithFonts = emittedDocumentWithFontPreloads(emittedNotFoundHtml());
+    const entries = {
+      [path.join("dist", "index.html")]: emittedDocumentWithFontPreloads(rootHtml),
+      [notFoundArtifactFile("dist")]: notFoundWithFonts,
+    };
+    for (const route of fixtureRoutes.filter((route) => route.href !== "/")) {
+      entries[subpageArtifactPath("dist", route.href)] = emittedDocumentWithFontPreloads(emittedSubpageHtml(route));
+    }
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: fixtureRoutes,
+        distDir: "dist",
+        readFile: memoryFileSystem(entries).readFile,
+        fontPreloadHrefs: emittedFontPreloadHrefs,
+      }),
+    ).resolves.toEqual(["/tjanster/", "/kontakt/"]);
+
+    expect(notFoundWithFonts).toContain(emittedFontPreloadLinkTags.join(""));
+  });
+
+  it("validates emitted font preloads for the real route inventory", async () => {
+    const entries = distEntriesWithFontPreloads(siteContent.routes);
+
+    await expect(
+      assertStaticRouteArtifacts({
+        routes: siteContent.routes,
+        distDir: "dist",
+        readFile: memoryFileSystem(entries).readFile,
+        fontPreloadHrefs: emittedFontPreloadHrefs,
+      }),
+    ).resolves.toEqual(staticSubpagePaths(siteContent.routes));
+  });
 });
 
 describe("routePageMetadata", () => {
@@ -1074,6 +1218,120 @@ describe("injectRouteHeroPreload", () => {
       injectRouteHeroPreload("<html><head></head></html>", "/page-visuals/services-hero.webp", undefined, "100vw"),
     ).toThrow(
       "Route hero preload injection requires hero image fields that must declare heroPhotoSrcSet and heroPhotoSizes together.",
+    );
+  });
+});
+
+describe("bundleFontPreloadHrefs", () => {
+  it("selects emitted woff2 asset entries as sorted root-relative hrefs", () => {
+    expect(bundleFontPreloadHrefs(emittedFontAssetFileNames)).toEqual(emittedFontPreloadHrefs);
+  });
+
+  it("sorts independently of emission order and deduplicates entries resolving to the same href", () => {
+    expect(
+      bundleFontPreloadHrefs({
+        "assets/oswald-latin-wght-normal-Hj3wL9pQ4m.woff2": {
+          type: "asset",
+          fileName: "assets/oswald-latin-wght-normal-Hj3wL9pQ4m.woff2",
+        },
+        "assets/inter-latin-wght-normal-Bq5tR8xN2k.woff2": {
+          type: "asset",
+          fileName: "assets/inter-latin-wght-normal-Bq5tR8xN2k.woff2",
+        },
+        "assets/inter-duplicate-key.woff2": {
+          type: "asset",
+          fileName: "assets/inter-latin-wght-normal-Bq5tR8xN2k.woff2",
+        },
+      }),
+    ).toEqual(emittedFontPreloadHrefs);
+  });
+
+  it("ignores chunks, non-font assets and malformed entries, and yields an empty set without a bundle", () => {
+    expect(
+      bundleFontPreloadHrefs({
+        chunk: { type: "chunk", fileName: "assets/index-a1b2c3d4.js" },
+        stylesheet: { type: "asset", fileName: "assets/index-e5f6a7b8.css" },
+        image: { type: "asset", fileName: "page-visuals/hero-photo.webp" },
+        nameless: { type: "asset" },
+        numeric: { type: "asset", fileName: 42 },
+      }),
+    ).toEqual([]);
+    expect(bundleFontPreloadHrefs(undefined)).toEqual([]);
+    expect(bundleFontPreloadHrefs({})).toEqual([]);
+  });
+});
+
+describe("distFontPreloadHrefs", () => {
+  it("derives the same expectation from a built asset directory listing as the bundle selection", () => {
+    expect(
+      distFontPreloadHrefs([
+        "assets/index-e5f6a7b8.css",
+        "assets/oswald-latin-wght-normal-Hj3wL9pQ4m.woff2",
+        "assets/inter-latin-wght-normal-Bq5tR8xN2k.woff2",
+        "assets/index-a1b2c3d4.js",
+      ]),
+    ).toEqual(emittedFontPreloadHrefs);
+    expect(distFontPreloadHrefs(["assets/index-a1b2c3d4.js", "assets/index-e5f6a7b8.css"])).toEqual([]);
+    expect(distFontPreloadHrefs(undefined)).toEqual([]);
+  });
+});
+
+describe("fontPreloadLinkTag", () => {
+  it("composes the exact single-line font preload tag with crossorigin and the woff2 type", () => {
+    expect(fontPreloadLinkTag("/assets/inter-latin-wght-normal-Bq5tR8xN2k.woff2")).toBe(emittedFontPreloadLinkTags[0]);
+  });
+
+  it("rejects hrefs that cannot serve as root-relative emitted font assets", () => {
+    expect(() => fontPreloadLinkTag("")).toThrow(
+      "Font preload link requires a font asset href that must be a nonempty string.",
+    );
+    expect(() => fontPreloadLinkTag("assets/inter.woff2")).toThrow(
+      'Font preload link requires a font asset href that must be root-relative, starting with "/".',
+    );
+    expect(() => fontPreloadLinkTag("/assets/inter.css")).toThrow(
+      "Font preload link requires a font asset href that must reference an emitted .woff2 asset.",
+    );
+    expect(() => fontPreloadLinkTag("/assets/inter font.woff2")).toThrow(
+      "Font preload link requires a font asset href that must stay free of whitespace and quote or angle characters.",
+    );
+  });
+});
+
+describe("injectFontPreloadLinks", () => {
+  it("injects exactly the emitted font preload tags before the head-close tag in sorted order", () => {
+    const document =
+      '<!doctype html><html lang="sv"><head><title>Titel</title></head><body>Svard Entreprenad</body></html>';
+
+    expect(injectFontPreloadLinks(document, emittedFontPreloadHrefs)).toBe(
+      '<!doctype html><html lang="sv"><head><title>Titel</title>' +
+        emittedFontPreloadLinkTags.join("") +
+        "</head><body>Svard Entreprenad</body></html>",
+    );
+  });
+
+  it("returns the document unchanged when the build emitted no font assets", () => {
+    const document = '<html lang="sv"><head><title>Titel</title></head><body>Svard Entreprenad</body></html>';
+
+    expect(injectFontPreloadLinks(document, [])).toBe(document);
+    expect(injectFontPreloadLinks(document, undefined)).toBe(document);
+  });
+
+  it("rejects an empty document or a document without </head> when font links must be injected", () => {
+    expect(() => injectFontPreloadLinks("", emittedFontPreloadHrefs)).toThrow(
+      "Font preload link injection requires a nonempty document string.",
+    );
+    expect(() => injectFontPreloadLinks("<html><body>inget huvud</body></html>", emittedFontPreloadHrefs)).toThrow(
+      "Route document must contain a </head> element to host the injected font preload links.",
+    );
+  });
+
+  it("keeps injected font preloads intact through the home-hero strip and commutes with it", () => {
+    expect(stripHomeHeroPreload(emittedDocumentWithFontPreloads(rootHtml))).toBe(
+      emittedDocumentWithFontPreloads(stripHomeHeroPreload(rootHtml)),
+    );
+    expect(emittedDocumentWithFontPreloads(rootHtml)).toContain(emittedFontPreloadLinkTags.join(""));
+    expect(stripHomeHeroPreload(emittedDocumentWithFontPreloads(rootHtml))).toContain(
+      emittedFontPreloadLinkTags.join(""),
     );
   });
 });
