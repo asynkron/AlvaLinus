@@ -1,4 +1,4 @@
-import type { SiteQuoteMail } from "../types/site";
+import type { SiteQuoteDrainagePricing, SiteQuoteMail, SiteQuoteUppfartPricing } from "../types/site";
 
 const moneyFormat = new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK", minimumFractionDigits: 0, maximumFractionDigits: 2 });
 const numberFormat = new Intl.NumberFormat("sv-SE", { maximumFractionDigits: 2 });
@@ -21,12 +21,12 @@ export function buildQuoteMailto(mail: SiteQuoteMail, values: Record<string, str
   return `mailto:${mail.recipientEmail}?subject=${encodeURIComponent(mail.subject)}&body=${encodeURIComponent(fillTemplate(mail.bodyTemplate, values))}`;
 }
 
-export function drainageTotal(meters: number): number {
-  const firstTier = Math.min(meters, 55);
-  const aboveTier = Math.max(meters - 55, 0);
-  return firstTier * 3500 + aboveTier * 3000 + 6900;
+export function drainageTotal(meters: number, pricing: SiteQuoteDrainagePricing): number {
+  const firstTier = Math.min(meters, pricing.boundaryMeters);
+  const aboveTier = Math.max(meters - pricing.boundaryMeters, 0);
+  return firstTier * pricing.firstTierPerMeter + aboveTier * pricing.aboveBoundaryPerMeter + pricing.fixedCost;
 }
 
-export function drivewayTotal(area: number, loads: number, includeAsphalt: boolean): number {
-  return area * 950 + (includeAsphalt ? area * 667 : 0) + 4900 + loads * 2000;
+export function drivewayTotal(area: number, loads: number, includeAsphalt: boolean, pricing: SiteQuoteUppfartPricing): number {
+  return area * pricing.perSquareMeter + (includeAsphalt ? area * pricing.asphaltPerSquareMeter : 0) + pricing.fixedCost + loads * pricing.perLoad;
 }

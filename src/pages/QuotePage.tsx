@@ -43,7 +43,7 @@ export function QuotePage({ content = siteContent }: { readonly content?: SiteCo
   const area = Number(values.area);
   const loads = Number(values.loads);
   const valid = values.area.trim() !== "" && values.loads.trim() !== "" && Number.isFinite(area) && area > 0 && area <= maximumQuantity && Number.isFinite(loads) && loads >= 0 && Number.isInteger(loads) && loads <= maximumQuantity;
-  const total = drivewayTotal(area, loads, includeAsphalt);
+  const total = drivewayTotal(area, loads, includeAsphalt, text.pricing);
   const email = buildQuoteMailto(text.mail, {
     area: number(area),
     loads: number(loads),

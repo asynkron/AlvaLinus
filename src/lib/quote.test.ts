@@ -1,4 +1,5 @@
-import type { SiteQuoteMail } from "../types/site";
+import { siteContent } from "../data/siteContent";
+import type { SiteQuoteDrainagePricing, SiteQuoteMail, SiteQuoteUppfartPricing } from "../types/site";
 import {
   buildQuoteMailto,
   drainageTotal,
@@ -9,6 +10,9 @@ import {
   vatStatusLabel,
 } from "./quote";
 
+const drainagePricing: SiteQuoteDrainagePricing = siteContent.quote.drainage.pricing;
+const drivewayPricing: SiteQuoteUppfartPricing = siteContent.quote.uppfart.pricing;
+
 const svNonBreakingSpace = /[\u00a0\u202f]/g;
 
 function plainSpaces(value: string): string {
@@ -17,40 +21,54 @@ function plainSpaces(value: string): string {
 
 describe("quote lib money logic", () => {
   describe("drainageTotal", () => {
-    it("bills the first 55 meters at 3 500 kr per meter plus the fixed cost", () => {
-      expect(drainageTotal(40)).toBe(40 * 3500 + 6900);
-      expect(drainageTotal(55)).toBe(55 * 3500 + 6900);
+    it("bills meters up to the declared boundary at the declared first-tier price plus the declared fixed cost", () => {
+      expect(drainageTotal(drainagePricing.boundaryMeters - 15, drainagePricing)).toBe(
+        (drainagePricing.boundaryMeters - 15) * drainagePricing.firstTierPerMeter + drainagePricing.fixedCost,
+      );
+      expect(drainageTotal(drainagePricing.boundaryMeters, drainagePricing)).toBe(
+        drainagePricing.boundaryMeters * drainagePricing.firstTierPerMeter + drainagePricing.fixedCost,
+      );
     });
 
-    it("bills only meters above the 55 meter boundary at 3 000 kr per meter", () => {
-      expect(drainageTotal(56)).toBe(55 * 3500 + 1 * 3000 + 6900);
-      expect(drainageTotal(100)).toBe(55 * 3500 + 45 * 3000 + 6900);
-      expect(drainageTotal(55.5)).toBe(55 * 3500 + 0.5 * 3000 + 6900);
+    it("bills only meters above the declared boundary at the declared above-boundary price", () => {
+      expect(drainageTotal(drainagePricing.boundaryMeters + 1, drainagePricing)).toBe(
+        drainagePricing.boundaryMeters * drainagePricing.firstTierPerMeter + 1 * drainagePricing.aboveBoundaryPerMeter + drainagePricing.fixedCost,
+      );
+      expect(drainageTotal(drainagePricing.boundaryMeters + 45, drainagePricing)).toBe(
+        drainagePricing.boundaryMeters * drainagePricing.firstTierPerMeter + 45 * drainagePricing.aboveBoundaryPerMeter + drainagePricing.fixedCost,
+      );
+      expect(drainageTotal(drainagePricing.boundaryMeters + 0.5, drainagePricing)).toBe(
+        drainagePricing.boundaryMeters * drainagePricing.firstTierPerMeter + 0.5 * drainagePricing.aboveBoundaryPerMeter + drainagePricing.fixedCost,
+      );
     });
 
-    it("keeps the 6 900 kr fixed cost at zero meters", () => {
-      expect(drainageTotal(0)).toBe(6900);
+    it("keeps the declared fixed cost at zero meters", () => {
+      expect(drainageTotal(0, drainagePricing)).toBe(drainagePricing.fixedCost);
     });
 
     it("accepts fractional meters like the page input allows", () => {
-      expect(drainageTotal(12.5)).toBe(12.5 * 3500 + 6900);
+      expect(drainageTotal(drainagePricing.boundaryMeters - 42.5, drainagePricing)).toBe(
+        (drainagePricing.boundaryMeters - 42.5) * drainagePricing.firstTierPerMeter + drainagePricing.fixedCost,
+      );
     });
   });
 
   describe("drivewayTotal", () => {
-    it("charges the area at 950 kr per square meter plus fixed and load costs without asphalt", () => {
-      expect(drivewayTotal(75, 0, false)).toBe(75 * 950 + 4900);
-      expect(drivewayTotal(100, 1, false)).toBe(100 * 950 + 4900 + 2000);
+    it("charges the area at the declared per-square-meter price plus declared fixed and load costs without asphalt", () => {
+      expect(drivewayTotal(75, 0, false, drivewayPricing)).toBe(75 * drivewayPricing.perSquareMeter + drivewayPricing.fixedCost);
+      expect(drivewayTotal(100, 1, false, drivewayPricing)).toBe(100 * drivewayPricing.perSquareMeter + drivewayPricing.fixedCost + drivewayPricing.perLoad);
     });
 
-    it("adds 667 kr per square meter when asphalt is included", () => {
-      expect(drivewayTotal(100, 1, true)).toBe(100 * 950 + 100 * 667 + 4900 + 2000);
-      expect(drivewayTotal(75, 0, true) - drivewayTotal(75, 0, false)).toBe(75 * 667);
+    it("adds the declared per-square-meter asphalt price when asphalt is included", () => {
+      expect(drivewayTotal(100, 1, true, drivewayPricing)).toBe(
+        100 * drivewayPricing.perSquareMeter + 100 * drivewayPricing.asphaltPerSquareMeter + drivewayPricing.fixedCost + drivewayPricing.perLoad,
+      );
+      expect(drivewayTotal(75, 0, true, drivewayPricing) - drivewayTotal(75, 0, false, drivewayPricing)).toBe(75 * drivewayPricing.asphaltPerSquareMeter);
     });
 
-    it("adds 2 000 kr per load", () => {
-      expect(drivewayTotal(75, 3, false)).toBe(75 * 950 + 4900 + 3 * 2000);
-      expect(drivewayTotal(75, 4, false) - drivewayTotal(75, 3, false)).toBe(2000);
+    it("adds the declared per-load cost per load", () => {
+      expect(drivewayTotal(75, 3, false, drivewayPricing)).toBe(75 * drivewayPricing.perSquareMeter + drivewayPricing.fixedCost + 3 * drivewayPricing.perLoad);
+      expect(drivewayTotal(75, 4, false, drivewayPricing) - drivewayTotal(75, 3, false, drivewayPricing)).toBe(drivewayPricing.perLoad);
     });
   });
 

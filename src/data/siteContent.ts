@@ -445,6 +445,7 @@ export const siteContent = {
         bodyTemplate:
           "Hej! Jag önskar en offert för uppfart.\n\nYta: {area} m²\nAntal lass: {loads}\nAsfalt: {asphalt}\nPreliminär summa: {total} ({vat}).\nOmfattning behöver bekräftas.\n\nProjekt / plats / kontaktuppgifter:\n{notes}",
       },
+      pricing: { perSquareMeter: 950, asphaltPerSquareMeter: 667, fixedCost: 4900, perLoad: 2000 },
     },
     drainage: {
       breadcrumbLabel: "Dräneringsberäkning",
@@ -473,6 +474,7 @@ export const siteContent = {
         bodyTemplate:
           "Hej! Jag önskar en offert för husdränering.\n\nLängd: {length} löpmeter\nPreliminär summa: {total} ({vat}).\nOmfattning behöver bekräftas.\n\nProjekt / plats / kontaktuppgifter:\n{notes}",
       },
+      pricing: { boundaryMeters: 55, firstTierPerMeter: 3500, aboveBoundaryPerMeter: 3000, fixedCost: 6900 },
     },
   },
   inquiry: {
