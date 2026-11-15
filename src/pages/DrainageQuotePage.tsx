@@ -18,7 +18,7 @@ export function DrainageQuotePage({ content = siteContent }: { readonly content?
   const [notes, setNotes] = useState("");
   const lengthValue = Number(length);
   const valid = length.trim() !== "" && Number.isFinite(lengthValue) && lengthValue > 0 && lengthValue <= maximumMeters;
-  const total = drainageTotal(lengthValue);
+  const total = drainageTotal(lengthValue, text.pricing);
   const email = buildQuoteMailto(text.mail, {
     length: meters(lengthValue),
     total: money(total),

@@ -120,6 +120,13 @@ export type SiteQuoteShared = {
   readonly printLabel: string;
 };
 
+export type SiteQuoteUppfartPricing = {
+  readonly perSquareMeter: number;
+  readonly asphaltPerSquareMeter: number;
+  readonly fixedCost: number;
+  readonly perLoad: number;
+};
+
 export type SiteQuoteUppfart = {
   readonly breadcrumbLabel: string;
   readonly heading: string;
@@ -146,6 +153,14 @@ export type SiteQuoteUppfart = {
   readonly resetLabel: string;
   readonly error: string;
   readonly mail: SiteQuoteMail;
+  readonly pricing: SiteQuoteUppfartPricing;
+};
+
+export type SiteQuoteDrainagePricing = {
+  readonly boundaryMeters: number;
+  readonly firstTierPerMeter: number;
+  readonly aboveBoundaryPerMeter: number;
+  readonly fixedCost: number;
 };
 
 export type SiteQuoteDrainage = {
@@ -167,6 +182,7 @@ export type SiteQuoteDrainage = {
   readonly drivewayCrossLinkQuestion: string;
   readonly drivewayCrossLinkLabel: string;
   readonly mail: SiteQuoteMail;
+  readonly pricing: SiteQuoteDrainagePricing;
 };
 
 export type SiteQuote = {
