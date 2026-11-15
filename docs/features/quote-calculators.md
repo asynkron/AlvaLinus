@@ -1,6 +1,6 @@
 # F6: Calculate a preliminary quote
 
-Reviewed: 2026-11-14. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-15. Runtime: `ui`. Product role: `customer_outcome`.
 
 Visitors with a husdränering or driveway project can self-serve a preliminary
 cost picture before contacting the company. The calculators produce a
@@ -13,8 +13,10 @@ bindingly by the website.
 `/offertberakning/` opens the calculator choice ("Vad gäller din
 offertförfrågan?") with two buttons: "Räkna på husdränering" leads to
 `/draneringsberakning/` and "Räkna på uppfart" selects the driveway calculator
-through the `#uppfart` hash. The hash is synced on `hashchange`, and "← Välj
-annan kalkyl" returns to the choice view. `/draneringsberakning/` opens the
+through the `#uppfart` hash. The hash is synced on `hashchange`, and every
+switch moves keyboard focus to the revealed view's heading — the `tabIndex=-1`
+`quote-choice-heading` or `quote-work-heading` heading — while "← Välj annan
+kalkyl" returns to the choice view. `/draneringsberakning/` opens the
 drainage length calculator directly.
 
 The driveway calculator takes Uppfartens yta (m²) and Antal lass (st) with the
@@ -133,7 +135,12 @@ with a 3px offset across the `.quote-layout` input, select, textarea, button,
 a and summary rules, the AA-readable declared `::selection` token pairing, and
 the selection background's orange brand hue. The inquiry-side focus-visible
 rules of that same declaration map under F5-US2 in
-[staffing-inquiry.md](staffing-inquiry.md).
+[staffing-inquiry.md](staffing-inquiry.md). The 2026-11-14 `fk215` change
+(PR #145, `c3f9ede`) then moved keyboard focus to the revealed view's heading
+on `/offertberakning/` hash switches, and this 2026-11-15 review maps its new
+direct declaration `moves keyboard focus to the revealed view heading on hash
+switches` in [QuotePage.test.tsx](../../src/pages/QuotePage.test.tsx) into
+F6-US1 in the story document and the identity manifest.
 
 An invalid measurement keeps the previous total out of view and disables the
 email and print controls until corrected; "Återställ exempel" restores the
