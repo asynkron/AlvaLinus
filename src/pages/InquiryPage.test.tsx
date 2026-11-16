@@ -218,7 +218,7 @@ describe("InquiryPage", () => {
     expect(openMailDraftSpy).toHaveBeenCalledTimes(1);
     const decoded = decodeURIComponent(openMailDraftSpy.mock.calls[0]?.[0] ?? "");
     expect(decoded).toContain(
-      `Erbjudet timpris: ${validValues.rate} kr/timme${text.mail.rateBasisTemplate.replace("{basis}", statedRateBasis())}`,
+      `Erbjudet timpris: ${validValues.rate}${text.mail.rateBasisTemplate.replace("{basis}", statedRateBasis())} kr/timme`,
     );
   });
 
