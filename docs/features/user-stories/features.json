@@ -891,6 +891,27 @@
               "name": "requires zero font preloads on every emitted document when the build emitted no font assets",
               "evidence_type": "technical",
               "supports": "Checks the deterministic no-op direction: a build fixture without emitted font assets passes the artifact gate with zero font preload links on every document. In-memory fixture evidence; it does not prove how a real build inlines fonts."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/styles.header-nav-tap-targets.test.ts",
+              "name": "adds vertical tap-target padding to every md+ header nav target",
+              "evidence_type": "technical",
+              "supports": "Source-text check pins the md+ desktop nav element, the desktop nav link className carrying py-2 and both desktop trigger classNames with py-2, the tap-target padding fk238 delivered. It reads the page source only and does not render the header or measure a browser."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/styles.header-nav-tap-targets.test.ts",
+              "name": "keeps the mobile menu targets and the sticky header row unchanged",
+              "evidence_type": "technical",
+              "supports": "Source-text check pins the unchanged mobile page-link, sub-link, Kalkyler-summary and toggle classNames plus the single min-h-16 header row height, so the desktop enlargement leaves the mobile targets and sticky row untouched."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/styles.header-nav-tap-targets.test.ts",
+              "name": "reaches at least 32px of tap height inside the unchanged 64px header row",
+              "evidence_type": "technical",
+              "supports": "Compiled-utility check computes the text-sm py-2 target's line height plus vertical padding at at least 32px and no taller than the min-h-16 row minimum. Tailwind-compile evidence; it does not render the header in a browser or measure real touch input."
             }
           ],
           "entry_point_refs": [],
@@ -910,7 +931,8 @@
             "An open mobile menu closes on Escape from a link or the focused toggle, restores focus to the toggle and can reopen; the toggle also closes it by click. Tab and Shift+Tab are not cancelled. Escape elsewhere in the header leaves the menu and focus unchanged.",
             "inventory.primaryRoutes has six shortcuts; it is not the full twelve-route registry.",
             "Subpage heroes and the home hero use decorative images requested at high fetch priority (photographs except the staffing, about and contact SVG heroes) while service-card images stay lazy; a failing home hero photo hides its image without a retry loop while the hero content remains. Service-card images have route alt text.",
-            "Every emitted document head (home, every stamped subpage artifact and dist/404.html) carries one woff2 font preload link per emitted font asset, injected at build time from that build's bundle via vite.config.ts and scripts/route-artifacts.mjs so font fetch starts at HTML parse time; the injection is a deterministic no-op when a build emits no woff2 assets, and the static route assertion requires exactly those tags byte-for-byte on every emitted document."
+            "Every emitted document head (home, every stamped subpage artifact and dist/404.html) carries one woff2 font preload link per emitted font asset, injected at build time from that build's bundle via vite.config.ts and scripts/route-artifacts.mjs so font fetch starts at HTML parse time; the injection is a deterministic no-op when a build emits no woff2 assets, and the static route assertion requires exactly those tags byte-for-byte on every emitted document.",
+            "At md+ widths the desktop nav links, the Tjänster trigger and the desktop Kalkyler summary carry py-2 vertical tap-target padding that reaches at least 32px of computed tap height (roughly 36px) inside the unchanged min-h-16 sticky header row, while the mobile menu targets stay unchanged."
           ],
           "expected_outcome": "A declared static route can be selected for F1, F2, F3, F5 or F6.",
           "failure_behavior": "A missing host artifact can fail before React mounts; this catalog does not claim host-level fallback.",
@@ -940,7 +962,7 @@
               "path": "src/pages/SiteHomePage.test.tsx",
               "name": "keeps $label empty-services feedback when services are empty",
               "evidence_type": "direct",
-              "supports": "Parameterized home and services-index cases check the empty-state heading and the absence of other route bodies."
+              "supports": "Parameterized home and services-index cases check the empty-state heading, the absence of other route bodies, and the rendered Kontakta oss action link targeting the registry contact route."
             },
             {
               "framework": "vitest",
@@ -980,7 +1002,7 @@
             "The default boot renders bundled content immediately, without network I/O; the page imports the bundled content module directly and no loader module exists."
           ],
           "expected_outcome": "The rendered state identifies content availability and provides route recovery when ready.",
-          "failure_behavior": "The empty-services state has no inline retry; its feedback applies to the service-dependent home and services-index bodies.",
+          "failure_behavior": "The empty-services state has no inline retry; it renders the registry-declared Kontakta oss action linking to the contact route, and its feedback applies to the service-dependent home and services-index bodies.",
           "recovery": "Use header navigation; a content defect needs a corrected static deployment."
         },
         {
@@ -1253,7 +1275,7 @@
           "Preliminary total announced",
           "Invalid input feedback"
         ],
-        "current_limitations": "Totals are client-side estimates from fixed source-price constants carrying the standing unconfirmed VAT label; no calculation state is saved or shareable, and a configured mail client plus the browser print dialog carry the handoff.",
+        "current_limitations": "Totals are client-side estimates from the registry-declared quote.uppfart and quote.drainage pricing carrying the standing unconfirmed VAT label; a calculation persists only through the share link the visitor explicitly creates, and a configured mail client plus the browser print dialog carry the handoff.",
         "failure_behavior": "Invalid measurements replace the total with a Swedish role=alert message, mark the input and disable the email and print controls; a missing or incompatible mail client can prevent handoff without a site error receipt.",
         "recovery": "Correct the named measurement or use Återställ exempel; use the displayed address in a working email tool when the handoff fails.",
         "runtime_owners": [
@@ -1414,23 +1436,23 @@
             {
               "framework": "vitest",
               "path": "src/lib/quote.test.ts",
-              "name": "bills the first 55 meters at 3 500 kr per meter plus the fixed cost",
+              "name": "bills meters up to the declared boundary at the declared first-tier price plus the declared fixed cost",
               "evidence_type": "technical",
-              "supports": "Helper-level check pins the first drainage tier at 3 500 kr per meter plus the 6 900 kr fixed cost; the page declarations above check the rendered totals built on it."
+              "supports": "Helper-level check pins the first drainage tier at the declared first-tier price plus the declared fixed cost, deriving its pins from the quote.drainage.pricing declaration; the page declarations above check the rendered totals built on it."
             },
             {
               "framework": "vitest",
               "path": "src/lib/quote.test.ts",
-              "name": "bills only meters above the 55 meter boundary at 3 000 kr per meter",
+              "name": "bills only meters above the declared boundary at the declared above-boundary price",
               "evidence_type": "technical",
-              "supports": "Helper-level check pins the above-boundary drainage tier at 3 000 kr per meter, including fractional lengths."
+              "supports": "Helper-level check pins the above-boundary drainage tier at the declared above-boundary price, including fractional lengths."
             },
             {
               "framework": "vitest",
               "path": "src/lib/quote.test.ts",
-              "name": "keeps the 6 900 kr fixed cost at zero meters",
+              "name": "keeps the declared fixed cost at zero meters",
               "evidence_type": "technical",
-              "supports": "Helper-level check pins the fixed establishment amount at zero meters."
+              "supports": "Helper-level check pins the declared fixed establishment amount at zero meters."
             },
             {
               "framework": "vitest",
@@ -1442,23 +1464,23 @@
             {
               "framework": "vitest",
               "path": "src/lib/quote.test.ts",
-              "name": "charges the area at 950 kr per square meter plus fixed and load costs without asphalt",
+              "name": "charges the area at the declared per-square-meter price plus declared fixed and load costs without asphalt",
               "evidence_type": "technical",
-              "supports": "Helper-level check pins driveway pricing at 950 kr per square meter plus the fixed preparation amount and per-load costs without asphalt."
+              "supports": "Helper-level check pins driveway pricing at the declared per-square-meter price plus the declared fixed preparation amount and per-load costs without asphalt."
             },
             {
               "framework": "vitest",
               "path": "src/lib/quote.test.ts",
-              "name": "adds 667 kr per square meter when asphalt is included",
+              "name": "adds the declared per-square-meter asphalt price when asphalt is included",
               "evidence_type": "technical",
-              "supports": "Helper-level check pins the asphalt surcharge at 667 kr per square meter; the page declarations check the rendered asphalt totals."
+              "supports": "Helper-level check pins the asphalt surcharge at the declared per-square-meter asphalt price; the page declarations check the rendered asphalt totals."
             },
             {
               "framework": "vitest",
               "path": "src/lib/quote.test.ts",
-              "name": "adds 2 000 kr per load",
+              "name": "adds the declared per-load cost per load",
               "evidence_type": "technical",
-              "supports": "Helper-level check pins the per-load cost at 2 000 kr."
+              "supports": "Helper-level check pins the per-load cost at the declared per-load amount."
             },
             {
               "framework": "vitest",

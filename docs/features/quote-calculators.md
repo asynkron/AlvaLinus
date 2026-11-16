@@ -1,6 +1,6 @@
 # F6: Calculate a preliminary quote
 
-Reviewed: 2026-11-15. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-16. Runtime: `ui`. Product role: `customer_outcome`.
 
 Visitors with a husdränering or driveway project can self-serve a preliminary
 cost picture before contacting the company. The calculators produce a
@@ -43,8 +43,17 @@ calculator's fields, errors and email draft.
 The totals are computed in [quote helpers](../../src/lib/quote.ts): the
 drainage total prices the first 55 löpmeter at a higher tier, a lower tier
 above 55 and a fixed establishment amount; the driveway total prices area, an
-optional asphalt layer, a fixed preparation amount and each load. These
-parameters are source constants, not maintainer-editable content. The email
+optional asphalt layer, a fixed preparation amount and each load. The parameters themselves are registry-declared content under `content.quote`:
+`quote.uppfart.pricing` in [typed content](../../src/data/siteContent.ts)
+declares perSquareMeter 950, asphaltPerSquareMeter 667, fixedCost 4900 and
+perLoad 2000, and `quote.drainage.pricing` declares boundaryMeters 55,
+firstTierPerMeter 3500, aboveBoundaryPerMeter 3000 and fixedCost 6900, so a
+price change is a registry-content edit rather than a code change; the helpers
+compute their totals from those typed
+`SiteQuoteUppfartPricing`/`SiteQuoteDrainagePricing` objects without numeric
+price literals of their own, and
+[quote.test.ts](../../src/lib/quote.test.ts) derives its pinned totals from the
+same declarations. The email
 bodies carry the entered measurements, the total and "Omfattning behöver
 bekräftas", and never internal prices.
 
@@ -121,8 +130,10 @@ manifest carry the exact names and their bounded scope. No declaration
 exercises a real print dialog or an actual email program. The
 [quote helpers](../../src/lib/quote.ts) also carry a dedicated money-logic
 unit-test file, [quote.test.ts](../../src/lib/quote.test.ts), whose
-declarations check the drainage tier totals at and beyond the 55-meter
-boundary, the driveway area, asphalt and load pricing, the sv-SE money and
+declarations check the drainage tier totals at and beyond the registry-declared
+boundary, the driveway area, asphalt and load pricing — each deriving its
+pinned totals from the declared `quote.uppfart.pricing` and
+`quote.drainage.pricing` objects instead of hardcoded amounts — the sv-SE money and
 number formatting, the VAT-status label constant and the mailto template
 filling and encoding; the page declarations above cover the rendered behavior
 around them. The 2026-11-11 review maps those helper declarations as
@@ -180,8 +191,7 @@ the text stays on the dark background, like other subpage heroes.
 
 The standing "Momsstatus ej bekräftad" label means visitors cannot tell
 whether the preliminary total includes VAT, which weakens the number as a
-budgeting input. The calculation parameters are fixed source constants, so a
-price change is a code change rather than a content edit. A calculation only
+budgeting input. A calculation only
 survives a reload or being sent onward through a share link the visitor
 explicitly creates; refreshing without one still starts from the example
 values. The drainage calculator prices length only,
@@ -192,7 +202,5 @@ the disclaimer says scope is assessed later.
 
 - Fix: confirm the VAT treatment of the preliminary totals and state it in
   the calculator instead of the standing unconfirmed label.
-- Fix: move the tier prices and fixed amounts behind maintainer-editable
-  content so price updates no longer require source changes.
 - Expand: add further calculator choices for new offered project types when
   the company defines them.
