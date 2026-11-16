@@ -44,6 +44,20 @@ function rateHint(): string {
   return hint;
 }
 
+function rateBasisLabel(): string {
+  return `${text.rateBasis.label} ${text.optionalMark}`;
+}
+
+function statedRateBasis(): string {
+  const option = text.rateBasis.options[1];
+
+  if (option === undefined) {
+    throw new Error("Missing registry momsstatus option");
+  }
+
+  return option;
+}
+
 function draftBody(values: Record<InquiryFieldKey, string>): string {
   return text.mail.bodyTemplate.replace(/\{(\w+)\}/g, (placeholder, key: string) =>
     key in values ? values[key as InquiryFieldKey] : placeholder,
@@ -177,6 +191,48 @@ describe("InquiryPage", () => {
     const decoded = decodeURIComponent(openMailDraftSpy.mock.calls[0]?.[0] ?? "");
     expect(decoded).toContain(draftBody({ ...validValues, phone: text.mail.emptyValue, org: text.mail.emptyValue }));
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("renders the declared optional momsstatus select after the rate field with registry copy", () => {
+    renderPage();
+
+    const rate = screen.getByLabelText(fieldLabel("rate"));
+    const select = screen.getByLabelText(rateBasisLabel());
+    expect(rate.compareDocumentPosition(select) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(select.tagName).toBe("SELECT");
+    expect(select).not.toHaveAttribute("required");
+    expect(select).toHaveValue("");
+    expect(screen.getByRole("option", { name: text.rateBasis.emptyOption })).toBeInTheDocument();
+    for (const option of text.rateBasis.options) {
+      expect(screen.getByRole("option", { name: option })).toBeInTheDocument();
+    }
+    expect(screen.getByText(rateHint())).toHaveAttribute("id", "inquiry-rate-hint");
+  });
+
+  it("carries a stated momsstatus into the mail draft beside the offered rate", () => {
+    renderPage();
+    fillValidForm();
+    fireEvent.change(screen.getByLabelText(rateBasisLabel()), { target: { value: statedRateBasis() } });
+    submit();
+
+    expect(openMailDraftSpy).toHaveBeenCalledTimes(1);
+    const decoded = decodeURIComponent(openMailDraftSpy.mock.calls[0]?.[0] ?? "");
+    expect(decoded).toContain(
+      `Erbjudet timpris: ${validValues.rate} kr/timme${text.mail.rateBasisTemplate.replace("{basis}", statedRateBasis())}`,
+    );
+  });
+
+  it("keeps the mail draft byte-identical to the declared body when momsstatus is omitted", () => {
+    expect(inquiryMailtoHref(validValues)).toBe(inquiryMailtoHref(validValues, ""));
+
+    renderPage();
+    fillValidForm();
+    submit();
+
+    expect(openMailDraftSpy).toHaveBeenCalledTimes(1);
+    const decoded = decodeURIComponent(openMailDraftSpy.mock.calls[0]?.[0] ?? "");
+    expect(decoded).toContain(draftBody(validValues));
+    expect(decoded).not.toContain(text.mail.rateBasisTemplate.replace("{basis}", text.mail.emptyValue));
   });
 
   it("keeps validation in helper functions so optional fields stay out of the error set", () => {

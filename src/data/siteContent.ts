@@ -504,6 +504,11 @@ export const siteContent = {
       "Lämna kontaktuppgifter så vi kan återkomma",
     ],
     optionalMark: "(valfritt)",
+    rateBasis: {
+      label: "Momsstatus för timpriset",
+      emptyOption: "Ej angivet",
+      options: ["inklusive moms", "exklusive moms"],
+    },
     fields: {
       company: { label: "Företagets namn", placeholder: "Företagets namn" },
       person: { label: "Kontaktperson", placeholder: "För- och efternamn" },
@@ -517,7 +522,7 @@ export const siteContent = {
       rate: {
         label: "Erbjudet timpris",
         placeholder: "Belopp i kr per timme",
-        hint: "Ange gärna i beskrivningen om priset är inklusive eller exklusive moms.",
+        hint: "Ange gärna momsstatus för priset i listan nedan eller i beskrivningen.",
       },
       duration: {
         label: "Hur länge gäller uppdraget?",
@@ -545,6 +550,7 @@ export const siteContent = {
       emptyValue: "–",
       bodyTemplate:
         "Förfrågan om inhyrning via webbplatsen.\n\nFöretag: {company}\nKontaktperson: {person}\nE-post: {email}\nTelefon: {phone}\nOrganisationsnummer: {org}\nBehov av inhyrning: {work}\nErbjudet timpris: {rate} kr/timme\nUppdragets längd: {duration}\nBeskriv ärendet:\n{description}",
+      rateBasisTemplate: " ({basis})",
     },
   },
   chrome: {

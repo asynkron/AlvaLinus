@@ -17,11 +17,12 @@ line. The form sits beside a guidance aside ("En tydlig start").
 
 The form collects, in order: Företagets namn; Kontaktperson; E-post;
 Telefon (valfritt); Organisationsnummer (valfritt); Vad behöver ni inhyrd
-hjälp med?; Erbjudet timpris (with the note "Ange gärna i beskrivningen om
-priset är inklusive eller exklusive moms."); Hur länge gäller uppdraget?; and
-Beskriv ärendet. Phone and organization number are optional; every other field
-is required. Company, contact, email and phone inputs carry the matching
-autocomplete hints.
+hjälp med?; Erbjudet timpris (with the note "Ange gärna momsstatus för priset
+i listan nedan eller i beskrivningen." and an optional "Momsstatus för
+timpriset" select offering "inklusive moms" and "exklusive moms"); Hur länge
+gäller uppdraget?; and Beskriv ärendet. Phone, organization number and the
+rate's momsstatus select are optional; every other field is required. Company,
+contact, email and phone inputs carry the matching autocomplete hints.
 
 The form uses custom Swedish validation instead of native bubbles:
 `noValidate` plus a submit handler that checks the required values, rejects an
@@ -33,8 +34,10 @@ a field clears its message.
 
 A valid submit builds a `mailto:` draft to the configured contact address
 (`kontakt@svardentreprenad.se`) with the subject "Förfrågan om inhyrning" and
-a labeled body containing every supplied value; empty optional fields are
-marked with a dash. The page hands the draft to the visitor's email program
+a labeled body containing every supplied value, with a stated momsstatus added
+beside the offered rate; empty optional fields are marked with a dash, and
+leaving the select on "Ej angivet" reproduces the earlier draft exactly. The
+page hands the draft to the visitor's email program
 and shows a `role="status"` confirmation that says the draft is opened in the
 visitor's own email program, that the visitor sends the email themselves, that
 the website cannot send or confirm delivery, and repeats the draft as an
@@ -43,13 +46,14 @@ button states the same handoff before submitting.
 
 ## Outcome and support
 
-Observable checks are locating the nine controls in mockup order, reading the
-Swedish validation messages for missing company details, an invalid email and
+Observable checks are locating the nine form fields in mockup order plus the
+optional momsstatus select, reading the Swedish validation messages for missing
+company details, an invalid email and
 a negative rate, and inspecting the drafted recipient, subject and body after a
 valid submit. An actual send must be confirmed outside the site. No funnel
 measurement, delivery tracking or response-time metric is installed. F4
 supplies navigation. Unlike the F3 customer inquiry this form has no backend,
-no select options, no stored draft and no confirmation screen; the handoff is
+no stored draft and no confirmation screen; the handoff is
 the page's single submission channel.
 
 ## Source, states and evidence
@@ -60,10 +64,12 @@ declaration `inquiry` (the `SiteInquiry` shape in
 [site types](../../src/types/site.ts)) declares the page's Swedish copy: the
 breadcrumb label, heading and intro, the form heading, note and aria label,
 the error summary and submit label, the per-field Swedish labels, placeholders
-and the rate's VAT hint with the optional mark, every validation message, the
-mail subject, the body template with `{placeholder}` substitution and the
-empty-value dash, the `{recipient}` mail-help and confirmation templates, the
-reopen prompt and link label, and the aside copy.
+and the rate's VAT hint with the optional mark, the rate's momsstatus select
+label, empty option and declared options, every validation message, the
+mail subject, the body template with `{placeholder}` substitution, the
+momsstatus draft template and the empty-value dash, the `{recipient}`
+mail-help and confirmation templates, the reopen prompt and link label, and
+the aside copy.
 [The inquiry page](../../src/pages/InquiryPage.tsx) keeps the runtime
 ownership: the input attribute specs in `inquiryFields` (optional flags, input
 types, autocomplete tokens, `inputMode`, `min`/`step` and textarea rows), the
@@ -80,10 +86,12 @@ authentication or spam-control workflow.
 
 The dedicated page declaration checks the nav link, heading, breadcrumb and
 form presence. The field-order declaration checks labels, required and
-optional attributes, autocomplete hints and the VAT note association. The
-validation declarations check the Swedish messages, focus movement and that no
-draft is opened for invalid input. The mail-draft declaration checks the
-recipient, subject, labeled body values, optional-field dashes, the
+optional attributes, autocomplete hints, the VAT note association and the
+optional momsstatus select with its declared options. The validation
+declarations check the Swedish messages, focus movement and that no draft is
+opened for invalid input. The mail-draft declaration checks the recipient,
+subject, labeled body values, optional-field dashes, the stated momsstatus
+beside the rate, the identical draft when momsstatus is omitted, the
 self-send confirmation and the fallback link. The helper declaration checks
 the validation function directly, including optional fields staying outside
 the error set. These are in-memory DOM assertions; they do not send email or
@@ -115,8 +123,9 @@ handoff; this catalog makes no privacy-law or compliance assurance claim.
 
 Sending still depends on a configured compatible email handler; the website
 cannot confirm delivery or receipt by design. The fallback link still requires
-an email handler. The rate is collected as a single number, so the VAT basis
-relies on the visitor's description.
+an email handler. The rate's momsstatus select is optional and self-reported:
+visitors who leave it on "Ej angivet" still leave the VAT basis to their
+description, and the website never assumes or confirms a stated basis.
 
 ## Roadmap
 
