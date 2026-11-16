@@ -11,7 +11,11 @@ a separate customer result because it has tests.
 
 All twelve routes listed in the [index](README.md) share Header. Desktop navigation
 links home, services (with five service links), the Kalkyler group with the two
-calculator links, about, the staffing inquiry and contact. The desktop
+calculator links, about, the staffing inquiry and contact. At md+ widths every
+desktop target — the nav links, the Tjänster trigger and the desktop Kalkyler
+summary — carries `py-2` vertical padding that gives roughly 36px of tap height
+inside the unchanged `min-h-16` 64px sticky header row, while the mobile menu
+targets keep their own paddings. The desktop
 Tjänster trigger is a focusable link declared with `aria-haspopup`, and its
 dropdown panel keeps the five service links in registry order; keyboard focus on
 the trigger reveals that panel through the existing `group-focus-within`
@@ -40,7 +44,7 @@ Kalkyler disclosure with its Dränering and Uppfart links, the Brödsmulor
 breadcrumb with its Hem link, the Sidan finns inte, Okänd sida and Genvägar
 not-found texts, the Nästa steg and Kontakta oss service contact band, the
 footer's Sidor, Tjänster and Kontakt headings with the Sidfotsnavigation nav
-name, and the Inget innehåll ännu empty state. A chrome copy edit is one
+name, and the Inget innehåll ännu empty state with its Kontakta oss action. A chrome copy edit is one
 registry declaration instead of a renderer markup edit; the renderer only maps
 registry entries to their landmarks.
 The registry order is the link order; the renderer only groups the five service
@@ -105,14 +109,17 @@ route-specific view. Static artifacts are not separate backend handlers. See
 
 | State | Visible behavior | Recovery and ceiling |
 | --- | --- | --- |
-| Empty services | Header plus Inget innehåll ännu | Applies to the service-dependent home and services-index bodies. About and contact keep their own bodies; a service route without its record and an unknown route use not-found recovery. |
+| Empty services | Header plus Inget innehåll ännu and its Kontakta oss action | Applies to the service-dependent home and services-index bodies. About and contact keep their own bodies; a service route without its record and an unknown route use not-found recovery. |
 | Ready known route | Typed route view plus footer | Missing joined service record goes to not-found. |
 | Ready unknown route | Sidan finns inte, route shortcuts and footer | Follow a declared shortcut. The build also emits `dist/404.html` carrying the same SPA document with the Swedish not-found title and description, so a static host that serves it at unknown paths boots the app, which renders this recovery with the requested URL; whether the host does so stays unknown. |
 | Photo error | Service card switches to the route SVG; if that fallback also errors, the card image is removed with no retry loop. Subpage hero and home hero hide their images. | Title, summary and Läs mer link remain. A hidden home hero keeps the navy section, gradient overlay, headline, intro, actions and stats. |
 
 The header stays during the empty-services state, but the footer does not. Partners
-is omitted independently when its list is empty. These are current behaviors,
-not new error recovery mechanisms.
+is omitted independently when its list is empty. The empty-services section
+also renders StaticState's optional action: the registry-declared
+`chrome.emptyStateActionLabel` "Kontakta oss" links to the contact route,
+giving visitors a next step while no inline retry mechanism exists. These are
+current behaviors, not new error recovery mechanisms.
 
 ## Sources and evidence
 
@@ -169,7 +176,14 @@ technical evidence — in-memory fixture declarations over helper composition
 and emitted-document text; they do not establish browser font-fetch
 scheduling or rendered font timing. F1-US1 owns the service-card
 failure mappings; this supporting surface points to F1 rather than duplicating
-those story references.
+those story references. The same 2026-11-16 review maps the three tap-target
+declarations in
+[styles.header-nav-tap-targets.test.ts](../../src/styles.header-nav-tap-targets.test.ts)
+into F4-US1 as technical evidence: the `py-2` tap-target padding on the md+
+desktop nav element, links and both triggers, the unchanged mobile targets and
+`min-h-16` header row, and the at-least-32px computed tap height — source-text
+and Tailwind-compile evidence that does not render the header or measure real
+touch input.
 
 No product background module, API, storage, telemetry or report belongs to this
 surface. Outcome measurement stays with F1–F3, F5 and F6; there is no standalone conversion
@@ -177,7 +191,8 @@ claim for the route inventory.
 
 ## What Works Less Well
 
-Empty-services feedback provides no inline retry or contact body.
+Empty-services feedback provides no inline retry; its standing contact path is
+the registry-declared Kontakta oss link to the contact route.
 
 ## Roadmap
 

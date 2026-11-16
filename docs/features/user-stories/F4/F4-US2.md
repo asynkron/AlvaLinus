@@ -2,7 +2,7 @@
 
 Feature: [F4 — Home, navigation and route recovery](../../navigation-and-recovery.md)  
 Status: current  
-Reviewed: 2026-11-02
+Reviewed: 2026-11-16
 
 As a site visitor, I want to interpret empty and unknown-route feedback so I can avoid mistaking missing content for a successful page.
 
@@ -29,7 +29,7 @@ The rendered state identifies content availability and provides route recovery w
 
 ## Failure and recovery
 
-The empty-services state has no inline retry; its feedback applies to the service-dependent home and services-index bodies.
+The empty-services state has no inline retry; it renders the registry-declared Kontakta oss action linking to the contact route, and its feedback applies to the service-dependent home and services-index bodies.
 
 Use header navigation; a content defect needs a corrected static deployment.
 
@@ -39,7 +39,7 @@ Use header navigation; a content defect needs a corrected static deployment.
 - [src/pages/SiteHomePage.tsx](../../../../src/pages/SiteHomePage.tsx)
 
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `renders ready bundled content on the first paint without a loading skeleton` (direct): Checks that the default boot renders ready home content with no Laddar innehåll skeleton.
-- vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `keeps $label empty-services feedback when services are empty` (direct): Parameterized home and services-index cases check the empty-state heading and the absence of other route bodies.
+- vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `keeps $label empty-services feedback when services are empty` (direct): Parameterized home and services-index cases check the empty-state heading, the absence of other route bodies, and the rendered Kontakta oss action link targeting the registry contact route.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `keeps about and contact bodies available when services are empty` (direct): Checks the about body and the contact form, handoff note and fallback email with one #content target and retained header/footer.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `keeps service and unknown routes on not-found recovery when services are empty` (direct): Checks that a service route without its record and an unknown route use not-found recovery instead of the empty state.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `fails unknown paths gracefully` (direct): Checks not-found guidance and a home recovery link.
