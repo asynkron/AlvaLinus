@@ -82,10 +82,12 @@ export function validateInquiry(values: InquiryValues): InquiryErrors {
 
 export function inquiryMailtoHref(
   values: InquiryValues,
+  rateBasis: string = "",
   recipient: string = siteContent.contact.form.recipientEmail,
 ): string {
   const mail = inquiry.mail;
   const orDash = (value: string) => (value.trim() === "" ? mail.emptyValue : value.trim());
+  const rateWithBasis = values.rate.trim() + (rateBasis === "" ? "" : mail.rateBasisTemplate.replace("{basis}", rateBasis));
   const filled: Record<InquiryFieldKey, string> = {
     company: values.company.trim(),
     person: values.person.trim(),
@@ -93,7 +95,7 @@ export function inquiryMailtoHref(
     phone: orDash(values.phone),
     org: orDash(values.org),
     work: values.work.trim(),
-    rate: values.rate.trim(),
+    rate: rateWithBasis,
     duration: values.duration.trim(),
     description: values.description.trim(),
   };
@@ -140,6 +142,7 @@ function openDefaultMailDraft(href: string) {
 export function InquiryPage({ openDraft = openDefaultMailDraft }: InquiryPageProps) {
   const [values, setValues] = useState<InquiryValues>(inquiryDefaults);
   const [errors, setErrors] = useState<InquiryErrors>({});
+  const [rateBasis, setRateBasis] = useState("");
   const [draftHref, setDraftHref] = useState("");
   const recipient = siteContent.contact.form.recipientEmail;
 
@@ -170,7 +173,7 @@ export function InquiryPage({ openDraft = openDefaultMailDraft }: InquiryPagePro
       return;
     }
 
-    const href = inquiryMailtoHref(values);
+    const href = inquiryMailtoHref(values, rateBasis);
     setDraftHref(href);
     openDraft(href);
   }
@@ -269,6 +272,24 @@ export function InquiryPage({ openDraft = openDefaultMailDraft }: InquiryPagePro
             </div>
             {renderField(inquiryFields.work)}
             {renderField(inquiryFields.rate)}
+            <div className="inquiry-field">
+              <label htmlFor="inquiry-rate-basis">
+                {inquiry.rateBasis.label}
+                <small> {inquiry.optionalMark}</small>
+              </label>
+              <select
+                id="inquiry-rate-basis"
+                value={rateBasis}
+                onChange={(event: ChangeEvent<HTMLSelectElement>) => setRateBasis(event.target.value)}
+              >
+                <option value="">{inquiry.rateBasis.emptyOption}</option>
+                {inquiry.rateBasis.options.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
             {renderField(inquiryFields.duration)}
             {renderField(inquiryFields.description)}
             <Button type="submit" className="inquiry-send">

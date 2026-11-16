@@ -214,6 +214,7 @@ export type SiteInquiryMail = {
   readonly subject: string;
   readonly emptyValue: string;
   readonly bodyTemplate: string;
+  readonly rateBasisTemplate: string;
 };
 
 export type SiteInquiry = {
@@ -234,6 +235,11 @@ export type SiteInquiry = {
   readonly asideSummary: string;
   readonly asideItems: readonly string[];
   readonly optionalMark: string;
+  readonly rateBasis: {
+    readonly label: string;
+    readonly emptyOption: string;
+    readonly options: readonly string[];
+  };
   readonly fields: Readonly<Record<SiteInquiryFieldKey, SiteInquiryFieldText>>;
   readonly validation: {
     readonly companyRequired: string;
