@@ -2,7 +2,7 @@
 
 Feature: [F4 — Home, navigation and route recovery](../../navigation-and-recovery.md)  
 Status: current  
-Reviewed: 2026-11-11
+Reviewed: 2026-11-16
 
 As a site visitor, I want to use route navigation so I can reach service selection, company information or inquiry preparation.
 
@@ -25,6 +25,7 @@ As a site visitor, I want to use route navigation so I can reach service selecti
 - An open mobile menu closes on Escape from a link or the focused toggle, restores focus to the toggle and can reopen; the toggle also closes it by click. Tab and Shift+Tab are not cancelled. Escape elsewhere in the header leaves the menu and focus unchanged.
 - inventory.primaryRoutes has six shortcuts; it is not the full twelve-route registry.
 - Subpage heroes and the home hero use decorative images requested at high fetch priority (photographs except the staffing, about and contact SVG heroes) while service-card images stay lazy; a failing home hero photo hides its image without a retry loop while the hero content remains. Service-card images have route alt text.
+- Every emitted document head (home, every stamped subpage artifact and `dist/404.html`) carries one woff2 font preload link per emitted font asset, injected at build time from that build's bundle via `vite.config.ts` and `scripts/route-artifacts.mjs` so font fetch starts at HTML parse time; the injection is a deterministic no-op when a build emits no woff2 assets, and the static route assertion requires exactly those tags byte-for-byte on every emitted document.
 
 ## Expected outcome
 
@@ -41,6 +42,9 @@ Use a known route or the home URL; repair/redeploy static route artifacts if mis
 - [src/data/siteContent.ts](../../../../src/data/siteContent.ts)
 - [src/pages/SiteHomePage.tsx](../../../../src/pages/SiteHomePage.tsx)
 - [src/styles.primary-contrast.test.ts](../../../../src/styles.primary-contrast.test.ts)
+- [vite.config.ts](../../../../vite.config.ts)
+- [scripts/route-artifacts.mjs](../../../../scripts/route-artifacts.mjs)
+- [scripts/assert-static-routes.mjs](../../../../scripts/assert-static-routes.mjs)
 
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `shows the requested primary navigation labels as real route links` (direct): Checks route-link destinations, not mobile-menu or dropdown interaction.
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `derives header, mobile menu and footer navigation from the typed route registry` (direct): Checks desktop, mobile-menu and footer destinations, Swedish labels and link order against `content.routes` as the single declaration source; does not exercise dropdown interaction or responsive layout.
@@ -59,5 +63,11 @@ Use a known route or the home URL; repair/redeploy static route artifacts if mis
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `hides a failing home hero photo without a retry loop and keeps the hero intact` (direct): Checks display:none hiding across repeated image errors while the headline, intro, actions and stats remain. Does not establish browser image loading or CSS visibility.
 - vitest, [src/styles.primary-contrast.test.ts](../../../../src/styles.primary-contrast.test.ts), declaration `keeps the on-dark accent readable on the navy header, hero, and footer surfaces at WCAG AA` (technical): Token-level stylesheet check pins the `--primary-on-dark` accent against the foreground token at 4.5:1, the pairing the shared navy header, hero and footer chrome renders. It reads the root tokens only and does not render chrome or measure a browser.
 - vitest, [src/styles.primary-contrast.test.ts](../../../../src/styles.primary-contrast.test.ts), declaration `keeps both accent tokens in the orange brand hue family` (technical): Token-level stylesheet check pins the primary and on-dark accent hues to the declared orange band, the shared brand identity behind the chrome accents. It constrains hue only; it does not itself re-check contrast or any rendered element.
+- vitest, [scripts/route-artifacts.test.mjs](../../../../scripts/route-artifacts.test.mjs), declaration `selects emitted woff2 asset entries as sorted root-relative hrefs` (technical): Checks that font href selection keeps only emitted `.woff2` asset entries, deduplicated and sorted by fileName into root-relative hrefs so the emitted link order stays deterministic regardless of bundler emission order. Fixture-bundle evidence over helper composition; it does not run a real Vite build or observe browser font fetching.
+- vitest, [scripts/route-artifacts.test.mjs](../../../../scripts/route-artifacts.test.mjs), declaration `composes the exact single-line font preload tag with crossorigin and the woff2 type` (technical): Pins the exact single-line `<link rel="preload" as="font" type="font/woff2" crossorigin />` tag shape and rejects hrefs that are not root-relative emitted `.woff2` assets, including whitespace and quote characters. Helper-composition evidence; it does not exercise a browser preload fetch.
+- vitest, [scripts/route-artifacts.test.mjs](../../../../scripts/route-artifacts.test.mjs), declaration `injects exactly the emitted font preload tags before the head-close tag in sorted order` (technical): Checks injection places exactly the composed font preload tags directly before `</head>` in sorted order and returns a document built without emitted font assets unchanged. Fixture-document evidence; it does not run the production build pipeline.
+- vitest, [scripts/route-artifacts.test.mjs](../../../../scripts/route-artifacts.test.mjs), declaration `keeps injected font preloads intact through the home-hero strip and commutes with it` (technical): Checks the font preload injection and the home-hero preload strip commute, so stripping the home image preload leaves every injected font preload intact and the `as="font"` emission stays distinct from the `as="image"` hero gates. Fixture-document evidence only.
+- vitest, [scripts/route-artifacts.test.mjs](../../../../scripts/route-artifacts.test.mjs), declaration `requires exactly the emitted font preloads on every emitted document when the build emitted font assets` (technical): Artifact-gate check that every emitted document fixture (root, subpages and `dist/404.html`) carries exactly the expected font preload tags byte-for-byte, with paired rejections for dropped, partial and diverging tags. In-memory emitted-document text; it does not prove a real dist deployment or browser fetch scheduling.
+- vitest, [scripts/route-artifacts.test.mjs](../../../../scripts/route-artifacts.test.mjs), declaration `requires zero font preloads on every emitted document when the build emitted no font assets` (technical): Checks the deterministic no-op direction: a build fixture without emitted font assets passes the artifact gate with zero font preload links on every document. In-memory fixture evidence; it does not prove how a real build inlines fonts.
 
 Backend entry-point references: none (frontend-only). Test mappings were reviewed as source declarations; this document is not an execution receipt.

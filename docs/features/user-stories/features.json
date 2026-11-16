@@ -725,7 +725,10 @@
           "benefit": "reach service selection, company information or inquiry preparation",
           "source_anchors": [
             "src/data/siteContent.ts",
-            "src/pages/SiteHomePage.tsx"
+            "src/pages/SiteHomePage.tsx",
+            "vite.config.ts",
+            "scripts/route-artifacts.mjs",
+            "scripts/assert-static-routes.mjs"
           ],
           "test_references": [
             {
@@ -846,6 +849,48 @@
               "name": "keeps both accent tokens in the orange brand hue family",
               "evidence_type": "technical",
               "supports": "Token-level stylesheet check pins the primary and on-dark accent hues to the declared orange band, the shared brand identity behind the chrome accents. It constrains hue only; it does not itself re-check contrast or any rendered element."
+            },
+            {
+              "framework": "vitest",
+              "path": "scripts/route-artifacts.test.mjs",
+              "name": "selects emitted woff2 asset entries as sorted root-relative hrefs",
+              "evidence_type": "technical",
+              "supports": "Checks that font href selection keeps only emitted .woff2 asset entries, deduplicated and sorted by fileName into root-relative hrefs so the emitted link order stays deterministic regardless of bundler emission order. Fixture-bundle evidence over helper composition; it does not run a real Vite build or observe browser font fetching."
+            },
+            {
+              "framework": "vitest",
+              "path": "scripts/route-artifacts.test.mjs",
+              "name": "composes the exact single-line font preload tag with crossorigin and the woff2 type",
+              "evidence_type": "technical",
+              "supports": "Pins the exact single-line <link rel=\"preload\" as=\"font\" type=\"font/woff2\" crossorigin /> tag shape and rejects hrefs that are not root-relative emitted .woff2 assets, including whitespace and quote characters. Helper-composition evidence; it does not exercise a browser preload fetch."
+            },
+            {
+              "framework": "vitest",
+              "path": "scripts/route-artifacts.test.mjs",
+              "name": "injects exactly the emitted font preload tags before the head-close tag in sorted order",
+              "evidence_type": "technical",
+              "supports": "Checks injection places exactly the composed font preload tags directly before </head> in sorted order and returns a document built without emitted font assets unchanged. Fixture-document evidence; it does not run the production build pipeline."
+            },
+            {
+              "framework": "vitest",
+              "path": "scripts/route-artifacts.test.mjs",
+              "name": "keeps injected font preloads intact through the home-hero strip and commutes with it",
+              "evidence_type": "technical",
+              "supports": "Checks the font preload injection and the home-hero preload strip commute, so stripping the home image preload leaves every injected font preload intact and the as=\"font\" emission stays distinct from the as=\"image\" hero gates. Fixture-document evidence only."
+            },
+            {
+              "framework": "vitest",
+              "path": "scripts/route-artifacts.test.mjs",
+              "name": "requires exactly the emitted font preloads on every emitted document when the build emitted font assets",
+              "evidence_type": "technical",
+              "supports": "Artifact-gate check that every emitted document fixture (root, subpages and dist/404.html) carries exactly the expected font preload tags byte-for-byte, with paired rejections for dropped, partial and diverging tags. In-memory emitted-document text; it does not prove a real dist deployment or browser fetch scheduling."
+            },
+            {
+              "framework": "vitest",
+              "path": "scripts/route-artifacts.test.mjs",
+              "name": "requires zero font preloads on every emitted document when the build emitted no font assets",
+              "evidence_type": "technical",
+              "supports": "Checks the deterministic no-op direction: a build fixture without emitted font assets passes the artifact gate with zero font preload links on every document. In-memory fixture evidence; it does not prove how a real build inlines fonts."
             }
           ],
           "entry_point_refs": [],
@@ -864,7 +909,8 @@
             "Header (desktop and mobile) and footer page and service links derive their Swedish labels, hrefs and order from the typed route registry, so a route edit is one declaration in src/data/siteContent.ts instead of parallel markup edits.",
             "An open mobile menu closes on Escape from a link or the focused toggle, restores focus to the toggle and can reopen; the toggle also closes it by click. Tab and Shift+Tab are not cancelled. Escape elsewhere in the header leaves the menu and focus unchanged.",
             "inventory.primaryRoutes has six shortcuts; it is not the full twelve-route registry.",
-            "Subpage heroes and the home hero use decorative images requested at high fetch priority (photographs except the staffing, about and contact SVG heroes) while service-card images stay lazy; a failing home hero photo hides its image without a retry loop while the hero content remains. Service-card images have route alt text."
+            "Subpage heroes and the home hero use decorative images requested at high fetch priority (photographs except the staffing, about and contact SVG heroes) while service-card images stay lazy; a failing home hero photo hides its image without a retry loop while the hero content remains. Service-card images have route alt text.",
+            "Every emitted document head (home, every stamped subpage artifact and dist/404.html) carries one woff2 font preload link per emitted font asset, injected at build time from that build's bundle via vite.config.ts and scripts/route-artifacts.mjs so font fetch starts at HTML parse time; the injection is a deterministic no-op when a build emits no woff2 assets, and the static route assertion requires exactly those tags byte-for-byte on every emitted document."
           ],
           "expected_outcome": "A declared static route can be selected for F1, F2, F3, F5 or F6.",
           "failure_behavior": "A missing host artifact can fail before React mounts; this catalog does not claim host-level fallback.",

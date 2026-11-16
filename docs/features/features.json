@@ -207,13 +207,16 @@
         },
         {
           "path": "vite.config.ts",
-          "description": "Emits static HTML entry artifacts for declared subpages."
+          "description": "Emits static HTML entry artifacts for declared subpages and injects woff2 font preload links into every emitted document head."
+        },
+        {
+          "path": "scripts/route-artifacts.mjs",
+          "description": "Shared document-emission helpers: route metadata stamping, per-route hero preload links and per-document woff2 font preload links."
         }
       ],
-      "reviewed_against_source": "2026-11-12",
+      "reviewed_against_source": "2026-11-16",
       "slice_refs": [],
       "entry_point_refs": []
     }
   ]
 }
-
