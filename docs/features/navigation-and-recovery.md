@@ -1,6 +1,6 @@
 # F4: Home, navigation and route recovery
 
-Reviewed: 2026-11-12. Runtime: `ui`. Product role: `surface`.
+Reviewed: 2026-11-16. Runtime: `ui`. Product role: `surface`.
 Supports **F1, F2, F3, F5 and F6**, all active customer-outcome features.
 
 Home and shared route handling make the service, company and inquiry outcomes
@@ -61,6 +61,24 @@ dranering-photo-400.webp 400w and dranering-photo-640.webp 640w with its own
 draneringsberakning-hero.webp 900w base at sizes 100vw. Only the staffing, about
 and contact SVG heroes lack variants.
 
+Every emitted document head also preloads the bundled woff2 fonts, independently
+of the per-route hero preloads above. During the build, the post-order
+`transformIndexHtml` handler in [vite.config.ts](../../vite.config.ts) calls
+`injectFontPreloadLinks` with `bundleFontPreloadHrefs(ctx.bundle)` from
+[route-artifacts.mjs](../../scripts/route-artifacts.mjs), so the home document,
+every stamped subpage artifact and `dist/404.html` each gain one
+`<link rel="preload" as="font" type="font/woff2" crossorigin />` per emitted
+`.woff2` asset directly before `</head>`, in sorted root-relative href order.
+Font requests are CORS-mode even same-origin, so the `crossorigin` attribute
+keeps the preload fetch matched to the `@font-face` request instead of being
+discarded as mismatched. Selection covers emitted asset entries only — chunks
+never carry fonts — and is a deterministic no-op when a build emits no woff2
+assets, for example when fonts fall below Vite's asset-inline limit.
+[assert-static-routes.mjs](../../scripts/assert-static-routes.mjs) derives the
+expectation from the built `dist/assets` listing with `distFontPreloadHrefs`
+and requires every emitted document, including the not-found artifact, to carry
+exactly those font preload tags byte-for-byte.
+
 [F4-US1](user-stories/F4/F4-US1.md) covers navigation from the home hero's two
 actions, route shortcuts and shared chrome. The inventory's six shortcuts
 are not the complete registry. Pool and reference-project pages are not active.
@@ -107,7 +125,9 @@ navigation destinations; the renderer boots ready content directly from that
 bundled registry on first paint, with no separate loader module.
 [StaticState](../../src/components/StaticState.tsx)
 renders the empty-services availability state. [Vite config](../../vite.config.ts) emits route
-artifacts; existing route and visual scripts check deployable paths.
+artifacts and injects the font preloads described above;
+[route-artifacts.mjs](../../scripts/route-artifacts.mjs) owns the shared document-emission
+helpers both use, and existing route and visual scripts check deployable paths.
 
 Story documents carry reviewed Vitest declarations for links, empty and
 not-found feedback. Swedish-character assertions protect representative
@@ -140,7 +160,14 @@ which pin the smooth-scroll default and its single
 `prefers-reduced-motion` override in styles.css. F4-US3 maps the two
 skip-link declarations separately from menu behavior. Neither mapping
 establishes responsive CSS or browser anchor activation. Normalization variants and production-host fallback remain
-unmapped, not claimed as executed acceptance. F1-US1 owns the service-card
+unmapped, not claimed as executed acceptance. The 2026-11-16 review adds the
+build-time woff2 font-preload emission mappings: F4-US1 maps the
+`bundleFontPreloadHrefs` selection, exact tag composition, head-close
+injection and the exactly-those-tags artifact gates in
+[route-artifacts.test.mjs](../../scripts/route-artifacts.test.mjs) as
+technical evidence — in-memory fixture declarations over helper composition
+and emitted-document text; they do not establish browser font-fetch
+scheduling or rendered font timing. F1-US1 owns the service-card
 failure mappings; this supporting surface points to F1 rather than duplicating
 those story references.
 
