@@ -133,7 +133,7 @@ function Header({ currentPath = "/", chrome }: { readonly currentPath?: string; 
                 <Fragment key={route.href}>
                   <div className="group relative">
                     <a
-                      className={`inline-flex items-center gap-1 ${
+                      className={`inline-flex items-center gap-1 py-2 ${
                         servicesActive ? "text-primary-onDark" : "text-background/75 transition-colors hover:text-primary-onDark"
                       }`}
                       aria-current={isActive ? "page" : undefined}
@@ -175,7 +175,7 @@ function Header({ currentPath = "/", chrome }: { readonly currentPath?: string; 
             return (
               <a
                 key={route.href}
-                className={isActive ? "text-primary-onDark" : "text-background/75 transition-colors hover:text-primary-onDark"}
+                className={isActive ? "py-2 text-primary-onDark" : "py-2 text-background/75 transition-colors hover:text-primary-onDark"}
                 aria-current={isActive ? "page" : undefined}
                 href={route.href}
               >
@@ -259,7 +259,7 @@ function CalcMenu({ variant, activePath }: { readonly variant: "desktop" | "mobi
       <summary
         className={`cursor-pointer list-none [&::-webkit-details-marker]:hidden ${
           desktop
-            ? `inline-flex items-center gap-1 ${
+            ? `inline-flex items-center gap-1 py-2 ${
                 groupActive ? "text-primary-onDark" : "text-background/75 transition-colors hover:text-primary-onDark"
               }`
             : `flex w-full items-center gap-1 rounded-md px-3 py-3 text-base font-medium ${
