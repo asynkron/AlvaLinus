@@ -1,25 +1,23 @@
 # Product and operation roadmap
 
-Reviewed: 2026-11-16 (fk241), source baseline
-`c0e17d2059a611e905379acde575e0e85fc23f1c` (this task's prepared base,
-which is fk237's merge — the origin/main tip re-read at these build
-reads via a fresh fetch). This is the first refresh in the chain whose
-build worktree was prepared directly onto the tip: fk231's November 15
-handoff anticipated a stale base and prescribed a re-baseline, but the
-prepared checkout already carries the fk231 generation at `c0e17d2`,
-so no re-baseline was needed — and every row below is still written
-from fresh owning reads at the tip rather than copied from the
-handoff, continuing the fk187/fk197/fk219/fk231 discipline.
+Reviewed: 2026-11-17 (fk251), source baseline
+`30f72ae2d0dafd961b4803ad0e42d32172e6ad00` (this task's prepared base,
+which is fk248's merge — the origin/main tip re-read at these build
+reads via a fresh fetch). The prepared checkout arrived directly at the
+tip — unlike the investigation's stale `c0e17d2` snapshot, whose warning
+was resolved by re-preparation before any edit — and every row below is
+written from fresh owning reads at the tip rather than copied from the
+handoff, continuing the fk187/fk197/fk219/fk231/fk241 discipline.
 
 This roadmap connects the Swedish Svärd Entreprenad website to operating a
 product with minimal human intervention. Source capability, task delivery,
 accepted quality and observed production operation are separate evidence.
 Goals are proposed work, not authorization to expand the site's runtime.
-This refresh supersedes fk231's November 15 assessment (PR #152, merge
-`5e90bfe`), which was read in full from this checkout's committed copy,
+This refresh supersedes fk241's November 16 assessment (PR #157, merge
+`e3f084a`), which was read in full from this checkout's committed copy,
 and continues the ownership chain fk44 → fk54 → fk66 → fk72 →
 fk76 → fk87 → fk96 → fk105 → fk113 → fk123 → fk153 → fk163 → fk173 →
-fk187 → fk197 → fk207 → fk219 → fk231 → fk241: the previous document was
+fk187 → fk197 → fk219 → fk231 → fk241 → fk251: the previous document was
 reconciled with exact merge receipts and current source. Earlier
 assessments remain in Git; their ownership is reconciled below and their
 retained read logs are compressed to pointers (see Evidence boundaries).
@@ -35,93 +33,111 @@ AlvaLinus is a static React/TypeScript/Vite site with twelve routes:
 There is no application backend, database, authentication or serverless runtime
 ([ADR 0001](adrs/0001-static-react-frontend-foundation.md)).
 
-Since the November 15 review, main advanced from `80eb6bd` (fk231's
-baseline, fk228's merge) to `c0e17d2` (this baseline) through four
+Since the November 16 review, main advanced from `c0e17d2` (fk241's
+baseline, fk237's merge) to `30f72ae` (this baseline) through five
 merges in order:
 
-- **fk232** (PR #153, head `f593e7ff` → merge `326125a`, closed
-  2026-11-15T19:10Z; run-quality pass at head `f593e7ff`) delivered
-  fk231's linked price-registry move: every money figure in both quote
-  calculators is now declared once in the typed registry — drainage
-  pricing (55 m boundary, 3 500/3 000 kr per-meter tiers, 6 900 kr
-  fixed) at [siteContent.ts](../src/data/siteContent.ts):479 and
-  driveway pricing (950/667 kr/m², 4 900 kr fixed, 2 000 kr/load) at
-  siteContent.ts:450 — and
-  [quote.ts](../src/lib/quote.ts):24-31 computes `drainageTotal`/
-  `drivewayTotal` from the typed
-  `SiteQuoteDrainagePricing`/`SiteQuoteUppfartPricing` with no numeric
-  price literal left in the lib, while the money-logic tests derive
-  their pinned totals from the same declarations (fk140's
-  registry-derived-pin pattern).
-- **fk233** (PR #154, head `5513cec8` → merge `6fd8aa7`, closed
-  2026-11-15T19:19Z; run-quality pass at head `5513cec8`) delivered
-  fk231's linked share-link feature: a registry-declared Swedish
-  "Skapa delbar länk" affordance in the shared quote result aside
-  writes the measurements into the page URL — `yta`, `lass` and the
-  asphalt choice on `/offertberakning/` (keeping the `#uppfart` hash so
-  the recipient lands on the driveway view), `langd` on
-  `/draneringsberakning/` — and opening such a link restores the inputs
-  once on load and recomputes the identical total, entirely client-side
-  ([quote-share.ts](../src/lib/quote-share.ts) owns the fixed parameter
-  names, tolerant decoding and absolute href building; invalid values
-  degrade through the existing invalid-input path; a URL without
-  parameters behaves exactly as before, with fk215's no-focus-stealing
-  initial-render contract intact). Both directions are pinned by
-  [quote-share.test.ts](../src/lib/quote-share.test.ts) and the extended
-  page tests.
-- **fk238** (PR #155, head `f728bae` → merge `eb4dd27`, closed
-  2026-11-16T18:02Z; run-quality pass at head `f728bae`) was the
-  frontend-optimization automation's November 16 child: the desktop
-  header navigation links, the Tjänster dropdown trigger and the
-  desktop Kalkyler summary grew from ~20px to ~36px tap targets at md+
-  widths through `py-2` vertical padding in
-  [SiteHomePage.tsx](../src/pages/SiteHomePage.tsx) inside the unchanged
-  64px sticky header, with the mobile menu (already ≥44px) untouched,
-  and a focused source-inspection test
-  ([styles.header-nav-tap-targets.test.ts](../src/styles.header-nav-tap-targets.test.ts))
-  pinning the utilities.
-- **fk237** (PR #156, head `fb74727` → merge `c0e17d2`, this baseline,
-  closed 2026-11-16T18:11Z; run-quality pass at head `fb74727`; its
-  required `validate-features` proof passed valid/complete with no
-  findings on its candidate and its delivery records the verifier
-  rerunning it independently on the merged candidate) was the
-  feature-refinement automation's November 16 child: a docs-and-manifest
-  reconciliation that documented fk228's woff2 font-preload emission
-  under F4 — a dedicated passage in
-  [navigation-and-recovery.md](features/navigation-and-recovery.md) kept
-  distinct from the hero-preload prose, the F4 record in
-  [features.json](features/features.json) gaining the
-  [route-artifacts.mjs](../scripts/route-artifacts.mjs) code path, and an
-  extended F4-US1 story record with six reviewed test references — with
-  the touched records re-stamped 2026-11-16.
+- **fk241** (PR #157, head `0e46ad8` → merge `e3f084a`, closed
+  2026-11-16T20:20Z; run-quality pass at head `0e46ad8`) was the previous
+  roadmap generation itself: it re-baselined the document onto the
+  four-merge `80eb6bd..c0e17d2` delta (fk232, fk233, fk238, fk237),
+  recorded fk220's blocked PR #149 once, and linked fk242 and fk243 —
+  both delivered below.
+- **fk243** (PR #158, head `cc37e81` → merge `5abbdb1`, closed
+  2026-11-16T20:31Z; run-quality pass at head `cc37e81`) delivered
+  fk241's linked rate-VAT-basis capture: the staffing inquiry's offered
+  rate gained a registry-declared, optional Swedish `rateBasis` select
+  ("Momsstatus för timpriset", empty option "Ej angivet", options
+  "inklusive moms"/"exklusive moms" in
+  [siteContent.ts](../src/data/siteContent.ts) under `content.inquiry`),
+  the rate hint now points to the select, a stated basis is composed into
+  the mailto draft only when provided (omission keeps the draft exactly as
+  before), the select joins the 16px floor via its own
+  [InquiryPage.css](../src/pages/InquiryPage.css) rule, deterministic
+  in-memory pins cover render/draft/omission, and
+  [staffing-inquiry.md](features/staffing-inquiry.md) was reconciled —
+  assuming and confirming no VAT status anywhere.
+- **fk242** (PR #159, head `3831435` → merge `27bf18e`, closed
+  2026-11-16T21:00Z; run-quality pass at head `3831435`) delivered the
+  catalog reconciliation fk241 linked:
+  [quote-calculators.md](features/quote-calculators.md) tells the
+  delivered registry-pricing story (its three stale price-constants
+  claims and the completed roadmap item are gone),
+  [navigation-and-recovery.md](features/navigation-and-recovery.md)
+  retires the stale empty-services friction line and documents fk238's
+  ~36px desktop tap targets under F4 with their owning test, and the
+  F6-US2 records' pre-fk232 declaration names were replaced — with
+  touched records re-stamped 2026-11-16 and published IDs untouched. Its
+  closed record's issue-level `feature-manifest-integrity` proof
+  projection reports `missing_evidence` with no recorded proof pass on
+  the record; the owning record is closed/done and the projection does
+  not reopen it.
+- **fk247** (PR #160, head `b749249` → merge `701f0c5`, closed
+  2026-11-17T18:24Z; run-quality pass at head `b749249`; 4 files,
+  +68/−1) was the frontend-optimization automation's November 17 child:
+  announced Swedish clipboard feedback on the shared quote share button.
+  Resolving the copy announces "Länken har kopierats till urklipp.";
+  a rejected or absent clipboard announces the manual-copy fallback —
+  both through a persistent `role="status"` element in the shared
+  result aside, both new typed readonly fields under `quote.shared`
+  ([siteContent.ts](../src/data/siteContent.ts)) — with the URL
+  replacement, visible link paragraph and invalid-input disabled state
+  untouched, and a focused in-memory test mocking
+  `navigator.clipboard` for both paths.
+- **fk248** (PR #161, head `79ddaed` → merge `30f72ae`, this baseline,
+  closed 2026-11-17T18:49Z; run-quality pass at head `79ddaed`; 9 files,
+  +162/−34) was the feature-refinement automation's November 17 child:
+  the feature-catalog reconciliation re-stamped 2026-11-17 — the
+  [catalog README](features/README.md) reconciliation paragraph names
+  fk232/fk233/fk238/fk237 plus fk242's interim pass, F6's record
+  describes the shareable measurement-bearing link and injected registry
+  pricing, [quote-share.ts](../src/lib/quote-share.ts) joined F6's
+  runtime owners, fk233's declarations are mapped into the existing
+  F6-US2/US3/US4 stories with honest direct/technical evidence types,
+  and F4-US1's tap-target mappings were re-verified against source with
+  all published IDs preserved. Its Build Update records an exploratory
+  validate-features pass at `79ddaed` (valid, complete, no findings);
+  its closed record's issue-level proof projection reports
+  `missing_evidence` — the owning record is closed/done and the
+  projection does not reopen it — and its delivery summary queues the
+  F6-US4 print-rendering mapping prompt on its own record.
 
-In parallel, **fk220** (PR #149, head `140a735` on branch
-`agent-go/task-fk220`, opened against base `7dca1af`) remains **open and
-unmerged**: its branch carries the complete in-place recompression of
-the three sibling full-size heroes (stensattning-photo 385,866 →
-262,640 B, quote-hero 362,898 → 253,714 B, services-hero 345,948 →
-241,842 B, dimensions and declarations unchanged), canonical quality
-passed 268/268 at that head, and the push landed before review ran —
-but the review stage's net-change gate counts only textual diff lines
-(`git diff --numstat` prints `-` for the three binaries), so it
-returned "zero net changes" and bounced the binaries-only PR. The task
-now waits on the operator's decision recorded as build-clarification
-[fk224](https://app.faktorial.ai/projects/alvalinus/tasks/fk224) (open
-since 2026-11-14T19:27Z, unanswered at these reads, re-verified
-2026-11-16). The savings are **not on main**: the three heroes still
-measure 385,866 / 362,898 / 345,948 B at this tip (re-measured
-2026-11-16), so the roadmap treats fk220 as unresolved blocking work,
-records its measured per-file numbers from its owning record, and
-creates no duplicate recompression task (see What works less well and
-Factory friction).
+In parallel, **fk220** (PR #149, head `140a735`) **closed approved on
+2026-11-17T06:09Z without a merge receipt**: its branch carried the
+complete in-place recompression of the three sibling full-size heroes
+(stensattning-photo 385,866 → 262,640 B, quote-hero 362,898 → 253,714 B,
+services-hero 345,948 → 241,842 B, dimensions and declarations
+unchanged) and canonical quality passed 268/268 at that head, but the
+review stage's textual-line net-change gate (`git diff --numstat` prints
+`-` for the three binaries) had bounced the binaries-only PR with "zero
+net changes". Its build-clarification
+[fk224](https://app.faktorial.ai/projects/alvalinus/tasks/fk224) closed
+approved at the same moment, but the clarification record carries no
+recorded answer timestamp and no comments — **the chosen resolution text
+is not visible in the owning records**; only the closure outcome (both
+records closed approved, PR #149 absent from main's history) is proven.
+The savings are **not on main**: the three heroes still measure
+385,866 / 362,898 / 345,948 B at this tip (re-measured 2026-11-17), so
+fk220's recompression is recorded as **never landed**. fk220's own
+option-3 wording explicitly anticipated that "a future task would have
+to redo the recompression", and this refresh created that redo task as
+[fk252](https://app.faktorial.ai/projects/alvalinus/tasks/fk252) (see
+Short-term priorities) — a permitted follow-up under fk220's own
+wording, not a duplicate of the closed record: fk220 stays closed and
+this task re-owns the undelivered scope with an acceptance written so
+the PR cannot be binaries-only again (it carries the one stale-prose fix
+fk220's clarification itself described).
 
 The visitor-facing baseline is a complete self-service surface whose Swedish
-text is declared in the typed registry on every delivered surface — now
-including the calculators' prices and tier amounts, so a price update is a
-content edit (fk232) — whose accent family is declared entirely through the
+text is declared in the typed registry on every delivered surface — including
+the calculators' prices and tier amounts (fk232), so a price update is a
+content edit — whose accent family is declared entirely through the
 token system, whose quote money logic and share-link encoding are
 unit-tested, whose calculations survive a reload or onward sharing through a
-measurements-bearing link (fk233), whose desktop header navigation presents
+measurements-bearing link (fk233) that now confirms the copy in Swedish or
+points to the visible link when the clipboard refuses (fk247), whose
+staffing inquiry captures the offered rate's VAT basis when the visitor
+states it (fk243), whose desktop header navigation presents
 reliably tappable ~36px targets at tablet widths (fk238), every declared
 hero asset exists with the gate keeping it that way, every photo-hero
 route's stamped preload describes exactly the candidates its img selects,
@@ -130,26 +146,24 @@ delivered form control zooms on iOS focus (fk195/fk199), the heaviest
 single hero download shrank by about a third (fk209), the empty-services
 fallback guides visitors to a declared contact surface instead of
 dead-ending (fk221), and every emitted document preloads the site fonts at
-parse time behind a build-time gate that is now documented in the catalog
-(fk228/fk237). What remains inside the delivered surface is the unmerged
-sibling-hero recompression (fk220's PR #149, blocked on the fk224 operator
-decision), the drifted catalog records now linked for reconciliation
-(fk242), the staffing inquiry's uncaptured rate VAT basis (fk243) and the
+parse time behind a build-time gate documented in the catalog
+(fk228/fk237). What remains inside the delivered surface is the unlanded
+sibling-hero recompression (fk252's redo of fk220's closed delivery), the
+notes text a visitor writes that share links still drop (fk253), and the
 declared but undelivered editorial photography — not new visitor
 capability.
 
-The open inventory at this refresh's closing reads (November 16,
-~19:53Z) held exactly sixteen records: this task; fk220 waiting on the
-fk224 human decision; fk224 itself (the build-clarification record);
-and thirteen delivery notices (fk216–fk218, fk222, fk223, fk226,
-fk229, fk230, fk234–fk236, fk239, fk240). fk225 — the worker-host
-C: free-space watch that was still open at the November 15 reads —
-has since closed. After this refresh's two creations the inventory
-holds eighteen records. The recurring automations stayed on cadence:
-the frontend-optimization stream delivered fk238 and the
-feature-refinement stream delivered fk237 on November 16, each closing
-delivered with a passed run-quality run and — for fk237 — an
-independently rerun validate-features proof.
+The open inventory at this refresh's closing read (November 17,
+~20:57Z) held exactly **three** records: this task and the two fk247/fk248
+delivery notices (fk249, fk250). The sixteen-record inventory fk241 saw on
+November 16 has emptied out: fk220 and fk224 closed on November 17, and
+every earlier delivery notice closed with it. After this refresh's two
+creations (fk252, fk253, both read back open) the inventory holds five
+records. The recurring automations stayed on cadence: the
+frontend-optimization stream delivered fk247 and the feature-refinement
+stream delivered fk248 on November 17, each closing delivered with a
+passed run-quality run within about twenty and thirty-five minutes of
+creation respectively.
 
 ### What works well
 
@@ -162,11 +176,14 @@ independently rerun validate-features proof.
   photo path (fk112/fk122), both quote calculators' full copy including their
   mailto templates (fk140), the staffing-inquiry page's validation messages,
   mailto draft labels, field specs and aside copy (`content.inquiry`, fk154),
-  the quote pages' registry-declared share copy (`quote.shared`, fk233) and
+  the inquiry's new optional rate-VAT-basis select (fk243's `rateBasis`
+  declaration), the quote pages' registry-declared share and clipboard-status
+  copy (`quote.shared`, fk233/fk247) and
   the calculators' pricing blocks (`quote.drainage.pricing`,
   `quote.uppfart.pricing`, fk232) with required typed fields
   ([types/site.ts](../src/types/site.ts)) — so tier boundaries, per-unit
-  prices and fixed amounts are maintainer-editable content, and
+  prices, the rate's VAT wording and the share feedback are
+  maintainer-editable content, and
   [quote.ts](../src/lib/quote.ts) stays content-agnostic with no numeric
   price literal. Since fk177 (PR #127) and fk185 (PR #130) the registry also
   carries `heroPhotoSrcSet`/`heroPhotoSizes` responsive-hero declarations on
@@ -187,8 +204,11 @@ independently rerun validate-features proof.
   [quote-share.test.ts](../src/lib/quote-share.test.ts), pinning the fixed
   URL parameter names, driveway and drainage search encoding, tolerant
   decoding and absolute href building, with both page suites pinning the
-  produced share URL and the restore-with-recomputed-total on load.
-- Contrast, form-field sizing, the whole accent family and now the desktop
+  produced share URL and the restore-with-recomputed-total on load; fk247
+  added [QuoteResultAside.test.tsx](../src/components/QuoteResultAside.test.tsx),
+  pinning the announced confirmation on clipboard resolve and the
+  manual-copy fallback on reject or absent clipboard.
+- Contrast, form-field sizing, the whole accent family and the desktop
   tap targets are enforced by test rather than by one-off repairs on every
   front they were repaired: fk151 (PR #114) darkened the light-surface
   `--primary` token with a deterministic contrast test; fk171 (PR #125)
@@ -200,27 +220,31 @@ independently rerun validate-features proof.
   #136) put both quote calculators' select and textarea on the same 16px
   floor; fk205 (PR #140) added the alpha-compositing read-more pairing
   test; fk208 (PR #142) extended the page-accent test to focus-visible
-  outlines and selection; and fk238 (PR #155) added
+  outlines and selection; fk238 (PR #155) added
   [styles.header-nav-tap-targets.test.ts](../src/styles.header-nav-tap-targets.test.ts),
   which pins the desktop `py-2` padding utilities, the unchanged mobile
-  menu classes and the compiled 36px-in-64px math. fk183 (PR #129),
+  menu classes and the compiled 36px-in-64px math; and fk243 (PR #158)
+  extended the inquiry's 16px floor to its new rate-basis select with its
+  own stylesheet rule. fk183 (PR #129),
   fk203 (PR #139), fk213 (PR #146) and fk227 (PR #150) mapped the
   delivered tests into the feature catalog as technical evidence at their
   strongest owning stories, so the catalog's evidence map names the real
   owning tests.
 - The quote pages' structure is owned once: [QuotePageShared.tsx](../src/components/QuotePageShared.tsx)
   (fk135) owns the result-aside, page shell, notes field, reset button and
-  mailto composition — and since fk233 the share affordance too, so a
-  caption, template or share-copy fix lands in one file while each page
+  mailto composition — and since fk233 the share affordance and since
+  fk247 its clipboard-status feedback too, so a caption, template,
+  share-copy or feedback fix lands in one file while each page
   keeps its distinct calculator logic.
 - The delivered interactive surface is real product capability: both quote
   calculators honor fk120's constraints (preliminary totals only, hidden
   internal prices, no assumed VAT status, safe invalid-input handling, print
   and email handoff), the staffing inquiry validates required fields in
   Swedish and hands a complete mail draft to the visitor's own email
-  program, since fk215 the `/offertberakning/` calculator keeps
-  keyboard and screen-reader users anchored when a view switch reveals the
-  driveway form, with the focus-flow contract pinned in
+  program — now including the stated VAT basis of the offered rate when the
+  visitor provides one (fk243) — since fk215 the `/offertberakning/`
+  calculator keeps keyboard and screen-reader users anchored when a view
+  switch reveals the driveway form, with the focus-flow contract pinned in
   [QuotePage.test.tsx](../src/pages/QuotePage.test.tsx) (initial load moves
   no focus; both switch directions land on the revealed view's heading),
   since fk221 the empty-services fallback carries a registry-declared
@@ -229,8 +253,10 @@ independently rerun validate-features proof.
   [SiteHomePage.test.tsx](../src/pages/SiteHomePage.test.tsx), since fk233 a
   visitor's calculation survives a reload or being sent onward through one
   shareable link with the measurements restored and the total recomputed
-  identically, and since fk238 the desktop header navigation presents ~36px
-  tap targets at tablet widths without shifting the header's 64px height.
+  identically, since fk247 that share button announces its outcome in
+  Swedish instead of failing silently, and since fk238 the desktop header
+  navigation presents ~36px tap targets at tablet widths without shifting
+  the header's 64px height.
 - Existing tests cover the delivered behavior:
   [SiteHomePage.test.tsx](../src/pages/SiteHomePage.test.tsx) pins route and
   content structure, chrome, the registry-owned hero map and the fk198
@@ -240,7 +266,10 @@ independently rerun validate-features proof.
   page's rendered hero srcset/sizes assertion, fk215 the focus-flow
   contract and fk233 the share encode/restore pins;
   [InquiryPage.test.tsx](../src/pages/InquiryPage.test.tsx) pins the staffing
-  inquiry; the route-emission plugin and its per-subpage preload stamping are
+  inquiry — fk243 extended it with the rate-basis render, draft and
+  omission pins; [QuoteResultAside.test.tsx](../src/components/QuoteResultAside.test.tsx)
+  pins fk247's clipboard feedback; the route-emission plugin and its
+  per-subpage preload stamping are
   covered by deterministic in-memory fixture tests in
   [`route-artifacts.test.mjs`](../scripts/route-artifacts.test.mjs) (fk164
   extended them for the hero-asset gate, fk161 for the enriched stamping,
@@ -262,27 +291,28 @@ independently rerun validate-features proof.
   ([quote.test.ts](../src/lib/quote.test.ts)) have their own focused
   tests. This refresh inspected source and owning records; it did not
   execute those tests.
-- The feature catalog covers the whole route surface: six features F1–F6
-  with the quote calculators documented as F6 (fk133), validate-features
-  passes recorded through fk237's delivery — the newest, valid/complete
-  with no findings on the merged candidate at PR #156 — following fk162's,
-  fk172's, fk176's, fk183's, fk193's, fk203's, fk213's and fk227's (the
-  closed records' issue-level proof projections still report
-  `missing_evidence`; the owning records are closed/done and the
-  projections do not reopen them), the README reconciliation note covering
-  fk135/fk162/fk164/fk176, fk183's 2026-11-11 evidence-map line,
-  fk193's 2026-11-12 review history, fk203's 2026-11-13 reconciliation
-  paragraph, fk213's 2026-11-14 paragraph, fk227's 2026-11-15 F6-US1
-  focus-test mapping, and fk237's 2026-11-16 F4 font-preload documentation
-  (F4/navigation-and-recovery stamped 2026-11-16; F6/quote-calculators
-  stamped 2026-11-15), with the
-  [route inventory](current-public-route-inventory.md) (checked
-  2026-11-04) matching the twelve-route registry. The catalog's recorded
+- The feature catalog covers the whole route surface and is reconciled:
+  six features F1–F6 with the quote calculators documented as F6 (fk133),
+  validate-features passing recorded through fk237's and fk248's
+  deliveries (the newest records are fk248's exploratory valid/complete
+  pass at `79ddaed` and fk237's independently rerun proof on its merged
+  candidate; the closed records' issue-level proof projections still
+  report `missing_evidence` — the owning records are closed/done and the
+  projections do not reopen them). The drifts fk241 linked are retired:
+  fk242 (PR #159, merge `27bf18e`) reconciled quote-calculators.md and
+  navigation-and-recovery.md with the delivered registry pricing, the
+  fk221 contact action and fk238's tap targets, and fk248 (PR #161,
+  merge `30f72ae`) completed the reconciliation with fk233's share-link
+  mappings, `quote-share.ts` as an F6 runtime owner and the catalog
+  re-stamped 2026-11-17 — so this roadmap references the reconciled
+  catalog rather than re-deriving its state. The catalog's recorded
   frictions are now the operator-owned VAT-confirmation item and the
-  drift between delivered work and three record passages this refresh
-  links below (fk242); the price-constants and empty-services-contact
-  items the records still carry are delivered work, not live friction.
-- Image handling is layered and now consistent: every photo-hero route
+  drainage length-only pricing model; the price-constants and
+  empty-services-contact items the older records carried are delivered
+  work, retired by fk242/fk248's passes. The
+  [route inventory](current-public-route-inventory.md) (checked
+  2026-11-04) matches the twelve-route registry.
+- Image handling is layered and consistent: every photo-hero route
   declares its responsive WebP variants in the registry (fk161/fk177/fk185),
   each emitted document preloads its hero at high priority with
   `imagesrcset`/`imagesizes` describing exactly the candidates its img can
@@ -299,12 +329,12 @@ independently rerun validate-features proof.
   to 342,786 B (from 501,858 B) with declarations byte-identical — and the
   largest remaining shipped assets are still the three sibling full-size
   heroes (stensattning-photo 385,866 B, quote-hero 362,898 B,
-  services-hero 345,948 B, re-measured 2026-11-16 at this tip), whose
-  complete recompression sits finished but unmerged on fk220's PR #149
-  pending the fk224 operator decision (see What works less well), with
+  services-hero 345,948 B, re-measured 2026-11-17 at this tip), whose
+  complete recompression fk220 closed without merging; the redo now has
+  its own record, fk252 (see What works less well), with
   every -640/-960 variant and the next-largest base
   (`gravjobb-photo.webp`, 148,896 B) efficiently sized.
-- Font delivery starts at parse time, is gate-enforced, and is now
+- Font delivery starts at parse time, is gate-enforced, and is
   documented in the catalog: since fk228 (PR #151, merge `80eb6bd`) the
   build injects one preload link per emitted woff2 asset — the site's
   76.7 KB of Fontsource-owned display and body fonts — into every
@@ -327,9 +357,10 @@ independently rerun validate-features proof.
   with a recorded reason, and the November 14 dependency-management child
   (fk214, PR #144) refreshed the Vite toolchain lockfile-only in range
   (vite 8.3.8, @vitejs/plugin-react 6.3.0, postcss 8.5.33) with
-  `package.json` byte-identical — re-verified through a fresh fk214 owning
-  read on November 16 (closed/done, its deferral backlog and coordinated
-  vitest-5 prompt unchanged). The deferral backlog covers the
+  `package.json` byte-identical — re-verified through fk214's owning read
+  on November 16 and unchanged since (no dependency child has run; its
+  deferral backlog and coordinated vitest-5 prompt stand). The deferral
+  backlog covers the
   exactly-pinned vitest/coverage-v8 4.1.9 pair, tailwindcss 4,
   tailwind-merge 3, typescript 7 main swap, lucide-react 1.x, jest-dom 7
   and the @types/node bump.
@@ -343,94 +374,85 @@ independently rerun validate-features proof.
   closed instead of emitting a partial record, with publication identity
   left as an operator-recorded host fact.
 - The autonomous factory keeps shipping through reviewed, merge-receipted
-  tasks: this is the eighteenth consecutive roadmap refresh, each
+  tasks: this is the nineteenth consecutive roadmap refresh, each
   reconciling the previous one against owning records before linking new
-  work. The loop's throughput is visible in this baseline: four merges
-  landed between fk231's closing read and this tip in about a day
-  (fk232 and fk233 the same evening it linked them, fk238 and fk237 the
-  next afternoon, with fk220's fifth PR unmerged on the human decision),
-  and the steering loop stays fast: fk232, linked by fk231 at
-  18:54:22Z on November 15, closed delivered at 19:10:36Z — sixteen
-  minutes link-to-close — with fk233 at twenty-five minutes, and the
-  November 16 automation children both delivered within about fifty
-  minutes of their creation (fk238 at ~26 minutes, fk237 at ~50). This
-  refresh's own links (fk242, fk243) were created and read back open
-  with exact labels. The chain also absorbs adverse timing without
-  losing accuracy: fk231's investigate handoff anticipated a stale
-  base for this worktree, the prepared checkout arrived at the tip
-  instead, and this refresh's rows are reconciled from fresh owning
-  reads at that tip rather than the anticipated re-baseline.
+  work. The loop's throughput is visible in this baseline: five merges
+  landed between fk241's baseline and this tip in about a day
+  (fk241's own PR, then fk243 and fk242 the same evening it linked them,
+  fk247 and fk248 the next afternoon), and the steering loop stays fast:
+  fk243, linked by fk241 at 19:55:01Z on November 16, closed delivered at
+  20:31:35Z — thirty-six minutes link-to-close — with fk242 at
+  sixty-six minutes, and the November 17 automation children delivered
+  within about twenty and thirty-five minutes of creation (fk247 at ~19
+  minutes, fk248 at ~34). This refresh's own links (fk252, fk253) were
+  created and read back open with exact labels. The chain also absorbs
+  adverse timing without losing accuracy: this investigation's snapshot
+  was stale at `c0e17d2`, the prepared build checkout arrived at the
+  `30f72ae` tip instead, and this refresh's rows are reconciled from
+  fresh owning reads at that tip rather than the stale handoff — the
+  documented fk187/fk197/fk219/fk231/fk241 re-preparation discipline.
+  It also absorbs closed-out deliveries without losing work: fk220's
+  unmerged recompression became fk252's re-owned redo task under
+  fk220's own option-3 wording, with fk220's measured numbers kept as
+  the reference targets.
 
 ### What works less well and what to improve
 
 - The three largest shipped assets are the full-size heroes whose sibling
-  fk209 just fixed, and their complete recompression is **finished but
-  unmerged**: on main, `stensattning-photo.webp` still measures 385,866 B
-  and serves `/stensattning/` first paint, `quote-hero.webp` 362,898 B
-  serves `/offertberakning/`, and `services-hero.webp` 345,948 B serves
-  `/tjanster/` (re-measured 2026-11-16 at this tip, unchanged from
-  fk231's listing). [fk220](https://app.faktorial.ai/projects/alvalinus/tasks/fk220)
-  (linked by fk219 on 2026-11-14, labels `priority: medium` and
-  `size:medium`) delivered the work on PR #149 — stensattning-photo
-  385,866 → 262,640 B (−31.9%), quote-hero 362,898 → 253,714 B (−30.1%),
-  services-hero 345,948 → 241,842 B (−30.1%), total 1,094,712 → 758,196 B,
-  dimensions and every declaration unchanged — and canonical quality passed
-  268/268 at its head before review ran, but the review stage's net-change
-  gate counts only textual diff lines (`git diff --numstat` prints `-` for
-  binaries), returned "zero net changes" for the three-binary diff, and
-  bounced the PR. fk220 now waits on the operator's answer to
-  build-clarification
-  [fk224](https://app.faktorial.ai/projects/alvalinus/tasks/fk224) (open
-  since 2026-11-14T19:27Z, unanswered at these reads: bounded gate-prose
-  fix, a binary-aware review gate, or close without merging). Until that
-  decision lands, the 336,516-byte total saving stays off main and this
-  roadmap records fk220 as unresolved blocking work — owned by its own
-  record, never duplicated by a new task.
-- Three catalog passages now contradict delivered main, and no task
-  carried their reconciliation between the deliveries that made them
-  stale and this refresh. `docs/features/quote-calculators.md` still
-  states "These parameters are source constants, not maintainer-editable
-  content" in its source section, still carries "a price change is a code
-  change rather than a content edit" in Works Less Well, and still lists
-  the price-registry move as a roadmap Fix item — all retired by fk232's
-  delivered registry pricing, and the stale sentences survived fk233's
-  own edit to the same document the same evening.
-  `docs/features/navigation-and-recovery.md` still records "Empty-services
-  feedback provides no inline retry or contact body" under What Works
-  Less Well — retired by fk221's delivered contact action on November 14,
-  and the stale line survived fk237's edit to the same document on
-  November 16. And no docs/features record covers fk238's delivered 36px
-  desktop tap targets at all. This refresh linked the reconciliation:
-  [fk242](https://app.faktorial.ai/projects/alvalinus/tasks/fk242)
-  (created and read back open 2026-11-16T19:54Z with labels
-  `priority: medium` and `size:medium`) re-reconciles the two drifted
-  documents and maps the fk238 delivery into F4 with its owning test,
-  following the fk227/fk237 docs-and-manifest pattern with the
-  `feature-manifest-integrity` proof. Owned by fk242's record; recorded
-  once here, not awaited or duplicated.
-- The staffing inquiry's offered rate is captured as a single number, so
-  the VAT basis of that rate relies on whatever the visitor happens to
-  write in the description (staffing-inquiry.md's own Works-Less-Well
-  text): the company reading a submitted inquiry cannot tell what the
-  offered rate includes without asking separately. The quote calculators'
-  VAT-status confirmation stays operator-owned and separate; this form
-  gap is a bounded capture problem, so this refresh linked it:
-  [fk243](https://app.faktorial.ai/projects/alvalinus/tasks/fk243)
-  (created and read back open 2026-11-16T19:55Z with the same labels)
-  adds one registry-declared, optional Swedish affordance letting the
-  visitor state the rate's VAT basis and carries the stated basis into
-  the mail draft, assuming and confirming no VAT status anywhere. Owned
-  by fk243's record; recorded once here, not awaited or duplicated.
-- The standing "Momsstatus ej bekräftad" label on both quote calculators
-  means visitors cannot tell whether the preliminary total includes VAT,
+  fk209 fixed, and their complete recompression **never landed**: on main,
+  `stensattning-photo.webp` still measures 385,866 B and serves
+  `/stensattning/` first paint, `quote-hero.webp` 362,898 B serves
+  `/offertberakning/`, and `services-hero.webp` 345,948 B serves
+  `/tjanster/` (re-measured 2026-11-17 at this tip, unchanged from
+  fk241's listing). [fk220](https://app.faktorial.ai/projects/alvalinus/tasks/fk220)
+  delivered the work on PR #149 — stensattning-photo 385,866 → 262,640 B
+  (−31.9%), quote-hero 362,898 → 253,714 B (−30.1%), services-hero
+  345,948 → 241,842 B (−30.1%), total 1,094,712 → 758,196 B, dimensions
+  and every declaration unchanged — quality passed 268/268 at its head,
+  but the review stage's textual-line net-change gate cannot see a
+  binaries-only diff and bounced the PR; fk220 closed approved on
+  2026-11-17 without merging (its fk224 clarification's recorded
+  resolution text is not visible in the owning records). This refresh
+  created the redo task fk220's own wording called for:
+  [fk252](https://app.faktorial.ai/projects/alvalinus/tasks/fk252)
+  (created and read back open 2026-11-17T20:58:37Z with labels
+  `priority: medium` and `size:medium`) redoes the three-hero
+  recompression at unchanged dimensions using fk220's measured numbers as
+  reference targets, and — unlike fk220's binaries-only PR — carries the
+  one stale-prose fix the recompression makes obsolete (the
+  `heroAssetByteBudget` JSDoc example in
+  [route-artifacts.mjs](../scripts/route-artifacts.mjs) still citing
+  stensattning-photo at 385,866 B, verified stale at this tip), mirroring
+  fk209's accepted gate-prose fix, because whether the review gate is now
+  binary-aware is unverified. Owned by fk252's record; recorded once
+  here, not awaited or duplicated.
+- A shared quote link restores the measurements but drops the visitor's
+  free-text notes: [quote-share.ts](../src/lib/quote-share.ts) encodes
+  only `yta`, `lass`, `asfalt` and `langd` (verified at this tip), so a
+  recipient of a shared link sees the numbers but an empty notes field —
+  the context the sender wrote is lost. fk233's own scope deliberately
+  excluded the note (its mail draft still carries it), and fk247's
+  clipboard feedback made copying reliable but did not change the
+  parameter set. This refresh linked the carry:
+  [fk253](https://app.faktorial.ai/projects/alvalinus/tasks/fk253)
+  (created and read back open 2026-11-17T20:58:50Z with the same labels)
+  adds one fixed notes parameter to both calculators' share links
+  following fk233's tolerant-decode pattern and fk247's
+  feedback-preserving edit boundary, pinned by deterministic in-memory
+  tests. Owned by fk253's record; recorded once here, not awaited or
+  duplicated.
+- The quote calculators' standing "Momsstatus ej bekräftad" label still
+  means visitors cannot tell whether a preliminary total includes VAT,
   which weakens the number as a budgeting input. Confirming the VAT
   treatment and changing the label is an operator decision; no agent
-  carries it. The drainage calculator similarly prices length only, so
-  depth, soil and access variations stay invisible to the visitor even
-  though the disclaimer says scope is assessed later — owner-defined
-  pricing rules and owner-reviewed Swedish claims are editorial work
-  (quote-calculators.md's and service-selection.md's own records), not
-  linked issues.
+  carries it (fk243's delivered capture covers the staffing inquiry's
+  offered rate, deliberately not the calculators' totals). The drainage
+  calculator similarly prices length only, so depth, soil and access
+  variations stay invisible to the visitor even though the disclaimer
+  says scope is assessed later — owner-defined pricing rules and
+  owner-reviewed Swedish claims are editorial work
+  (quote-calculators.md's and service-selection.md's own reconciled
+  records), not linked issues.
 - Photography remains partially editorial: the three delivered canvas
   photographs, the responsive quote hero and the responsive services hero
   sit beside still-outstanding requests — a real Trädgårdsplanering photo
@@ -453,9 +475,9 @@ independently rerun validate-features proof.
 - fk120's static-client caveat stands: the calculators' internal prices and
   formulas are readable in the shipped source; truly secret prices cannot be
   kept in a static client, so the totals stay estimates pending a real quote.
-- fk149's and fk214's documented deferrals stand, re-verified on November 16
-  through a fresh fk214 owning read (closed/done, PR #144, its deferral
-  backlog and coordinated-bump prompt unchanged on the record): the vitest
+- fk149's and fk214's documented deferrals stand (fk241's fresh fk214
+  owning read on November 16 confirmed the backlog; no dependency child
+  has run since): the vitest
   5 + coverage-v8 5 migration
   carries fk214's own follow-up prompt (the pair is exactly pinned at
   4.1.9 and must move together), the other major jumps (tailwindcss 4,
@@ -464,19 +486,23 @@ independently rerun validate-features proof.
   npm-audit findings remain documented rather than forced. These stay on
   the dependency-management automation's records; this refresh creates no
   duplicate issue for them.
-- Six delivery-summary follow-up prompts stay queued on their own records,
-  each re-verified through a fresh owning read on November 16: fk171's
-  contrast-test hardening against CSS formatting churn; fk183's F2
-  re-stamp (its F3 half was consumed by fk203); fk195's real-device iOS
+- Seven delivery-summary follow-up prompts stay queued on their own
+  closed records, none consumed by the intervening automation children
+  (fk247 and fk248, both read in full at this refresh, delivered other
+  scopes): fk171's contrast-test hardening against CSS formatting churn;
+  fk183's F2 re-stamp (its F3 half was consumed by fk203; fk248's
+  November 17 pass again left F2 untouched); fk195's real-device iOS
   zoom verification (jsdom cannot reproduce it); fk228's browser
-  measurement of the font-preload head start (DevTools/Lighthouse
-  waterfall, delivered head `80eb6bd` vs pre-change base `4822524`); and
-  fk238's small-tap-target sweep of the footer navigation links, the
-  Inventory route chips and the NotFound shortcut pills — the newest
-  queue, from the November 16 delivery. This static-test environment has
-  no browser automation, rendered inspection is not a delivery
-  prerequisite in this lane, and each prompt has a named owning record —
-  so none is duplicated as an issue here.
+  measurement of the font-preload head start; fk238's small-tap-target
+  sweep of the footer navigation links, the Inventory route chips and
+  the NotFound shortcut pills (re-read on fk238's own record at this
+  refresh, still queued); and fk248's new F6-US4 print-rendering mapping
+  prompt — mapping the print hand-off's actual source entry point and
+  test evidence into `docs/features/backend-entry-points.json` and the
+  F6 story manifest, queued November 17 on its own record. This
+  static-test environment has no browser automation, rendered inspection
+  is not a delivery prerequisite in this lane, and each prompt has a
+  named owning record — so none is duplicated as an issue here.
 
 ## Delivered work and ownership reconciliation
 
@@ -488,25 +514,27 @@ November 6 during the fk123 refresh, on November 7 during the fk153 refresh,
 on November 8 during the fk163 refresh, on November 10 during the fk173
 refresh, on November 11 during the fk187 refresh, on November 12 during the
 fk197 refresh, on November 13 during the fk207 refresh, on November 14
-during the fk219 refresh, on November 15 during the fk231 refresh (whose
-own reads are compressed to a pointer below), and again on November 16
-during this fk241 refresh. This checkout's prepared base equals this
-baseline `c0e17d2`: the checkout advanced from fk231's reviewed `80eb6bd`
-baseline through the fk232, fk233, fk238 and fk237 merges in that order
-(PRs #153, #154, #155 and #156). All four are closed/done with merge
-receipts and passed native run-quality runs (receipts below); fk237's
-required `validate-features` proof passed on its candidate and was
-independently re-run on the merged candidate, and the other three carry
-no proof obligations beyond ordinary quality. The fifth PR in the
-window, fk220's #149, is open and unmerged: fk220 reads back open in
-build, waiting on the operator's unanswered fk224 build-clarification
-decision, with its complete recompression recorded on its own branch
-(numbers above) and quality passed 268/268 at its head — unresolved
-blocking work, recorded once, not duplicated. During the November 16
-owning reads, fk242 and fk243 — the two follow-up issues this refresh
-creates — read back open at 19:54Z/19:55Z with labels `priority: medium`
-and `size:medium`, so both are owned by their own records and recorded
-once in the short-term section below.
+during the fk219 refresh, on November 15 during the fk231 refresh, on
+November 16 during the fk241 refresh (both compressed to pointers below),
+and again on November 17 during this fk251 refresh. This checkout's
+prepared base equals this baseline `30f72ae`: the checkout advanced from
+fk241's reviewed `c0e17d2` baseline through the fk241, fk243, fk242,
+fk247 and fk248 merges in that order (PRs #157–#161). All five are
+closed/done with merge receipts and passed native run-quality runs
+(receipts below); fk242 and fk248 declared required `validate-features`
+proofs whose issue-level projections report `missing_evidence` on their
+closed records (fk248's Build Update records an exploratory valid pass on
+its candidate; fk237's generation recorded the verifier independently
+rerunning such proofs on merged candidates), and the other three carry
+no proof obligations beyond ordinary quality. The window's sixth PR —
+fk220's #149 — never merged: fk220 closed approved on 2026-11-17
+without a merge receipt alongside fk224, whose recorded resolution text
+is not visible in the owning records; the recompression is recorded as
+never landed above and its redo is fk252's linked scope below. During
+the November 17 owning reads, fk252 and fk253 — the two follow-up issues
+this refresh creates — read back open at 20:58:37Z/20:58:50Z with labels
+`priority: medium` and `size:medium`, so both are owned by their own
+records and recorded once in the short-term section below.
 
 | Work | Current owning evidence | Disposition |
 | --- | --- | --- |
@@ -541,11 +569,11 @@ once in the short-term section below.
 | [fk115](https://app.faktorial.ai/projects/alvalinus/tasks/fk115), registry-declared shared chrome strings | Closed/done; PR #101, merge `1620bbd`; native quality pass at head `35d5541`. Verified in source at this baseline: the `chrome` section declares brand, not-found (with `{path}` template), breadcrumb, contact band, footer and service strings ([siteContent.ts](../src/data/siteContent.ts)); Header, Footer, NotFound, PageHero, ServicePage and ContactLinkBand consume them. | Delivered. The former "renderer-side shared chrome" gap is retired; the small leftover set fk134 reserved shipped through fk144, below. fk221 delivered the same chrome section's empty-state contact action (receipt below). |
 | [fk112](https://app.faktorial.ai/projects/alvalinus/tasks/fk112), per-subpage hero preloads | Closed/done; PR #102, merge `8e7a8e9`; native quality pass at head `5a3083a` (conflict-resolution run). Verified in source at this baseline: every route declares `heroPhotoAssetPath` ([types/site.ts](../src/types/site.ts)), heroes render from it ([SiteHomePage.tsx](../src/pages/SiteHomePage.tsx)), and `routeHeroPreloadHref` validates and stamps each emitted subpage document's high-priority preload from the same field ([route-artifacts.mjs](../scripts/route-artifacts.mjs)); the renderer-side `PAGE_HERO_PHOTOS` map is gone. Its scheduling projection reports `record_state=missing` while the owning record is closed/done. | Delivered. fk113's "in-flight automation child" description is retired; fk122's quote-hero WebP conversion below completed the hero-asset work. |
 | [fk120](https://app.faktorial.ai/projects/alvalinus/tasks/fk120), drainage quote calculator | Closed/done; PR #103, merge `8230760`; native quality pass at head `dbe5498`. Verified in source at this baseline: `/draneringsberakning/` renders the per-meter drainage calculator ([DrainageQuotePage.tsx](../src/pages/DrainageQuotePage.tsx)), `drainageTotal` encodes the 3 500/3 000 kr tiers plus 6 900 kr fixed ([quote.ts](../src/lib/quote.ts)), the Dränering service page carries the registry-declared calculator link band, and the customer view, printout and email show only the preliminary total. | Delivered by operator-authored work. The quote-page copy moved into the registry through fk140 and the structure through fk135; the pricing constants moved into the registry through fk232 (receipt below). |
-| [fk121](https://app.faktorial.ai/projects/alvalinus/tasks/fk121), staffing inquiry page | Closed/done; PR #104, merge `4294bb2`; native quality pass at head `7b3ca1a` (conflict-resolution run). Verified in source at this baseline: `/inhyrning/` (route kind `inquiry`) renders the inquiry form with Swedish validation and mail-draft handoff ([InquiryPage.tsx](../src/pages/InquiryPage.tsx)), pinned by [InquiryPage.test.tsx](../src/pages/InquiryPage.test.tsx) and documented in [staffing-inquiry.md](features/staffing-inquiry.md). | Delivered by operator-authored work; its renderer-side Swedish copy was declared in the registry by fk154, below. Its rate field's uncaptured VAT basis is fk243's linked scope (created this refresh). |
+| [fk121](https://app.faktorial.ai/projects/alvalinus/tasks/fk121), staffing inquiry page | Closed/done; PR #104, merge `4294bb2`; native quality pass at head `7b3ca1a` (conflict-resolution run). Verified in source at this baseline: `/inhyrning/` (route kind `inquiry`) renders the inquiry form with Swedish validation and mail-draft handoff ([InquiryPage.tsx](../src/pages/InquiryPage.tsx)), pinned by [InquiryPage.test.tsx](../src/pages/InquiryPage.test.tsx) and documented in [staffing-inquiry.md](features/staffing-inquiry.md). | Delivered by operator-authored work; its renderer-side Swedish copy was declared in the registry by fk154, below. Its rate field's uncaptured VAT basis was fk243's linked scope — delivered (receipt below). |
 | [fk127](https://app.faktorial.ai/projects/alvalinus/tasks/fk127), Kalkyler menu links | Closed/done; PR #105, merge `0ed6ce0`; native quality pass at head `7d8cfa9`. Verified in source at this baseline: `chrome.calcMenu` declares the Kalkyler group — Dränering → `/draneringsberakning/`, Uppfart → `/offertberakning/#uppfart` ([siteContent.ts](../src/data/siteContent.ts)) — and desktop and mobile menus render it. | Delivered by operator-authored work. |
 | [fk128](https://app.faktorial.ai/projects/alvalinus/tasks/fk128), Inhyrning menu entry | Closed/done; PR #106, merge `a890c30`; native quality pass at head `2864f86`. Verified in source at this baseline: the header and mobile menu include the Inhyrning route through the registry-derived nav lists ([SiteHomePage.tsx](../src/pages/SiteHomePage.tsx)). | Delivered by operator-authored work. |
 | Operator photo selection (commit `1bb124a`) | No owning task record; a direct operator-authored commit on main (2026-11-04): selected canvas photographs replace the generated placeholders for Stensättning, Markarbete and Grävjobb cards and page heroes; [image-requests.md](image-requests.md) records the canvas-attachment provenance and retires the Grävjobb request. | Delivered. Editorial photography landed outside the task machinery; recorded once here so no agent recreates it. |
-| [fk122](https://app.faktorial.ai/projects/alvalinus/tasks/fk122), quote-hero WebP conversion | Closed/done 2026-11-06T13:32Z; PR #107, head `8378d87` → merge `b4afea0`; native run-quality pass at head `8378d87`. Verified in source at this baseline: `quote-hero.png` is absent from `public/page-visuals`, the `quote-hero` 640w/960w/full WebP trio is present, and the quote route's registry path, rendered `srcSet` and stamped preload agree. | Delivered. fk123's "in build" description is retired; the quote-hero bytes work is complete. The full-size base's byte weight is now fk220's linked scope below. |
+| [fk122](https://app.faktorial.ai/projects/alvalinus/tasks/fk122), quote-hero WebP conversion | Closed/done 2026-11-06T13:32Z; PR #107, head `8378d87` → merge `b4afea0`; native run-quality pass at head `8378d87`. Verified in source at this baseline: `quote-hero.png` is absent from `public/page-visuals`, the `quote-hero` 640w/960w/full WebP trio is present, and the quote route's registry path, rendered `srcSet` and stamped preload agree. | Delivered. fk123's "in build" description is retired; the quote-hero bytes work is complete. The full-size base's byte weight became fk220's scope (closed 2026-11-17 without merging; its redo is fk252's linked scope, receipt below). |
 | [fk133](https://app.faktorial.ai/projects/alvalinus/tasks/fk133), quote-calculator feature catalog | Closed/done 2026-11-06T13:50Z; PR #109, head `8af176d` → merge `4050621`; native run-quality pass at head `8af176d`; the native `validate-features` pass recorded at that head stands in the delivery record, while the issue-level proof projection still reports `missing_evidence` — the owning record is closed/done and the projection does not reopen it. Verified in source at this baseline: [features.json](features/features.json) carries six features including F6, and the [route inventory](current-public-route-inventory.md) no longer claims the calculators are outside the catalog. | Delivered. fk123's "in build" description is retired; the quote-route catalog gap is closed. |
 | [fk134](https://app.faktorial.ai/projects/alvalinus/tasks/fk134), registry-declared quote-page copy | Closed 2026-11-06T19:00Z with no build PR of its own. Its partially staged worktree branch (`agent-go/task-fk134`) was salvaged into plan fk139, whose children fk140 and fk144 delivered the scope; fk134's record head carries the merged state it was rebased onto. | Delivered via plan fk139. The salvage story is recorded once here; no reopen and no duplicate delivery. |
 | [fk139](https://app.faktorial.ai/projects/alvalinus/tasks/fk139), quote-copy delivery plan | Plan closed/done 2026-11-06T19:56Z; all four plan items complete; PR #110. | Delivered through its children fk140 and fk144. fk123's fk134/fk135 "open next step" rows are retired by the deliveries below. |
@@ -557,24 +585,24 @@ once in the short-term section below.
 | [fk152](https://app.faktorial.ai/projects/alvalinus/tasks/fk152), feature-catalog stamp refresh | Closed/done 2026-11-07T14:17Z; PR #115, head `81093b5` → merge `18da5d9`; native run-quality pass at head `81093b5`; its delivery summary records the validate-features pass at that head while the closed record's issue-level proof projection still reports `missing_evidence` (the owning record is closed/done and the projection does not reopen it). Verified in source at this baseline: `features.json` stamps read 2026-11-07 on all six features. | Delivered. fk153's "in build" description is retired; the story-document stamp re-read it deferred was absorbed by the later fk162/fk172/fk183 reconciliations. |
 | [fk153](https://app.faktorial.ai/projects/alvalinus/tasks/fk153), previous roadmap | Closed/done 2026-11-07T14:25Z; PR #116, head `89705da` → merge `e2ca438`; native run-quality pass at head `89705da`. Document read in full during the fk163 refresh. | Superseded assessment; its Next 1/Next 2 shipped as fk154/fk155, and its in-flight fk151/fk152 reservations are delivered above. |
 | [fk155](https://app.faktorial.ai/projects/alvalinus/tasks/fk155), quote money-logic unit tests | Closed/done 2026-11-07T14:35Z; PR #117, head `41dac58` → merge `2fdfc82`; native run-quality pass at head `41dac58`. Verified in source at this baseline: [quote.test.ts](../src/lib/quote.test.ts) pins both totals' tiering and flags, the sv-SE formatting and the template placeholder contract. | Delivered. The former "money logic exercised only through DOM assertions" gap is retired. fk232's registry-derived pins extend the same file (receipt below). |
-| [fk154](https://app.faktorial.ai/projects/alvalinus/tasks/fk154), inquiry-page registry declaration | Closed/done 2026-11-07T14:46Z; PR #118, head `8a33f1a` → merge `feef822` (fk163's baseline); native run-quality pass at head `8a33f1a`. Verified in source at this baseline: `content.inquiry` is declared on the typed registry and [InquiryPage.tsx](../src/pages/InquiryPage.tsx) renders registry fields with registry-derived pins. | Delivered. The former "last renderer-side Swedish surface" gap is retired; the route/service registry is now the single Swedish declaration source for the delivered surface. F5's catalog records predated this delivery; fk176's delivery below reconciled them. fk243's linked VAT-basis capture extends the same declaration pattern. |
-| [fk161](https://app.faktorial.ai/projects/alvalinus/tasks/fk161), services-hero responsive variants | Closed/done 2026-11-08T15:05Z; PR #119, head `2d28b86` (after a repair commit fixing two strict-null test errors) → merge `7396db5`; native run-quality pass at head `2d28b86`. Verified in source at this baseline: `services-hero-640.webp`/`-960.webp` exist, the services route declares `heroPhotoSrcSet`/`heroPhotoSizes`, the stamper emits `imagesrcset`/`imagesizes` exactly for declaring routes, and the gate existence-checks declared candidates. | Delivered. fk163's "in review" description is retired. Its delivery summary's follow-up prompt — migrating the remaining hero srcsets into registry declarations — was consumed by the linked fk177 below, recorded once so the prompt and the task are not duplicated. The full-size base's byte weight is now fk220's linked scope below. |
+| [fk154](https://app.faktorial.ai/projects/alvalinus/tasks/fk154), inquiry-page registry declaration | Closed/done 2026-11-07T14:46Z; PR #118, head `8a33f1a` → merge `feef822` (fk163's baseline); native run-quality pass at head `8a33f1a`. Verified in source at this baseline: `content.inquiry` is declared on the typed registry and [InquiryPage.tsx](../src/pages/InquiryPage.tsx) renders registry fields with registry-derived pins. | Delivered. The former "last renderer-side Swedish surface" gap is retired; the route/service registry is now the single Swedish declaration source for the delivered surface. F5's catalog records predated this delivery; fk176's delivery below reconciled them. fk243's delivered VAT-basis select (receipt below) extends the same declaration pattern. |
+| [fk161](https://app.faktorial.ai/projects/alvalinus/tasks/fk161), services-hero responsive variants | Closed/done 2026-11-08T15:05Z; PR #119, head `2d28b86` (after a repair commit fixing two strict-null test errors) → merge `7396db5`; native run-quality pass at head `2d28b86`. Verified in source at this baseline: `services-hero-640.webp`/`-960.webp` exist, the services route declares `heroPhotoSrcSet`/`heroPhotoSizes`, the stamper emits `imagesrcset`/`imagesizes` exactly for declaring routes, and the gate existence-checks declared candidates. | Delivered. fk163's "in review" description is retired. Its delivery summary's follow-up prompt — migrating the remaining hero srcsets into registry declarations — was consumed by the linked fk177 below, recorded once so the prompt and the task are not duplicated. The full-size base's byte weight became fk220's scope (closed without merging; fk252's redo is linked below). |
 | [fk162](https://app.faktorial.ai/projects/alvalinus/tasks/fk162), feature-catalog reconciliation | Closed/done 2026-11-08T15:23Z; PR #120, head `b81d4e1` → merge `be106db`; native run-quality pass at head `b81d4e1`; its delivery records the validate-features pass on the candidate (digest `dfa2a48a…`) while the closed record's issue-level proof projection still reports `missing_evidence` — the owning record is closed/done and the projection does not reopen it. Verified in source at this baseline: F6 lists `QuotePageShared.tsx` in both manifests, quote-calculators.md and navigation-and-recovery.md are stamped 2026-11-08, and F4-US1 maps the chrome-rendering test. | Delivered. fk163's "in build" description is retired. Its F5 follow-up shipped as the linked fk176 below. |
 | [fk163](https://app.faktorial.ai/projects/alvalinus/tasks/fk163), previous roadmap | Closed/done 2026-11-08T15:27Z; PR #121, head `43c156c` → merge `c084a50`; native run-quality pass at head `43c156c`. Document read in full during the fk173 refresh. | Superseded assessment; its Next 1/Next 2 shipped as fk164/fk165 below, and its in-flight fk161/fk162 reservations are delivered above. |
 | [fk164](https://app.faktorial.ai/projects/alvalinus/tasks/fk164), dead-hero re-point and gate extension | Closed/done 2026-11-08T15:35Z; PR #122, head `ade983b` → merge `3b19a91`; native run-quality pass at head `ade983b`. Verified in source at this baseline: `/om-oss/` and `/kontakt/` declare the in-tree `svard-entreprenad-about.svg`/`-contact.svg` heroes ([siteContent.ts](../src/data/siteContent.ts):88/:172), no `about-hero.webp`/`contact-hero.webp` exists or is declared, and the gate rejects any route whose declared hero path is missing. | Delivered. fk163's "open next step" description is retired; the dead-reference class is closed at the declaration and gate level. |
 | [fk165](https://app.faktorial.ai/projects/alvalinus/tasks/fk165), release-provenance command | Closed/done 2026-11-08T15:44Z; PR #123, head `063e171` → merge `72af228`; native run-quality pass at head `063e171`. Verified in source at this baseline: [release-provenance.mjs](../scripts/release-provenance.mjs), the `write-release-provenance` CLI and its fixture tests exist, and [release-runbook.md](release-runbook.md) references the composed path with publication identity kept operator-recorded. | Delivered. fk163's "open next step" description is retired; the four-identity sequence is one fail-closed command. |
 | [fk172](https://app.faktorial.ai/projects/alvalinus/tasks/fk172), feature-catalog re-verification | Closed/done 2026-11-10T08:02Z; PR #124, head `69d1bec` → merge `7931e16`; native run-quality pass at head `69d1bec`; its delivery records the validate-features pass on the candidate (digest `b7527970…`) while the closed record's issue-level proof projection still reports `missing_evidence` — the owning record is closed/done and the projection does not reopen it. Verified in source at this baseline: the README reconciliation note and 2026-11-10 stamps on F2/F4/F6, the SVG-hero prose corrections in company-confidence.md and navigation-and-recovery.md, and F5 left at 2026-11-07 on a rationale its own record states ("nothing touched their documented behavior"). | Delivered. The November 9 feature-refinement child, merged November 10. Its F5 rationale did not hold against fk154's post-stamp merge; fk176's delivery corrected the F5 records instead of reopening fk172 work. |
-| [fk171](https://app.faktorial.ai/projects/alvalinus/tasks/fk171), WCAG field-border contrast | Closed/done 2026-11-10T14:36Z; PR #125, head `1f6aba4` → merge `ea2d472` (fk173's baseline); native run-quality pass 235/235 at head `1f6aba4`. Verified in source at this baseline: the three field-boundary declarations draw `#64748b` ([QuotePage.css](../src/pages/QuotePage.css):15/:18, [InquiryPage.css](../src/pages/InquiryPage.css):19), [the focused contrast test](../src/styles.field-border-contrast.test.ts) computes the ratio from raw CSS, and `test.css.include` is generalized. | Delivered. The November 9 frontend-optimization child, merged November 10. Its delivery summary's follow-up prompt — hardening the contrast test's selector matching against CSS formatting churn — stays on fk171's record (re-verified 2026-11-16); the recurring frontend-optimization automation's November 13–16 runs (fk205, fk215, fk238) delivered other hardening instead, so the prompt remains queued there unconsumed. |
-| [fk173](https://app.faktorial.ai/projects/alvalinus/tasks/fk173), previous roadmap | Closed/done 2026-11-10T16:04Z; PR #128, head `e51ccf3` → merge `74ef9ae` (on fk177's `719a11e` base); native run-quality pass at head `e51ccf3`. Document read in full during the fk187 refresh. | Superseded assessment; its two linked next steps were both delivered before it closed — fk176 merged at 15:24Z and fk177 at 15:53Z on November 10 (receipts above and below) — and its works-less-well rows are re-baselined here onto the `c0e17d2` tip. |
-| [fk176](https://app.faktorial.ai/projects/alvalinus/tasks/fk176), F5 catalog reconciliation | Closed/done 2026-11-10T15:24Z; PR #126, head `b71a47a` → merge `ab28b45` (fk173's baseline); native run-quality pass 235/235 at head `b71a47a`; the required `validate-features` proof passed on its candidate (aggregate digest `f2589022…`, no findings). Verified in source at this baseline: [staffing-inquiry.md](features/staffing-inquiry.md) stamped 2026-11-10 names the registry-declared `inquiry` copy with InquiryPage.tsx's remaining runtime ownership, the shared inventory's F5 code-path descriptions match the fk154 split, and the README carries the fk176 reconciliation sentence. | Delivered. Created and linked by the fk173 refresh at 14:49:33Z (read back open with labels `priority: medium` and `size:medium`), picked up from the roadmap and merged within roughly half an hour — consuming fk162's dropped F5 follow-up. |
+| [fk171](https://app.faktorial.ai/projects/alvalinus/tasks/fk171), WCAG field-border contrast | Closed/done 2026-11-10T14:36Z; PR #125, head `1f6aba4` → merge `ea2d472` (fk173's baseline); native run-quality pass 235/235 at head `1f6aba4`. Verified in source at this baseline: the three field-boundary declarations draw `#64748b` ([QuotePage.css](../src/pages/QuotePage.css):15/:18, [InquiryPage.css](../src/pages/InquiryPage.css):19), [the focused contrast test](../src/styles.field-border-contrast.test.ts) computes the ratio from raw CSS, and `test.css.include` is generalized. | Delivered. The November 9 frontend-optimization child, merged November 10. Its delivery summary's follow-up prompt — hardening the contrast test's selector matching against CSS formatting churn — stays on fk171's record (fk241 re-verified it 2026-11-16; the intervening frontend-optimization children fk205/fk215/fk238/fk247 delivered other hardening instead, so the prompt remains queued there unconsumed). |
+| [fk173](https://app.faktorial.ai/projects/alvalinus/tasks/fk173), previous roadmap | Closed/done 2026-11-10T16:04Z; PR #128, head `e51ccf3` → merge `74ef9ae` (on fk177's `719a11e` base); native run-quality pass at head `e51ccf3`. Document read in full during the fk187 refresh. | Superseded assessment; its two linked next steps were both delivered before it closed — fk176 merged at 15:24Z and fk177 at 15:53Z on November 10 (receipts above and below) — and its works-less-well rows are re-baselined here onto the `30f72ae` tip. |
+| [fk176](https://app.faktorial.ai/projects/alvalinus/tasks/fk176), F5 catalog reconciliation | Closed/done 2026-11-10T15:24Z; PR #126, head `b71a47a` → merge `ab28b45` (fk173's baseline); native run-quality pass 235/235 at head `b71a47a`; the required `validate-features` proof passed on its candidate (aggregate digest `f2589022…`, no findings). Verified in source at this baseline: [staffing-inquiry.md](features/staffing-inquiry.md) stamped 2026-11-10 names the registry-declared `inquiry` copy with InquiryPage.tsx's remaining runtime ownership, the shared inventory's F5 code-path descriptions match the fk154 split, and the README carries the fk176 reconciliation sentence. | Delivered. Created and linked by the fk173 refresh at 14:49:33Z (read back open with labels `priority: medium` and `size:medium`), picked up from the roadmap and merged within roughly half an hour — consuming fk162's dropped F5 follow-up. fk243's later delivery (receipt below) reconciled the same document for the VAT-basis capture. |
 | [fk177](https://app.faktorial.ai/projects/alvalinus/tasks/fk177), remaining hero srcset declarations | Closed/done 2026-11-10T15:53Z; PR #127, head `6a1d0f9` → merge `719a11e` (fk173's base); native run-quality pass at head `6a1d0f9` (run `3fb3ed43-7d2f-4ea2-8b2b-5f86efda0797-build-dmrnb0rhdqyc-quality`, re-read November 11). Verified in source at this baseline: the home, four `*-photo` service-detail, `/tradgardsplanering/` and `/offertberakning/` routes declare `heroPhotoSrcSet`/`heroPhotoSizes` byte-identical to the candidates their heroes rendered before, QuotePage.tsx reads the registry declaration instead of the inline literal, and `/draneringsberakning/` was deliberately left undeclared at that point (no variant family existed and its plain preload already matched). Its own investigation corrected fk173's nine-route count to seven mismatching heroes. | Delivered. fk173's linked Next 2, created and linked at 14:49:50Z (read back open with labels `priority: medium` and `size:medium`), delivered about an hour later. This was the last plain-preload mismatch class; fk185's delivery below completed the declaration set by adding the drainage-quote route. |
-| [fk183](https://app.faktorial.ai/projects/alvalinus/tasks/fk183), feature-catalog evidence mapping | Closed/done 2026-11-11T08:52Z; PR #129, head `8c50f1b` → merge `74475bb`; native run-quality pass at head `8c50f1b`; the delivery records the validate-features pass at that head (digest `63fd5b48…`, valid with no findings) while the closed record's issue-level proof projection still reports `missing_evidence` — the owning record is closed/done and the projection does not reopen it. Verified in source at this baseline: the identity manifest maps the three styles accessibility tests and `quote.test.ts` as 22 technical references at their strongest owning stories, seven story documents mirror the mappings, F1/F4/F5/F6 and the touched docs carry 2026-11-11 stamps, and the README names all eight mapped test files. | Delivered. The November 11 feature-refinement child (re-verified 2026-11-16; its F2 re-stamp prompt still queued). Its documented `.quote-send` token exclusion (delivery-summary comment only) was resolved by fk189's delivery (receipt below). Its follow-up prompt — re-reading F2/F3's source and re-stamping their records — was partially consumed on November 13: fk203 re-stamped F3 (alongside F1/F6) against the fk195/fk198/fk199 deltas, while F2 stays deliberately untouched and that remainder stays queued on fk183's record for the recurring feature-refinement automation; fk213's and fk227's later children again left F2 untouched. |
+| [fk183](https://app.faktorial.ai/projects/alvalinus/tasks/fk183), feature-catalog evidence mapping | Closed/done 2026-11-11T08:52Z; PR #129, head `8c50f1b` → merge `74475bb`; native run-quality pass at head `8c50f1b`; the delivery records the validate-features pass at that head (digest `63fd5b48…`, valid with no findings) while the closed record's issue-level proof projection still reports `missing_evidence` — the owning record is closed/done and the projection does not reopen it. Verified in source at this baseline: the identity manifest maps the three styles accessibility tests and `quote.test.ts` as 22 technical references at their strongest owning stories, seven story documents mirror the mappings, F1/F4/F5/F6 and the touched docs carry 2026-11-11 stamps, and the README names all eight mapped test files. | Delivered. The November 11 feature-refinement child. Its documented `.quote-send` token exclusion (delivery-summary comment only) was resolved by fk189's delivery (receipt below). Its follow-up prompt — re-reading F2/F3's source and re-stamping their records — was partially consumed on November 13: fk203 re-stamped F3 (alongside F1/F6) against the fk195/fk198/fk199 deltas, while F2 stays deliberately untouched — fk213's, fk227's, fk242's and fk248's later children again left F2 untouched — so that remainder stays queued on fk183's record for the recurring feature-refinement automation. |
 | [fk185](https://app.faktorial.ai/projects/alvalinus/tasks/fk185), drainage-quote hero srcset | Closed/done 2026-11-11T15:05Z; PR #130, head `3392f82` (after a one-array test-expectation repair) → merge `5465b66` (fk187's baseline); native run-quality pass at head `3392f82` (run `4089a89a-f737-451b-8978-57a0a2992125-build-dmsgykgpc8wo-quality`, re-read November 11 during the fk187 refresh). Verified in source at this baseline: the drainage-quote route declares `heroPhotoSrcSet` reusing the byte-identical `dranering-photo-400/-640.webp` variants (SHA-256 `d2c8b5f0…78760`, no new binaries) plus the 900w base, DrainageQuotePage reads the registry through QuotePageShell's hero props, and a focused test pins the rendered srcset/sizes. | Delivered. The November 11 frontend-optimization child; with fk177 it closes the whole preload/srcset mismatch class — all nine photo-hero routes now declare registry variants. **Its delivery summary's follow-up prompt is retired as factually stale**: it claims `/offertberakning/` "still hardcodes its srcset with a preload mismatch", but fk177 (PR #127, merge `719a11e`, closed 2026-11-10) already declared that route's srcset and moved QuotePage.tsx onto the registry — verified at this tip. Recorded once so the frontend-optimization automation does not redo delivered work. |
 | [fk189](https://app.faktorial.ai/projects/alvalinus/tasks/fk189), accent palette tokenization | Closed/done 2026-11-11T16:46Z; PR #132, head `7d21a757` → merge `3440d65` (directly on fk185's `5465b66`); native run-quality pass at head `7d21a757` (run `3d615243-ae57-4f41-a194-903ea77a62a5-build-dmsj3iyzdvz4-quality`, re-read November 12). Verified in source at this baseline: the quote/inquiry accent roles declare `hsl(var(--primary))`/`hsl(var(--primary-hover))` ([QuotePage.css](../src/pages/QuotePage.css):21/:28/:29/:35-36, [InquiryPage.css](../src/pages/InquiryPage.css):23), `--primary-hover: 18 84% 33%` joined `:root` ([styles.css](../src/styles.css)), [styles.page-accent-contrast.test.ts](../src/styles.page-accent-contrast.test.ts) pins the `.quote-send` white-on-background pairing at ≥4.5:1, and the F6-US5/F5-US2 story records and identity manifest name the test. | Delivered. fk187's linked Next 2, created 16:20:36Z November 11 and delivered within about half an hour of its link. The fk183-documented F6-US5 exclusion is resolved; the focus/selection hex residue fk189 scoped out was delivered by fk208 (receipt below). |
-| [fk187](https://app.faktorial.ai/projects/alvalinus/tasks/fk187), previous roadmap | Closed/done 2026-11-11T16:47Z; PR #131, head `1ec5bac` → merge `7eb567e` (on fk189's `3440d65`); native run-quality pass at head `1ec5bac` (run `179d297e-c222-45f7-8ab5-2f620d1b5770-build-dmsj2litfsvo-quality`, re-read November 12). Document read in full during the fk197 refresh. | Superseded assessment; its two linked next steps shipped around its own merge — fk189 at 16:46Z and fk188 at 16:53Z on November 11 (receipts above and below) — and its works-less-well rows were re-baselined by fk197, fk207, fk219, fk231 and again by this refresh onto the `c0e17d2` tip. |
+| [fk187](https://app.faktorial.ai/projects/alvalinus/tasks/fk187), previous roadmap | Closed/done 2026-11-11T16:47Z; PR #131, head `1ec5bac` → merge `7eb567e` (on fk189's `3440d65`); native run-quality pass at head `1ec5bac` (run `179d297e-c222-45f7-8ab5-2f620d1b5770-build-dmsj2litfsvo-quality`, re-read November 12). Document read in full during the fk197 refresh. | Superseded assessment; its two linked next steps shipped around its own merge — fk189 at 16:46Z and fk188 at 16:53Z on November 11 (receipts above and below) — and its works-less-well rows were re-baselined by fk197, fk207, fk219, fk231, fk241 and again by this refresh onto the `30f72ae` tip. |
 | [fk188](https://app.faktorial.ai/projects/alvalinus/tasks/fk188), per-route social-card imagery | Closed/done 2026-11-11T16:53Z; PR #133, head `71f21f79` → merge `36d7cba` (on fk187's `7eb567e`); native run-quality pass at head `71f21f79` (run `511c7c94-5af9-405a-8acf-1c5635c85136-build-dmsj80kgw840-quality`, re-read November 12). Verified in source at this baseline: the emitter substitutes `og:image`/`og:image:alt`/`twitter:image` from each route's registry-declared `heroPhotoAssetPath` with registry-declared Swedish alt text, the three SVG-hero routes carry the shared raster home hero, the root and 404 documents keep their home-branded sets, and the static gate existence-checks every emitted image path (fk164's pattern extended). | Delivered. fk187's linked Next 1, created 16:20:23Z November 11 and closed delivered about half an hour later. The former "home-branded social cards on every subpage" gap is retired for imagery as fk88 retired it for text. |
 | [fk193](https://app.faktorial.ai/projects/alvalinus/tasks/fk193), feature-catalog reconciliation | Closed/done 2026-11-12T09:26Z; PR #134, head `802f378b` → merge `c131651` (on fk188's `36d7cba`); native run-quality pass at head `802f378b` (run `64920971-6743-41d2-a965-6d8fabe9d755-build-dmt4btwcgr4g-quality`, re-read November 12); its required `feature-manifest-integrity` proof passed at acceptance. Verified in source at this baseline: navigation-and-recovery.md describes the drainage-hero variant family with the stale no-variant sentence gone, quote-calculators.md names both quote routes' declared srcsets and fk189's accent-test mapping, features.json carries 2026-11-12 stamps on F4/F6 only, and the README review history records the fk185/fk188/fk189 deltas. | Delivered. The November 12 feature-refinement child. F5 keeps its 2026-11-11 stamp because no reviewed task touched its surfaces beyond fk189's own story-record mapping. |
-| [fk195](https://app.faktorial.ai/projects/alvalinus/tasks/fk195), 16px contact-form floor | Closed/done 2026-11-12T15:25Z; PR #135, head `636126c` → merge `9e7dd70` (fk197's baseline, on fk193's `c131651`); native run-quality pass at head `636126c` (run `89ffb78b-1e2d-4f93-859d-b85b1511a4ad-build-dmtc0elqw268-quality`, re-read November 12, re-verified 2026-11-16). Verified in source at this baseline: `CONTACT_FIELD_BASE_CLASS` no longer carries the `sm:text-sm` downgrade, and the focused test pins `text-base` with no responsive text-size override on both the home and `/kontakt/` renderings. | Delivered. The November 12 frontend-optimization child; its delivery summary's real-device verification prompt stays on fk195's record (re-verified 2026-11-16; jsdom cannot reproduce iOS focus zoom). The same defect class on the quote pages was delivered by fk199 (receipt below). |
+| [fk195](https://app.faktorial.ai/projects/alvalinus/tasks/fk195), 16px contact-form floor | Closed/done 2026-11-12T15:25Z; PR #135, head `636126c` → merge `9e7dd70` (fk197's baseline, on fk193's `c131651`); native run-quality pass at head `636126c` (run `89ffb78b-1e2d-4f93-859d-b85b1511a4ad-build-dmtc0elqw268-quality`, re-read November 12, re-verified 2026-11-16). Verified in source at this baseline: `CONTACT_FIELD_BASE_CLASS` no longer carries the `sm:text-sm` downgrade, and the focused test pins `text-base` with no responsive text-size override on both the home and `/kontakt/` renderings. | Delivered. The November 12 frontend-optimization child; its delivery summary's real-device verification prompt stays on fk195's record (jsdom cannot reproduce iOS focus zoom; the intervening frontend-optimization children delivered other scopes, so it remains queued). The same defect class on the quote pages was delivered by fk199 (receipt below). |
 | [fk199](https://app.faktorial.ai/projects/alvalinus/tasks/fk199), quote-page 16px focus-zoom floor | Closed/done 2026-11-12T17:19Z; PR #136, head `b1a3c989` → merge `aa4fdb6` (on fk195's `9e7dd70`, fk197's baseline); native run-quality pass at head `b1a3c989` (run `54a24b2f-f8ad-4fee-9c9a-c39b8b2e178f-build-dmteg2wb9kd4-quality`, re-read November 13). Verified in source at this baseline: the `.quote-field select,.quote-field textarea` rule declares `font-size:16px` ([QuotePage.css](../src/pages/QuotePage.css):18) so neither control inherits the 14px container size, the fk171-asserted border declaration survived the edit, and the new [styles.quote-focus-zoom.test.ts](../src/styles.quote-focus-zoom.test.ts) pins the floor on the shared stylesheet both quote pages render through. | Delivered. fk197's linked Next 2, created 17:03:23Z November 12 and closed sixteen minutes later — the fastest link-to-close in the chain at that point (fk232's sixteen-minute close ties it). The quote-page half of fk195's defect class is closed; both quote routes now hold the 16px floor. |
 | [fk198](https://app.faktorial.ai/projects/alvalinus/tasks/fk198), read-more hover on the AA-enforced token | Closed/done 2026-11-12T17:27Z; PR #137, head `35eccacb` → merge `9631338` (on fk199's `aa4fdb6`); native run-quality pass at head `35eccacb` (run `200ceed5-c0b4-4c57-8765-c1fd24fb8f14-build-dmtejrx8n70k-quality`, re-read November 13). Verified in source at this baseline: the anchor carries `text-primary hover:text-primary-hover` ([SiteHomePage.tsx](../src/pages/SiteHomePage.tsx):850), [tailwind.config.ts](../tailwind.config.ts) maps `primary.hover` to `hsl(var(--primary-hover))` (7.10:1 on the white card), [tailwind.primary-hover-utility.test.ts](../src/tailwind.primary-hover-utility.test.ts) proves the utility compiles from the token, SiteHomePage.test.tsx:495 pins the classes, and no `text-primary/<alpha>` hover remains anywhere in src/. | Delivered. fk197's linked Next 1, created 17:03:11Z November 12 and closed twenty-four minutes later. fk151's recorded hover ceiling is closed and — via fk205's pairing test below — enforced against alpha-composited regressions. |
 | [fk197](https://app.faktorial.ai/projects/alvalinus/tasks/fk197), previous roadmap | Closed/done 2026-11-12T17:35Z; PR #138, head `55e5d0ff` → merge `6242e9e` (on fk198's `9631338`); native run-quality pass at head `55e5d0ff` (run `6fd58277-32e6-42a5-bb52-ba2299cbd340-build-dmtervedrwyo-quality`, re-read November 13). Document read in full during the fk207 refresh. | Superseded assessment. Its own PR merged after the merges of both tasks it had linked (fk199 and fk198 landed beneath it, as fk187's had), and its works-less-well rows were re-baselined by later refreshes onto this tip: its two links delivered, its recorded hex residue delivered by fk208, and its byte-weight observation delivered by fk209. |
@@ -582,22 +610,28 @@ once in the short-term section below.
 | [fk205](https://app.faktorial.ai/projects/alvalinus/tasks/fk205), read-more hover pairing hardening | Closed/done 2026-11-13T15:56Z; PR #140, head `de546201` → merge `eb2711d` (fk207's baseline, on fk203's `2e3245f`); native run-quality pass at head `de546201` (run `82a0525c-2faf-413f-b0ec-51ab51364d35-build-dmu7a1wtz7qs-quality`, re-read November 13) after one strict-typecheck repair commit (`split()` destructuring violates `noUncheckedIndexedAccess`; replaced with `indexOf`/`slice`, no behavior change). Verified in source at this baseline: [styles.read-more-hover-contrast.test.ts](../src/styles.read-more-hover-contrast.test.ts) (187 lines) finds the anchor structurally via its Swedish aria-label marker, resolves its hover utility through a flattened tailwind config map (rejecting any hardcoded color), alpha-composites `/NN` modifiers over the card surface, asserts ≥4.5:1 and that hover stays strictly darker than rest — restoring the retired `hover:text-primary/80` computes 3.96:1 and fails by design. fk198's fix itself was already in its base, so its merge delta is the test alone. | Delivered. The November 13 frontend-optimization child — it targeted the same surface fk198 had just fixed, recognized the fix in its base, and delivered the one missing acceptance piece (the pairing test) instead of redoing delivered work. The "Läs mer" hover contract is now enforced twice over, at two independent boundaries. Its two test declarations were mapped into F1-US1 by fk213's November 14 child (receipt below). |
 | [fk207](https://app.faktorial.ai/projects/alvalinus/tasks/fk207), previous roadmap | Closed/done 2026-11-13T18:07Z; PR #141, head `8129295` → merge `c1051ec` (on fk205's `eb2711d`); native run-quality pass at head `8129295` (run `c9a6e41e-a9bd-4cdc-95d3-88bbfa3e0a09-build-dmua328m3qn8-quality`, re-read November 14). Document read in full during the fk219 refresh. | Superseded assessment. Its two linked tasks (fk208, fk209) both shipped the same evening beneath fk214's/fk213's/fk215's November 14 merges, and its works-less-well rows are re-baselined onto this tip: its accent-residue link and tradgard link are delivered below, its dependency-cadence question is answered by fk214, and its catalog-staleness note is resolved by fk213. |
 | [fk208](https://app.faktorial.ai/projects/alvalinus/tasks/fk208), focus-visible and selection accent tokenization | Closed/done 2026-11-13T18:08Z; PR #142, head `76432fc7` → merge `2dddae4` (on fk207's `c1051ec`); native run-quality pass at head `76432fc7` (run `dd973e8f-0589-44dd-afe6-a0b77347ec5d-build-dmua4osxkj20-quality`, re-read November 14). Verified in source at this baseline: the three `:focus-visible` outline rules draw `hsl(var(--primary-hover))` with 3px geometry and offset intact ([QuotePage.css](../src/pages/QuotePage.css):20, [InquiryPage.css](../src/pages/InquiryPage.css):22/:27), the quote `::selection` draws the declared `--selection-background`/`--selection-foreground` pair ([styles.css](../src/styles.css):16–17, QuotePage.css:22), a literal search finds no `#bc4a12` or `#f7c5aa` under src/, and the extended page-accent test rejects any hardcoded accent hex. | Delivered. fk207's linked Next 1, created 17:51:33Z November 13 and closed seventeen minutes later. The accent family fk189 started and fk189's scoped-out residue carried now has no undeclared member; fk213's November 14 child mapped the new declarations into F5-US2/F6-US5 (receipt below). |
-| [fk209](https://app.faktorial.ai/projects/alvalinus/tasks/fk209), tradgard hero recompression | Closed/done 2026-11-13T18:29Z; PR #143, head `cc6268d` → merge `33e665d` (on fk208's `2dddae4`); native run-quality pass at head `cc6268d` (run `e6cabaf6-fafb-47c5-b028-328d53eb69bc-build-dmuak72fn72o-quality`, re-read November 14). Verified in source at this baseline: `tradgard-generated.webp` measures 342,786 B at the same path (down from 501,858 B, −31.7%, above its ≥30% target), the `-960` (220,062 B) and `-640` (101,718 B) variants are untouched, and the registry declarations stayed byte-identical. | Delivered. fk207's linked Next 2, created 17:51:54Z November 13 and closed thirty-eight minutes later. Its delivery summary's scope note — the sibling full-size heroes stay untouched unless a follow-up run takes them — was consumed by fk219's fk220 link below, recorded once so the pool is not left unowned. |
-| [fk214](https://app.faktorial.ai/projects/alvalinus/tasks/fk214), dependency-management lockfile refresh | Closed/done 2026-11-14T16:54Z; PR #144, head `5a8a4a8` → merge `fe88422` (on fk209's `33e665d`); native run-quality pass 267/267 at head `5a8a4a8` (run `db3f4d7b-09a6-4916-be91-2e34abe9f00e-build-dmv2qbbex9gc-quality`, re-read November 14, re-verified 2026-11-16). Verified in source at this baseline: `package.json` is byte-identical to its base and the lockfile pins vite 8.3.8, @vitejs/plugin-react 6.3.0 and postcss 8.5.33 (its diff bounded to the Vite toolchain's own transitives); its Build Update cites the `npm outdated` signal and carries one-line deferral reasons for all eight majors, including the exactly-pinned 4.1.9 vitest/coverage-v8 pair. | Delivered. The dependency-management automation's November 14 child — landing exactly on the cadence fk207 documented as pending. Its coordinated vitest-5 follow-up prompt stays on its own record for the recurring automation (re-verified unchanged 2026-11-16; no dependency child has run since). |
+| [fk209](https://app.faktorial.ai/projects/alvalinus/tasks/fk209), tradgard hero recompression | Closed/done 2026-11-13T18:29Z; PR #143, head `cc6268d` → merge `33e665d` (on fk208's `2dddae4`); native run-quality pass at head `cc6268d` (run `e6cabaf6-fafb-47c5-b028-328d53eb69bc-build-dmuak72fn72o-quality`, re-read November 14). Verified in source at this baseline: `tradgard-generated.webp` measures 342,786 B at the same path (down from 501,858 B, −31.7%, above its ≥30% target), the `-960` (220,062 B) and `-640` (101,718 B) variants are untouched, and the registry declarations stayed byte-identical. | Delivered. fk207's linked Next 2, created 17:51:54Z November 13 and closed thirty-eight minutes later. Its delivery summary's scope note — the sibling full-size heroes stay untouched unless a follow-up run takes them — was consumed by fk219's fk220 link; fk220's delivery closed without merging on 2026-11-17, and the redo now sits on fk252's linked scope (receipt below), recorded once so the pool is not left unowned. |
+| [fk214](https://app.faktorial.ai/projects/alvalinus/tasks/fk214), dependency-management lockfile refresh | Closed/done 2026-11-14T16:54Z; PR #144, head `5a8a4a8` → merge `fe88422` (on fk209's `33e665d`); native run-quality pass 267/267 at head `5a8a4a8` (run `db3f4d7b-09a6-4916-be91-2e34abe9f00e-build-dmv2qbbex9gc-quality`, re-read November 14, re-verified 2026-11-16). Verified in source at this baseline: `package.json` is byte-identical to its base and the lockfile pins vite 8.3.8, @vitejs/plugin-react 6.3.0 and postcss 8.5.33 (its diff bounded to the Vite toolchain's own transitives); its Build Update cites the `npm outdated` signal and carries one-line deferral reasons for all eight majors, including the exactly-pinned 4.1.9 vitest/coverage-v8 pair. | Delivered. The dependency-management automation's November 14 child — landing exactly on the cadence fk207 documented as pending. Its coordinated vitest-5 follow-up prompt stays on its own record for the recurring automation (fk241 re-verified it 2026-11-16; no dependency child has run since). |
 | [fk213](https://app.faktorial.ai/projects/alvalinus/tasks/fk213), feature-catalog reconciliation | Closed/done 2026-11-14T16:57Z; PR #146, head `536eed7` → merge `c911d1b` (on fk214's `fe88422`); native run-quality pass 267/267 at head `536eed7` (run `a337223a-eb3d-4514-83f8-eed1f7e5b157-build-dmv37cw5ilyw-quality`, re-read November 14); its required `feature-manifest-integrity` proof passed on its candidate and its delivery records the verifier rerunning it independently on the merged candidate while the closed record's issue-level proof projection still reports `missing_evidence` — the owning record is closed/done and the projection does not reopen it. Verified in source at this baseline: F1-US1 carries the two fk205 read-more-hover declarations, F5-US2 and F6-US5 carry fk208's focus-visible and quote-selection declarations with matching story-document bullets, F1/F5/F6 carry 2026-11-14 stamps, and F2/F4 records keep their honest older stamps with IDs, routes and the intentionally empty backend mapping unchanged. | Delivered. The feature-refinement automation's November 14 child — a docs-and-manifest reconciliation only, exactly as its own record scopes it. The catalog's evidence map now names the real owning tests through the fk208/fk205 deltas. |
-| [fk215](https://app.faktorial.ai/projects/alvalinus/tasks/fk215), quote-view heading focus | Closed/done 2026-11-14T16:58Z; PR #145, head `60bba11` → merge `c3f9ede` (fk219's baseline, on fk213's `c911d1b`); native run-quality pass 268/268 at head `60bba11` (run `3ce18fe1-8605-4609-a514-b27ff5529f7d-build-dmv2s85fckig-quality`, re-read November 14). Verified in source at this baseline: the choice and work headings carry `quote-choice-heading`/`quote-work-heading` ids and `tabIndex={-1}` ([QuotePage.tsx](../src/pages/QuotePage.tsx):60/:69), the kind-transition effect focuses the revealed view's heading via `document.getElementById(...)?.focus()` (QuotePage.tsx:40), a `previousKind` ref skips first renders so initial load and `#uppfart` deep links never steal focus, and the in-memory focus-flow test pins both switch directions plus the untouched initial render. | Delivered. The frontend-optimization automation's November 14 child — the same focus-anchoring pattern fk195's InquiryPage established, applied to the quote calculator's hash-driven view switch. fk233's share links preserve its initial-render contract (receipt below), and fk227 mapped the focus test into F6-US1. |
-| [fk219](https://app.faktorial.ai/projects/alvalinus/tasks/fk219), previous roadmap | Closed/done 2026-11-14T18:38Z; PR #147, head `a689906` → merge `778998e` (on fk215's `c3f9ede`); native run-quality pass at head `a689906`. Document read in full during the fk231 refresh. | Superseded assessment. Its two linked tasks shipped beneath fk227's/fk228's November 15 merges or stayed blocked: fk221 delivered in seventeen minutes (receipt below), and fk220 remains open on the fk224 human decision with its PR #149 unmerged (recorded above and in What works less well). |
-| [fk221](https://app.faktorial.ai/projects/alvalinus/tasks/fk221), empty-services contact action | Closed/done 2026-11-14T18:40Z; PR #148, head `68d055f` → merge `7dca1af` (on fk219's `778998e`); native run-quality pass at head `68d055f`. Verified in source at this baseline: StaticState extends an optional action affordance rendering a registry-declared Swedish label and destination (no renderer-side copy), the empty-services call site passes the action only from the fallback branch, and the extended SiteHomePage tests pin the accessible name and declared destination. | Delivered. fk219's linked Next 2, created 18:24:10Z November 14 and closed delivered seventeen minutes later — the fastest link-to-close recorded in the chain so far. The F4 catalog friction ("no inline retry or contact body") is retired in behavior; the stale friction sentence still standing in navigation-and-recovery.md is fk242's linked reconciliation scope (created this refresh). |
+| [fk215](https://app.faktorial.ai/projects/alvalinus/tasks/fk215), quote-view heading focus | Closed/done 2026-11-14T16:58Z; PR #145, head `60bba11` → merge `c3f9ede` (fk219's baseline, on fk213's `c911d1b`); native run-quality pass 268/268 at head `60bba11` (run `3ce18fe1-8605-4609-a514-b27ff5529f7d-build-dmv2s85fckig-quality`, re-read November 14). Verified in source at this baseline: the choice and work headings carry `quote-choice-heading`/`quote-work-heading` ids and `tabIndex={-1}` ([QuotePage.tsx](../src/pages/QuotePage.tsx):60/:69), the kind-transition effect focuses the revealed view's heading via `document.getElementById(...)?.focus()` (QuotePage.tsx:40), a `previousKind` ref skips first renders so initial load and `#uppfart` deep links never steal focus, and the in-memory focus-flow test pins both switch directions plus the untouched initial render. | Delivered. The frontend-optimization automation's November 14 child — the same focus-anchoring pattern fk195's InquiryPage established, applied to the quote calculator's hash-driven view switch. fk233's share links preserve its initial-render contract (receipt below), fk247's feedback extends the same aside, and fk227 mapped the focus test into F6-US1. |
+| [fk219](https://app.faktorial.ai/projects/alvalinus/tasks/fk219), previous roadmap | Closed/done 2026-11-14T18:38Z; PR #147, head `a689906` → merge `778998e` (on fk215's `c3f9ede`); native run-quality pass at head `a689906`. Document read in full during the fk231 refresh. | Superseded assessment. Its two linked tasks shipped beneath fk227's/fk228's November 15 merges or stayed blocked: fk221 delivered in seventeen minutes (receipt below), and fk220 — the blocked exception in every assessment from fk219 through fk241 — closed approved without merging on 2026-11-17, its redo re-owned by fk252 (receipt below). |
+| [fk221](https://app.faktorial.ai/projects/alvalinus/tasks/fk221), empty-services contact action | Closed/done 2026-11-14T18:40Z; PR #148, head `68d055f` → merge `7dca1af` (on fk219's `778998e`); native run-quality pass at head `68d055f`. Verified in source at this baseline: StaticState extends an optional action affordance rendering a registry-declared Swedish label and destination (no renderer-side copy), the empty-services call site passes the action only from the fallback branch, and the extended SiteHomePage tests pin the accessible name and declared destination. | Delivered. fk219's linked Next 2, created 18:24:10Z November 14 and closed delivered seventeen minutes later — the fastest link-to-close recorded in the chain so far. The F4 catalog friction ("no inline retry or contact body") is retired in behavior; the stale friction sentence that stood in navigation-and-recovery.md was reconciled by fk242's delivered docs-and-manifest pass (receipt below). |
 | [fk227](https://app.faktorial.ai/projects/alvalinus/tasks/fk227), feature-catalog reconciliation | Closed/done 2026-11-15T17:17Z; PR #150, head `aa0afe9` → merge `4822524` (on fk221's `7dca1af`); native run-quality pass 268/268 at head `aa0afe9`; its required `validate-features` proof passed on its candidate (valid, complete, no findings) and its delivery records the verifier rerunning it independently on the merged candidate while the closed record's issue-level proof projection still reports `missing_evidence` — the owning record is closed/done and the projection does not reopen it. Verified in source at this baseline: F6-US1 carries the fk215 hash-switch focus declaration with a direct vitest reference to the QuotePage test, F6 and quote-calculators.md carry 2026-11-15 stamps, the README records the reconciliation, and no other feature or story record changed (fk219 roadmap-only and fk221 F4-source touched no docs/features files). | Delivered. The feature-refinement automation's November 15 child — a docs-and-manifest reconciliation only, exactly as its own record scopes it. The catalog's F6 story now names the real owning focus test. |
-| [fk228](https://app.faktorial.ai/projects/alvalinus/tasks/fk228), woff2 font preloads in every emitted head | Closed/done 2026-11-15T17:34Z; PR #151, head `283f8f5` → merge `80eb6bd` (fk231's baseline, on fk227's `4822524`); native run-quality pass 285/285 at head `283f8f5`. Verified in source at this baseline: the four pure font-preload helpers exist in [route-artifacts.mjs](../scripts/route-artifacts.mjs), the `transformIndexHtml` handler injects from `ctx.bundle` ([vite.config.ts](../vite.config.ts)), [assert-static-routes.mjs](../scripts/assert-static-routes.mjs) derives the emitted hrefs and requires exactly those tags on every document including `dist/404.html`, and the hero `as="image"` gates are untouched. | Delivered. The frontend-optimization automation's November 15 child; the parse-time font head start and its byte-for-byte gate are recorded in the works-well list, and fk237's delivery below documented the emission in the catalog. Its delivery summary's browser-measurement prompt stays queued on its own record (re-verified 2026-11-16; see What works less well). |
-| [fk232](https://app.faktorial.ai/projects/alvalinus/tasks/fk232), calculator prices into the typed registry | Closed/done 2026-11-15T19:10Z; PR #153, head `f593e7ff` → merge `326125a` (on fk231's `5e90bfe`); native run-quality pass at head `f593e7ff` (run `debf5b7b-f51f-4d41-92b9-6ae8c905372b-build-dmw0oybfal7g-quality`, re-read November 16). Verified in source at this baseline: the pricing blocks are declared under `content.quote` with required typed fields ([siteContent.ts](../src/data/siteContent.ts):450/:479, [types/site.ts](../src/types/site.ts)), [quote.ts](../src/lib/quote.ts):24-31 computes both totals from the typed pricing with no numeric price or tier-boundary literal left in the lib, both pages pass the declarations from their content prop, and quote.test.ts derives every expected total from the declarations (fk140's registry-derived-pin pattern). | Delivered. fk231's linked Next 1, created 18:54:22Z November 15 and closed delivered sixteen minutes later. The price-constants claims it retires were left standing in quote-calculators.md (recorded once in What works less well; fk242's linked reconciliation scope). |
-| [fk233](https://app.faktorial.ai/projects/alvalinus/tasks/fk233), measurements-bearing share links | Closed/done 2026-11-15T19:19Z; PR #154, head `5513cec8` → merge `6fd8aa7` (on fk232's `326125a`); native run-quality pass at head `5513cec8` (run `865c22db-d32c-4483-8b39-56db14ff79b5-build-dmw0vgrdmz6s-quality`, re-read November 16). Verified in source at this baseline: [quote-share.ts](../src/lib/quote-share.ts) owns the fixed URL parameter names (`yta`, `lass`, `asfalt`, `langd`), search encoding, tolerant decoding and absolute href building; both quote pages read the encoded inputs once on mount with defaults restored when parameters are absent; driveway share links keep the `#uppfart` hash so the recipient lands on the driveway view; invalid encoded values degrade through the existing invalid-input alert and disabled controls; the share copy is registry-declared in `quote.shared`; and the encode/restore directions are pinned by quote-share.test.ts plus the extended page tests. fk215's hash-driven focus contract is untouched, and the free-text note is deliberately not carried in the link (its mail draft still carries it; fk233's own scope excluded it). | Delivered. fk231's linked Next 2, created 18:54:39Z November 15 and closed delivered twenty-five minutes later. Its docs edit updated the share behavior prose in quote-calculators.md but left the price-constants claims stale (fk242's material). |
-| [fk238](https://app.faktorial.ai/projects/alvalinus/tasks/fk238), 36px desktop header tap targets | Closed/done 2026-11-16T18:02Z; PR #155, head `f728bae` → merge `eb4dd27` (on fk233's `6fd8aa7`); native run-quality pass at head `f728bae` (run `cb24ae7c-aee1-44cb-be7c-fec2cab32f54-build-dmwttrfb1vk0-quality`, re-read November 16). Verified in source at this baseline: `py-2` vertical padding on the desktop nav link classNames (active and inactive variants), the Tjänster dropdown trigger and the desktop Kalkyler summary in [SiteHomePage.tsx](../src/pages/SiteHomePage.tsx) (targets ≈36px inside the unchanged 64px sticky header; mobile menu ≥44px targets untouched), pinned by [styles.header-nav-tap-targets.test.ts](../src/styles.header-nav-tap-targets.test.ts) in the repo's source-inspection test style. | Delivered. The frontend-optimization automation's November 16 child. Its delivery summary's follow-up prompt — footer navigation links, Inventory route chips and NotFound shortcut pills below 32px — stays queued on its own record (re-verified 2026-11-16). No docs/features record yet covers this delivery; fk242's linked reconciliation maps it into F4. |
-| [fk237](https://app.faktorial.ai/projects/alvalinus/tasks/fk237), font-preload emission documented under F4 | Closed/done 2026-11-16T18:11Z; PR #156, head `fb74727` → merge `c0e17d2` (this baseline, on fk238's `eb4dd27`); native run-quality pass at head `fb74727` (run `651c53aa-63c8-48f5-933d-7efa3dca111f-build-dmwtygo2yjuk-quality`, re-read November 16); its required `feature-manifest-integrity` proof returned valid/complete with no findings on its candidate and its delivery records the verifier rerunning it independently on the merged candidate while the issue-level proof projection still reports `missing_evidence` — the owning record is closed/done and the projection does not reopen it. Verified in source at this baseline: [navigation-and-recovery.md](features/navigation-and-recovery.md) carries a dedicated font-preload passage kept distinct from the hero-preload prose, [features.json](features/features.json) F4 lists the [route-artifacts.mjs](../scripts/route-artifacts.mjs) code path with an updated vite.config.ts description, F4-US1 is extended without new IDs (three source anchors, six reviewed technical vitest references), and the touched records carry 2026-11-16 stamps. | Delivered. The feature-refinement automation's November 16 child — docs-and-manifest reconciliation of fk228's emission, exactly as its record scoped it. The same edit left the document's stale empty-services friction line untouched and the catalog still without fk238's tap targets (fk242's linked reconciliation scope). |
+| [fk228](https://app.faktorial.ai/projects/alvalinus/tasks/fk228), woff2 font preloads in every emitted head | Closed/done 2026-11-15T17:34Z; PR #151, head `283f8f5` → merge `80eb6bd` (fk231's baseline, on fk227's `4822524`); native run-quality pass 285/285 at head `283f8f5`. Verified in source at this baseline: the four pure font-preload helpers exist in [route-artifacts.mjs](../scripts/route-artifacts.mjs), the `transformIndexHtml` handler injects from `ctx.bundle` ([vite.config.ts](../vite.config.ts)), [assert-static-routes.mjs](../scripts/assert-static-routes.mjs) derives the emitted hrefs and requires exactly those tags on every document including `dist/404.html`, and the hero `as="image"` gates are untouched. | Delivered. The frontend-optimization automation's November 15 child; the parse-time font head start and its byte-for-byte gate are recorded in the works-well list, and fk237's delivery below documented the emission in the catalog. Its delivery summary's browser-measurement prompt stays queued on its own record (fk241 re-verified it 2026-11-16; the intervening children delivered other scopes; see What works less well). |
+| [fk232](https://app.faktorial.ai/projects/alvalinus/tasks/fk232), calculator prices into the typed registry | Closed/done 2026-11-15T19:10Z; PR #153, head `f593e7ff` → merge `326125a` (on fk231's `5e90bfe`); native run-quality pass at head `f593e7ff` (run `debf5b7b-f51f-4d41-92b9-6ae8c905372b-build-dmw0oybfal7g-quality`, re-read November 16). Verified in source at this baseline: the pricing blocks are declared under `content.quote` with required typed fields ([siteContent.ts](../src/data/siteContent.ts):450/:479, [types/site.ts](../src/types/site.ts)), [quote.ts](../src/lib/quote.ts):24-31 computes both totals from the typed pricing with no numeric price or tier-boundary literal left in the lib, both pages pass the declarations from their content prop, and quote.test.ts derives every expected total from the declarations (fk140's registry-derived-pin pattern). | Delivered. fk231's linked Next 1, created 18:54:22Z November 15 and closed delivered sixteen minutes later. The price-constants claims it retires stood in quote-calculators.md until fk242's delivered reconciliation removed them (receipt below). |
+| [fk233](https://app.faktorial.ai/projects/alvalinus/tasks/fk233), measurements-bearing share links | Closed/done 2026-11-15T19:19Z; PR #154, head `5513cec8` → merge `6fd8aa7` (on fk232's `326125a`); native run-quality pass at head `5513cec8` (run `865c22db-d32c-4483-8b39-56db14ff79b5-build-dmw0vgrdmz6s-quality`, re-read November 16). Verified in source at this baseline: [quote-share.ts](../src/lib/quote-share.ts) owns the fixed URL parameter names (`yta`, `lass`, `asfalt`, `langd`), search encoding, tolerant decoding and absolute href building; both quote pages read the encoded inputs once on mount with defaults restored when parameters are absent; driveway share links keep the `#uppfart` hash so the recipient lands on the driveway view; invalid encoded values degrade through the existing invalid-input alert and disabled controls; the share copy is registry-declared in `quote.shared`; and the encode/restore directions are pinned by quote-share.test.ts plus the extended page tests. fk215's hash-driven focus contract is untouched, and the free-text note is deliberately not carried in the link (its mail draft still carries it; fk233's own scope excluded it — the carry is now fk253's linked scope, receipt below). | Delivered. fk231's linked Next 2, created 18:54:39Z November 15 and closed delivered twenty-five minutes later. Its docs edit updated the share behavior prose in quote-calculators.md; the price-constants claims it left stale were reconciled by fk242 (receipt below). |
+| [fk238](https://app.faktorial.ai/projects/alvalinus/tasks/fk238), 36px desktop header tap targets | Closed/done 2026-11-16T18:02Z; PR #155, head `f728bae` → merge `eb4dd27` (on fk233's `6fd8aa7`); native run-quality pass at head `f728bae` (run `cb24ae7c-aee1-44cb-be7c-fec2cab32f54-build-dmwttrfb1vk0-quality`, re-read November 16). Verified in source at this baseline: `py-2` vertical padding on the desktop nav link classNames (active and inactive variants), the Tjänster dropdown trigger and the desktop Kalkyler summary in [SiteHomePage.tsx](../src/pages/SiteHomePage.tsx) (targets ≈36px inside the unchanged 64px sticky header; mobile menu ≥44px targets untouched), pinned by [styles.header-nav-tap-targets.test.ts](../src/styles.header-nav-tap-targets.test.ts) in the repo's source-inspection test style. | Delivered. The frontend-optimization automation's November 16 child. Its delivery summary's follow-up prompt — footer navigation links, Inventory route chips and NotFound shortcut pills below 32px — stays queued on its own record (re-read on fk238's own record 2026-11-17; the intervening frontend-optimization child fk247 delivered the share-button feedback instead). No docs/features record covered this delivery until fk242's reconciliation mapped it into F4 (receipt below). |
+| [fk237](https://app.faktorial.ai/projects/alvalinus/tasks/fk237), font-preload emission documented under F4 | Closed/done 2026-11-16T18:11Z; PR #156, head `fb74727` → merge `c0e17d2` (fk241's baseline, on fk238's `eb4dd27`); native run-quality pass at head `fb74727` (run `651c53aa-63c8-48f5-933d-7efa3dca111f-build-dmwtygo2yjuk-quality`, re-read November 16); its required `feature-manifest-integrity` proof returned valid/complete with no findings on its candidate and its delivery records the verifier rerunning it independently on the merged candidate while the issue-level proof projection still reports `missing_evidence` — the owning record is closed/done and the projection does not reopen it. Verified in source at this baseline: [navigation-and-recovery.md](features/navigation-and-recovery.md) carries a dedicated font-preload passage kept distinct from the hero-preload prose, [features.json](features/features.json) F4 lists the [route-artifacts.mjs](../scripts/route-artifacts.mjs) code path with an updated vite.config.ts description, F4-US1 is extended without new IDs (three source anchors, six reviewed technical vitest references), and the touched records carry 2026-11-16 stamps. | Delivered. The feature-refinement automation's November 16 child — docs-and-manifest reconciliation of fk228's emission, exactly as its record scoped it. The same edit left the document's stale empty-services friction line and the then-missing fk238 coverage in place; fk242's delivered reconciliation retired both (receipt below). |
+| [fk220](https://app.faktorial.ai/projects/alvalinus/tasks/fk220), three-hero WebP recompression | Closed approved 2026-11-17T06:09Z **without a merge receipt**: PR #149 (head `140a735`) carried the complete recompression (stensattning-photo 385,866 → 262,640 B, quote-hero 362,898 → 253,714 B, services-hero 345,948 → 241,842 B, dimensions and declarations unchanged) and canonical quality passed 268/268 at that head, but the review stage's textual-line net-change gate returned "zero net changes" for the binaries-only diff and bounced the PR; fk220 then waited on its fk224 build-clarification until both records closed approved on 2026-11-17, with fk224's recorded resolution text not visible in the owning records (no answer timestamp, no comments). The heroes still measure 385,866 / 362,898 / 345,948 B at this tip (re-measured 2026-11-17). | Closed without delivery. Its recompression is recorded as never landed; fk220's own option-3 wording explicitly anticipated a future redo task, which this refresh created as fk252 (receipt below) — fk220 stays closed, and fk252 re-owns the undelivered scope with fk220's measured numbers as reference targets and an acceptance that prevents a second binaries-only PR. No reopen of fk220 and no duplicate record beyond fk252. |
+| [fk241](https://app.faktorial.ai/projects/alvalinus/tasks/fk241), previous roadmap | Closed/done 2026-11-16T20:20Z; PR #157, head `0e46ad8` → merge `e3f084a` (on fk237's `c0e17d2`); native run-quality pass at head `0e46ad8` (run `b9c4e572-7b76-4c2d-ab99-8a517cf3532b-build-dmwwq23y21xk-quality`). Document read in full from this checkout's committed copy during this refresh. | Superseded assessment. Its two linked tasks both shipped beneath its own merge — fk243 at 20:31Z and fk242 at 21:00Z on November 16 (receipts below) — its blocked-work record (fk220 on the fk224 decision) closed on 2026-11-17 as recorded above, and its works-less-well rows are re-baselined here onto the `30f72ae` tip. |
+| [fk243](https://app.faktorial.ai/projects/alvalinus/tasks/fk243), inquiry rate VAT-basis capture | Closed/done 2026-11-16T20:31Z; PR #158, head `cc37e81` → merge `5abbdb1` (on fk241's `e3f084a`); native run-quality pass at head `cc37e81` (run `6e32e091-57e9-4904-96d7-5b610b4cc5de-build-dmwwzdpmook8-quality`). Verified in source at this baseline: the registry-declared optional `rateBasis` select ("Momsstatus för timpriset" with "Ej angivet" and inklusive/exklusive moms options) under `content.inquiry` ([siteContent.ts](../src/data/siteContent.ts)), the rate hint pointing to it, the stated basis composed into the mailto draft only when provided (omission draft unchanged), the select on its own 16px stylesheet rule ([InquiryPage.css](../src/pages/InquiryPage.css)), deterministic render/draft/omission pins in InquiryPage.test.tsx, and staffing-inquiry.md reconciled. | Delivered. fk241's linked Next 2, created 19:55:01Z November 16 and closed delivered thirty-six minutes later. No VAT status is assumed or confirmed anywhere; the quote calculators' standing label stays operator-owned (see What works less well). |
+| [fk242](https://app.faktorial.ai/projects/alvalinus/tasks/fk242), feature-catalog reconciliation | Closed/done 2026-11-16T21:00Z; PR #159, head `3831435` → merge `27bf18e` (on fk243's `5abbdb1`); native run-quality pass at head `3831435` (run `f0ae2084-34b7-493b-b9b3-7ba3e9d9ff53-build-dmwwxz057sz8-quality`). Verified in source at this baseline: quote-calculators.md tells the delivered registry-pricing story (the three stale price-constants claims and the completed roadmap item removed, share prose intact), navigation-and-recovery.md retires the stale empty-services friction line and documents fk238's ~36px tap targets under F4 with `styles.header-nav-tap-targets.test.ts` mapped, the F6-US2 records carry the delivered post-fk232 declaration names and the F6 capability limitations no longer claim fixed constants or unshareable state, published IDs untouched, records re-stamped 2026-11-16. Its closed record's issue-level `feature-manifest-integrity` proof projection reports `missing_evidence` with no recorded proof pass on the record; the owning record is closed/done and the projection does not reopen it. | Delivered. fk241's linked Next 1, created 19:54:46Z November 16 and closed delivered sixty-six minutes later, rebased onto fk243's merge. fk248's November 17 pass verified this reconciliation against source and completed the catalog's remaining share/tap-target mappings (receipt below). |
+| [fk247](https://app.faktorial.ai/projects/alvalinus/tasks/fk247), Swedish share-button clipboard feedback | Closed/done 2026-11-17T18:24Z; PR #160, head `b749249` → merge `701f0c5` (on fk242's `27bf18e`); native run-quality pass at head `b749249` (run `ad35e950-755a-45c9-9c32-d807a14443ac-build-dmxoym15i88c-quality`). Verified in source at this baseline: `QuoteResultAside.share()` handles the `navigator.clipboard.writeText` outcome — resolve announces the declared "Länken har kopierats till urklipp.", reject or absent clipboard announces the manual-copy fallback — through a persistent `role="status"` element in the shared result aside, both strings new typed readonly fields under `quote.shared`, with the URL replacement, visible link paragraph and invalid-input disabled state untouched, and QuoteResultAside.test.tsx mocking the clipboard for both paths (4 files, +68/−1). | Delivered. The frontend-optimization automation's November 17 child, delivered about nineteen minutes after creation — the fastest automation-child creation-to-close in the chain so far. fk238's footer-sweep prompt stays queued on its own record (this child delivered the share feedback instead). fk253's linked notes-carry extends the same share contract (receipt below). |
+| [fk248](https://app.faktorial.ai/projects/alvalinus/tasks/fk248), feature-catalog reconciliation re-stamp | Closed/done 2026-11-17T18:49Z; PR #161, head `79ddaed` → merge `30f72ae` (this baseline, on fk247's `701f0c5`); native run-quality pass at head `79ddaed` (run `55ab20be-fb70-4c49-b297-b7138979329e-build-dmxpfzxo6xq0-quality`). Verified in source at this baseline: the catalog README's reconciliation paragraph names fk232/fk233/fk238/fk237 plus fk242's interim pass and re-stamps 2026-11-17, F6 describes the shareable measurement-bearing link and injected registry pricing, quote-share.ts joined F6's runtime owners, fk233's declarations are mapped into F6-US2/US3/US4 with honest direct/technical evidence types, F4-US1's tap-target mappings were re-verified, all 124 manifest test references resolve in source, and the F1–F6/20-story ID inventory is unchanged (9 files, +162/−34). Its Build Update records an exploratory validate-features pass at `79ddaed` (valid, complete, no findings); its closed record's issue-level proof projection reports `missing_evidence` — the owning record is closed/done and the projection does not reopen it. | Delivered. The feature-refinement automation's November 17 child, delivered about thirty-five minutes after creation, verifying rather than redoing fk242's reconciliation. Its delivery summary queues the F6-US4 print-rendering mapping prompt on its own record (see What works less well). The catalog is now reconciled through this delivery; this roadmap references it instead of re-deriving catalog state. |
 
 The prior roadmap's older Done references were checked against current owning
 membership on October 29 and again during each later refresh through this
-November 16 one, and no row above was reopened or recreated by this refresh:
+November 17 one, and no row above was reopened or recreated by this refresh:
 fk3/fk24/fk35 (roadmaps), fk10 (reporter), fk11 (runbook), fk5/fk23/fk34
 (mobile), fk8 (dependencies), fk25/fk26 (image/registry recovery), fk32
 (catalog), fk36/fk37 (route validation/checksums), fk43/fk44 (mobile/roadmap),
@@ -609,13 +643,14 @@ heads, 138/138/134 at the fk104/fk106/fk107 heads, the passed runs at the
 fk114/fk115/fk112/fk120/fk121/fk127/fk128 heads, the passed runs at the
 fk122/fk133/fk140/fk144/fk135/fk149 heads, the passed runs at the
 fk151/fk152/fk153/fk155/fk154 heads, the passed runs at the
-fk161/fk162/fk163/fk164/fk165/fk172/fk171/fk176 heads, the passed runs at
-the fk177/fk173/fk183/fk185 heads, the passed runs at the
+fk161/fk162/fk163/fk164/fk165/fk172/fk171/fk176 heads, the passed runs at the
+fk177/fk173/fk183/fk185 heads, the passed runs at the
 fk189/fk187/fk188/fk193/fk195 heads, the passed runs at the
 fk199/fk198/fk197/fk203/fk205/fk207 heads, the passed runs at the
 fk208/fk209/fk214/fk213/fk215 heads, the passed runs at the
-fk219/fk221/fk227/fk228 heads, and the passed runs at the
-fk232/fk233/fk238/fk237 heads above) are historical, not
+fk219/fk221/fk227/fk228 heads, the passed runs at the
+fk232/fk233/fk238/fk237 heads, and the passed runs at the
+fk241/fk243/fk242/fk247/fk248 heads above) are historical, not
 current totals, and no acceptance is claimed for this roadmap candidate,
 current main or any deployment.
 
@@ -632,84 +667,72 @@ fk83 closed through the manual-close option, so the missing automation-run
 parent record (`automation-run:local:feature-refinement:1793366910953132005`)
 was never repaired platform-side. No recurrence has been observed: every
 subsequent feature-refinement, dependency-management and
-frontend-optimization occurrence through fk237/fk238 on November 16 ran
+frontend-optimization occurrence through fk247/fk248 on November 17 ran
 with fresh parent keys and closed delivered (receipts above). The
 worker-host maintenance pair from the November 10 monitor incident (fk181
 with fk182 as its question notice) read closed on November 13 at
 2026-11-12T22:19Z, with fk181's question form showing no recorded answer
-— resolved as closed platform records, not site work. The steering loop
-remains the fastest path in the chain: fk221, linked 18:24:10Z on
-November 14, closed delivered seventeen minutes later; fk232 and fk233,
-linked by fk231 the evening of November 15, closed in sixteen and
-twenty-five minutes; the November 16 automation children both delivered
-within about fifty minutes of creation; and this refresh's own two links
-— fk242 created 19:54:46Z and fk243 19:55:01Z on November 16 — read
-back open with exact labels, their owning records carrying the work
-forward. The chain's current open friction is human, not machine:
-fk220's complete, quality-passed recompression sits on unmerged PR #149
-because the review stage's textual-line net-change gate cannot see a
-binaries-only diff, and the operator's answer to the fk224
-build-clarification (open since 2026-11-14T19:27Z, unanswered at these
-reads, re-verified 2026-11-16) is the single decision that releases it
-— bounded gate-prose fix, binary-aware review gate, or close without
-merging. That decision is orchestrator/owner territory; no agent may
-satisfy it by editing the task or duplicating the work. The incident
-receipts come from fk153's November 7 owning reads, retained for
+— resolved as closed platform records, not site work. The chain's longest
+human gate, fk220's binaries-only review bounce, closed on 2026-11-17:
+fk220 and its fk224 clarification closed approved without a merge receipt,
+with fk224's recorded resolution text not visible in the owning records —
+the work was not lost, but it did not land, and the loop's answer was the
+fk252 redo task created under fk220's own option-3 wording rather than a
+reopen. The steering loop remains the fastest path in the chain: fk221,
+linked 18:24:10Z on November 14, closed delivered seventeen minutes later;
+fk232 and fk233, linked by fk231 the evening of November 15, closed in
+sixteen and twenty-five minutes; fk243 and fk242, linked by fk241 on
+November 16, closed in thirty-six and sixty-six minutes; and the November
+17 automation children fk247 and fk248 delivered within about nineteen and
+thirty-five minutes of creation. This refresh's own two links — fk252
+created 20:58:37Z and fk253 20:58:50Z on November 17 — read back open
+with exact labels, their owning records carrying the work forward. The
+incident receipts come from fk153's November 7 owning reads, retained for
 provenance; no duplicate record is created for any of them.
 
 ## Short-term priorities and issue ownership
 
-fk231's two short-term priorities are resolved on this tip's own records:
-the price-registry move landed through fk232 (PR #153, merge `326125a`,
-closed 19:10Z November 15, sixteen minutes after being linked) and the
-share-link feature through fk233 (PR #154, merge `6fd8aa7`, closed 19:19Z
-November 15, twenty-five minutes after being linked) — and the
-sibling-hero recompression remains complete on fk220's unmerged PR #149
-(1,094,712 → 758,196 B total, quality 268/268 at head `140a735`) but
-cannot reach main until the operator answers the fk224
-build-clarification — the one blocked item, recorded above and in the
-friction paragraph, and never duplicated.
+fk241's two short-term priorities are resolved on this tip's own records:
+the catalog reconciliation landed through fk242 (PR #159, merge `27bf18e`,
+closed 21:00Z November 16) and the inquiry rate-VAT-basis capture through
+fk243 (PR #158, merge `5abbdb1`, closed 20:31Z November 16). The one
+blocked item fk241 recorded — fk220's complete-but-unmerged recompression
+waiting on the fk224 operator decision — resolved on 2026-11-17 as a
+closure without merging: fk220 and fk224 closed approved together, fk224's
+recorded answer is not visible, the heroes remain unrecompressed on main
+(re-measured 2026-11-17), and the scope now belongs to a new record rather
+than a reopen.
 
 The two follow-up issues created during this refresh cycle (this roadmap
-task's own writes on November 16, read back open before linking) target
-the catalog drift and the staffing inquiry's recorded rate-basis gap,
-and the just-before-creation inventory read held no other feature work:
+task's own writes on November 17, read back open before linking) target the
+never-landed hero recompression and the share links' dropped notes, and the
+just-before-creation inventory read held no other feature work:
 
-1. [fk242](https://app.faktorial.ai/projects/alvalinus/tasks/fk242) —
-   reconcile the drifted feature-catalog records with the delivered
-   fk221/fk232/fk238 work: quote-calculators.md still carries three
-   price-constants claims and a roadmap Fix item that fk232's delivered
-   registry pricing retires (the stale sentences survived fk233's edit
-   to the same document); navigation-and-recovery.md still records the
-   empty-services "no inline retry or contact body" friction that
-   fk221's delivered contact action retires (the stale line survived
-   fk237's edit to the same document); and no docs/features record
-   covers fk238's delivered 36px desktop tap targets. The task updates
-   the two documents, maps the tap-target delivery into F4 with its
-   owning test (`styles.header-nav-tap-targets.test.ts`), re-stamps the
-   touched records 2026-11-16, keeps F2 untouched (fk183's queued
-   re-stamp owns that), and declares the required
-   `feature-manifest-integrity` validate-features proof (the
-   fk227/fk237 docs-and-manifest pattern). Created and read back open
-   at 19:54:46Z with labels `priority: medium` and `size:medium`.
-   Owned by fk242's record; recorded once here, not awaited or
-   duplicated.
-2. [fk243](https://app.faktorial.ai/projects/alvalinus/tasks/fk243) —
-   let the staffing inquiry capture the offered rate's VAT basis:
-   staffing-inquiry.md's own Works-Less-Well text records that the rate
-   is collected as a single number (the `rate` field spec in
-   [InquiryPage.tsx](../src/pages/InquiryPage.tsx)) so the VAT basis
-   relies on the visitor's description, and the reader of an inquiry
-   email cannot tell what the offered rate includes without asking
-   separately. The task adds one registry-declared, optional Swedish
-   affordance on the rate field (an inclusive/exclusive select or a
-   clarified declared description, builder's choice within the
-   declaration contract) and carries the stated basis into the mailto
-   draft, pinned in both directions by deterministic in-memory tests in
-   the InquiryPage pattern — assuming and confirming no VAT status
-   anywhere, keeping fk195's 16px floor, and leaving the quote
-   calculators' operator-owned VAT label untouched. Created and read
-   back open at 19:55:01Z with the same labels. Owned by fk243's
+1. [fk252](https://app.faktorial.ai/projects/alvalinus/tasks/fk252) —
+   redo the three-hero WebP recompression fk220 closed without merging:
+   stensattning-photo, quote-hero and services-hero are re-encoded in
+   place at unchanged dimensions with fk220's measured results as
+   reference targets (262,640 / 253,714 / 241,842 B; target ≥30% per
+   file, judged from the actual re-encodes), declarations byte-identical.
+   Unlike fk220's binaries-only PR #149 — which the review stage's
+   textual-line net-change gate bounced once — the task's acceptance
+   requires carrying the one stale-prose fix the recompression makes
+   obsolete (the `heroAssetByteBudget` JSDoc example in
+   route-artifacts.mjs citing stensattning-photo at 385,866 B), mirroring
+   fk209's accepted gate-prose fix, because the gate's current
+   binary-awareness is unverified. Created and read back open at
+   20:58:37Z with labels `priority: medium` and `size:medium`. Owned by
+   fk252's record; recorded once here, not awaited or duplicated.
+2. [fk253](https://app.faktorial.ai/projects/alvalinus/tasks/fk253) —
+   carry the quote calculators' free-text notes through the share links:
+   quote-share.ts currently encodes only `yta`/`lass`/`asfalt`/`langd`
+   (verified at this tip), so a shared link restores the measurements but
+   drops the notes context the sender wrote. The task adds one fixed
+   notes parameter to both calculators' share links following fk233's
+   tolerant-decode/constant-owned-parameter pattern, keeps fk247's
+   clipboard feedback and fk215's focus contract intact, and pins encode,
+   restore and absence with deterministic in-memory tests. Created and
+   read back open at 20:58:50Z with the same labels. Owned by fk253's
    record; recorded once here, not awaited or duplicated.
 
 Remaining candidates were judged and dispositioned above and below: the
@@ -725,23 +748,27 @@ they stay catalog-recorded editorial work rather than linked issues; the
 deferred major-version jumps, their assessment prompts and the 3 moderate
 audit findings carry their own recorded follow-ups on the
 dependency-management automation's records — fk214's delivery being the
-newest owner (fresh-verified 2026-11-16, no dependency child since),
-whose coordinated vitest-5 prompt stays queued there (no duplicate issue
+newest owner (no dependency child has run since), whose coordinated
+vitest-5 prompt stays queued there (no duplicate issue
 is created over a queue that demonstrably ran on cadence); fk171's
 contrast-test hardening prompt stays on its own record for the recurring
-frontend-optimization automation, whose November 14–16 runs (fk215,
-fk228, fk238) delivered other improvements instead; fk183's F2 re-stamp
+frontend-optimization automation, whose November 14–17 runs (fk215,
+fk228, fk238, fk247) delivered other improvements instead; fk183's F2 re-stamp
 prompt stays queued on its record after fk203 consumed the F3 half and
-fk213's/fk227's November 14/15 children again left F2 untouched; fk195's
+fk213's/fk227's/fk242's/fk248's later children again left F2 untouched; fk195's
 real-device verification prompt stays on its own record (jsdom cannot
 reproduce iOS focus zoom); fk228's browser-measurement prompt stays
 queued on its record because this environment has no browser automation
 and rendered inspection is not a delivery prerequisite here; fk238's
 small-tap-target prompt (footer navigation links, Inventory route chips,
-NotFound shortcut pills) stays queued on its own November 16 record for
-the same recurring automation; and the catalog drift this refresh did
-link (fk242) is scoped to F4/F6 reconciliation precisely so it does not
-consume fk183's separate F2 queue. No further issue is created in this
+NotFound shortcut pills) stays queued on its own November 16 record —
+re-read on the record itself at this refresh — for
+the same recurring automation, whose November 17 child fk247 delivered
+the share-button feedback instead; fk248's new F6-US4 print-rendering
+mapping prompt stays queued on its own November 17 record for the
+feature-refinement automation; and the feature catalog's earlier drift
+was already reconciled by the delivered fk242/fk248 passes, so no catalog
+issue is created. No further issue is created in this
 refresh: every remaining candidate is either operator/editorial work,
 carries its own recorded owner, or is already delivered — a synthetic
 third task would duplicate one of those queues rather than steer new
@@ -753,21 +780,29 @@ work.
    and task ownership, prove behavior at deterministic owner boundaries, and
    let native quality accept each candidate. The fk44 → fk54 → fk66 → fk72 →
    fk76 → fk87 → fk96 → fk105 → fk113 → fk123 → fk153 → fk163 → fk173 →
-   fk187 → fk197 → fk207 → fk219 → fk231 → fk241 refresh chain shows the
+   fk187 → fk197 → fk207 → fk219 → fk231 → fk241 → fk251 refresh chain shows the
    working loop: reconcile, ship, re-verify, retire. Separate source delivery,
    task closure and acceptance; missing evidence stays unknown. The loop also
    absorbs stalled deliveries without losing work (fk134's salvage into
    plan fk139), stale starting points without losing accuracy (fk187's,
-   fk197's, fk219's, fk231's re-baselines and this refresh's
-   arrived-at-the-tip preparation), and interleaved merges without
-   misattributing receipts. Its steering latency keeps tightening — half an
+   fk197's, fk219's, fk231's, fk241's re-baselines and this refresh's
+   arrived-at-the-tip preparation), interleaved merges without
+   misattributing receipts, and closed-out deliveries without losing scope
+   (fk220's unmerged recompression re-owned by fk252 under fk220's own
+   option-3 wording, with the closure recorded honestly — including that
+   fk224's chosen resolution text is not visible in the owning records).
+   Its steering latency keeps tightening — half an
    hour around fk188/fk189, sixteen and twenty-four minutes for
    fk199/fk198, seventeen and thirty-eight minutes for fk208/fk209,
    seventeen minutes link-to-close for fk221, sixteen and twenty-five
-   minutes for fk232/fk233 — with the owning records carrying the work
+   minutes for fk232/fk233, thirty-six and sixty-six minutes for
+   fk243/fk242, and fk247 delivered about nineteen minutes after creation —
+   with the owning records carrying the work
    forward. What the loop cannot do alone is equally visible: fk220's
-   finished delivery waits on one human decision (fk224) because a gate
-   mechanism, not the work, blocks it.
+   finished delivery ultimately closed without merging because a gate
+   mechanism, not the work, blocked it — the recorded lesson being that a
+   delivery whose diff the gate cannot see needs its acceptance shaped for
+   the gate from the start, as fk252's does.
 2. **Repeatable product operation.** fk165's composed command delivered the
    local half of this goal: one deterministic `release-provenance.v1` record
    joining the accepted source revision, the checksum manifest identity and
@@ -801,21 +836,23 @@ work.
    (fk228, documented under F4 by fk237), registry-declared calculator
    pricing so a price update is a content edit (fk232), shareable
    measurements-bearing calculation links on both quote pages (fk233),
-   ~36px desktop header tap targets at tablet widths (fk238), existing
+   ~36px desktop header tap targets at tablet widths (fk238), the
+   staffing inquiry's optional declared rate-VAT-basis select carried into
+   the mail draft (fk243), announced Swedish clipboard feedback on the
+   share button (fk247), existing
    hero assets on every route with the gate keeping them that way, and the
    unit-tested money logic are delivered. The remaining visitor-visible
-   work is the sibling full-size hero byte weights — delivered on fk220's
-   unmerged PR #149, waiting on the fk224 operator decision — the catalog
-   reconciliation and truthful records (fk242), the staffing inquiry's
-   rate VAT-basis capture (fk243), and approved missing imagery; the
-   maintainer-facing catalog records are otherwise truthful after
-   fk176's, fk183's, fk193's, fk203's, fk213's, fk227's and fk237's
-   reconciliations. Define useful inquiry signals and privacy needs
-   before promising delivery or telemetry.
+   work is the sibling full-size hero byte weights — delivered twice over
+   on fk220's branch yet never landed on main, now owned by fk252's redo —
+   the notes text share links still drop (fk253), and approved missing
+   imagery; the maintainer-facing catalog records are truthful and
+   reconciled after fk176's, fk183's, fk193's, fk203's, fk213's, fk227's,
+   fk237's, fk242's and fk248's passes. Define useful inquiry signals and
+   privacy needs before promising delivery or telemetry.
 4. **Evidence-led cross-product learning.** Compare booking and
    Asynkron.JsEngine when their repositories and operational evidence are
-   available; both remain absent — re-verified on November 16, this
-   checkout's parent holds exactly the fk237/fk238/fk241 worktrees,
+   available; both remain absent — re-verified on November 17, this
+   checkout's parent holds exactly the fk247/fk248/fk251 worktrees,
    `D:\git` holds AlvaLinus, asynkron and FaktorialDemo alongside
    unrelated AlexExperimenterar working folders, and `D:\git\asynkron`
    holds only femma. Transfer demonstrated practices with explicit
@@ -824,80 +861,80 @@ work.
 
 ## Evidence boundaries and update triggers
 
-- Reads made on November 16 during this fk241 refresh: the previous roadmap
-  in full (the committed fk231 generation at this checkout's prepared base
-  — the `c0e17d2` tip itself, the generation this document supersedes);
-  the Git history across the `80eb6bd..c0e17d2` delta — four merges in
-  order: fk232 PR #153 head `f593e7ff` merge `326125a`, fk233 PR #154
-  head `5513cec8` merge `6fd8aa7`, fk238 PR #155 head `f728bae` merge
-  `eb4dd27`, fk237 PR #156 head `fb74727` merge `c0e17d2` — plus the
-  unmerged fifth PR (fk220 #149, head `140a735` on `agent-go/task-fk220`),
-  with owning `get_task` reads confirming fk232, fk233, fk237, fk238,
-  fk231 and fk228 closed/done/approved at the states recorded above
-  (fk237's validate-features pass recorded on its candidate and
-  independently re-run on the merged candidate; the vitest counts from
-  fk227's/fk228's run-quality receipts are historical), fk220 open in
-  build waiting on the human decision and fk224 open with no recorded
-  answer, fresh fk214/fk171/fk183/fk195/fk228/fk238 owning reads
-  confirming their deferral backlog and queued prompts before reusing
-  that text, and fk231's closure with its merge receipt.
+- Reads made on November 17 during this fk251 refresh: the previous roadmap
+  in full (the committed fk241 generation at this checkout's prepared base
+  `30f72ae`, the generation this document supersedes); the Git history
+  across the `c0e17d2..30f72ae` delta — five merges in order: fk241 PR
+  #157 head `0e46ad8` merge `e3f084a`, fk243 PR #158 head `cc37e81`
+  merge `5abbdb1`, fk242 PR #159 head `3831435` merge `27bf18e`, fk247
+  PR #160 head `b749249` merge `701f0c5`, fk248 PR #161 head `79ddaed`
+  merge `30f72ae` — with the wider post-`80eb6bd` window's four
+  deliveries (fk232/fk233/fk238/fk237) carried receipted from fk241's
+  generation and reconfirmed against main's history, and owning
+  `get_task` reads confirming fk241, fk242, fk243, fk247 and fk248
+  closed/done/approved at the states recorded above (fk242's and
+  fk248's `validate-features` proof projections reporting
+  `missing_evidence` on their closed records, fk248's Build Update
+  recording an exploratory valid pass at its head; the vitest counts in
+  older receipts are historical), fk220 closed approved without a merge
+  receipt and fk224 closed with no visible recorded answer (both read
+  from their own records), fk238's queued footer-sweep prompt re-read on
+  its own record, and the quality receipts of the five window merges
+  read from their owning records.
   Source verification at this HEAD: the sibling-hero listing
   (stensattning-photo.webp 385,866 B, quote-hero.webp 362,898 B,
   services-hero.webp 345,948 B — fk220's savings confirmed absent from
   main; tradgard-generated.webp 342,786 B after fk209; gravjobb-photo
-  148,896 B; `-960`/`-640` variants unchanged), the registry pricing
-  declarations at [siteContent.ts](../src/data/siteContent.ts):450/:479,
-  the content-agnostic
-  [quote.ts](../src/lib/quote.ts) signatures with no numeric price
-  literal (fk232), [quote-share.ts](../src/lib/quote-share.ts) and its
-  tests (fk233), the desktop `py-2` tap-target utilities and
-  [styles.header-nav-tap-targets.test.ts](../src/styles.header-nav-tap-targets.test.ts)
-  (fk238), the F4 font-preload documentation and stamps (fk237), the
-  drifted catalog passages (quote-calculators.md source/Works-Less-Well/
-  roadmap items, navigation-and-recovery.md's empty-services line, no
-  record covering the tap targets), the standing
-  `vatStatusLabel` ("Momsstatus ej bekräftad", quote.ts:6) and the
-  staffing inquiry's single-number `rate` field spec
-  (InquiryPage.tsx:125) grounding the fk243 link. The created tasks
-  fk242/fk243 read back open at 19:54:46Z/19:55:01Z with exact labels
+  148,896 B; `-960`/`-640` variants unchanged), the unchanged
+  [quote-share.ts](../src/lib/quote-share.ts) parameter set
+  (`yta`/`lass`/`asfalt`/`langd`, grounding the fk253 link), the stale
+  `heroAssetByteBudget` JSDoc example in
+  [route-artifacts.mjs](../scripts/route-artifacts.mjs) still citing
+  stensattning-photo at 385,866 B (grounding fk252's prose-fix
+  acceptance), the registry pricing declarations (fk232), fk243's
+  delivered `rateBasis` declaration in
+  [siteContent.ts](../src/data/siteContent.ts) (read from its merge
+  `5abbdb1`'s diff), and the reconciled catalog state via fk248's own
+  record rather than a re-derivation. The created tasks
+  fk252/fk253 read back open at 20:58:37Z/20:58:50Z with exact labels
   `priority: medium` and `size:medium`; the open-task inventory read
-  just before creation held sixteen records (this task, fk220, fk224,
-  and the fk216–fk218/fk222/fk223/fk226/fk229/fk230/fk234–fk236/fk239/
-  fk240 delivery notices; fk225 has closed since the November 15 reads)
-  with no other feature work. This checkout's parent holds exactly the
-  fk237/fk238/fk241 worktrees, `D:\git` holds AlvaLinus, asynkron and
-  FaktorialDemo alongside unrelated AlexExperimenterar working folders,
-  and `D:\git\asynkron` holds only femma (re-verified November 16);
-  `../booking` and `../Asynkron.JsEngine` are absent. Unchanged
-  structural claims carried from the October 28–November 15 reviews keep
-  that provenance.
-- One-day Faktorial API usage read on November 16 (19:53:19Z) reported
-  116,005 calls across 10 endpoints, overwhelmingly task-record reads
-  (GET /api/tasks/{issue_ref}, 113,559), with worker-settings reads at
-  135 and agent-management and queue reads at 81 each. The same caveats
-  as previous refreshes stand and this read is again far thinner than
-  its window: the volatile in-memory retention covered only
-  19:49:17Z–19:53:19Z against the one-day request (TTL 3600 s), the
-  population was truncated by a store cap, the sampling state is unknown,
-  and revision comparability is unavailable; of 386 selected retained
-  spans, 362 joined exactly to durable route identities and 24 were
-  unmatched (all `conflicting_route`), with zero errors in the measured
-  population — but that population is a thin window, not a demand
-  estimate.
-- The serving-process database telemetry read at 19:53:19Z on November 16
-  covered the collector epoch reset 2026-11-16T19:19:39Z: at the read its
-  cumulative counters span about 34 minutes — 102,010 calls, 85,043
-  queries, 7 errors and ≈112.3 MB received, led by the DuePage
-  agent-run reads (9,233 calls, ≈50.8 MB received), the task-data Read
-  operation (5,445 calls), the paired SchedulingRevision/CommandRevision
-  reads (7,701 calls each) and the TryClaim claim attempts (3,996 calls,
-  15,984 queries); the 7 errors sit in DuePage (6) and the
-  projectarchitecture SourceSync ReadSelection queries (1). The serving
-  process restarted shortly before the read, so this window is far
-  shorter than previous refreshes' reads. Cumulative counters are not
-  comparable across collector resets. Both populations are Cloud
-  serving-process scope, not this static site, and none can be combined
-  into an error rate or demand estimate.
+  just before creation held three records (this task and the
+  fk249/fk250 delivery notices) with no other feature work — a
+  deliberate inventory shrink from fk241's sixteen, as fk220/fk224 and
+  every earlier delivery notice closed. This checkout's parent holds
+  exactly the fk247/fk248/fk251 worktrees, `D:\git` holds AlvaLinus,
+  asynkron and FaktorialDemo alongside unrelated AlexExperimenterar
+  working folders, and `D:\git\asynkron` holds only femma (re-verified
+  November 17); `../booking` and `../Asynkron.JsEngine` are absent.
+  Unchanged structural claims carried from the October 28–November 16
+  reviews keep that provenance.
+- One-day Faktorial API usage read on November 17 (20:57:40Z) reported
+  68,425 calls across 18 endpoints, overwhelmingly task-record reads
+  (GET /api/tasks/{issue_ref}, 60,751), with canvas context-checks at
+  7,291, queue reads at 126 and agent-management and worker-settings
+  reads at 84 each. The same caveats as previous refreshes stand and
+  this read is again far thinner than its window: the volatile in-memory
+  retention covered only 20:46:19Z–20:57:37Z against the one-day request
+  (TTL 3600 s), the population was truncated by a store cap, the sampling
+  state is unknown, and revision comparability is unavailable; of 368
+  selected retained spans, 302 joined exactly to durable route identities
+  and 66 were unmatched (all `conflicting_route`), with zero errors in the
+  measured population — but that population is a thin window, not a
+  demand estimate.
+- The serving-process database telemetry read at 20:57:40Z on November 17
+  covered the collector epoch reset 2026-11-17T20:12:31Z: at the read its
+  cumulative counters span about 45 minutes — 102,152 calls, 82,765
+  queries, 7 errors and ≈121.8 MB received, led by the DuePage
+  agent-run reads (12,623 calls, ≈70.4 MB received, 5 errors), the paired
+  SchedulingRevision/CommandRevision reads (10,389 calls each), the
+  Settings reads (5,196 calls), the ListSchedulingFactsContext reads
+  (2,675 calls) and the TryClaim claim attempts (1,168 calls, 4,672
+  queries); the other 2 errors sit in the projectarchitecture SourceSync
+  ReadSelection queries. The serving process restarted about 45 minutes
+  before the read, so this window is far shorter than previous refreshes'
+  reads. Cumulative counters are not comparable across collector resets.
+  Both populations are Cloud serving-process scope, not this static site,
+  and none can be combined into an error rate or demand estimate.
 - Website traffic, inquiry outcomes and production logs remain unavailable;
   the application has no database. No new privacy or compliance verdict is
   claimed. Exact `../booking` and `../Asynkron.JsEngine` paths are absent in
@@ -914,6 +951,18 @@ work.
   API-usage and database-telemetry reads — are compressed to the pointers
   below; each generation's full text stays in Git history at its delivery
   commit (`git log -p -- docs/roadmap.md` from the listed merge).
+  - fk241 (November 16): the previous roadmap read in full at the
+    prepared `c0e17d2` tip (fk237's merge), the `80eb6bd..c0e17d2` delta
+    (fk232/fk233/fk238/fk237) plus the unmerged fk220 PR #149, source
+    verification of the registry pricing, share-link helpers, tap-target
+    utilities, font-preload documentation, sibling-hero listing and
+    drifted catalog passages, owning reads of fk232/fk233/fk237/fk238/
+    fk231/fk228/fk220/fk224/fk214/fk171/fk183/fk195, the fk242/fk243
+    creation read-backs, the sixteen-record open inventory, API usage
+    (116,005 calls/10 endpoints) and database telemetry (102,010 calls /
+    85,043 queries / 7 errors on the 2026-11-16T19:19:39Z epoch) under
+    the serving-process caveats — full text in Git history at merge
+    `e3f084a` (PR #157).
   - fk231 (November 15): the previous roadmap read in full at the
     prepared `80eb6bd` tip (fk228's merge), the `c3f9ede..80eb6bd` delta
     (fk219/fk221/fk227/fk228) plus the unmerged fk220 PR #149, source
