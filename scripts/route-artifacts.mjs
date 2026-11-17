@@ -38,10 +38,10 @@ const homeHeroPhotoAssetPath = "/page-visuals/hero-photo.webp";
 /**
  * Byte budget for each route's preloaded full-size hero asset, the file the
  * stamped preload link fetches before first paint. It sits above the largest
- * current preloaded hero (stensattning-photo.webp at 385,866 B) and below the
- * 501,858 B tradgard-generated.webp baseline that the 2026-11-13 recompression
- * removed, so the gate trips exactly when an oversized preloaded hero
- * reappears instead of policing already-efficient srcset variants.
+ * current preloaded hero (tradgard-generated.webp at 342,786 B after the
+ * 2026-11-13 and 2026-11-17 hero recompressions), so the gate trips exactly
+ * when an oversized preloaded hero reappears instead of policing
+ * already-efficient srcset variants.
  */
 export const heroAssetByteBudget = 400000;
 
