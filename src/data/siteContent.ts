@@ -415,6 +415,8 @@ export const siteContent = {
       printLabel: "Skriv ut / spara som PDF",
       shareLabel: "Skapa delbar länk",
       shareHelp: "Länken innehåller dina mått. Den som öppnar den ser samma beräkning.",
+      shareCopiedMessage: "Länken har kopierats till urklipp.",
+      shareFallbackMessage: "Kopieringen misslyckades. Markera och kopiera länken ovan manuellt.",
     },
     uppfart: {
       breadcrumbLabel: "Offertberäkning",
