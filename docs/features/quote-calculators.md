@@ -1,6 +1,6 @@
 # F6: Calculate a preliminary quote
 
-Reviewed: 2026-11-16. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-17. Runtime: `ui`. Product role: `customer_outcome`.
 
 Visitors with a husdränering or driveway project can self-serve a preliminary
 cost picture before contacting the company. The calculators produce a
@@ -43,7 +43,8 @@ calculator's fields, errors and email draft.
 The totals are computed in [quote helpers](../../src/lib/quote.ts): the
 drainage total prices the first 55 löpmeter at a higher tier, a lower tier
 above 55 and a fixed establishment amount; the driveway total prices area, an
-optional asphalt layer, a fixed preparation amount and each load. The parameters themselves are registry-declared content under `content.quote`:
+optional asphalt layer, a fixed preparation amount and each load. The parameters themselves are registry-declared content under `content.quote`
+since the `fk232` change (PR #153, `326125a`):
 `quote.uppfart.pricing` in [typed content](../../src/data/siteContent.ts)
 declares perSquareMeter 950, asphaltPerSquareMeter 667, fixedCost 4900 and
 perLoad 2000, and `quote.drainage.pricing` declares boundaryMeters 55,
@@ -133,7 +134,8 @@ unit-test file, [quote.test.ts](../../src/lib/quote.test.ts), whose
 declarations check the drainage tier totals at and beyond the registry-declared
 boundary, the driveway area, asphalt and load pricing — each deriving its
 pinned totals from the declared `quote.uppfart.pricing` and
-`quote.drainage.pricing` objects instead of hardcoded amounts — the sv-SE money and
+`quote.drainage.pricing` objects instead of hardcoded amounts, the bound the
+`fk232` registry move introduced — the sv-SE money and
 number formatting, the VAT-status label constant and the mailto template
 filling and encoding; the page declarations above cover the rendered behavior
 around them. The 2026-11-11 review maps those helper declarations as

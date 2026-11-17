@@ -1283,6 +1283,7 @@
           "src/pages/DrainageQuotePage.tsx",
           "src/components/QuotePageShared.tsx",
           "src/lib/quote.ts",
+          "src/lib/quote-share.ts",
           "src/data/siteContent.ts"
         ],
         "background_component_relations": [],
@@ -1292,6 +1293,7 @@
         "outcome_signals": [
           "In an observed task, a visitor selects husdränering or uppfart and sees one preliminary total for the entered measurements.",
           "A valid calculation exposes the Begär offert mailto draft with the measurements and total and a print/PDF path, with nothing sent automatically.",
+          "A visitor creates the measurements-bearing share link, and opening it restores the inputs and recomputes the same total.",
           "Invalid input shows a Swedish blocking message instead of a misleading total."
         ]
       },
@@ -1414,6 +1416,20 @@
             },
             {
               "framework": "vitest",
+              "path": "src/pages/QuotePage.test.tsx",
+              "name": "restores the shared driveway inputs and recomputes the same total on load",
+              "evidence_type": "direct",
+              "supports": "Checks that loading /offertberakning/ with the yta, lass and asfalt share parameters restores the three inputs without an alert and recomputes the identical driveway total. It does not open the link in a second browser session."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/DrainageQuotePage.test.tsx",
+              "name": "restores the shared length and recomputes the same total on load",
+              "evidence_type": "direct",
+              "supports": "Checks that loading /draneringsberakning/ with the langd share parameter restores the length without an alert and recomputes the identical drainage total."
+            },
+            {
+              "framework": "vitest",
               "path": "src/pages/DrainageQuotePage.test.tsx",
               "name": "describes the length field and announces updates in a polite live region",
               "evidence_type": "direct",
@@ -1502,6 +1518,20 @@
               "name": "exports the exact VAT status label constant",
               "evidence_type": "technical",
               "supports": "Helper-level check pins the exact Momsstatus ej bekräftad constant that the rendered result aside and the email body carry."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote-share.test.ts",
+              "name": "reads driveway share values and leaves missing params undefined",
+              "evidence_type": "technical",
+              "supports": "Helper-level check pins the tolerant decoding of the yta, lass and asfalt search parameters, leaving missing or malformed values undefined so the page keeps its own input handling; the page declarations above check the rendered restore built on it."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote-share.test.ts",
+              "name": "reads the drainage length only when present",
+              "evidence_type": "technical",
+              "supports": "Helper-level check pins that the langd search parameter is read only when present, the tolerant-decode basis for the restore-on-load behavior the page declarations above check."
             }
           ],
           "entry_point_refs": [],
@@ -1556,6 +1586,20 @@
               "name": "restores the example and clears the project description",
               "evidence_type": "direct",
               "supports": "Checks that reset restores the example length, clears the note and the alert and leaves a valid email handoff."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuotePage.test.tsx",
+              "name": "degrades invalid shared inputs through the existing invalid-input path",
+              "evidence_type": "direct",
+              "supports": "Checks that an invalid shared yta value renders the existing Swedish alert instead of a total and disables the send, print and share controls, reusing the invalid-input handling instead of a separate shared-error path."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/DrainageQuotePage.test.tsx",
+              "name": "degrades an invalid shared length through the existing invalid-input path",
+              "evidence_type": "direct",
+              "supports": "Checks that an invalid shared langd value renders the existing Swedish alert instead of a total and disables the send, print and share controls."
             }
           ],
           "entry_point_refs": [],
@@ -1578,16 +1622,60 @@
         },
         {
           "id": "F6-US4",
-          "title": "Print or save the preliminary quote as PDF",
+          "title": "Keep or share the preliminary quote outside the browser session",
           "status": "current",
           "role": "Property owner",
-          "action": "print or save the preliminary quote through the browser print dialog",
+          "action": "print or save the preliminary quote, or create a share link carrying the measurements",
           "benefit": "keep or share the cost picture outside the browser session",
           "source_anchors": [
             "src/pages/QuotePage.tsx",
-            "src/pages/DrainageQuotePage.tsx"
+            "src/pages/DrainageQuotePage.tsx",
+            "src/lib/quote-share.ts"
           ],
-          "test_references": [],
+          "test_references": [
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuotePage.test.tsx",
+              "name": "produces a share link that encodes the driveway inputs and lands on the uppfart view",
+              "evidence_type": "direct",
+              "supports": "Checks that Skapa delbar länk writes the yta, lass and asfalt values into the page URL while keeping the #uppfart hash so the recipient lands on the driveway view, and renders the same absolute URL as the copyable link's href."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/DrainageQuotePage.test.tsx",
+              "name": "produces a share link that encodes the drainage length",
+              "evidence_type": "direct",
+              "supports": "Checks that Skapa delbar länk writes the langd length into the page URL and renders the same absolute URL as the copyable link's href."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote-share.test.ts",
+              "name": "declares the fixed Swedish URL parameter names",
+              "evidence_type": "technical",
+              "supports": "Helper-level check pins the fixed yta, lass, asfalt and langd parameter names shared by the share URL and its decoding, the contract the page share declarations build on."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote-share.test.ts",
+              "name": "builds driveway search params for area, loads and the asphalt choice",
+              "evidence_type": "technical",
+              "supports": "Helper-level check pins the driveway search encoding, including the 1/0 asphalt flag."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote-share.test.ts",
+              "name": "builds the drainage search param from the entered length",
+              "evidence_type": "technical",
+              "supports": "Helper-level check pins the drainage search encoding behind the page share-link declarations."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote-share.test.ts",
+              "name": "builds an absolute share href from the current page location",
+              "evidence_type": "technical",
+              "supports": "Helper-level check pins the absolute href construction that keeps the rendered share link usable regardless of the origin path."
+            }
+          ],
           "entry_point_refs": [],
           "preconditions": [
             "A calculator shows a valid preliminary total."
@@ -1595,14 +1683,17 @@
           "flow": [
             "Enter valid measurements and read the announced total.",
             "Select Skriv ut / spara som PDF to open the browser's print dialog.",
-            "Keep or share the printed page; it carries the same total-only content as the view."
+            "Keep or share the printed page; it carries the same total-only content as the view.",
+            "Or select Skapa delbar länk to write the measurements into the page URL and copy or send the displayed share link onward."
           ],
           "variants": [
-            "Both calculators expose the same print control in the Din kostnadsbild aside; it stays disabled while input is invalid."
+            "Both calculators expose the same print control in the Din kostnadsbild aside; it stays disabled while input is invalid.",
+            "The share link encodes yta, lass and the asphalt choice on /offertberakning/ while keeping the #uppfart hash, and längd on /draneringsberakning/; the control copies through the browser clipboard when that API is available and stays usable as a plain link when it is not.",
+            "Opening a share link restores the shared inputs once on load and recomputes the identical total; missing parameters fall back to the example defaults and invalid shared values go through the existing invalid-input alert with the share control disabled alongside the email and print controls."
           ],
-          "expected_outcome": "The visitor can hand the preliminary total to paper or a PDF through the browser's own print path; the website produces no separate document, file or stored quote.",
-          "failure_behavior": "The website cannot confirm that a printout or PDF was produced; browser and printer availability stay outside the site.",
-          "recovery": "Retry the print control or read the total on screen; no print invocation is covered by a reviewed declaration, so the printed rendering remains an unmapped gap."
+          "expected_outcome": "The visitor hands the preliminary total to paper or a PDF through the browser's own print path, or carries the exact calculation onward through a measurements-bearing share link whose recipient sees the same recomputed total; the website stores nothing beyond that link.",
+          "failure_behavior": "The website cannot confirm that a printout or PDF was produced; browser and printer availability stay outside the site. The share control is disabled alongside the email and print controls while input is invalid.",
+          "recovery": "Retry the print control or read the total on screen; a recipient without the exact link URL starts from the example values. No print invocation is covered by a reviewed declaration, so the printed rendering remains an unmapped gap."
         },
         {
           "id": "F6-US5",
