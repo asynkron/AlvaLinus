@@ -2,7 +2,7 @@
 
 Feature: [F4 — Home, navigation and route recovery](../../navigation-and-recovery.md)  
 Status: current  
-Reviewed: 2026-11-16
+Reviewed: 2026-11-17
 
 As a site visitor, I want to use route navigation so I can reach service selection, company information or inquiry preparation.
 

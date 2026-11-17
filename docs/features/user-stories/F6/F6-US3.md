@@ -2,7 +2,7 @@
 
 Feature: [F6 — Calculate a preliminary quote](../../quote-calculators.md)  
 Status: current  
-Reviewed: 2026-11-06
+Reviewed: 2026-11-17
 
 As a project visitor, I want clear Swedish feedback when my measurements are invalid so I can correct them instead of acting on a misleading total.
 
@@ -38,5 +38,7 @@ The page performs shape and range checks only; it cannot judge whether the enter
 - vitest, [src/pages/QuotePage.test.tsx](../../../../src/pages/QuotePage.test.tsx), declaration `blocks invalid quantities without a misleading result and resets the calculator` (direct): Checks the Swedish alert, the absent email link, the disabled result and print controls, the absent total for empty and negative values and the reset behavior.
 - vitest, [src/pages/DrainageQuotePage.test.tsx](../../../../src/pages/DrainageQuotePage.test.tsx), declaration `blocks the invalid length %s without a misleading result` (direct): Parameterized empty, zero, negative and over-limit cases check the alert, aria-invalid, the disabled email and print controls and the absent total.
 - vitest, [src/pages/DrainageQuotePage.test.tsx](../../../../src/pages/DrainageQuotePage.test.tsx), declaration `restores the example and clears the project description` (direct): Checks that reset restores the example length, clears the note and the alert and leaves a valid email handoff.
+- vitest, [src/pages/QuotePage.test.tsx](../../../../src/pages/QuotePage.test.tsx), declaration `degrades invalid shared inputs through the existing invalid-input path` (direct): Checks that an invalid shared yta value renders the existing Swedish alert instead of a total and disables the send, print and share controls, reusing the invalid-input handling instead of a separate shared-error path.
+- vitest, [src/pages/DrainageQuotePage.test.tsx](../../../../src/pages/DrainageQuotePage.test.tsx), declaration `degrades an invalid shared length through the existing invalid-input path` (direct): Checks that an invalid shared langd value renders the existing Swedish alert instead of a total and disables the send, print and share controls.
 
 Backend entry-point references: none (frontend-only). Test mappings were reviewed as source declarations; this document is not an execution receipt.
