@@ -27,7 +27,7 @@ export function QuotePage({ content = siteContent }: { readonly content?: SiteCo
   const share = readDrivewayShareValues(window.location.search);
   const [values, setValues] = useState<Values>(() => ({ area: share.area ?? defaults.area, loads: share.loads ?? defaults.loads }));
   const [includeAsphalt, setIncludeAsphalt] = useState(share.asphalt ?? true);
-  const [notes, setNotes] = useState("");
+  const [notes, setNotes] = useState(share.notes ?? "");
 
   useEffect(() => {
     const syncKind = () => setKind(selectedKind());
@@ -57,7 +57,7 @@ export function QuotePage({ content = siteContent }: { readonly content?: SiteCo
   function quantity(key: keyof Values, label: string, unit: string, min: string, step: string) {
     return <label className="quote-field"><span>{label}</span><span className="quote-input"><input type="number" min={min} max={maximumQuantity} step={step} value={values[key]} onChange={event => setValues({ ...values, [key]: event.target.value })} aria-invalid={!valid} aria-describedby="quote-quantity-help" /><span>{unit}</span></span></label>;
   }
-  return <QuotePageShell homeLabel={content.chrome.breadcrumb.homeLabel} formAriaLabel={shared.formAriaLabel} hero={{ src: "/page-visuals/quote-hero.webp", srcSet: quoteRoute?.heroPhotoSrcSet, sizes: quoteRoute?.heroPhotoSizes }} breadcrumbLabel={text.breadcrumbLabel} heading={text.heading} intro={text.intro} resultAside={<QuoteResultAside shared={shared} error={text.error} valid={valid} total={money(total)} email={email} hidden={kind !== "uppfart"} shareHref={buildQuoteShareHref(buildDrivewayShareSearch({ area: values.area, loads: values.loads, includeAsphalt }), uppfartHash)} />}>
+  return <QuotePageShell homeLabel={content.chrome.breadcrumb.homeLabel} formAriaLabel={shared.formAriaLabel} hero={{ src: "/page-visuals/quote-hero.webp", srcSet: quoteRoute?.heroPhotoSrcSet, sizes: quoteRoute?.heroPhotoSizes }} breadcrumbLabel={text.breadcrumbLabel} heading={text.heading} intro={text.intro} resultAside={<QuoteResultAside shared={shared} error={text.error} valid={valid} total={money(total)} email={email} hidden={kind !== "uppfart"} shareHref={buildQuoteShareHref(buildDrivewayShareSearch({ area: values.area, loads: values.loads, includeAsphalt, notes }), uppfartHash)} />}>
     <div className="quote-choice" hidden={kind === "uppfart"}>
       <h2 id="quote-choice-heading" tabIndex={-1}>{text.choiceHeading}</h2>
       <p>{text.choiceSummary}</p>

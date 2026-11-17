@@ -221,6 +221,33 @@ describe("QuotePage", () => {
     expect(loadsInput()).toHaveValue(2);
     expect(asphaltCheckbox()).not.toBeChecked();
     expect(screen.getByText(money(56400))).toBeInTheDocument();
+    expect(screen.getByRole("textbox")).toHaveValue("");
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("encodes a written note into the produced share link", () => {
+    render(<QuotePage />);
+    chooseUppfart();
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: "Villa i Örebro" } });
+
+    const shareHref = `${window.location.origin}/offertberakning/?${quoteShareParams.area}=100&${quoteShareParams.loads}=1&${quoteShareParams.asphalt}=1&${quoteShareParams.notes}=Villa+i+%C3%96rebro#uppfart`;
+
+    expect(screen.queryByRole("link", { name: shareHref })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: shared.shareLabel }));
+
+    expect(window.location.search).toBe(`?${quoteShareParams.area}=100&${quoteShareParams.loads}=1&${quoteShareParams.asphalt}=1&${quoteShareParams.notes}=Villa+i+%C3%96rebro`);
+    expect(screen.getByRole("link", { name: shareHref })).toHaveAttribute("href", shareHref);
+  });
+
+  it("restores the shared note into the project description on load", () => {
+    window.history.replaceState(null, "", `/offertberakning/?${quoteShareParams.area}=50&${quoteShareParams.loads}=2&${quoteShareParams.asphalt}=0&${quoteShareParams.notes}=Villa+i+%C3%96rebro#uppfart`);
+    render(<QuotePage />);
+
+    expect(document.activeElement).toBe(document.body);
+    expect(areaInput()).toHaveValue(50);
+    expect(screen.getByRole("textbox")).toHaveValue("Villa i Örebro");
+    expect(screen.getByText(money(56400))).toBeInTheDocument();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
 

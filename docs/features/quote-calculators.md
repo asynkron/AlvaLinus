@@ -61,15 +61,17 @@ bekräftas", and never internal prices.
 While the input is valid, "Skapa delbar länk" writes the measurements into the
 page URL — yta, lass and the asphalt choice on `/offertberakning/`, where the
 `#uppfart` hash is kept so the recipient lands on the driveway view with the
-total visible, and längd on `/draneringsberakning/` — and renders the same
+total visible, and längd on `/draneringsberakning/` — together with the
+optional project note whenever one is written, and renders the same
 absolute URL as a copyable link below the control, copying it through the
 browser clipboard when that API is available and staying usable as a plain
 link when it is not. Opening a quote URL that carries those parameters
-restores the inputs once on load and recomputes the identical total; missing
+restores the inputs and the note once on load and recomputes the identical
+total; missing
 parameters fall back to the example defaults, invalid values go through the
 existing invalid-input alert, and the share control is disabled alongside the
 email and print controls while the input is invalid. The share URL parameters
-(`yta`, `lass`, `asfalt`, `langd`) are fixed source constants in
+(`yta`, `lass`, `asfalt`, `langd`, `anteckning`) are fixed source constants in
 [quote-share helpers](../../src/lib/quote-share.ts), and the share copy is
 registry-declared in `siteContent.quote.shared`.
 

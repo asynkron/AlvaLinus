@@ -175,11 +175,37 @@ describe("DrainageQuotePage", () => {
     expect(screen.getByRole("link", { name: shareHref })).toHaveAttribute("href", shareHref);
   });
 
+  it("encodes a written note into the produced share link", () => {
+    render(<DrainageQuotePage />);
+    fireEvent.change(lengthInput(), { target: { value: "62.5" } });
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: "Villa i Örebro" } });
+
+    const shareHref = `${window.location.origin}/draneringsberakning/?${quoteShareParams.length}=62.5&${quoteShareParams.notes}=Villa+i+%C3%96rebro`;
+
+    expect(screen.queryByRole("link", { name: shareHref })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: shared.shareLabel }));
+
+    expect(window.location.search).toBe(`?${quoteShareParams.length}=62.5&${quoteShareParams.notes}=Villa+i+%C3%96rebro`);
+    expect(screen.getByRole("link", { name: shareHref })).toHaveAttribute("href", shareHref);
+  });
+
   it("restores the shared length and recomputes the same total on load", () => {
     window.history.replaceState(null, "", `/draneringsberakning/?${quoteShareParams.length}=62.5`);
     render(<DrainageQuotePage />);
 
     expect(lengthInput()).toHaveValue(62.5);
+    expect(screen.getByText(money(221900))).toBeInTheDocument();
+    expect(screen.getByRole("textbox")).toHaveValue("");
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("restores the shared note into the project description on load", () => {
+    window.history.replaceState(null, "", `/draneringsberakning/?${quoteShareParams.length}=62.5&${quoteShareParams.notes}=Villa+i+%C3%96rebro`);
+    render(<DrainageQuotePage />);
+
+    expect(lengthInput()).toHaveValue(62.5);
+    expect(screen.getByRole("textbox")).toHaveValue("Villa i Örebro");
     expect(screen.getByText(money(221900))).toBeInTheDocument();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
