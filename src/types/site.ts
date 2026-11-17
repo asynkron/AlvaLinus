@@ -120,6 +120,8 @@ export type SiteQuoteShared = {
   readonly printLabel: string;
   readonly shareLabel: string;
   readonly shareHelp: string;
+  readonly shareCopiedMessage: string;
+  readonly shareFallbackMessage: string;
 };
 
 export type SiteQuoteUppfartPricing = {

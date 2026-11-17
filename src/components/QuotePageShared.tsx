@@ -47,11 +47,17 @@ type QuoteResultAsideProps = {
 
 export function QuoteResultAside({ shared, error, valid, total, email, hidden, shareHref }: QuoteResultAsideProps) {
   const [shareLink, setShareLink] = useState<string | null>(null);
+  const [shareMessage, setShareMessage] = useState<string | null>(null);
 
   function share() {
     window.history.replaceState(null, "", shareHref);
     setShareLink(shareHref);
-    void navigator.clipboard?.writeText(shareHref).catch(() => undefined);
+    const write = navigator.clipboard?.writeText(shareHref);
+    if (write) {
+      void write.then(() => setShareMessage(shared.shareCopiedMessage), () => setShareMessage(shared.shareFallbackMessage));
+    } else {
+      setShareMessage(shared.shareFallbackMessage);
+    }
   }
 
   return <aside className="quote-result" aria-label={shared.resultAriaLabel} hidden={hidden}>
@@ -69,6 +75,7 @@ export function QuoteResultAside({ shared, error, valid, total, email, hidden, s
     <button className="quote-share" onClick={share} disabled={!valid}><Link2 size={16} aria-hidden="true" />{shared.shareLabel}</button>
     {shareLink ? <p className="quote-share-link"><a href={shareLink}>{shareLink}</a></p> : null}
     <p className="quote-share-help">{shared.shareHelp}</p>
+    <p role="status" className="quote-share-status">{shareMessage}</p>
   </aside>;
 }
 
