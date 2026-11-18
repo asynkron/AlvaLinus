@@ -522,7 +522,7 @@ function Inventory({ content }: { readonly content: SiteContent }) {
               <a
                 key={route.label}
                 href={route.href}
-                className="rounded-full border bg-background px-3 py-1 text-sm text-foreground transition-colors hover:border-primary"
+                className="inline-flex items-center rounded-full border bg-background px-3 py-2 text-sm text-foreground transition-colors hover:border-primary"
               >
                 {route.label}
               </a>
