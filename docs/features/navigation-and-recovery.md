@@ -1,6 +1,6 @@
 # F4: Home, navigation and route recovery
 
-Reviewed: 2026-11-17. Runtime: `ui`. Product role: `surface`.
+Reviewed: 2026-11-18. Runtime: `ui`. Product role: `surface`.
 Supports **F1, F2, F3, F5 and F6**, all active customer-outcome features.
 
 Home and shared route handling make the service, company and inquiry outcomes
@@ -30,7 +30,9 @@ the menu can reopen.
 Tab/Shift+Tab events are not cancelled; Escape elsewhere in the header leaves
 both menu and focus unchanged. Subpages have a Hem breadcrumb.
 Footer repeats page and service links and the contact email on ready routes,
-including not-found.
+including not-found. The footer's page and service links and the contact email
+are inline-flex tap targets carrying `py-2` vertical padding of roughly 36px of
+tap height inside the unchanged footer grid and list layout.
 
 Desktop and mobile header navigation and the footer's page and service lists
 derive from the typed route registry: each page or service destination's
@@ -183,7 +185,12 @@ into F4-US1 as technical evidence: the `py-2` tap-target padding on the md+
 desktop nav element, links and both triggers, the unchanged mobile targets and
 `min-h-16` header row, and the at-least-32px computed tap height — source-text
 and Tailwind-compile evidence that does not render the header or measure real
-touch input.
+touch input. The 2026-11-18 `fk257` review maps the three footer tap-target
+declarations in
+[styles.footer-tap-targets.test.ts](../../src/styles.footer-tap-targets.test.ts)
+into F4-US1 the same way: the inline-flex `py-2` tap-target padding on the
+footer's page, service and email links, the unchanged footer identity, grid and
+list layout, and the at-least-36px computed tap height.
 
 No product background module, API, storage, telemetry or report belongs to this
 surface. Outcome measurement stays with F1–F3, F5 and F6; there is no standalone conversion
