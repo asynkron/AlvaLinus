@@ -987,7 +987,10 @@ function Footer({ content }: { readonly content: SiteContent }) {
           <ul className="mt-3 grid gap-2">
             {PAGE_NAV.map((route) => (
               <li key={route.href}>
-                <a href={route.href} className="text-background/70 transition-colors hover:text-primary-onDark">
+                <a
+                  href={route.href}
+                  className="inline-flex items-center py-2 text-background/70 transition-colors hover:text-primary-onDark"
+                >
                   {route.label}
                 </a>
               </li>
@@ -999,7 +1002,10 @@ function Footer({ content }: { readonly content: SiteContent }) {
           <ul className="mt-3 grid gap-2">
             {SERVICE_NAV.map((route) => (
               <li key={route.href}>
-                <a href={route.href} className="text-background/70 transition-colors hover:text-primary-onDark">
+                <a
+                  href={route.href}
+                  className="inline-flex items-center py-2 text-background/70 transition-colors hover:text-primary-onDark"
+                >
                   {route.label}
                 </a>
               </li>
@@ -1010,7 +1016,7 @@ function Footer({ content }: { readonly content: SiteContent }) {
           <p className="font-semibold text-background">{chrome.footer.contactHeading}</p>
           <a
             href={`mailto:${email}`}
-            className="mt-3 inline-flex items-center gap-2 text-background/70 transition-colors hover:text-primary-onDark"
+            className="mt-3 inline-flex items-center gap-2 py-2 text-background/70 transition-colors hover:text-primary-onDark"
           >
             <Mail className="h-4 w-4" aria-hidden="true" />
             {email}
