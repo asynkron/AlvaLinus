@@ -130,7 +130,9 @@ polite live region, the field descriptions, the invalid-input alerts and
 disabled controls, the reset behavior, the total-only discipline in the page
 and the email draft, and the cross-links. The story documents and the identity
 manifest carry the exact names and their bounded scope. No declaration
-exercises a real print dialog or an actual email program. The
+exercises a real print dialog or an actual email program; the print hand-off's
+anchors and `@media print` rules are instead pinned at the source level by the
+2026-11-18 stylesheet mapping below. The
 [quote helpers](../../src/lib/quote.ts) also carry a dedicated money-logic
 unit-test file, [quote.test.ts](../../src/lib/quote.test.ts), whose
 declarations check the drainage tier totals at and beyond the registry-declared
@@ -190,7 +192,20 @@ and this review maps its new page declarations `encodes a written note into the
 produced share link` and `restores the shared note into the project description
 on load` for both calculators plus the note-carrying helper declarations in
 [quote-share.test.ts](../../src/lib/quote-share.test.ts) into the F6-US2 and
-F6-US4 records.
+F6-US4 records. The same 2026-11-18 review then mapped the delivered print
+hand-off itself: the "Skriv ut / spara som PDF" control invokes the browser's
+own `window.print()` in the shared result aside
+([QuotePageShared](../../src/components/QuotePageShared.tsx)), and the shared
+quote stylesheet ([QuotePage.css](../../src/pages/QuotePage.css)) that both
+calculators render through carries the two `@media print` blocks dropping the
+hero photo and intro decoration and hiding the page chrome and every action
+control for paper; this review names those anchors in the F6-US4 record
+together with the declarations `hides the hero image and intro decoration from
+the printed page`, `hides the page chrome and every action control from the
+printed page` and `restyles the result column for paper` in
+[styles.quote-print.test.ts](../../src/styles.quote-print.test.ts) as
+technical evidence, still without any declaration exercising a real print
+dialog.
 
 An invalid measurement keeps the previous total out of view and disables the
 email and print controls until corrected; "Återställ exempel" restores the
