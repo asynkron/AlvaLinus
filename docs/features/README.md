@@ -1,6 +1,6 @@
 # Feature catalog
 
-Reviewed against source: 2026-11-17.
+Reviewed against source: 2026-11-18.
 
 The catalog introduced in `f7b481f` already covers the current route inventory.
 The maintained catalog retains its published identities, including F4-US3 for
@@ -68,6 +68,17 @@ the quote-share helper declarations into the F6-US2, F6-US3 and F6-US4 records,
 adds the share control to the quote route rows, adds
 [quote-share.test.ts](../../src/lib/quote-share.test.ts) and
 [styles.header-nav-tap-targets.test.ts](../../src/styles.header-nav-tap-targets.test.ts)
+to the test-reference list, and re-stamps the F4 and F6 records. `fk253`
+(PR #162, `de05fa5`) then carried the optional quote note through the share
+links, updating the F6 feature document in the same commit, while `fk251`
+(PR #163) refreshed [docs/roadmap.md](../roadmap.md) and `fk252` (PR #164)
+recompressed the three largest hero WebPs in place without catalog impact, and
+`fk257` (PR #165, `0a5964d`) enlarged the footer nav and email tap targets.
+This 2026-11-18 review completes the reconciliation from a fresh source read:
+it folds the note-carrying share prose into the F6 records with the eight new
+note declarations mapped into the F6-US2 and F6-US4 records, maps the three
+footer tap-target declarations into F4-US1, adds
+[styles.footer-tap-targets.test.ts](../../src/styles.footer-tap-targets.test.ts)
 to the test-reference list, and re-stamps the F4 and F6 records.
 
 This catalog maps the static Swedish Svärd Entreprenad site to visitor outcomes.
@@ -104,8 +115,8 @@ there too. The renderer is the authority for visible sections.
 | `/om-oss/` | [F2-US1](user-stories/F2/F2-US1.md) | Hero and breadcrumb; company paragraphs; contact link band; footer. |
 | `/inhyrning/` | [F5-US1](user-stories/F5/F5-US1.md), [F5-US2](user-stories/F5/F5-US2.md) | Hero and breadcrumb; staffing inquiry form with Swedish validation, VAT note and mail-draft handoff; guidance aside; footer. |
 | `/kontakt/` | [F3-US1](user-stories/F3/F3-US1.md), [F3-US2](user-stories/F3/F3-US2.md) | Hero; quote/site-visit prompt; email address; native form; footer. |
-| `/offertberakning/` | [F6-US1](user-stories/F6/F6-US1.md), [F6-US2](user-stories/F6/F6-US2.md), [F6-US3](user-stories/F6/F6-US3.md), [F6-US4](user-stories/F6/F6-US4.md), [F6-US5](user-stories/F6/F6-US5.md); [F4-US1](user-stories/F4/F4-US1.md) | Hero; breadcrumb; calculator choice (`#uppfart` selects the driveway calculator) with preliminary total, measurements-bearing share link, email handoff and print; footer. |
-| `/draneringsberakning/` | [F6-US1](user-stories/F6/F6-US1.md), [F6-US2](user-stories/F6/F6-US2.md), [F6-US3](user-stories/F6/F6-US3.md), [F6-US4](user-stories/F6/F6-US4.md), [F6-US5](user-stories/F6/F6-US5.md); [F4-US1](user-stories/F4/F4-US1.md) | Hero; breadcrumb; drainage length calculator with preliminary total, measurements-bearing share link, email handoff and print; footer. |
+| `/offertberakning/` | [F6-US1](user-stories/F6/F6-US1.md), [F6-US2](user-stories/F6/F6-US2.md), [F6-US3](user-stories/F6/F6-US3.md), [F6-US4](user-stories/F6/F6-US4.md), [F6-US5](user-stories/F6/F6-US5.md); [F4-US1](user-stories/F4/F4-US1.md) | Hero; breadcrumb; calculator choice (`#uppfart` selects the driveway calculator) with preliminary total, share link carrying the measurements and any written note, email handoff and print; footer. |
+| `/draneringsberakning/` | [F6-US1](user-stories/F6/F6-US1.md), [F6-US2](user-stories/F6/F6-US2.md), [F6-US3](user-stories/F6/F6-US3.md), [F6-US4](user-stories/F6/F6-US4.md), [F6-US5](user-stories/F6/F6-US5.md); [F4-US1](user-stories/F4/F4-US1.md) | Hero; breadcrumb; drainage length calculator with preliminary total, share link carrying the measurements and any written note, email handoff and print; footer. |
 | Keyboard bypass on all rendered states | [F4-US3](user-stories/F4/F4-US3.md) | Hoppa till innehåll precedes Header and points to one #content target; ready bodies have tabindex=-1, availability sections do not. |
 | Shared empty/not-found | [F4-US2](user-stories/F4/F4-US2.md) | Header remains; the empty-services message replaces the service-dependent home/index bodies; ready not-found provides declared-route shortcuts and footer. |
 
@@ -178,7 +189,8 @@ does not provide persistence, delivery assurance or a privacy/compliance verdict
   [styles.reduced-motion.test.ts](../../src/styles.reduced-motion.test.ts),
   [styles.page-accent-contrast.test.ts](../../src/styles.page-accent-contrast.test.ts),
   [styles.quote-focus-zoom.test.ts](../../src/styles.quote-focus-zoom.test.ts),
-  [styles.header-nav-tap-targets.test.ts](../../src/styles.header-nav-tap-targets.test.ts)
+  [styles.header-nav-tap-targets.test.ts](../../src/styles.header-nav-tap-targets.test.ts),
+  [styles.footer-tap-targets.test.ts](../../src/styles.footer-tap-targets.test.ts)
   and [tailwind.primary-hover-utility.test.ts](../../src/tailwind.primary-hover-utility.test.ts).
   `direct` means
   the assertion checks the stated user-visible facet, not every step of a story.

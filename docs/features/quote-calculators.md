@@ -1,6 +1,6 @@
 # F6: Calculate a preliminary quote
 
-Reviewed: 2026-11-17. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-18. Runtime: `ui`. Product role: `customer_outcome`.
 
 Visitors with a husdränering or driveway project can self-serve a preliminary
 cost picture before contacting the company. The calculators produce a
@@ -184,7 +184,13 @@ absolute href building) and in
 (producing the encoded share URL and copyable link from a filled form,
 restoring the shared inputs with the recomputed total on load, and the
 invalid-shared-input degradation through the existing alert and disabled
-controls).
+controls). The 2026-11-18 `fk253` change (PR #162, `de05fa5`) then carried the
+optional project note through the share link under the `anteckning` parameter,
+and this review maps its new page declarations `encodes a written note into the
+produced share link` and `restores the shared note into the project description
+on load` for both calculators plus the note-carrying helper declarations in
+[quote-share.test.ts](../../src/lib/quote-share.test.ts) into the F6-US2 and
+F6-US4 records.
 
 An invalid measurement keeps the previous total out of view and disables the
 email and print controls until corrected; "Återställ exempel" restores the

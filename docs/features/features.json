@@ -130,7 +130,7 @@
     },
     {
       "name": "Calculate a preliminary quote",
-      "description": "Visitors choose the husdränering or uppfart calculator, enter measurements and get a total-only preliminary quote they can carry onward through a measurements-bearing share link, email or print.",
+      "description": "Visitors choose the husdränering or uppfart calculator, enter measurements and get a total-only preliminary quote they can carry onward through a share link carrying the measurements and any written note, email or print.",
       "document": "docs/features/quote-calculators.md",
       "route_scope": "/offertberakning/, /draneringsberakning/",
       "routes": [
@@ -156,7 +156,7 @@
         },
         {
           "path": "src/lib/quote-share.ts",
-          "description": "Quote share-link helpers: fixed URL parameter names, measurement search encoding, tolerant decoding and absolute share href building."
+          "description": "Quote share-link helpers: fixed URL parameter names including the anteckning note, measurement and note search encoding, tolerant decoding and absolute share href building."
         },
         {
           "path": "src/data/siteContent.ts",
@@ -171,7 +171,7 @@
           "description": "Quote route kind, the shared and per-calculator quote copy contracts and the calculator band contract."
         }
       ],
-      "reviewed_against_source": "2026-11-17",
+      "reviewed_against_source": "2026-11-18",
       "slice_refs": [],
       "entry_point_refs": []
     },
@@ -214,7 +214,7 @@
           "description": "Shared document-emission helpers: route metadata stamping, per-route hero preload links and per-document woff2 font preload links."
         }
       ],
-      "reviewed_against_source": "2026-11-17",
+      "reviewed_against_source": "2026-11-18",
       "slice_refs": [],
       "entry_point_refs": []
     }

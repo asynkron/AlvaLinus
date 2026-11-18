@@ -912,6 +912,27 @@
               "name": "reaches at least 32px of tap height inside the unchanged 64px header row",
               "evidence_type": "technical",
               "supports": "Compiled-utility check computes the text-sm py-2 target's line height plus vertical padding at at least 32px and no taller than the min-h-16 row minimum. Tailwind-compile evidence; it does not render the header in a browser or measure real touch input."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/styles.footer-tap-targets.test.ts",
+              "name": "blockifies every footer nav link and keeps the email link as an inline-flex target",
+              "evidence_type": "technical",
+              "supports": "Source-text check pins the footer page and services nav link classNames and the email link className as inline-flex targets carrying py-2, the tap-target padding fk257 delivered. It reads the page source only and does not render the footer or measure a browser."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/styles.footer-tap-targets.test.ts",
+              "name": "keeps the footer identity, grid and list layout unchanged",
+              "evidence_type": "technical",
+              "supports": "Source-text check pins the unchanged four-column footer grid, the two nav list classNames, the footer shell element and colors and the shared footer link hover colors, so the enlargement leaves the footer structure untouched."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/styles.footer-tap-targets.test.ts",
+              "name": "reaches at least 36px of tap height for the unchanged text-sm footer links",
+              "evidence_type": "technical",
+              "supports": "Compiled-utility check computes the text-sm inline-flex py-2 target's line height plus vertical padding at at least 36px. Tailwind-compile evidence; it does not render the footer in a browser or measure real touch input."
             }
           ],
           "entry_point_refs": [],
@@ -932,7 +953,8 @@
             "inventory.primaryRoutes has six shortcuts; it is not the full twelve-route registry.",
             "Subpage heroes and the home hero use decorative images requested at high fetch priority (photographs except the staffing, about and contact SVG heroes) while service-card images stay lazy; a failing home hero photo hides its image without a retry loop while the hero content remains. Service-card images have route alt text.",
             "Every emitted document head (home, every stamped subpage artifact and dist/404.html) carries one woff2 font preload link per emitted font asset, injected at build time from that build's bundle via vite.config.ts and scripts/route-artifacts.mjs so font fetch starts at HTML parse time; the injection is a deterministic no-op when a build emits no woff2 assets, and the static route assertion requires exactly those tags byte-for-byte on every emitted document.",
-            "At md+ widths the desktop nav links, the Tjänster trigger and the desktop Kalkyler summary carry py-2 vertical tap-target padding that reaches at least 32px of computed tap height (roughly 36px) inside the unchanged min-h-16 sticky header row, while the mobile menu targets stay unchanged."
+            "At md+ widths the desktop nav links, the Tjänster trigger and the desktop Kalkyler summary carry py-2 vertical tap-target padding that reaches at least 32px of computed tap height (roughly 36px) inside the unchanged min-h-16 sticky header row, while the mobile menu targets stay unchanged.",
+            "The footer's page and service links and the contact email link are inline-flex tap targets carrying py-2 vertical padding that reaches at least 36px of computed tap height inside the unchanged footer identity, grid and list layout."
           ],
           "expected_outcome": "A declared static route can be selected for F1, F2, F3, F5 or F6.",
           "failure_behavior": "A missing host artifact can fail before React mounts; this catalog does not claim host-level fallback.",
@@ -1293,7 +1315,7 @@
         "outcome_signals": [
           "In an observed task, a visitor selects husdränering or uppfart and sees one preliminary total for the entered measurements.",
           "A valid calculation exposes the Begär offert mailto draft with the measurements and total and a print/PDF path, with nothing sent automatically.",
-          "A visitor creates the measurements-bearing share link, and opening it restores the inputs and recomputes the same total.",
+          "A visitor creates the share link carrying the measurements and any written note, and opening it restores the inputs and the note and recomputes the same total.",
           "Invalid input shows a Swedish blocking message instead of a misleading total."
         ]
       },
@@ -1532,6 +1554,27 @@
               "name": "reads the drainage length only when present",
               "evidence_type": "technical",
               "supports": "Helper-level check pins that the langd search parameter is read only when present, the tolerant-decode basis for the restore-on-load behavior the page declarations above check."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote-share.test.ts",
+              "name": "reads the shared note only when present",
+              "evidence_type": "technical",
+              "supports": "Helper-level check pins that the anteckning search parameter is read only when present, the tolerant-decode basis for the shared-note restore the page declarations above check."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuotePage.test.tsx",
+              "name": "restores the shared note into the project description on load",
+              "evidence_type": "direct",
+              "supports": "Checks that loading /offertberakning/ with an anteckning share parameter restores the written note into the project description field alongside the restored measurements, the recomputed total and no alert."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/DrainageQuotePage.test.tsx",
+              "name": "restores the shared note into the project description on load",
+              "evidence_type": "direct",
+              "supports": "Checks the same note restore on /draneringsberakning/ with the restored length, the recomputed total and no alert."
             }
           ],
           "entry_point_refs": [],
@@ -1625,7 +1668,7 @@
           "title": "Keep or share the preliminary quote outside the browser session",
           "status": "current",
           "role": "Property owner",
-          "action": "print or save the preliminary quote, or create a share link carrying the measurements",
+          "action": "print or save the preliminary quote, or create a share link carrying the measurements and any written note",
           "benefit": "keep or share the cost picture outside the browser session",
           "source_anchors": [
             "src/pages/QuotePage.tsx",
@@ -1652,7 +1695,7 @@
               "path": "src/lib/quote-share.test.ts",
               "name": "declares the fixed Swedish URL parameter names",
               "evidence_type": "technical",
-              "supports": "Helper-level check pins the fixed yta, lass, asfalt and langd parameter names shared by the share URL and its decoding, the contract the page share declarations build on."
+              "supports": "Helper-level check pins the fixed yta, lass, asfalt, langd and anteckning parameter names shared by the share URL and its decoding, the contract the page share declarations build on."
             },
             {
               "framework": "vitest",
@@ -1674,6 +1717,41 @@
               "name": "builds an absolute share href from the current page location",
               "evidence_type": "technical",
               "supports": "Helper-level check pins the absolute href construction that keeps the rendered share link usable regardless of the origin path."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuotePage.test.tsx",
+              "name": "encodes a written note into the produced share link",
+              "evidence_type": "direct",
+              "supports": "Checks that a written project note is encoded into the produced share URL and the copyable link's href as the anteckning parameter alongside the yta, lass and asfalt values."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/DrainageQuotePage.test.tsx",
+              "name": "encodes a written note into the produced share link",
+              "evidence_type": "direct",
+              "supports": "Checks the same note encoding on /draneringsberakning/ alongside the langd length."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote-share.test.ts",
+              "name": "carries a non-empty note in the driveway search params",
+              "evidence_type": "technical",
+              "supports": "Helper-level check pins that a non-empty note is appended as the anteckning parameter to the driveway search encoding."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote-share.test.ts",
+              "name": "carries a non-empty note in the drainage search params",
+              "evidence_type": "technical",
+              "supports": "Helper-level check pins that a non-empty note is appended as the anteckning parameter to the drainage search encoding."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote-share.test.ts",
+              "name": "round-trips long and special-character notes through the search encoding",
+              "evidence_type": "technical",
+              "supports": "Helper-level check pins that long, multiline and special-character notes survive the URLSearchParams round trip through both search encodings and decodings."
             }
           ],
           "entry_point_refs": [],
@@ -1684,14 +1762,14 @@
             "Enter valid measurements and read the announced total.",
             "Select Skriv ut / spara som PDF to open the browser's print dialog.",
             "Keep or share the printed page; it carries the same total-only content as the view.",
-            "Or select Skapa delbar länk to write the measurements into the page URL and copy or send the displayed share link onward."
+            "Or select Skapa delbar länk to write the measurements and any written note into the page URL and copy or send the displayed share link onward."
           ],
           "variants": [
             "Both calculators expose the same print control in the Din kostnadsbild aside; it stays disabled while input is invalid.",
-            "The share link encodes yta, lass and the asphalt choice on /offertberakning/ while keeping the #uppfart hash, and längd on /draneringsberakning/; the control copies through the browser clipboard when that API is available and stays usable as a plain link when it is not.",
-            "Opening a share link restores the shared inputs once on load and recomputes the identical total; missing parameters fall back to the example defaults and invalid shared values go through the existing invalid-input alert with the share control disabled alongside the email and print controls."
+            "The share link encodes yta, lass and the asphalt choice on /offertberakning/ while keeping the #uppfart hash, and längd on /draneringsberakning/, together with the optional project note (anteckning) whenever one is written; the control copies through the browser clipboard when that API is available and stays usable as a plain link when it is not.",
+            "Opening a share link restores the shared inputs and the note once on load and recomputes the identical total; missing parameters fall back to the example defaults and invalid shared values go through the existing invalid-input alert with the share control disabled alongside the email and print controls."
           ],
-          "expected_outcome": "The visitor hands the preliminary total to paper or a PDF through the browser's own print path, or carries the exact calculation onward through a measurements-bearing share link whose recipient sees the same recomputed total; the website stores nothing beyond that link.",
+          "expected_outcome": "The visitor hands the preliminary total to paper or a PDF through the browser's own print path, or carries the exact calculation onward through a share link carrying the measurements and any written note, whose recipient sees the same recomputed total; the website stores nothing beyond that link.",
           "failure_behavior": "The website cannot confirm that a printout or PDF was produced; browser and printer availability stay outside the site. The share control is disabled alongside the email and print controls while input is invalid.",
           "recovery": "Retry the print control or read the total on screen; a recipient without the exact link URL starts from the example values. No print invocation is covered by a reviewed declaration, so the printed rendering remains an unmapped gap."
         },

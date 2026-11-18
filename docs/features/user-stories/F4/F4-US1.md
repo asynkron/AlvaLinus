@@ -2,7 +2,7 @@
 
 Feature: [F4 — Home, navigation and route recovery](../../navigation-and-recovery.md)  
 Status: current  
-Reviewed: 2026-11-17
+Reviewed: 2026-11-18
 
 As a site visitor, I want to use route navigation so I can reach service selection, company information or inquiry preparation.
 
@@ -27,6 +27,7 @@ As a site visitor, I want to use route navigation so I can reach service selecti
 - Subpage heroes and the home hero use decorative images requested at high fetch priority (photographs except the staffing, about and contact SVG heroes) while service-card images stay lazy; a failing home hero photo hides its image without a retry loop while the hero content remains. Service-card images have route alt text.
 - Every emitted document head (home, every stamped subpage artifact and `dist/404.html`) carries one woff2 font preload link per emitted font asset, injected at build time from that build's bundle via `vite.config.ts` and `scripts/route-artifacts.mjs` so font fetch starts at HTML parse time; the injection is a deterministic no-op when a build emits no woff2 assets, and the static route assertion requires exactly those tags byte-for-byte on every emitted document.
 - At md+ widths the desktop nav links, the Tjänster trigger and the desktop Kalkyler summary carry `py-2` vertical tap-target padding that reaches at least 32px of computed tap height (roughly 36px) inside the unchanged `min-h-16` sticky header row, while the mobile menu targets stay unchanged.
+- The footer's page and service links and the contact email link are inline-flex tap targets carrying `py-2` vertical padding that reaches at least 36px of computed tap height inside the unchanged footer identity, grid and list layout.
 
 ## Expected outcome
 
@@ -44,6 +45,7 @@ Use a known route or the home URL; repair/redeploy static route artifacts if mis
 - [src/pages/SiteHomePage.tsx](../../../../src/pages/SiteHomePage.tsx)
 - [src/styles.primary-contrast.test.ts](../../../../src/styles.primary-contrast.test.ts)
 - [src/styles.header-nav-tap-targets.test.ts](../../../../src/styles.header-nav-tap-targets.test.ts)
+- [src/styles.footer-tap-targets.test.ts](../../../../src/styles.footer-tap-targets.test.ts)
 - [vite.config.ts](../../../../vite.config.ts)
 - [scripts/route-artifacts.mjs](../../../../scripts/route-artifacts.mjs)
 - [scripts/assert-static-routes.mjs](../../../../scripts/assert-static-routes.mjs)
@@ -74,5 +76,8 @@ Use a known route or the home URL; repair/redeploy static route artifacts if mis
 - vitest, [src/styles.header-nav-tap-targets.test.ts](../../../../src/styles.header-nav-tap-targets.test.ts), declaration `adds vertical tap-target padding to every md+ header nav target` (technical): Source-text check pins the md+ desktop nav element, the desktop nav link className carrying `py-2` and both desktop trigger classNames with `py-2`, the tap-target padding fk238 delivered. It reads the page source only and does not render the header or measure a browser.
 - vitest, [src/styles.header-nav-tap-targets.test.ts](../../../../src/styles.header-nav-tap-targets.test.ts), declaration `keeps the mobile menu targets and the sticky header row unchanged` (technical): Source-text check pins the unchanged mobile page-link, sub-link, Kalkyler-summary and toggle classNames plus the single `min-h-16` header row height, so the desktop enlargement leaves the mobile targets and sticky row untouched.
 - vitest, [src/styles.header-nav-tap-targets.test.ts](../../../../src/styles.header-nav-tap-targets.test.ts), declaration `reaches at least 32px of tap height inside the unchanged 64px header row` (technical): Compiled-utility check computes the `text-sm py-2` target's line height plus vertical padding at at least 32px and no taller than the `min-h-16` row minimum. Tailwind-compile evidence; it does not render the header in a browser or measure real touch input.
+- vitest, [src/styles.footer-tap-targets.test.ts](../../../../src/styles.footer-tap-targets.test.ts), declaration `blockifies every footer nav link and keeps the email link as an inline-flex target` (technical): Source-text check pins the footer page and services nav link classNames and the email link className as inline-flex targets carrying `py-2`, the tap-target padding fk257 delivered. It reads the page source only and does not render the footer or measure a browser.
+- vitest, [src/styles.footer-tap-targets.test.ts](../../../../src/styles.footer-tap-targets.test.ts), declaration `keeps the footer identity, grid and list layout unchanged` (technical): Source-text check pins the unchanged four-column footer grid, the two nav list classNames, the footer shell element and colors and the shared footer link hover colors, so the enlargement leaves the footer structure untouched.
+- vitest, [src/styles.footer-tap-targets.test.ts](../../../../src/styles.footer-tap-targets.test.ts), declaration `reaches at least 36px of tap height for the unchanged text-sm footer links` (technical): Compiled-utility check computes the `text-sm inline-flex py-2` target's line height plus vertical padding at at least 36px. Tailwind-compile evidence; it does not render the footer in a browser or measure real touch input.
 
 Backend entry-point references: none (frontend-only). Test mappings were reviewed as source declarations; this document is not an execution receipt.
