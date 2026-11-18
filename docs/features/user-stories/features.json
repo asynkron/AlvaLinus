@@ -1673,7 +1673,9 @@
           "source_anchors": [
             "src/pages/QuotePage.tsx",
             "src/pages/DrainageQuotePage.tsx",
-            "src/lib/quote-share.ts"
+            "src/lib/quote-share.ts",
+            "src/components/QuotePageShared.tsx",
+            "src/pages/QuotePage.css"
           ],
           "test_references": [
             {
@@ -1752,6 +1754,27 @@
               "name": "round-trips long and special-character notes through the search encoding",
               "evidence_type": "technical",
               "supports": "Helper-level check pins that long, multiline and special-character notes survive the URLSearchParams round trip through both search encodings and decodings."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/styles.quote-print.test.ts",
+              "name": "hides the hero image and intro decoration from the printed page",
+              "evidence_type": "technical",
+              "supports": "Stylesheet check pins the shared quote stylesheet's @media print rule that removes the hero photo and the intro gradient decoration from the printed page. It reads the stylesheet source only and does not render print output."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/styles.quote-print.test.ts",
+              "name": "hides the page chrome and every action control from the printed page",
+              "evidence_type": "technical",
+              "supports": "Stylesheet check pins the shared quote stylesheet's @media print rule that hides the page header and footer, the intro links and every action control — the send button, mail help line, Skriv ut control, reset control, share control, rendered share link and its help line and the back-to-choice link — with display:none from the printed page. It reads the stylesheet source only and does not render print output."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/styles.quote-print.test.ts",
+              "name": "restyles the result column for paper",
+              "evidence_type": "technical",
+              "supports": "Stylesheet check pins the shared quote stylesheet's @media print restyle that lays the result column out as a block, releases the sticky result aside, removes its shadow and keeps the result together for paper. It reads the stylesheet source only and does not render print output."
             }
           ],
           "entry_point_refs": [],
@@ -1771,7 +1794,7 @@
           ],
           "expected_outcome": "The visitor hands the preliminary total to paper or a PDF through the browser's own print path, or carries the exact calculation onward through a share link carrying the measurements and any written note, whose recipient sees the same recomputed total; the website stores nothing beyond that link.",
           "failure_behavior": "The website cannot confirm that a printout or PDF was produced; browser and printer availability stay outside the site. The share control is disabled alongside the email and print controls while input is invalid.",
-          "recovery": "Retry the print control or read the total on screen; a recipient without the exact link URL starts from the example values. No print invocation is covered by a reviewed declaration, so the printed rendering remains an unmapped gap."
+          "recovery": "Retry the print control or read the total on screen; a recipient without the exact link URL starts from the example values. The print hand-off is owned by the window.print() control in the shared result aside and the shared quote stylesheet's @media print rules, pinned by the styles.quote-print.test.ts stylesheet declarations; no declaration exercises a real print dialog."
         },
         {
           "id": "F6-US5",
