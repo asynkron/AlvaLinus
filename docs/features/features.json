@@ -130,7 +130,7 @@
     },
     {
       "name": "Calculate a preliminary quote",
-      "description": "Visitors choose the husdränering or uppfart calculator, enter measurements and get a total-only preliminary quote they can carry onward through a share link carrying the measurements and any written note, email or print.",
+      "description": "Visitors choose the husdränering or uppfart calculator, enter measurements and get a total-only preliminary quote they can carry onward through a share link carrying the measurements and any written note, email or print. Share feedback belongs to the current inputs and latest explicit sharing attempt; edits discard old feedback without publishing.",
       "document": "docs/features/quote-calculators.md",
       "route_scope": "/offertberakning/, /draneringsberakning/",
       "routes": [
@@ -148,7 +148,7 @@
         },
         {
           "path": "src/components/QuotePageShared.tsx",
-          "description": "Shared quote page shell, result aside, notes field and reset button both calculators render."
+          "description": "Shared quote page shell, result aside, notes field and reset button both calculators render; QuoteShareControls owns explicit URL/clipboard publication and latest-attempt feedback, remounted when shareHref or validity changes to discard old feedback and pending ownership."
         },
         {
           "path": "src/lib/quote.ts",
@@ -171,7 +171,7 @@
           "description": "Quote route kind, the shared and per-calculator quote copy contracts and the calculator band contract."
         }
       ],
-      "reviewed_against_source": "2026-11-18",
+      "reviewed_against_source": "2026-11-19",
       "slice_refs": [],
       "entry_point_refs": []
     },

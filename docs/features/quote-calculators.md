@@ -78,7 +78,12 @@ for drainage. Exclusive VAT adds `moms=exkl`; absent or unknown VAT values
 default to inclusive, keeping old links compatible. Old `lass` parameters are ignored and never generated.
 A share restores the inputs on load and recomputes the estimate or the
 individual-contact state. Invalid shared values use normal validation.
-The clipboard has a copyable-link fallback. Nothing persists beyond the URL.
+Changing measurements or notes, resetting values or making inputs invalid discards the old displayed share link and status. Editing alone does not publish another URL or write to the clipboard; valid inputs require a fresh explicit share action.
+
+An obsolete clipboard resolution or rejection cannot restore discarded feedback, even after returning to the original inputs. Only the latest explicit sharing attempt can announce its result.
+
+A successful clipboard write announces: Länken har kopierats till urklipp. Rejection or an unavailable clipboard announces: Kopieringen misslyckades. Markera och kopiera länken ovan manuellt. The fallback leaves the current attempt's link available for manual copying.
+Nothing persists beyond the URL.
 
 [QuotePage](../../src/pages/QuotePage.tsx) and
 [DrainageQuotePage](../../src/pages/DrainageQuotePage.tsx) own input state.
@@ -109,6 +114,12 @@ very large finite share input and invalid non-finite/non-numeric shares.
 drainage-tier and injected driveway-price contracts.
 [quote-share.test.ts](../../src/lib/quote-share.test.ts) covers remaining URL
 parameters and special-character note round-trips.
+[QuoteResultAside.test.tsx](../../src/components/QuoteResultAside.test.tsx)
+owns the F6-US4 shared-control lifecycle declarations mapped in the story:
+confirmation, rejection/unavailable fallback, input-change invalidation, obsolete
+completion after returning to original inputs and overlapping attempts.
+These in-memory shared-component declarations use mocked clipboard APIs, controlled promises and rerendered props. They cover shared-control feedback ownership, not page edit-event wiring, full browser/device/clipboard-service execution or actual screen-reader announcements. Source mappings are not execution receipts.
+
 Existing field-border, focus-zoom, accent-contrast and quote-print stylesheet
 tests retain their bounded source-level coverage. A real mail client,
 screen-reader announcement, print dialog and rendered paper output are not
@@ -119,7 +130,8 @@ exercised by these declarations. Canonical native quality owns execution.
 The standing selected VAT label still limits estimates as budgeting input.
 A calculation persists only through its share URL. Soil, depth and access
 still require assessment by the company. The site cannot confirm email
-delivery, a real printout or a binding price.
+delivery, a real printout or a binding price. After editing, visitors must
+explicitly create a new share link; clipboard restrictions can require manual copying.
 
 ## Roadmap
 
