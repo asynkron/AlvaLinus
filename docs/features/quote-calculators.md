@@ -19,7 +19,7 @@ The driveway inputs are Uppfartens yta, Inkludera asfalt, and an optional
 project note. Defaults are 100 m², asphalt included, and no note.
 There is no load quantity, load validation, hidden load charge or load entry
 in the email. Pricing remains 950 kr/m², optional asphalt 667 kr/m²,
-and fixed cost 4900 kr: 100 m² totals 166600 kr with asphalt or 99900 kr
+and fixed cost 4900 kr, all inclusive of 25% VAT: 100 m² totals 166600 kr with asphalt or 99900 kr
 without it.
 
 Drainage starts at 40 löpmeter and accepts decimals. Its unchanged pricing
@@ -27,11 +27,31 @@ uses 3500 kr/m for the first 55 meters, 3000 kr/m above 55, and fixed cost
 6900 kr. Exactly 100 still receives an estimate (334400 kr).
 
 For estimates, Din kostnadsbild shows only Beräknad totalsumma, the
-Swedish currency total, Momsstatus ej bekräftad and the non-binding
+Swedish currency total, Inkl. moms / Exkl. moms and the non-binding
 disclaimer. Unit prices and part amounts are absent from the customer page,
 email and printout. Begär offert på underlaget opens a draft to
 linus.svardd@outlook.com with measurements, options, total and notes.
 Skriv ut / spara som PDF invokes the browser's own `window.print()`.
+
+## VAT choice
+
+Both calculators use the same native fieldset with mutually exclusive
+Inkl. moms / Exkl. moms radio choices. Inclusive is selected by default.
+The original inclusive pricing is unchanged; exclusive = inclusive total / 1.25.
+Each render derives the selected amount from the original unrounded total,
+then formats for display. It never converts a previous displayed result.
+
+The selected label accompanies the result, email draft and the document sent
+to the browser print handoff. Reset returns to inclusive. For example, driveway
+100 m² with asphalt is 166600/133280 kr inclusive/exclusive; drainage
+40 m is 146900/117520 kr. Above 100, either selection keeps the result and
+contact email free of any estimated price.
+
+[QuoteVat.test.tsx](../../src/pages/QuoteVat.test.tsx) owns in-memory keyboard
+arrow selection, mutual exclusion, independent example amounts, fractional
+repeated-toggle precision, reset, result/email/print-handoff labels,
+price-free contact in both modes and exclusive-share restoration.
+The browser print dialog and rendered paper are outside this proof.
 
 ## Individual quotes and validation
 
@@ -54,7 +74,8 @@ print and share actions. Reset restores each page's defaults and clears notes.
 
 Skapa delbar länk writes `yta`, `asfalt` and optional `anteckning`
 for driveway, preserving `#uppfart`, or `langd` and optional `anteckning`
-for drainage. Old `lass` parameters are ignored and never generated.
+for drainage. Exclusive VAT adds `moms=exkl`; absent or unknown VAT values
+default to inclusive, keeping old links compatible. Old `lass` parameters are ignored and never generated.
 A share restores the inputs on load and recomputes the estimate or the
 individual-contact state. Invalid shared values use normal validation.
 The clipboard has a copyable-link fallback. Nothing persists beyond the URL.
@@ -95,12 +116,11 @@ exercised by these declarations. Canonical native quality owns execution.
 
 ## What Works Less Well
 
-The standing unconfirmed VAT label still limits estimates as budgeting input.
+The standing selected VAT label still limits estimates as budgeting input.
 A calculation persists only through its share URL. Soil, depth and access
 still require assessment by the company. The site cannot confirm email
 delivery, a real printout or a binding price.
 
 ## Roadmap
 
-- Confirm the VAT treatment before replacing the standing unconfirmed label.
 - Add calculator choices when the company defines further project types.

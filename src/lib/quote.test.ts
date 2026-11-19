@@ -7,7 +7,6 @@ import {
   fillTemplate,
   formatMoney,
   formatNumber,
-  vatStatusLabel,
 } from "./quote";
 
 const drainagePricing: SiteQuoteDrainagePricing = siteContent.quote.drainage.pricing;
@@ -74,10 +73,6 @@ describe("quote lib money logic", () => {
     });
   });
 
-  it("exports the exact VAT status label constant", () => {
-    expect(vatStatusLabel).toBe("Momsstatus ej bekräftad");
-  });
-
   describe("fillTemplate", () => {
     it("replaces every known {key} placeholder with its value", () => {
       expect(fillTemplate("Längd: {length} m ({length})", { length: "55" })).toBe("Längd: 55 m (55)");
@@ -98,8 +93,8 @@ describe("quote lib money logic", () => {
     };
 
     it("percent-encodes the subject and the filled body in a mailto URL", () => {
-      expect(buildQuoteMailto(mail, { length: "55", total: "199 200 kr", vat: "momsstatus ej bekräftad", notes: "" })).toBe(
-        `mailto:info@example.se?subject=${encodeURIComponent("Offertförfrågan")}&body=${encodeURIComponent("Längd: 55 m\nTotal: 199 200 kr\nmomsstatus ej bekräftad\n\n")}`,
+      expect(buildQuoteMailto(mail, { length: "55", total: "199 200 kr", vat: "inkl. moms", notes: "" })).toBe(
+        `mailto:info@example.se?subject=${encodeURIComponent("Offertförfrågan")}&body=${encodeURIComponent("Längd: 55 m\nTotal: 199 200 kr\ninkl. moms\n\n")}`,
       );
     });
 

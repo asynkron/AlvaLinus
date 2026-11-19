@@ -1,6 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { siteContent } from "../data/siteContent";
-import { vatStatusLabel } from "../lib/quote";
 import { quoteShareParams } from "../lib/quote-share";
 import { QuotePage } from "./QuotePage";
 
@@ -64,7 +63,7 @@ describe("QuotePage", () => {
     expect(screen.getByRole("heading", { name: shared.resultHeading })).toBeInTheDocument();
     expect(screen.getByText(shared.resultCaption)).toBeInTheDocument();
     expect(screen.getByText(money(166600))).toBeInTheDocument();
-    expect(screen.getByText(vatStatusLabel)).toBeInTheDocument();
+    expect(screen.getByRole("complementary")).toHaveTextContent("Inkl. moms");
     expect(screen.getByText(shared.disclaimer)).toBeInTheDocument();
 
     expect(screen.queryByRole("link", { name: text.drainageChoiceLabel })).not.toBeInTheDocument();
@@ -116,7 +115,7 @@ describe("QuotePage", () => {
     expect(href).toContain("Yta: 50 m\u00b2\nAsfalt: Ja\nPrelimin\u00e4r summa: 85 750 kr");
     expect(href).not.toMatch(/lass/i);
     expect(href).toContain("Villa & garage");
-    expect(href).toContain("momsstatus ej bekräftad");
+    expect(href).toContain("Inkl. moms");
     expect(href).toContain("Omfattning behöver bekräftas");
     expect(href).not.toMatch(/kr\/m|Fast kostnad|950|667/);
 

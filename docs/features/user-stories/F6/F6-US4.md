@@ -72,3 +72,24 @@ Direct declarations in [QuoteLimits.test.tsx](../../../../src/pages/QuoteLimits.
 - `keeps invalid shared scope %s separate from an individual quote`
 
 These in-memory declarations cover both calculators and are not execution receipts.
+
+## VAT mode (fk274, Alva 41716/41724)
+
+Both calculators default to Inkl. moms and offer native keyboard-operable,
+mutually exclusive Inkl. moms / Exkl. moms radio controls. Existing prices
+include 25% VAT. Exclusive totals are derived from the original unrounded
+inclusive total divided by 1.25 on every change, with display rounding only.
+The selected mode labels the result, email and print document. Reset returns
+to inclusive. Exclusive share links carry moms=exkl; older links default to
+inclusive. Contact above 100 stays price-free in either mode.
+
+Direct declarations in [QuoteVat.test.tsx](../../../../src/pages/QuoteVat.test.tsx):
+
+- `selects mutually exclusive VAT modes by keyboard and labels the result, draft and print handoff`
+- `always recalculates from inclusive prices without accumulated rounding and resets to inclusive`
+- `keeps over-100 contact price-free in either VAT mode and restores the selected estimate below the limit`
+- `restores and shares an exclusive VAT estimate while old links default to inclusive`
+
+These declarations pin independent 166600/133280 kr driveway and
+146900/117520 kr drainage examples and fractional cases. They inspect the
+document at the mocked browser-print boundary; they do not render paper.

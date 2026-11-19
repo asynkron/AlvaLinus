@@ -3,7 +3,9 @@ import type { SiteQuoteDrainagePricing, SiteQuoteMail, SiteQuoteUppfartPricing }
 const moneyFormat = new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK", minimumFractionDigits: 0, maximumFractionDigits: 2 });
 const numberFormat = new Intl.NumberFormat("sv-SE", { maximumFractionDigits: 2 });
 
-export const vatStatusLabel = "Momsstatus ej bekräftad";
+export function quoteTotalForVat(inclusiveTotal: number, includeVat: boolean): number {
+  return includeVat ? inclusiveTotal : inclusiveTotal / 1.25;
+}
 
 export function formatMoney(value: number): string {
   return moneyFormat.format(value);

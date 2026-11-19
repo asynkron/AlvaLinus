@@ -1314,7 +1314,7 @@
           "Invalid input feedback",
           "Individual quote contact for finite positive measurements above 100; no estimate"
         ],
-        "current_limitations": "Totals are client-side estimates from the registry-declared quote.uppfart and quote.drainage pricing carrying the standing unconfirmed VAT label; a calculation persists only through the share link the visitor explicitly creates, and a configured mail client plus the browser print dialog carry the handoff.",
+        "current_limitations": "Totals are client-side estimates from the registry-declared quote.uppfart and quote.drainage pricing with selectable inclusive/exclusive VAT; a calculation persists only through the share link the visitor explicitly creates, and a configured mail client plus the browser print dialog carry the handoff.",
         "failure_behavior": "Invalid measurements replace the total with a Swedish role=alert message, mark the input and disable the email and print controls; a missing or incompatible mail client can prevent handoff without a site error receipt.",
         "recovery": "Correct the named measurement or use Återställ exempel; use the displayed address in a working email tool when the handoff fails.",
         "runtime_owners": [
@@ -1416,7 +1416,7 @@
               "path": "src/pages/QuotePage.test.tsx",
               "name": "reveals only the uppfart calculator after choosing uppfart",
               "evidence_type": "direct",
-              "supports": "Checks the example defaults, the checked asphalt box, the result heading, the Preliminärt underlag caption, the example total, the VAT-status label and the disclaimer."
+              "supports": "Checks the example defaults, the checked asphalt box, the result heading, the Preliminärt underlag caption, the example total, the selected VAT label and the disclaimer."
             },
             {
               "framework": "vitest",
@@ -1437,7 +1437,7 @@
               "path": "src/pages/DrainageQuotePage.test.tsx",
               "name": "presents the drainage estimate without internal prices or part amounts",
               "evidence_type": "direct",
-              "supports": "Checks the drainage headings, scope summary, caption, VAT-status label and disclaimer and the absence of internal prices and breakdown markup."
+              "supports": "Checks the drainage headings, scope summary, caption, selected VAT label and disclaimer and the absence of internal prices and breakdown markup."
             },
             {
               "framework": "vitest",
@@ -1532,13 +1532,6 @@
             },
             {
               "framework": "vitest",
-              "path": "src/lib/quote.test.ts",
-              "name": "exports the exact VAT status label constant",
-              "evidence_type": "technical",
-              "supports": "Helper-level check pins the exact Momsstatus ej bekräftad constant that the rendered result aside and the email body carry."
-            },
-            {
-              "framework": "vitest",
               "path": "src/lib/quote-share.test.ts",
               "name": "reads driveway share values and leaves missing params undefined",
               "evidence_type": "technical",
@@ -1592,6 +1585,34 @@
               "name": "restores a very large finite shared scope as an individual inquiry without computing a price",
               "evidence_type": "direct",
               "supports": "Both calculators: very large finite share restoration, scope-only email, no total in document, share and reset."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteVat.test.tsx",
+              "name": "selects mutually exclusive VAT modes by keyboard and labels the result, draft and print handoff",
+              "evidence_type": "direct",
+              "supports": "Arrow-key radio selection, mutual exclusion and literal 166600/133280 and 146900/117520 amounts in result/email; selected label at mocked print boundary."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteVat.test.tsx",
+              "name": "always recalculates from inclusive prices without accumulated rounding and resets to inclusive",
+              "evidence_type": "direct",
+              "supports": "Fractional independent totals survive repeated keyboard toggles; reset returns both calculators to inclusive defaults."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteVat.test.tsx",
+              "name": "keeps over-100 contact price-free in either VAT mode and restores the selected estimate below the limit",
+              "evidence_type": "direct",
+              "supports": "Both modes preserve scope-only contact and disabled print above 100, then exclusive estimate returns below the limit."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteVat.test.tsx",
+              "name": "restores and shares an exclusive VAT estimate while old links default to inclusive",
+              "evidence_type": "direct",
+              "supports": "Exclusive share inputs restore selected radio and amount, and generated links preserve moms=exkl; default-inclusive cases cover older links."
             }
           ],
           "entry_point_refs": [],
@@ -1601,7 +1622,7 @@
           "flow": [
             "Enter Uppfartens yta or Dräneringens längd in löpmeter.",
             "Read the help text under the fields and the Det här ingår scope summary on the drainage page.",
-            "Read the announced Beräknad totalsumma, the currency total and Momsstatus ej bekräftad in the Din kostnadsbild aside.",
+            "Read the announced Beräknad totalsumma, the currency total and Inkl. moms / Exkl. moms in the Din kostnadsbild aside.",
             "Read the disclaimer that this is an estimate, not a binding quote, and that ROT deduction and payment terms are specified in the real quote."
           ],
           "variants": [
@@ -1610,9 +1631,10 @@
             "Totals recalculate on every change and are announced through an aria-live polite, aria-atomic region.",
             "Only the total is shown: no unit prices, part amounts or price-breakdown sections exist in the customer view.",
             "Only positive finite measurements up to and including 100 receive an estimate. At 100 m² driveway totals are 166600 kr with asphalt and 99900 kr without; there is no load input or charge.",
-            "Above 100 m² or 100 löpmeter, the polite live region shows Kontakta oss för en individuell offert. The keyboard-accessible contact link carries scope and notes to linus.svardd@outlook.com without an estimated total; print is disabled and browser printing cannot include a removed total. Lowering the measurement to at most 100 restores the estimate. Share links preserve this contact state."
+            "Above 100 m² or 100 löpmeter, the polite live region shows Kontakta oss för en individuell offert. The keyboard-accessible contact link carries scope and notes to linus.svardd@outlook.com without an estimated total; print is disabled and browser printing cannot include a removed total. Lowering the measurement to at most 100 restores the estimate. Share links preserve this contact state.",
+            "Prices include 25% VAT. Native Inkl. moms / Exkl. moms radios default to inclusive; exclusive = original unrounded inclusive total / 1.25. Result, email and printed document carry the selected mode; reset returns to inclusive. Above 100 remains price-free in both modes. Exclusive links carry moms=exkl; absent/unknown values default to inclusive."
           ],
-          "expected_outcome": "The visitor sees exactly one preliminary total for the entered measurements, clearly labeled as unconfirmed regarding VAT and non-binding.",
+          "expected_outcome": "The visitor sees exactly one preliminary total for the entered measurements, clearly labeled with the selected VAT mode and as non-binding.",
           "failure_behavior": "The website cannot confirm a binding price; the disclaimer directs scope confirmation to the real quote discussion.",
           "recovery": "Adjust the measurements or continue to the email handoff; no binding offer is created on the site."
         },
@@ -1669,6 +1691,34 @@
               "name": "keeps invalid shared scope %s separate from an individual quote",
               "evidence_type": "direct",
               "supports": "Both calculators reject non-numeric and non-finite shared inputs without exposing a total or contact draft."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteVat.test.tsx",
+              "name": "selects mutually exclusive VAT modes by keyboard and labels the result, draft and print handoff",
+              "evidence_type": "direct",
+              "supports": "Arrow-key radio selection, mutual exclusion and literal 166600/133280 and 146900/117520 amounts in result/email; selected label at mocked print boundary."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteVat.test.tsx",
+              "name": "always recalculates from inclusive prices without accumulated rounding and resets to inclusive",
+              "evidence_type": "direct",
+              "supports": "Fractional independent totals survive repeated keyboard toggles; reset returns both calculators to inclusive defaults."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteVat.test.tsx",
+              "name": "keeps over-100 contact price-free in either VAT mode and restores the selected estimate below the limit",
+              "evidence_type": "direct",
+              "supports": "Both modes preserve scope-only contact and disabled print above 100, then exclusive estimate returns below the limit."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteVat.test.tsx",
+              "name": "restores and shares an exclusive VAT estimate while old links default to inclusive",
+              "evidence_type": "direct",
+              "supports": "Exclusive share inputs restore selected radio and amount, and generated links preserve moms=exkl; default-inclusive cases cover older links."
             }
           ],
           "entry_point_refs": [],
@@ -1684,7 +1734,8 @@
             "The driveway message is Ange en yta större än 0. while the area is invalid; the drainage message is Ange en längd större än 0..",
             "While input is invalid, no Beräknad totalsumma is rendered, the input carries aria-invalid, and the email and print controls are disabled or replaced by a disabled Kontrollera dina uppgifter button.",
             "Återställ exempel restores the example measurements, the default asphalt choice and an empty note, clearing the alert.",
-            "Measurements above 100 are valid scope for an individual quote, not validation errors. Non-finite and non-numeric values remain invalid."
+            "Measurements above 100 are valid scope for an individual quote, not validation errors. Non-finite and non-numeric values remain invalid.",
+            "Prices include 25% VAT. Native Inkl. moms / Exkl. moms radios default to inclusive; exclusive = original unrounded inclusive total / 1.25. Result, email and printed document carry the selected mode; reset returns to inclusive. Above 100 remains price-free in both modes. Exclusive links carry moms=exkl; absent/unknown values default to inclusive."
           ],
           "expected_outcome": "The visitor never sees a stale total alongside invalid input and can recover by correcting the named value or resetting the example.",
           "failure_behavior": "The page performs shape and range checks only; it cannot judge whether the entered measurements fit the real project.",
@@ -1816,6 +1867,34 @@
               "name": "restores a very large finite shared scope as an individual inquiry without computing a price",
               "evidence_type": "direct",
               "supports": "Both calculators: very large finite share restoration, scope-only email, no total in document, share and reset."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteVat.test.tsx",
+              "name": "selects mutually exclusive VAT modes by keyboard and labels the result, draft and print handoff",
+              "evidence_type": "direct",
+              "supports": "Arrow-key radio selection, mutual exclusion and literal 166600/133280 and 146900/117520 amounts in result/email; selected label at mocked print boundary."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteVat.test.tsx",
+              "name": "always recalculates from inclusive prices without accumulated rounding and resets to inclusive",
+              "evidence_type": "direct",
+              "supports": "Fractional independent totals survive repeated keyboard toggles; reset returns both calculators to inclusive defaults."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteVat.test.tsx",
+              "name": "keeps over-100 contact price-free in either VAT mode and restores the selected estimate below the limit",
+              "evidence_type": "direct",
+              "supports": "Both modes preserve scope-only contact and disabled print above 100, then exclusive estimate returns below the limit."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteVat.test.tsx",
+              "name": "restores and shares an exclusive VAT estimate while old links default to inclusive",
+              "evidence_type": "direct",
+              "supports": "Exclusive share inputs restore selected radio and amount, and generated links preserve moms=exkl; default-inclusive cases cover older links."
             }
           ],
           "entry_point_refs": [],
@@ -1832,7 +1911,8 @@
             "Both calculators expose the same print control in the Din kostnadsbild aside; it stays disabled while input is invalid.",
             "The share link encodes yta and the asphalt choice on /offertberakning/ while keeping the #uppfart hash, and längd on /draneringsberakning/, together with the optional project note (anteckning) whenever one is written; the control copies through the browser clipboard when that API is available and stays usable as a plain link when it is not.",
             "Opening a share link restores the shared inputs and the note once on load and recomputes the identical total; missing parameters fall back to the example defaults and invalid shared values go through the existing invalid-input alert with the share control disabled alongside the email and print controls.",
-            "Above 100 m² or 100 löpmeter, the polite live region shows Kontakta oss för en individuell offert. The keyboard-accessible contact link carries scope and notes to linus.svardd@outlook.com without an estimated total; print is disabled and browser printing cannot include a removed total. Lowering the measurement to at most 100 restores the estimate. Share links preserve this contact state."
+            "Above 100 m² or 100 löpmeter, the polite live region shows Kontakta oss för en individuell offert. The keyboard-accessible contact link carries scope and notes to linus.svardd@outlook.com without an estimated total; print is disabled and browser printing cannot include a removed total. Lowering the measurement to at most 100 restores the estimate. Share links preserve this contact state.",
+            "Prices include 25% VAT. Native Inkl. moms / Exkl. moms radios default to inclusive; exclusive = original unrounded inclusive total / 1.25. Result, email and printed document carry the selected mode; reset returns to inclusive. Above 100 remains price-free in both modes. Exclusive links carry moms=exkl; absent/unknown values default to inclusive."
           ],
           "expected_outcome": "The visitor hands the preliminary total to paper or a PDF through the browser's own print path, or carries the exact calculation onward through a share link carrying the measurements and any written note, whose recipient sees the same recomputed total; the website stores nothing beyond that link.",
           "failure_behavior": "The website cannot confirm that a printout or PDF was produced; browser and printer availability stay outside the site. The share control is disabled alongside the email and print controls while input is invalid.",
@@ -1855,7 +1935,7 @@
               "path": "src/pages/QuotePage.test.tsx",
               "name": "keeps the email handoff about the uppfart without internal prices",
               "evidence_type": "direct",
-              "supports": "Checks the mailto recipient, subject, decoded body values including the Asfalt answer and unconfirmed VAT label, the confirmed-scope line and the absence of internal prices."
+              "supports": "Checks the mailto recipient, subject, decoded body values including the Asfalt answer and selected VAT label, the confirmed-scope line and the absence of internal prices."
             },
             {
               "framework": "vitest",
@@ -1940,6 +2020,34 @@
               "name": "restores a very large finite shared scope as an individual inquiry without computing a price",
               "evidence_type": "direct",
               "supports": "Both calculators: very large finite share restoration, scope-only email, no total in document, share and reset."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteVat.test.tsx",
+              "name": "selects mutually exclusive VAT modes by keyboard and labels the result, draft and print handoff",
+              "evidence_type": "direct",
+              "supports": "Arrow-key radio selection, mutual exclusion and literal 166600/133280 and 146900/117520 amounts in result/email; selected label at mocked print boundary."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteVat.test.tsx",
+              "name": "always recalculates from inclusive prices without accumulated rounding and resets to inclusive",
+              "evidence_type": "direct",
+              "supports": "Fractional independent totals survive repeated keyboard toggles; reset returns both calculators to inclusive defaults."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteVat.test.tsx",
+              "name": "keeps over-100 contact price-free in either VAT mode and restores the selected estimate below the limit",
+              "evidence_type": "direct",
+              "supports": "Both modes preserve scope-only contact and disabled print above 100, then exclusive estimate returns below the limit."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteVat.test.tsx",
+              "name": "restores and shares an exclusive VAT estimate while old links default to inclusive",
+              "evidence_type": "direct",
+              "supports": "Exclusive share inputs restore selected radio and amount, and generated links preserve moms=exkl; default-inclusive cases cover older links."
             }
           ],
           "entry_point_refs": [],
@@ -1954,10 +2062,11 @@
             "Read Öppnar ditt e-postprogram. Inget skickas automatiskt. beside the control."
           ],
           "variants": [
-            "The driveway draft has the subject Offertförfrågan – uppfart and a body with Yta, the Asfalt answer, the preliminary sum labeled momsstatus ej bekräftad and Omfattning behöver bekräftas; unchecking asphalt changes the Asfalt answer.",
+            "The driveway draft has the subject Offertförfrågan – uppfart and a body with Yta, the Asfalt answer, the preliminary sum labeled Inkl. moms / Exkl. moms and Omfattning behöver bekräftas; unchecking asphalt changes the Asfalt answer.",
             "The drainage draft has the subject Offertförfrågan – husdränering and a body with the length in löpmeter, the preliminary sum and Omfattning behöver bekräftas.",
             "Both drafts address linus.svardd@outlook.com and never contain internal unit prices, fixed costs or part amounts.",
-            "Above 100 m² or 100 löpmeter, the polite live region shows Kontakta oss för en individuell offert. The keyboard-accessible contact link carries scope and notes to linus.svardd@outlook.com without an estimated total; print is disabled and browser printing cannot include a removed total. Lowering the measurement to at most 100 restores the estimate. Share links preserve this contact state."
+            "Above 100 m² or 100 löpmeter, the polite live region shows Kontakta oss för en individuell offert. The keyboard-accessible contact link carries scope and notes to linus.svardd@outlook.com without an estimated total; print is disabled and browser printing cannot include a removed total. Lowering the measurement to at most 100 restores the estimate. Share links preserve this contact state.",
+            "Prices include 25% VAT. Native Inkl. moms / Exkl. moms radios default to inclusive; exclusive = original unrounded inclusive total / 1.25. Result, email and printed document carry the selected mode; reset returns to inclusive. Above 100 remains price-free in both modes. Exclusive links carry moms=exkl; absent/unknown values default to inclusive."
           ],
           "expected_outcome": "The email program receives a draft carrying the entered measurements and the preliminary total; the visitor sends it themselves and delivery is not established.",
           "failure_behavior": "The mail handler may fail to open; the page cannot confirm acceptance or sending.",

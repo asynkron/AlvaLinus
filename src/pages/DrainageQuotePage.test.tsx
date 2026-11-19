@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { siteContent } from "../data/siteContent";
-import { formatNumber, vatStatusLabel } from "../lib/quote";
+import { formatNumber } from "../lib/quote";
 import { quoteShareParams } from "../lib/quote-share";
 import { DrainageQuotePage } from "./DrainageQuotePage";
 
@@ -48,7 +48,7 @@ describe("DrainageQuotePage", () => {
     expect(screen.getByText(shared.resultCaption)).toBeInTheDocument();
     expect(screen.getByText(text.includedHeading)).toBeInTheDocument();
     expect(screen.getByText(firstIncludedParagraph())).toBeInTheDocument();
-    expect(screen.getByText(vatStatusLabel)).toBeInTheDocument();
+    expect(screen.getByRole("complementary")).toHaveTextContent("Inkl. moms");
     expect(screen.getByText(shared.disclaimer)).toBeInTheDocument();
     expect(screen.getByText(shared.mailHelp)).toBeInTheDocument();
 

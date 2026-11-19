@@ -108,6 +108,9 @@ export type SiteQuoteMail = {
 };
 
 export type SiteQuoteShared = {
+  readonly vatLegend: string;
+  readonly vatInclusiveLabel: string;
+  readonly vatExclusiveLabel: string;
   readonly individualQuoteHeading: string;
   readonly individualQuoteSendLabel: string;
   readonly formAriaLabel: string;

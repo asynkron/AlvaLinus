@@ -1,7 +1,6 @@
 import { ArrowRight, Link2, Printer, RotateCcw } from "lucide-react";
-import { useState } from "react";
+import { useId, useState } from "react";
 import type { ChangeEvent, ReactNode } from "react";
-import { vatStatusLabel } from "../lib/quote";
 import type { SiteQuoteShared } from "../types/site";
 import { Button } from "./ui/button";
 
@@ -36,6 +35,7 @@ export function QuotePageShell({ homeLabel, formAriaLabel, hero, breadcrumbLabel
 }
 
 type QuoteResultAsideProps = {
+  readonly vatLabel: string;
   readonly shared: SiteQuoteShared;
   readonly error: string;
   readonly valid: boolean;
@@ -46,7 +46,7 @@ type QuoteResultAsideProps = {
   readonly individualQuote?: string;
 };
 
-export function QuoteResultAside({ shared, error, valid, total, email, hidden, shareHref, individualQuote }: QuoteResultAsideProps) {
+export function QuoteResultAside({ shared, error, valid, total, email, hidden, shareHref, individualQuote, vatLabel }: QuoteResultAsideProps) {
   const [shareLink, setShareLink] = useState<string | null>(null);
   const [shareMessage, setShareMessage] = useState<string | null>(null);
 
@@ -68,7 +68,7 @@ export function QuoteResultAside({ shared, error, valid, total, email, hidden, s
       {individualQuote
         ? <p className="quote-individual">{individualQuote}</p>
         : valid
-        ? <div className="quote-total"><span>{shared.totalLabel}</span><strong>{total}</strong><span>{vatStatusLabel}</span></div>
+        ? <div className="quote-total"><span>{shared.totalLabel}</span><strong>{total}</strong><span>{vatLabel}</span></div>
         : <p role="alert" className="quote-error">{error}</p>}
     </div>
     {!individualQuote ? <p className="quote-disclaimer">{shared.disclaimer}</p> : null}
@@ -80,6 +80,21 @@ export function QuoteResultAside({ shared, error, valid, total, email, hidden, s
     <p className="quote-share-help">{shared.shareHelp}</p>
     <p role="status" className="quote-share-status">{shareMessage}</p>
   </aside>;
+}
+
+export function QuoteVatField({ shared, includeVat, onChange }: {
+  readonly shared: SiteQuoteShared;
+  readonly includeVat: boolean;
+  readonly onChange: (includeVat: boolean) => void;
+}) {
+  const name = useId();
+  return <fieldset className="quote-vat">
+    <legend>{shared.vatLegend}</legend>
+    <div className="quote-vat-options">
+      <label><input type="radio" name={name} value="inclusive" checked={includeVat} onChange={() => onChange(true)} />{shared.vatInclusiveLabel}</label>
+      <label><input type="radio" name={name} value="exclusive" checked={!includeVat} onChange={() => onChange(false)} />{shared.vatExclusiveLabel}</label>
+    </div>
+  </fieldset>;
 }
 
 type QuoteNotesFieldProps = {

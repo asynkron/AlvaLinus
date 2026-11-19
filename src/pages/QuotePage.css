@@ -21,6 +21,11 @@
 .quote-layout ::selection{background:hsl(var(--selection-background));color:hsl(var(--selection-foreground))}
 .quote-check{display:flex;gap:12px;align-items:flex-start;margin:0 0 28px;font-weight:600;font-size:15px}
 .quote-check input{width:20px;height:20px;margin-top:2px}
+.quote-vat{margin:0 0 24px;min-width:0}
+.quote-vat legend{font-size:15px;font-weight:600}
+.quote-vat-options{display:flex;flex-wrap:wrap;gap:8px 24px}
+.quote-vat label{display:flex;align-items:center;gap:10px;min-height:44px;font-size:16px;cursor:pointer}
+.quote-vat input{width:20px;height:20px}
 .quote-help{display:block;font-size:13px;font-weight:400;color:#526071;margin-top:4px}
 .choice-buttons{display:flex;flex-wrap:wrap;gap:16px;margin-top:24px}
 .choice-buttons a{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:12px 22px;background:hsl(var(--primary));color:hsl(var(--primary-foreground));border-radius:6px;font-weight:600;text-decoration:none}

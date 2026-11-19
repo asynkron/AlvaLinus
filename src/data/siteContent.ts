@@ -403,6 +403,9 @@ export const siteContent = {
   },
   quote: {
     shared: {
+      vatLegend: "Moms",
+      vatInclusiveLabel: "Inkl. moms",
+      vatExclusiveLabel: "Exkl. moms",
       individualQuoteHeading: "Kontakta oss för en individuell offert",
       individualQuoteSendLabel: "Kontakta oss för offert",
       formAriaLabel: "Projektets förutsättningar",

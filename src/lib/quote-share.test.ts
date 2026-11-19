@@ -9,7 +9,7 @@ import {
 
 describe("quote-share lib URL encoding", () => {
   it("declares the fixed Swedish URL parameter names", () => {
-    expect(quoteShareParams).toEqual({ area: "yta", asphalt: "asfalt", length: "langd", notes: "anteckning" });
+    expect(quoteShareParams).toEqual({ area: "yta", asphalt: "asfalt", length: "langd", notes: "anteckning", vat: "moms" });
   });
 
   it("builds driveway search params for area and the asphalt choice", () => {
