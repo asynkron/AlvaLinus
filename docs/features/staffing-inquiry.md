@@ -33,7 +33,7 @@ error messages associated through `aria-describedby` and `aria-invalid`, an
 a field clears its message.
 
 A valid submit builds a `mailto:` draft to the configured contact address
-(`kontakt@svardentreprenad.se`) with the subject "Förfrågan om inhyrning" and
+(`linus.svardd@outlook.com`) with the subject "Förfrågan om inhyrning" and
 a labeled body containing every supplied value, with a stated momsstatus added
 beside the offered rate; empty optional fields are marked with a dash, and
 leaving the select on "Ej angivet" reproduces the earlier draft exactly. The

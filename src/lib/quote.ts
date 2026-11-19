@@ -27,6 +27,6 @@ export function drainageTotal(meters: number, pricing: SiteQuoteDrainagePricing)
   return firstTier * pricing.firstTierPerMeter + aboveTier * pricing.aboveBoundaryPerMeter + pricing.fixedCost;
 }
 
-export function drivewayTotal(area: number, loads: number, includeAsphalt: boolean, pricing: SiteQuoteUppfartPricing): number {
-  return area * pricing.perSquareMeter + (includeAsphalt ? area * pricing.asphaltPerSquareMeter : 0) + pricing.fixedCost + loads * pricing.perLoad;
+export function drivewayTotal(area: number, includeAsphalt: boolean, pricing: SiteQuoteUppfartPricing): number {
+  return area * pricing.perSquareMeter + (includeAsphalt ? area * pricing.asphaltPerSquareMeter : 0) + pricing.fixedCost;
 }

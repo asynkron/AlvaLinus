@@ -2,7 +2,7 @@
 
 Feature: [F6 — Calculate a preliminary quote](../../quote-calculators.md)  
 Status: current  
-Reviewed: 2026-11-14
+Reviewed: 2026-11-19
 
 As a project visitor, I want to hand my measurements and the preliminary total to the company by email so the discussion starts from the same numbers.
 
@@ -20,9 +20,9 @@ As a project visitor, I want to hand my measurements and the preliminary total t
 
 ## Variants
 
-- The driveway draft has the subject "Offertförfrågan – uppfart" and a body with Yta, Antal lass, the Asfalt answer, the preliminary sum labeled "momsstatus ej bekräftad" and "Omfattning behöver bekräftas"; unchecking asphalt changes the Asfalt answer.
+- The driveway draft has the subject "Offertförfrågan – uppfart" and a body with Yta, the Asfalt answer, the preliminary sum labeled "momsstatus ej bekräftad" and "Omfattning behöver bekräftas"; unchecking asphalt changes the Asfalt answer.
 - The drainage draft has the subject "Offertförfrågan – husdränering" and a body with the length in löpmeter, the preliminary sum and "Omfattning behöver bekräftas".
-- Both drafts address kontakt@svardentreprenad.se and never contain internal unit prices, fixed costs or part amounts.
+- Both drafts address linus.svardd@outlook.com and never contain internal unit prices, fixed costs or part amounts.
 
 ## Expected outcome
 
@@ -50,3 +50,23 @@ The mail handler may fail to open; the page cannot confirm acceptance or sending
 - vitest, [src/styles.page-accent-contrast.test.ts](../../../../src/styles.page-accent-contrast.test.ts), declaration `keeps the quote selection background in the orange brand hue family` (technical): Stylesheet check pins the .quote-layout ::selection background token's hue to the declared orange brand band. It constrains hue only and does not itself re-check contrast or render a text selection.
 
 Backend entry-point references: none (frontend-only). Test mappings were reviewed as source declarations; this document is not an execution receipt.
+
+## Individual-quote boundary (fk274, 2026-11-19)
+
+Estimates apply only to positive finite measurements up to and including 100.
+Above 100 m² or 100 löpmeter the polite atomic live region shows
+Kontakta oss för en individuell offert with the page-specific explanation.
+The native contact link is keyboard accessible and opens a scope-and-notes
+draft to linus.svardd@outlook.com without a price. Print is disabled, and the
+document contains no stale estimate even when the browser prints directly.
+Share remains available and restores this state. Lowering the measurement to
+at most 100 restores the normal result. Invalid measurements remain a separate
+alert state. Old lass parameters are inert.
+
+Direct declarations in [QuoteLimits.test.tsx](../../../../src/pages/QuoteLimits.test.tsx):
+
+- `estimates 99.9 and exactly 100, then replaces the price above 100 and recovers`
+- `restores a very large finite shared scope as an individual inquiry without computing a price`
+- `keeps invalid shared scope %s separate from an individual quote`
+
+These in-memory declarations cover both calculators and are not execution receipts.

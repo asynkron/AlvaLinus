@@ -973,6 +973,7 @@ function Partners({ content }: { readonly content: SiteContent }) {
 
 function Footer({ content }: { readonly content: SiteContent }) {
   const email = content.contact.form.recipientEmail;
+  const phone = content.contact.items.find(item => item.href.startsWith("tel:"));
   const chrome = content.chrome;
 
   return (
@@ -1021,6 +1022,13 @@ function Footer({ content }: { readonly content: SiteContent }) {
             <Mail className="h-4 w-4" aria-hidden="true" />
             {email}
           </a>
+          {phone ? <a
+            href={phone.href}
+            className="mt-1 flex items-center gap-2 py-2 text-background/70 transition-colors hover:text-primary-onDark"
+          >
+            <PhoneCall className="h-4 w-4" aria-hidden="true" />
+            {phone.value}
+          </a> : null}
         </div>
       </div>
       <div className="border-t border-background/10">
@@ -1064,7 +1072,7 @@ function Contact({
                 className="rounded-lg border border-background/15 bg-background/5 p-4 transition-colors hover:border-primary-onDark"
               >
                 <span className="flex items-center gap-2 text-sm text-background/70">
-                  <PhoneCall className="h-4 w-4 text-primary-onDark" aria-hidden="true" />
+                  {item.href.startsWith("tel:") ? <PhoneCall className="h-4 w-4 text-primary-onDark" aria-hidden="true" /> : <Mail className="h-4 w-4 text-primary-onDark" aria-hidden="true" />}
                   {item.label}
                 </span>
                 <span className="mt-2 block font-medium text-background">{item.value}</span>

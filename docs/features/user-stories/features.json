@@ -589,6 +589,13 @@
               "name": "keeps every contact form control at the 16px base text size on home and /kontakt/",
               "evidence_type": "technical",
               "supports": "Class-level check pins text-base on the Namn, Kundtyp, Tjänst and Meddelande controls on home and /kontakt/ and rejects responsive sm/md/lg/xl/2xl text-size classes that would shrink them below the iOS Safari 16px focus-zoom floor. It inspects rendered classNames only and does not execute the iOS zoom behavior."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "offers the company phone contact with native keyboard access on %s",
+              "evidence_type": "direct",
+              "supports": "Home, contact and both calculator footers expose the literal telephone number/href and keyboard focus; home/contact also expose the telephone in their contact section, while retaining the email."
             }
           ],
           "entry_point_refs": [],
@@ -609,9 +616,10 @@
             "Pool excavation is part of Grävjobb, not a separate Pool option.",
             "Service-page inquiry actions target /kontakt/?tjanst=<service id> using the typed service record id; contact preselects the matching typed option and keeps manual change available, while direct /kontakt/ and home /#kontakt without context and unknown or malformed context keep the first option without creating new options.",
             "Required fields use browser-native validation; the site has no custom submit handler.",
-            "The same typed explanation and subject-bearing fallback email link appear inside the form on home and /kontakt/; aria-describedby associates the note with the form."
+            "The same typed explanation and subject-bearing fallback email link appear inside the form on home and /kontakt/; aria-describedby associates the note with the form.",
+            "Home and /kontakt/ contact sections and the shared footer show 070-214 67 83 as tel:+46702146783 alongside linus.svardd@outlook.com; native links support keyboard focus."
           ],
-          "expected_outcome": "The form requests a plain-text mail-client handoff to kontakt@svardentreprenad.se with the configured subject and the actually selected Tjänst option; delivery is not established.",
+          "expected_outcome": "The form requests a plain-text mail-client handoff to linus.svardd@outlook.com with the configured subject and the actually selected Tjänst option; delivery is not established.",
           "failure_behavior": "The mail handler may fail to open; the page cannot confirm acceptance or sending.",
           "recovery": "Use the address linked in the explanation or copy it into working email software and include project details manually; the fallback link still needs an email handler."
         },
@@ -647,7 +655,7 @@
             "The page has loaded enough to render the contact section or footer."
           ],
           "flow": [
-            "Read kontakt@svardentreprenad.se in the contact section, the in-form handoff explanation or footer.",
+            "Read linus.svardd@outlook.com in the contact section, the in-form handoff explanation or footer.",
             "Use its email link or copy the address into an email tool.",
             "Describe the project and a way to reply."
           ],
@@ -925,7 +933,7 @@
               "path": "src/styles.footer-tap-targets.test.ts",
               "name": "keeps the footer identity, grid and list layout unchanged",
               "evidence_type": "technical",
-              "supports": "Source-text check pins the unchanged four-column footer grid, the two nav list classNames, the footer shell element and colors and the shared footer link hover colors, so the enlargement leaves the footer structure untouched."
+              "supports": "Source-text check pins the unchanged four-column footer grid, the two nav list classNames, the footer shell element and colors, so the enlargement leaves the footer structure untouched."
             },
             {
               "framework": "vitest",
@@ -933,6 +941,13 @@
               "name": "reaches at least 36px of tap height for the unchanged text-sm footer links",
               "evidence_type": "technical",
               "supports": "Compiled-utility check computes the text-sm inline-flex py-2 target's line height plus vertical padding at at least 36px. Tailwind-compile evidence; it does not render the footer in a browser or measure real touch input."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "offers the company phone contact with native keyboard access on %s",
+              "evidence_type": "direct",
+              "supports": "Home, contact and both calculator footers expose the literal telephone number/href and keyboard focus; home/contact also expose the telephone in their contact section, while retaining the email."
             }
           ],
           "entry_point_refs": [],
@@ -954,7 +969,8 @@
             "Subpage heroes and the home hero use decorative images requested at high fetch priority (photographs except the staffing, about and contact SVG heroes) while service-card images stay lazy; a failing home hero photo hides its image without a retry loop while the hero content remains. Service-card images have route alt text.",
             "Every emitted document head (home, every stamped subpage artifact and dist/404.html) carries one woff2 font preload link per emitted font asset, injected at build time from that build's bundle via vite.config.ts and scripts/route-artifacts.mjs so font fetch starts at HTML parse time; the injection is a deterministic no-op when a build emits no woff2 assets, and the static route assertion requires exactly those tags byte-for-byte on every emitted document.",
             "At md+ widths the desktop nav links, the Tjänster trigger and the desktop Kalkyler summary carry py-2 vertical tap-target padding that reaches at least 32px of computed tap height (roughly 36px) inside the unchanged min-h-16 sticky header row, while the mobile menu targets stay unchanged.",
-            "The footer's page and service links and the contact email link are inline-flex tap targets carrying py-2 vertical padding that reaches at least 36px of computed tap height inside the unchanged footer identity, grid and list layout."
+            "The footer's page and service links and the contact email link are inline-flex tap targets carrying py-2 vertical padding that reaches at least 36px of computed tap height inside the unchanged footer identity, grid and list layout.",
+            "Home and /kontakt/ contact sections and the shared footer show 070-214 67 83 as tel:+46702146783 alongside linus.svardd@outlook.com; native links support keyboard focus."
           ],
           "expected_outcome": "A declared static route can be selected for F1, F2, F3, F5 or F6.",
           "failure_behavior": "A missing host artifact can fail before React mounts; this catalog does not claim host-level fallback.",
@@ -1123,7 +1139,7 @@
         "outcome_signals": [
           "In an observed browser task, the nine inquiry controls can be located in mockup order with required and optional marks.",
           "Submitting invalid input names each blocking field in Swedish and opens no draft.",
-          "A valid submit exposes the kontakt@svardentreprenad.se draft with its subject and labeled body, and the visitor is told they send the email themselves."
+          "A valid submit exposes the linus.svardd@outlook.com draft with its subject and labeled body, and the visitor is told they send the email themselves."
         ]
       },
       "user_stories": [
@@ -1259,7 +1275,7 @@
           "flow": [
             "Complete the staffing inquiry form with valid values.",
             "Select Skicka förfrågan.",
-            "The page hands a mailto draft to kontakt@svardentreprenad.se with the subject Förfrågan om inhyrning and a labeled body to the email program.",
+            "The page hands a mailto draft to linus.svardd@outlook.com with the subject Förfrågan om inhyrning and a labeled body to the email program.",
             "Read the role=status confirmation that the draft awaits review and that the visitor sends the email themselves.",
             "If the email program did not open, follow Öppna utkastet igen or copy the displayed address."
           ],
@@ -1267,7 +1283,7 @@
             "Empty optional fields are marked with a dash in the draft body instead of blocking the handoff.",
             "The static help line beside the submit button states the draft handoff and the manual send before submitting."
           ],
-          "expected_outcome": "The form requests a mailto handoff to kontakt@svardentreprenad.se with the staffing subject and details; the visitor sends the email themselves and delivery is not established.",
+          "expected_outcome": "The form requests a mailto handoff to linus.svardd@outlook.com with the staffing subject and details; the visitor sends the email themselves and delivery is not established.",
           "failure_behavior": "The mail handler may fail to open; the page cannot confirm acceptance or sending.",
           "recovery": "Use the reopen-draft fallback link or copy the displayed address and details into working email software; the site offers no persistent draft recovery or alternate transport."
         }
@@ -1295,7 +1311,8 @@
           "Driveway calculator",
           "Drainage calculator",
           "Preliminary total announced",
-          "Invalid input feedback"
+          "Invalid input feedback",
+          "Individual quote contact for finite positive measurements above 100; no estimate"
         ],
         "current_limitations": "Totals are client-side estimates from the registry-declared quote.uppfart and quote.drainage pricing carrying the standing unconfirmed VAT label; a calculation persists only through the share link the visitor explicitly creates, and a configured mail client plus the browser print dialog carry the handoff.",
         "failure_behavior": "Invalid measurements replace the total with a Swedish role=alert message, mark the input and disable the email and print controls; a missing or incompatible mail client can prevent handoff without a site error receipt.",
@@ -1441,7 +1458,7 @@
               "path": "src/pages/QuotePage.test.tsx",
               "name": "restores the shared driveway inputs and recomputes the same total on load",
               "evidence_type": "direct",
-              "supports": "Checks that loading /offertberakning/ with the yta, lass and asfalt share parameters restores the three inputs without an alert and recomputes the identical driveway total. It does not open the link in a second browser session."
+              "supports": "Checks that loading /offertberakning/ with the yta and asfalt share parameters restores area and asphalt without an alert and recomputes the identical driveway total. It does not open the link in a second browser session."
             },
             {
               "framework": "vitest",
@@ -1502,27 +1519,6 @@
             {
               "framework": "vitest",
               "path": "src/lib/quote.test.ts",
-              "name": "charges the area at the declared per-square-meter price plus declared fixed and load costs without asphalt",
-              "evidence_type": "technical",
-              "supports": "Helper-level check pins driveway pricing at the declared per-square-meter price plus the declared fixed preparation amount and per-load costs without asphalt."
-            },
-            {
-              "framework": "vitest",
-              "path": "src/lib/quote.test.ts",
-              "name": "adds the declared per-square-meter asphalt price when asphalt is included",
-              "evidence_type": "technical",
-              "supports": "Helper-level check pins the asphalt surcharge at the declared per-square-meter asphalt price; the page declarations check the rendered asphalt totals."
-            },
-            {
-              "framework": "vitest",
-              "path": "src/lib/quote.test.ts",
-              "name": "adds the declared per-load cost per load",
-              "evidence_type": "technical",
-              "supports": "Helper-level check pins the per-load cost at the declared per-load amount."
-            },
-            {
-              "framework": "vitest",
-              "path": "src/lib/quote.test.ts",
               "name": "formats money in kronor with non-breaking grouping and a decimal comma",
               "evidence_type": "technical",
               "supports": "Helper-level check pins sv-SE money formatting with non-breaking grouping and a decimal comma, the format the rendered total and email body carry."
@@ -1546,7 +1542,7 @@
               "path": "src/lib/quote-share.test.ts",
               "name": "reads driveway share values and leaves missing params undefined",
               "evidence_type": "technical",
-              "supports": "Helper-level check pins the tolerant decoding of the yta, lass and asfalt search parameters, leaving missing or malformed values undefined so the page keeps its own input handling; the page declarations above check the rendered restore built on it."
+              "supports": "Helper-level check pins the tolerant decoding of the yta and asfalt search parameters, leaving missing or malformed values undefined so the page keeps its own input handling; the page declarations above check the rendered restore built on it."
             },
             {
               "framework": "vitest",
@@ -1575,6 +1571,27 @@
               "name": "restores the shared note into the project description on load",
               "evidence_type": "direct",
               "supports": "Checks the same note restore on /draneringsberakning/ with the restored length, the recomputed total and no alert."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/lib/quote.test.ts",
+              "name": "uses the supplied driveway area, asphalt and fixed prices",
+              "evidence_type": "technical",
+              "supports": "Independent custom-price examples protect the typed pricing contract; page tests pin the public totals."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteLimits.test.tsx",
+              "name": "estimates 99.9 and exactly 100, then replaces the price above 100 and recovers",
+              "evidence_type": "direct",
+              "supports": "Both calculators: literal boundary totals, live announcement, focusable contact, scope and notes without a price, disabled print and return below the cutoff."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteLimits.test.tsx",
+              "name": "restores a very large finite shared scope as an individual inquiry without computing a price",
+              "evidence_type": "direct",
+              "supports": "Both calculators: very large finite share restoration, scope-only email, no total in document, share and reset."
             }
           ],
           "entry_point_refs": [],
@@ -1582,16 +1599,18 @@
             "A calculator is selected (uppfart via the #uppfart hash, husdränering via /draneringsberakning/)."
           ],
           "flow": [
-            "Enter Uppfartens yta and Antal lass, or Dräneringens längd in löpmeter.",
+            "Enter Uppfartens yta or Dräneringens längd in löpmeter.",
             "Read the help text under the fields and the Det här ingår scope summary on the drainage page.",
             "Read the announced Beräknad totalsumma, the currency total and Momsstatus ej bekräftad in the Din kostnadsbild aside.",
             "Read the disclaimer that this is an estimate, not a binding quote, and that ROT deduction and payment terms are specified in the real quote."
           ],
           "variants": [
-            "The driveway calculator starts from the example values 100 m², 1 lass and the checked Inkludera asfalt checkbox; unchecking asphalt recalculates the total.",
+            "The driveway calculator starts from the example values 100 m² and the checked Inkludera asfalt checkbox; unchecking asphalt recalculates the total.",
             "The drainage calculator starts from the example 40 löpmeter and accepts decimal lengths with the same precision on the page and in the email.",
             "Totals recalculate on every change and are announced through an aria-live polite, aria-atomic region.",
-            "Only the total is shown: no unit prices, part amounts or price-breakdown sections exist in the customer view."
+            "Only the total is shown: no unit prices, part amounts or price-breakdown sections exist in the customer view.",
+            "Only positive finite measurements up to and including 100 receive an estimate. At 100 m² driveway totals are 166600 kr with asphalt and 99900 kr without; there is no load input or charge.",
+            "Above 100 m² or 100 löpmeter, the polite live region shows Kontakta oss för en individuell offert. The keyboard-accessible contact link carries scope and notes to linus.svardd@outlook.com without an estimated total; print is disabled and browser printing cannot include a removed total. Lowering the measurement to at most 100 restores the estimate. Share links preserve this contact state."
           ],
           "expected_outcome": "The visitor sees exactly one preliminary total for the entered measurements, clearly labeled as unconfirmed regarding VAT and non-binding.",
           "failure_behavior": "The website cannot confirm a binding price; the disclaimer directs scope confirmation to the real quote discussion.",
@@ -1621,7 +1640,7 @@
               "path": "src/pages/DrainageQuotePage.test.tsx",
               "name": "blocks the invalid length %s without a misleading result",
               "evidence_type": "direct",
-              "supports": "Parameterized empty, zero, negative and over-limit cases check the alert, aria-invalid, the disabled email and print controls and the absent total."
+              "supports": "Parameterized empty, zero, negative and non-numeric cases check the alert, aria-invalid, the disabled email and print controls and the absent total."
             },
             {
               "framework": "vitest",
@@ -1643,6 +1662,13 @@
               "name": "degrades an invalid shared length through the existing invalid-input path",
               "evidence_type": "direct",
               "supports": "Checks that an invalid shared langd value renders the existing Swedish alert instead of a total and disables the send, print and share controls."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteLimits.test.tsx",
+              "name": "keeps invalid shared scope %s separate from an individual quote",
+              "evidence_type": "direct",
+              "supports": "Both calculators reject non-numeric and non-finite shared inputs without exposing a total or contact draft."
             }
           ],
           "entry_point_refs": [],
@@ -1650,14 +1676,15 @@
             "A calculator is selected with an entered measurement."
           ],
           "flow": [
-            "Enter an invalid value: a non-positive or over-limit area, a fractional number of loads, or an empty, non-positive or over-limit drainage length.",
+            "Enter an invalid value: a empty, non-numeric, non-finite or non-positive area or drainage length.",
             "Read the role=alert Swedish message and the marked input instead of a total.",
             "Correct the value or select Återställ exempel to restore the example values and clear the note."
           ],
           "variants": [
-            "The driveway message is Ange en yta större än 0, ett helt antal lass och högst 100 000. while the area or loads are invalid; the drainage message is Ange en längd större än 0 och högst 100 000 meter..",
+            "The driveway message is Ange en yta större än 0. while the area is invalid; the drainage message is Ange en längd större än 0..",
             "While input is invalid, no Beräknad totalsumma is rendered, the input carries aria-invalid, and the email and print controls are disabled or replaced by a disabled Kontrollera dina uppgifter button.",
-            "Återställ exempel restores the example measurements, the default asphalt choice and an empty note, clearing the alert."
+            "Återställ exempel restores the example measurements, the default asphalt choice and an empty note, clearing the alert.",
+            "Measurements above 100 are valid scope for an individual quote, not validation errors. Non-finite and non-numeric values remain invalid."
           ],
           "expected_outcome": "The visitor never sees a stale total alongside invalid input and can recover by correcting the named value or resetting the example.",
           "failure_behavior": "The page performs shape and range checks only; it cannot judge whether the entered measurements fit the real project.",
@@ -1683,7 +1710,7 @@
               "path": "src/pages/QuotePage.test.tsx",
               "name": "produces a share link that encodes the driveway inputs and lands on the uppfart view",
               "evidence_type": "direct",
-              "supports": "Checks that Skapa delbar länk writes the yta, lass and asfalt values into the page URL while keeping the #uppfart hash so the recipient lands on the driveway view, and renders the same absolute URL as the copyable link's href."
+              "supports": "Checks that Skapa delbar länk writes the yta and asfalt values into the page URL while keeping the #uppfart hash so the recipient lands on the driveway view, and renders the same absolute URL as the copyable link's href."
             },
             {
               "framework": "vitest",
@@ -1697,12 +1724,12 @@
               "path": "src/lib/quote-share.test.ts",
               "name": "declares the fixed Swedish URL parameter names",
               "evidence_type": "technical",
-              "supports": "Helper-level check pins the fixed yta, lass, asfalt, langd and anteckning parameter names shared by the share URL and its decoding, the contract the page share declarations build on."
+              "supports": "Helper-level check pins the fixed yta, asfalt, langd and anteckning parameter names shared by the share URL and its decoding, the contract the page share declarations build on."
             },
             {
               "framework": "vitest",
               "path": "src/lib/quote-share.test.ts",
-              "name": "builds driveway search params for area, loads and the asphalt choice",
+              "name": "builds driveway search params for area and the asphalt choice",
               "evidence_type": "technical",
               "supports": "Helper-level check pins the driveway search encoding, including the 1/0 asphalt flag."
             },
@@ -1725,7 +1752,7 @@
               "path": "src/pages/QuotePage.test.tsx",
               "name": "encodes a written note into the produced share link",
               "evidence_type": "direct",
-              "supports": "Checks that a written project note is encoded into the produced share URL and the copyable link's href as the anteckning parameter alongside the yta, lass and asfalt values."
+              "supports": "Checks that a written project note is encoded into the produced share URL and the copyable link's href as the anteckning parameter alongside the yta and asfalt values."
             },
             {
               "framework": "vitest",
@@ -1775,6 +1802,20 @@
               "name": "restyles the result column for paper",
               "evidence_type": "technical",
               "supports": "Stylesheet check pins the shared quote stylesheet's @media print restyle that lays the result column out as a block, releases the sticky result aside, removes its shadow and keeps the result together for paper. It reads the stylesheet source only and does not render print output."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteLimits.test.tsx",
+              "name": "estimates 99.9 and exactly 100, then replaces the price above 100 and recovers",
+              "evidence_type": "direct",
+              "supports": "Both calculators: literal boundary totals, live announcement, focusable contact, scope and notes without a price, disabled print and return below the cutoff."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteLimits.test.tsx",
+              "name": "restores a very large finite shared scope as an individual inquiry without computing a price",
+              "evidence_type": "direct",
+              "supports": "Both calculators: very large finite share restoration, scope-only email, no total in document, share and reset."
             }
           ],
           "entry_point_refs": [],
@@ -1789,8 +1830,9 @@
           ],
           "variants": [
             "Both calculators expose the same print control in the Din kostnadsbild aside; it stays disabled while input is invalid.",
-            "The share link encodes yta, lass and the asphalt choice on /offertberakning/ while keeping the #uppfart hash, and längd on /draneringsberakning/, together with the optional project note (anteckning) whenever one is written; the control copies through the browser clipboard when that API is available and stays usable as a plain link when it is not.",
-            "Opening a share link restores the shared inputs and the note once on load and recomputes the identical total; missing parameters fall back to the example defaults and invalid shared values go through the existing invalid-input alert with the share control disabled alongside the email and print controls."
+            "The share link encodes yta and the asphalt choice on /offertberakning/ while keeping the #uppfart hash, and längd on /draneringsberakning/, together with the optional project note (anteckning) whenever one is written; the control copies through the browser clipboard when that API is available and stays usable as a plain link when it is not.",
+            "Opening a share link restores the shared inputs and the note once on load and recomputes the identical total; missing parameters fall back to the example defaults and invalid shared values go through the existing invalid-input alert with the share control disabled alongside the email and print controls.",
+            "Above 100 m² or 100 löpmeter, the polite live region shows Kontakta oss för en individuell offert. The keyboard-accessible contact link carries scope and notes to linus.svardd@outlook.com without an estimated total; print is disabled and browser printing cannot include a removed total. Lowering the measurement to at most 100 restores the estimate. Share links preserve this contact state."
           ],
           "expected_outcome": "The visitor hands the preliminary total to paper or a PDF through the browser's own print path, or carries the exact calculation onward through a share link carrying the measurements and any written note, whose recipient sees the same recomputed total; the website stores nothing beyond that link.",
           "failure_behavior": "The website cannot confirm that a printout or PDF was produced; browser and printer availability stay outside the site. The share control is disabled alongside the email and print controls while input is invalid.",
@@ -1884,6 +1926,20 @@
               "name": "keeps the quote selection background in the orange brand hue family",
               "evidence_type": "technical",
               "supports": "Stylesheet check pins the .quote-layout ::selection background token's hue to the declared orange brand band. It constrains hue only and does not itself re-check contrast or render a text selection."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteLimits.test.tsx",
+              "name": "estimates 99.9 and exactly 100, then replaces the price above 100 and recovers",
+              "evidence_type": "direct",
+              "supports": "Both calculators: literal boundary totals, live announcement, focusable contact, scope and notes without a price, disabled print and return below the cutoff."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteLimits.test.tsx",
+              "name": "restores a very large finite shared scope as an individual inquiry without computing a price",
+              "evidence_type": "direct",
+              "supports": "Both calculators: very large finite share restoration, scope-only email, no total in document, share and reset."
             }
           ],
           "entry_point_refs": [],
@@ -1898,9 +1954,10 @@
             "Read Öppnar ditt e-postprogram. Inget skickas automatiskt. beside the control."
           ],
           "variants": [
-            "The driveway draft has the subject Offertförfrågan – uppfart and a body with Yta, Antal lass, the Asfalt answer, the preliminary sum labeled momsstatus ej bekräftad and Omfattning behöver bekräftas; unchecking asphalt changes the Asfalt answer.",
+            "The driveway draft has the subject Offertförfrågan – uppfart and a body with Yta, the Asfalt answer, the preliminary sum labeled momsstatus ej bekräftad and Omfattning behöver bekräftas; unchecking asphalt changes the Asfalt answer.",
             "The drainage draft has the subject Offertförfrågan – husdränering and a body with the length in löpmeter, the preliminary sum and Omfattning behöver bekräftas.",
-            "Both drafts address kontakt@svardentreprenad.se and never contain internal unit prices, fixed costs or part amounts."
+            "Both drafts address linus.svardd@outlook.com and never contain internal unit prices, fixed costs or part amounts.",
+            "Above 100 m² or 100 löpmeter, the polite live region shows Kontakta oss för en individuell offert. The keyboard-accessible contact link carries scope and notes to linus.svardd@outlook.com without an estimated total; print is disabled and browser printing cannot include a removed total. Lowering the measurement to at most 100 restores the estimate. Share links preserve this contact state."
           ],
           "expected_outcome": "The email program receives a draft carrying the entered measurements and the preliminary total; the visitor sends it themselves and delivery is not established.",
           "failure_behavior": "The mail handler may fail to open; the page cannot confirm acceptance or sending.",

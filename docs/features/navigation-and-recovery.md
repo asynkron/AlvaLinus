@@ -205,3 +205,20 @@ the registry-declared Kontakta oss link to the contact route.
 
 - Expand: document the actual production-host unknown-path behavior when known.
 
+
+## Company telephone contact (fk274, 2026-11-19)
+
+The home contact section, /kontakt/ and shared footer display 070-214 67 83
+as a native `tel:+46702146783` link alongside linus.svardd@outlook.com.
+The footer derives the telephone item from the same typed contact items as
+the contact section. Its link occupies its own row with vertical padding;
+existing responsive columns remain in place.
+
+The direct SiteHomePage.test.tsx declaration
+`offers the company phone contact with native keyboard access on %s`
+checks the home, contact and both calculator footers, literal telephone
+href/text, focusability and the retained email; it also checks the contact
+section on home and /kontakt/. It does not exercise a phone handler or render
+mobile/desktop layout. The footer stylesheet test no longer counts identical
+color substrings, which would incorrectly forbid adding another contact link.
+Existing source layout checks and compiled tap-height coverage remain.

@@ -3,7 +3,7 @@ import { siteContent } from "../data/siteContent";
 import { QuoteResultAside } from "./QuotePageShared";
 
 const shared = siteContent.quote.shared;
-const shareHref = `${window.location.origin}/offertberakning/?area=50&loads=2`;
+const shareHref = `${window.location.origin}/offertberakning/?yta=50&asfalt=1`;
 
 function renderAside() {
   render(<QuoteResultAside shared={shared} error="" valid total="1 234 kr" email="mailto:test@example.se" shareHref={shareHref} />);

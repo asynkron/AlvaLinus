@@ -1,6 +1,5 @@
 export const quoteShareParams = {
   area: "yta",
-  loads: "lass",
   asphalt: "asfalt",
   length: "langd",
   notes: "anteckning",
@@ -8,7 +7,6 @@ export const quoteShareParams = {
 
 export type DrivewayShareValues = {
   readonly area?: string;
-  readonly loads?: string;
   readonly asphalt?: boolean;
   readonly notes?: string;
 };
@@ -18,10 +16,9 @@ export type DrainageShareValues = {
   readonly notes?: string;
 };
 
-export function buildDrivewayShareSearch(values: { readonly area: string; readonly loads: string; readonly includeAsphalt: boolean; readonly notes: string }): string {
+export function buildDrivewayShareSearch(values: { readonly area: string; readonly includeAsphalt: boolean; readonly notes: string }): string {
   const params = new URLSearchParams({
     [quoteShareParams.area]: values.area,
-    [quoteShareParams.loads]: values.loads,
     [quoteShareParams.asphalt]: values.includeAsphalt ? "1" : "0",
   });
 
@@ -44,7 +41,6 @@ export function readDrivewayShareValues(search: string): DrivewayShareValues {
 
   return {
     area: params.get(quoteShareParams.area) ?? undefined,
-    loads: params.get(quoteShareParams.loads) ?? undefined,
     asphalt: asphalt === null ? undefined : asphalt !== "0",
     notes: params.get(quoteShareParams.notes) ?? undefined,
   };

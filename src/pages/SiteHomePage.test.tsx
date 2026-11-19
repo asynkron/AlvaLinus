@@ -65,6 +65,24 @@ function notFoundSummary(path: string): string {
 }
 
 describe("SiteHomePage", () => {
+  it.each(["/", "/kontakt/", "/offertberakning/", "/draneringsberakning/"])("offers the company phone contact with native keyboard access on %s", async currentPath => {
+    render(<SiteHomePage currentPath={currentPath} content={content} />);
+    const footer = await screen.findByRole("contentinfo");
+    const phone = within(footer).getByRole("link", { name: "070-214 67 83" });
+    expect(phone).toHaveAttribute("href", "tel:+46702146783");
+    phone.focus();
+    expect(phone).toHaveFocus();
+    expect(within(footer).getByRole("link", { name: "linus.svardd@outlook.com" })).toHaveAttribute("href", "mailto:linus.svardd@outlook.com");
+    if (currentPath === "/" || currentPath === "/kontakt/") {
+      const contact = document.getElementById("kontakt");
+      if (!contact) throw new Error("Missing contact section");
+      const contactPhone = within(contact).getByRole("link", { name: "Telefon 070-214 67 83" });
+      expect(contactPhone).toHaveAttribute("href", "tel:+46702146783");
+      contactPhone.focus();
+      expect(contactPhone).toHaveFocus();
+    }
+  });
+
   it("offers a Swedish skip link before header navigation that targets the stable page content", () => {
     render(<SiteHomePage content={content} />);
 
@@ -948,7 +966,7 @@ describe("SiteHomePage", () => {
     const note = formScope.getByText(/öppnas i ditt eget e-postprogram/);
     expect(note).toHaveAttribute("id", "kontakt-handoff-note");
     expect(note).toHaveTextContent("Webbplatsen kan inte bekräfta att meddelandet har levererats");
-    const fallback = formScope.getByRole("link", { name: content.contact.form.recipientEmail });
+    const fallback = formScope.getByRole("link", { name: "linus.svardd@outlook.com" });
     expect(fallback).toHaveAttribute(
       "href",
       `mailto:${content.contact.form.recipientEmail}?subject=${encodeURIComponent(content.contact.form.subject)}`,
@@ -959,9 +977,9 @@ describe("SiteHomePage", () => {
     expect(formScope.queryByRole("option", { name: "Pool" })).not.toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: content.contact.form.recipientEmail })).toHaveLength(2);
     const footerScope = within(screen.getByRole("contentinfo"));
-    expect(footerScope.getByRole("link", { name: content.contact.form.recipientEmail })).toHaveAttribute(
+    expect(footerScope.getByRole("link", { name: "linus.svardd@outlook.com" })).toHaveAttribute(
       "href",
-      `mailto:${content.contact.form.recipientEmail}`,
+      "mailto:linus.svardd@outlook.com",
     );
     expect(screen.queryByRole("link", { name: /Källa/ })).not.toBeInTheDocument();
   });

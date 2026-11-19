@@ -15,7 +15,7 @@ As a company representative, I want the staffing inquiry handed to my own email 
 
 1. Complete the staffing inquiry form with valid values.
 2. Select Skicka förfrågan.
-3. The page hands a mailto draft to kontakt@svardentreprenad.se with the subject "Förfrågan om inhyrning" and a labeled body of every supplied value to the email program.
+3. The page hands a mailto draft to linus.svardd@outlook.com with the subject "Förfrågan om inhyrning" and a labeled body of every supplied value to the email program.
 4. Read the role="status" confirmation: review the draft and send the email yourself; the website cannot send or confirm delivery.
 5. If the email program did not open, follow Öppna utkastet igen or copy the displayed address.
 
@@ -27,7 +27,7 @@ As a company representative, I want the staffing inquiry handed to my own email 
 
 ## Expected outcome
 
-The form requests a mailto handoff to kontakt@svardentreprenad.se with the staffing subject and details; the visitor sends the email themselves and delivery is not established.
+The form requests a mailto handoff to linus.svardd@outlook.com with the staffing subject and details; the visitor sends the email themselves and delivery is not established.
 
 ## Failure and recovery
 

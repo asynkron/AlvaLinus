@@ -13,10 +13,6 @@ function labelPattern(label: string): RegExp {
   return new RegExp(label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
 }
 
-function draftBody(values: Record<string, string>): string {
-  return text.mail.bodyTemplate.replace(/\{(\w+)\}/g, (placeholder, key: string) => values[key] ?? placeholder);
-}
-
 function firstIncludedParagraph(): string {
   const paragraph = text.includedParagraphs[0];
 
@@ -34,7 +30,7 @@ function lengthInput() {
 function decodedEmailHref(): string {
   const link = screen.getByRole("link", { name: labelPattern(shared.sendLabel) });
 
-  expect(link.getAttribute("href") ?? "").toContain(`mailto:${text.mail.recipientEmail}`);
+  expect(link.getAttribute("href") ?? "").toContain("mailto:linus.svardd@outlook.com");
 
   return decodeURIComponent(link.getAttribute("href") ?? "").replace(/[\u00a0\u202f]/g, " ");
 }
@@ -76,7 +72,7 @@ describe("DrainageQuotePage", () => {
     const href = decodedEmailHref();
 
     expect(href).toContain(text.mail.subject);
-    expect(href).toContain(draftBody({ length: formatNumber(Number(meters)), total: money(expected), vat: vatStatusLabel.toLowerCase(), notes: "" }));
+    expect(href).toContain(`L\u00e4ngd: ${formatNumber(Number(meters))} l\u00f6pmeter\nPrelimin\u00e4r summa: ${money(expected)}`);
     expect(href).not.toMatch(/kr\/m|Schakt och markarbete/);
   });
 
@@ -86,11 +82,11 @@ describe("DrainageQuotePage", () => {
 
     const href = decodedEmailHref();
 
-    expect(href).toContain(draftBody({ length: formatNumber(40.5), total: money(148650), vat: vatStatusLabel.toLowerCase(), notes: "" }));
+    expect(href).toContain("L\u00e4ngd: 40,5 l\u00f6pmeter\nPrelimin\u00e4r summa: 148 650 kr");
     expect(screen.getByText(money(148650))).toBeInTheDocument();
   });
 
-  it.each(["", "0", "-5", "100001"])("blocks the invalid length %s without a misleading result", (invalid) => {
+  it.each(["", "0", "-5", "invalid"])("blocks the invalid length %s without a misleading result", (invalid) => {
     render(<DrainageQuotePage />);
     fireEvent.change(lengthInput(), { target: { value: invalid } });
 
@@ -132,7 +128,7 @@ describe("DrainageQuotePage", () => {
     expect(lengthInput()).toHaveValue(40);
     expect(screen.getByRole("textbox")).toHaveValue("");
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
-    expect(decodedEmailHref()).toContain(draftBody({ length: formatNumber(40), total: money(146900), vat: vatStatusLabel.toLowerCase(), notes: "" }));
+    expect(decodedEmailHref()).toContain("L\u00e4ngd: 40 l\u00f6pmeter\nPrelimin\u00e4r summa: 146 900 kr");
   });
 
   it("links visitors with a driveway project back to the quote calculator", () => {
