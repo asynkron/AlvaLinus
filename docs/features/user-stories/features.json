@@ -1335,11 +1335,13 @@
           "Drainage calculator",
           "Preliminary total announced",
           "Invalid input feedback",
-          "Individual quote contact for finite positive measurements above 100; no estimate"
+          "Individual quote contact for finite positive measurements above 100; no estimate",
+          "Current-input share link and Swedish confirmation or manual-copy fallback",
+          "Discarded share feedback after inputs change; obsolete clipboard completion ignored"
         ],
         "current_limitations": "Totals are client-side estimates from the registry-declared quote.uppfart and quote.drainage pricing with selectable inclusive/exclusive VAT; a calculation persists only through the share link the visitor explicitly creates, and a configured mail client plus the browser print dialog carry the handoff.",
-        "failure_behavior": "Invalid measurements replace the total with a Swedish role=alert message, mark the input and disable the email and print controls; a missing or incompatible mail client can prevent handoff without a site error receipt.",
-        "recovery": "Correct the named measurement or use Återställ exempel; use the displayed address in a working email tool when the handoff fails.",
+        "failure_behavior": "Invalid measurements replace the total with a Swedish role=alert message, mark the input and disable the email and print controls; a missing or incompatible mail client can prevent handoff without a site error receipt. Invalid input also disables sharing. Clipboard rejection or unavailability leaves a manually copyable link with Swedish fallback feedback; obsolete completions cannot restore discarded status.",
+        "recovery": "Correct the named measurement or use Återställ exempel; use the displayed address in a working email tool when the handoff fails. After changing inputs, explicitly create a new share link; manually copy the current displayed link if clipboard copying fails.",
         "runtime_owners": [
           "src/pages/QuotePage.tsx",
           "src/pages/DrainageQuotePage.tsx",
@@ -1918,6 +1920,48 @@
               "name": "restores and shares an exclusive VAT estimate while old links default to inclusive",
               "evidence_type": "direct",
               "supports": "Exclusive share inputs restore selected radio and amount, and generated links preserve moms=exkl; default-inclusive cases cover older links."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/components/QuoteResultAside.test.tsx",
+              "name": "announces the Swedish copy confirmation when the clipboard write resolves",
+              "evidence_type": "direct",
+              "supports": "Checks the explicit share action's clipboard argument and Swedish success status with a resolved mock clipboard promise. These in-memory shared-component declarations use mocked clipboard APIs, controlled promises and rerendered props. They cover shared-control feedback ownership, not page edit-event wiring, full browser/device/clipboard-service execution or actual screen-reader announcements. Source mappings are not execution receipts."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/components/QuoteResultAside.test.tsx",
+              "name": "announces the manual-copy fallback when the clipboard write rejects",
+              "evidence_type": "direct",
+              "supports": "Checks the Swedish fallback status and copyable link after a rejected mock clipboard promise. These in-memory shared-component declarations use mocked clipboard APIs, controlled promises and rerendered props. They cover shared-control feedback ownership, not page edit-event wiring, full browser/device/clipboard-service execution or actual screen-reader announcements. Source mappings are not execution receipts."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/components/QuoteResultAside.test.tsx",
+              "name": "announces the manual-copy fallback when the clipboard is unavailable",
+              "evidence_type": "direct",
+              "supports": "Checks the Swedish fallback status and copyable link without a clipboard API. These in-memory shared-component declarations use mocked clipboard APIs, controlled promises and rerendered props. They cover shared-control feedback ownership, not page edit-event wiring, full browser/device/clipboard-service execution or actual screen-reader announcements. Source mappings are not execution receipts."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/components/QuoteResultAside.test.tsx",
+              "name": "discards shared feedback when %s without publishing another URL",
+              "evidence_type": "direct",
+              "supports": "Parameterized measurements change / notes change / values reset / inputs become invalid cases rerender the shared aside's shareHref/valid props. They check removal of the old link and status without another URL publication; valid cases explicitly share the new URL, while invalid input disables sharing. This does not exercise page edit-event wiring or assert clipboard call counts during edits. These in-memory shared-component declarations use mocked clipboard APIs, controlled promises and rerendered props. They cover shared-control feedback ownership, not page edit-event wiring, full browser/device/clipboard-service execution or actual screen-reader announcements. Source mappings are not execution receipts."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/components/QuoteResultAside.test.tsx",
+              "name": "ignores an obsolete clipboard %s even after returning to the original quote",
+              "evidence_type": "direct",
+              "supports": "Controlled-promise resolve / reject cases rerender changed and then original quote props before settling the old write; the old link and status remain absent. These in-memory shared-component declarations use mocked clipboard APIs, controlled promises and rerendered props. They cover shared-control feedback ownership, not page edit-event wiring, full browser/device/clipboard-service execution or actual screen-reader announcements. Source mappings are not execution receipts."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/components/QuoteResultAside.test.tsx",
+              "name": "keeps the newest attempt's feedback when the older attempt succeeds: %s",
+              "evidence_type": "direct",
+              "supports": "Parameterized true / false cases control two clipboard promises: newer rejection followed by older success, and newer success followed by older rejection. Only the newer Swedish fallback/confirmation remains, with the current link. These in-memory shared-component declarations use mocked clipboard APIs, controlled promises and rerendered props. They cover shared-control feedback ownership, not page edit-event wiring, full browser/device/clipboard-service execution or actual screen-reader announcements. Source mappings are not execution receipts."
             }
           ],
           "entry_point_refs": [],
@@ -1935,11 +1979,14 @@
             "The share link encodes yta and the asphalt choice on /offertberakning/ while keeping the #uppfart hash, and längd on /draneringsberakning/, together with the optional project note (anteckning) whenever one is written; the control copies through the browser clipboard when that API is available and stays usable as a plain link when it is not.",
             "Opening a share link restores the shared inputs and the note once on load and recomputes the identical total; missing parameters fall back to the example defaults and invalid shared values go through the existing invalid-input alert with the share control disabled alongside the email and print controls.",
             "Above 100 m² or 100 löpmeter, the polite live region shows Kontakta oss för en individuell offert. The keyboard-accessible contact link carries scope and notes to linus.svardd@outlook.com without an estimated total; print is disabled and browser printing cannot include a removed total. Lowering the measurement to at most 100 restores the estimate. Share links preserve this contact state.",
-            "Prices include 25% VAT. Native Inkl. moms / Exkl. moms radios default to inclusive; exclusive = original unrounded inclusive total / 1.25. Result, email and printed document carry the selected mode; reset returns to inclusive. Above 100 remains price-free in both modes. Exclusive links carry moms=exkl; absent/unknown values default to inclusive."
+            "Prices include 25% VAT. Native Inkl. moms / Exkl. moms radios default to inclusive; exclusive = original unrounded inclusive total / 1.25. Result, email and printed document carry the selected mode; reset returns to inclusive. Above 100 remains price-free in both modes. Exclusive links carry moms=exkl; absent/unknown values default to inclusive.",
+            "Changing measurements or notes, resetting values or making inputs invalid discards the old displayed share link and status. Editing alone does not publish another URL or write to the clipboard; valid inputs require a fresh explicit share action.",
+            "An obsolete clipboard resolution or rejection cannot restore discarded feedback, even after returning to the original inputs. Only the latest explicit sharing attempt can announce its result.",
+            "A successful clipboard write announces: Länken har kopierats till urklipp. Rejection or an unavailable clipboard announces: Kopieringen misslyckades. Markera och kopiera länken ovan manuellt. The fallback leaves the current attempt's link available for manual copying."
           ],
           "expected_outcome": "The visitor hands the preliminary total to paper or a PDF through the browser's own print path, or carries the exact calculation onward through a share link carrying the measurements and any written note, whose recipient sees the same recomputed total; the website stores nothing beyond that link.",
-          "failure_behavior": "The website cannot confirm that a printout or PDF was produced; browser and printer availability stay outside the site. The share control is disabled alongside the email and print controls while input is invalid.",
-          "recovery": "Retry the print control or read the total on screen; a recipient without the exact link URL starts from the example values. The print hand-off is owned by the window.print() control in the shared result aside and the shared quote stylesheet's @media print rules, pinned by the styles.quote-print.test.ts stylesheet declarations; no declaration exercises a real print dialog."
+          "failure_behavior": "The website cannot confirm that a printout or PDF was produced; browser and printer availability stay outside the site. The share control is disabled alongside the email and print controls while input is invalid. An obsolete clipboard resolution or rejection cannot restore discarded feedback, even after returning to the original inputs. Only the latest explicit sharing attempt can announce its result. A successful clipboard write announces: Länken har kopierats till urklipp. Rejection or an unavailable clipboard announces: Kopieringen misslyckades. Markera och kopiera länken ovan manuellt. The fallback leaves the current attempt's link available for manual copying.",
+          "recovery": "Retry the print control or read the total on screen; a recipient without the exact link URL starts from the example values. The print hand-off is owned by the window.print() control in the shared result aside and the shared quote stylesheet's @media print rules, pinned by the styles.quote-print.test.ts stylesheet declarations; no declaration exercises a real print dialog. After edits discard the old link/status, explicitly share again with valid inputs; copy the displayed current link manually if clipboard copying fails."
         },
         {
           "id": "F6-US5",

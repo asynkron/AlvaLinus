@@ -1,6 +1,7 @@
 # Feature catalog
 
-Latest bounded source review: F5 on 2026-11-19; other records retain their own review dates.
+Latest bounded source review: F5 and F6 sharing lifecycle on 2026-11-19;
+other records retain their own review dates.
 
 The catalog introduced in `f7b481f` already covers the current route inventory.
 The maintained catalog retains its published identities, including F4-US3 for
@@ -130,6 +131,16 @@ there too. The renderer is the authority for visible sections.
 nothing because `partners` is empty. About copy is on the dedicated about page;
 home has process and trust sections instead. No separate Pool or Referensobjekt
 route is declared.
+
+The 2026-11-19 F6 sharing review maps the already-delivered fk276 shared-control
+lifecycle to F6-US4, preserving the later F5 reconciliation and existing F6
+print, URL, note, VAT and individual-quote evidence.
+[QuoteResultAside.test.tsx](../../src/components/QuoteResultAside.test.tsx)
+names Swedish confirmation/fallback, input-change invalidation, obsolete
+completion and latest-attempt declarations. Controlled promises and rerendered
+props support that shared boundary; they do not establish page edit-event wiring
+or real browser/device/clipboard-service execution. Edits discard feedback;
+URL and clipboard publication require an explicit share action.
 
 ## Sources and runtime boundaries
 

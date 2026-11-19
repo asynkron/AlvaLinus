@@ -23,6 +23,10 @@ As a project visitor, I want to print or save the preliminary quote, or share it
 - The share link encodes yta and the asphalt choice on /offertberakning/ while keeping the #uppfart hash, and längd on /draneringsberakning/, together with the optional project note (anteckning) whenever one is written; the control copies through the browser clipboard when that API is available and stays usable as a plain link when it is not.
 - Opening a share link restores the shared inputs and the note once on load and recomputes the identical total; missing parameters fall back to the example defaults and invalid shared values go through the existing invalid-input alert with the share control disabled alongside the email and print controls.
 
+- Changing measurements or notes, resetting values or making inputs invalid discards the old displayed share link and status. Editing alone does not publish another URL or write to the clipboard; valid inputs require a fresh explicit share action.
+- An obsolete clipboard resolution or rejection cannot restore discarded feedback, even after returning to the original inputs. Only the latest explicit sharing attempt can announce its result.
+- A successful clipboard write announces: Länken har kopierats till urklipp. Rejection or an unavailable clipboard announces: Kopieringen misslyckades. Markera och kopiera länken ovan manuellt. The fallback leaves the current attempt's link available for manual copying.
+
 ## Expected outcome
 
 The visitor hands the preliminary total to paper or a PDF through the browser's own print path, or carries the exact calculation onward through a share link carrying the measurements and any written note, whose recipient sees the same recomputed total; the website stores nothing beyond that link.
@@ -52,6 +56,22 @@ The 2026-11-17 reconciliation maps the `fk233` share-link declarations into this
 The print hand-off itself is the visitor-invoked `window.print()` call on the "Skriv ut" control in the shared result aside ([QuotePageShared.tsx](../../../../src/components/QuotePageShared.tsx)) together with the two `@media print` blocks in the shared quote stylesheet ([QuotePage.css](../../../../src/pages/QuotePage.css)) that both calculators render through; the technical declarations above own that mapping. No declaration exercises a real print dialog or renders printed output — the browser's print dialog stays outside the site.
 
 Backend entry-point references: none (frontend-only). Test mappings were reviewed as source declarations; this document is not an execution receipt.
+
+## Current-input sharing lifecycle (fk276, reviewed 2026-11-19)
+
+The shared result aside owns this lifecycle through QuoteShareControls; changes
+to shareHref or validity discard the previous control's feedback and pending
+clipboard ownership. URL and clipboard writes occur only on an explicit share
+click. The page and helper mappings above retain URL, note and restore coverage.
+
+These in-memory shared-component declarations use mocked clipboard APIs, controlled promises and rerendered props. They cover shared-control feedback ownership, not page edit-event wiring, full browser/device/clipboard-service execution or actual screen-reader announcements. Source mappings are not execution receipts.
+
+- vitest, [QuoteResultAside.test.tsx](../../../../src/components/QuoteResultAside.test.tsx), declaration `announces the Swedish copy confirmation when the clipboard write resolves` (direct): Checks the explicit share action's clipboard argument and Swedish success status with a resolved mock clipboard promise.
+- vitest, [QuoteResultAside.test.tsx](../../../../src/components/QuoteResultAside.test.tsx), declaration `announces the manual-copy fallback when the clipboard write rejects` (direct): Checks the Swedish fallback status and copyable link after a rejected mock clipboard promise.
+- vitest, [QuoteResultAside.test.tsx](../../../../src/components/QuoteResultAside.test.tsx), declaration `announces the manual-copy fallback when the clipboard is unavailable` (direct): Checks the Swedish fallback status and copyable link without a clipboard API.
+- vitest, [QuoteResultAside.test.tsx](../../../../src/components/QuoteResultAside.test.tsx), declaration `discards shared feedback when %s without publishing another URL` (direct): Parameterized measurements change / notes change / values reset / inputs become invalid cases rerender the shared aside's shareHref/valid props. They check removal of the old link and status without another URL publication; valid cases explicitly share the new URL, while invalid input disables sharing. This does not exercise page edit-event wiring or assert clipboard call counts during edits.
+- vitest, [QuoteResultAside.test.tsx](../../../../src/components/QuoteResultAside.test.tsx), declaration `ignores an obsolete clipboard %s even after returning to the original quote` (direct): Controlled-promise resolve / reject cases rerender changed and then original quote props before settling the old write; the old link and status remain absent.
+- vitest, [QuoteResultAside.test.tsx](../../../../src/components/QuoteResultAside.test.tsx), declaration `keeps the newest attempt's feedback when the older attempt succeeds: %s` (direct): Parameterized true / false cases control two clipboard promises: newer rejection followed by older success, and newer success followed by older rejection. Only the newer Swedish fallback/confirmation remains, with the current link.
 
 ## Individual-quote boundary (fk274, 2026-11-19)
 
