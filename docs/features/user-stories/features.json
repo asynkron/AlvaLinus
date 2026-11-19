@@ -1203,7 +1203,7 @@
               "path": "src/styles.field-border-contrast.test.ts",
               "name": "keeps quote and inquiry form field boundaries at WCAG AA non-text contrast on white",
               "evidence_type": "technical",
-              "supports": "Stylesheet check pins the 1px hex border color of the inquiry input and textarea boundary rule at 3:1 non-text contrast on white, alongside the quote-page equivalents. It reads the page CSS only and does not render the form."
+              "supports": "PostCSS stylesheet check independently checks the inquiry input and textarea base boundary colors at at least 3:1 non-text contrast on white, alongside the quote-page equivalents, regardless of whitespace or selector-list order. It reads the page CSS only and does not render the form."
             }
           ],
           "entry_point_refs": [],
@@ -1502,7 +1502,7 @@
               "path": "src/styles.field-border-contrast.test.ts",
               "name": "keeps quote and inquiry form field boundaries at WCAG AA non-text contrast on white",
               "evidence_type": "technical",
-              "supports": "Stylesheet check pins the 1px hex border color of the quote input and select/textarea boundary rules at 3:1 non-text contrast on white, alongside the inquiry-page equivalents. It reads the page CSS only and does not render the calculator."
+              "supports": "PostCSS stylesheet check independently checks the quote input wrapper, select and textarea base boundary colors at at least 3:1 non-text contrast on white, alongside the inquiry-page equivalents, regardless of whitespace or selector-list order. It reads the page CSS only and does not render the calculator."
             },
             {
               "framework": "vitest",
