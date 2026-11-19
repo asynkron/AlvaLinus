@@ -11,7 +11,7 @@ import {
 } from "./InquiryPage";
 
 const text = siteContent.inquiry;
-const recipient = siteContent.contact.form.recipientEmail;
+const recipient = "linus.svardd@outlook.com";
 
 const openMailDraftSpy = vi.fn();
 

@@ -1,15 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight } from "lucide-react";
-import { QuoteNotesField, QuotePageShell, QuoteResetButton, QuoteResultAside } from "../components/QuotePageShared";
+import { QuoteNotesField, QuotePageShell, QuoteResetButton, QuoteResultAside, QuoteVatField } from "../components/QuotePageShared";
 import { siteContent } from "../data/siteContent";
-import { buildQuoteMailto, drivewayTotal, formatMoney, formatNumber, vatStatusLabel } from "../lib/quote";
+import { buildQuoteMailto, drivewayTotal, formatMoney, formatNumber, quoteTotalForVat } from "../lib/quote";
 import { buildDrivewayShareSearch, buildQuoteShareHref, readDrivewayShareValues } from "../lib/quote-share";
 import type { SiteContent } from "../types/site";
 import "./QuotePage.css";
 
-const defaults = { area: "100", loads: "1" };
-type Values = typeof defaults;
-const maximumQuantity = 100000;
+const defaultArea = "100";
+const estimateLimit = 100;
 const quotePath = "/offertberakning/";
 const uppfartHash = "#uppfart";
 const money = formatMoney;
@@ -25,9 +24,11 @@ export function QuotePage({ content = siteContent }: { readonly content?: SiteCo
   const quoteRoute = content.routes.find((route) => route.href === quotePath);
   const [kind, setKind] = useState(selectedKind);
   const share = readDrivewayShareValues(window.location.search);
-  const [values, setValues] = useState<Values>(() => ({ area: share.area ?? defaults.area, loads: share.loads ?? defaults.loads }));
+  const [area, setArea] = useState(() => share.area ?? defaultArea);
   const [includeAsphalt, setIncludeAsphalt] = useState(share.asphalt ?? true);
   const [notes, setNotes] = useState(share.notes ?? "");
+  const [includeVat, setIncludeVat] = useState(share.includeVat ?? true);
+  const vatLabel = includeVat ? shared.vatInclusiveLabel : shared.vatExclusiveLabel;
 
   useEffect(() => {
     const syncKind = () => setKind(selectedKind());
@@ -42,22 +43,18 @@ export function QuotePage({ content = siteContent }: { readonly content?: SiteCo
     document.getElementById(kind === "uppfart" ? "quote-work-heading" : "quote-choice-heading")?.focus();
   }, [kind]);
 
-  const area = Number(values.area);
-  const loads = Number(values.loads);
-  const valid = values.area.trim() !== "" && values.loads.trim() !== "" && Number.isFinite(area) && area > 0 && area <= maximumQuantity && Number.isFinite(loads) && loads >= 0 && Number.isInteger(loads) && loads <= maximumQuantity;
-  const total = drivewayTotal(area, loads, includeAsphalt, text.pricing);
-  const email = buildQuoteMailto(text.mail, {
-    area: number(area),
-    loads: number(loads),
+  const areaValue = Number(area);
+  const valid = area.trim() !== "" && Number.isFinite(areaValue) && areaValue > 0;
+  const individualQuote = valid && areaValue > estimateLimit;
+  const total = valid && !individualQuote ? money(quoteTotalForVat(drivewayTotal(areaValue, includeAsphalt, text.pricing), includeVat)) : "";
+  const email = valid ? buildQuoteMailto(individualQuote ? { ...text.mail, bodyTemplate: text.individualQuote.bodyTemplate } : text.mail, {
+    area: number(areaValue),
     asphalt: includeAsphalt ? text.asphaltYesLabel : text.asphaltNoLabel,
-    total: money(total),
-    vat: vatStatusLabel.toLowerCase(),
+    total,
+    vat: vatLabel,
     notes,
-  });
-  function quantity(key: keyof Values, label: string, unit: string, min: string, step: string) {
-    return <label className="quote-field"><span>{label}</span><span className="quote-input"><input type="number" min={min} max={maximumQuantity} step={step} value={values[key]} onChange={event => setValues({ ...values, [key]: event.target.value })} aria-invalid={!valid} aria-describedby="quote-quantity-help" /><span>{unit}</span></span></label>;
-  }
-  return <QuotePageShell homeLabel={content.chrome.breadcrumb.homeLabel} formAriaLabel={shared.formAriaLabel} hero={{ src: "/page-visuals/quote-hero.webp", srcSet: quoteRoute?.heroPhotoSrcSet, sizes: quoteRoute?.heroPhotoSizes }} breadcrumbLabel={text.breadcrumbLabel} heading={text.heading} intro={text.intro} resultAside={<QuoteResultAside shared={shared} error={text.error} valid={valid} total={money(total)} email={email} hidden={kind !== "uppfart"} shareHref={buildQuoteShareHref(buildDrivewayShareSearch({ area: values.area, loads: values.loads, includeAsphalt, notes }), uppfartHash)} />}>
+  }) : "";
+  return <QuotePageShell homeLabel={content.chrome.breadcrumb.homeLabel} formAriaLabel={shared.formAriaLabel} hero={{ src: "/page-visuals/quote-hero.webp", srcSet: quoteRoute?.heroPhotoSrcSet, sizes: quoteRoute?.heroPhotoSizes }} breadcrumbLabel={text.breadcrumbLabel} heading={text.heading} intro={text.intro} resultAside={<QuoteResultAside shared={shared} error={text.error} valid={valid} total={total} vatLabel={vatLabel} individualQuote={individualQuote ? text.individualQuote.description : undefined} email={email} hidden={kind !== "uppfart"} shareHref={buildQuoteShareHref(buildDrivewayShareSearch({ area, includeAsphalt, notes, includeVat }), uppfartHash)} />}>
     <div className="quote-choice" hidden={kind === "uppfart"}>
       <h2 id="quote-choice-heading" tabIndex={-1}>{text.choiceHeading}</h2>
       <p>{text.choiceSummary}</p>
@@ -69,11 +66,12 @@ export function QuotePage({ content = siteContent }: { readonly content?: SiteCo
     {kind === "uppfart" ? <a className="quote-back-choice" href={quotePath}>{text.backLinkLabel}</a> : null}
     <div className="quote-work" hidden={kind !== "uppfart"}>
       <h2 id="quote-work-heading" tabIndex={-1}>{text.workHeading}</h2><p>{text.workSummary}</p>
-      <div className="quote-fields">{quantity("area", text.areaLabel, text.areaUnit, "0.1", "any")}{quantity("loads", text.loadsLabel, text.loadsUnit, "0", "1")}</div>
+      <label className="quote-field"><span>{text.areaLabel}</span><span className="quote-input"><input type="number" min="0.1" step="any" value={area} onChange={event => setArea(event.target.value)} aria-invalid={!valid} aria-describedby="quote-quantity-help" /><span>{text.areaUnit}</span></span></label>
       <p id="quote-quantity-help" className="quote-help">{text.quantityHelp}</p>
       <label className="quote-check"><input type="checkbox" checked={includeAsphalt} onChange={event => setIncludeAsphalt(event.target.checked)} /><span>{text.asphaltLabel}<span className="quote-help">{text.asphaltHelp}</span></span></label>
+      <QuoteVatField shared={shared} includeVat={includeVat} onChange={setIncludeVat} />
       <QuoteNotesField label={text.notesLabel} optionalLabel={text.notesOptionalLabel} placeholder={text.notesPlaceholder} value={notes} onChange={event => setNotes(event.target.value)} />
-      <QuoteResetButton label={text.resetLabel} onReset={() => { setValues(defaults); setIncludeAsphalt(true); setNotes(""); }} />
+      <QuoteResetButton label={text.resetLabel} onReset={() => { setArea(defaultArea); setIncludeAsphalt(true); setNotes(""); setIncludeVat(true); }} />
     </div>
   </QuotePageShell>;
 }

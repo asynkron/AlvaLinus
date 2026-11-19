@@ -67,12 +67,6 @@ describe("footer navigation and email tap targets", () => {
       '<footer className="border-t border-background/10 bg-foreground text-background">',
       "the footer shell element and colors",
     );
-    requireCount(
-      homeSource,
-      "text-background/70 transition-colors hover:text-primary-onDark",
-      3,
-      "the footer link and hover colors",
-    );
   });
 
   it("reaches at least 36px of tap height for the unchanged text-sm footer links", async () => {

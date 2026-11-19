@@ -108,6 +108,11 @@ export type SiteQuoteMail = {
 };
 
 export type SiteQuoteShared = {
+  readonly vatLegend: string;
+  readonly vatInclusiveLabel: string;
+  readonly vatExclusiveLabel: string;
+  readonly individualQuoteHeading: string;
+  readonly individualQuoteSendLabel: string;
   readonly formAriaLabel: string;
   readonly resultAriaLabel: string;
   readonly resultHeading: string;
@@ -128,10 +133,10 @@ export type SiteQuoteUppfartPricing = {
   readonly perSquareMeter: number;
   readonly asphaltPerSquareMeter: number;
   readonly fixedCost: number;
-  readonly perLoad: number;
 };
 
 export type SiteQuoteUppfart = {
+  readonly individualQuote: { readonly description: string; readonly bodyTemplate: string };
   readonly breadcrumbLabel: string;
   readonly heading: string;
   readonly intro: string;
@@ -144,8 +149,6 @@ export type SiteQuoteUppfart = {
   readonly workSummary: string;
   readonly areaLabel: string;
   readonly areaUnit: string;
-  readonly loadsLabel: string;
-  readonly loadsUnit: string;
   readonly quantityHelp: string;
   readonly asphaltLabel: string;
   readonly asphaltHelp: string;
@@ -168,6 +171,7 @@ export type SiteQuoteDrainagePricing = {
 };
 
 export type SiteQuoteDrainage = {
+  readonly individualQuote: { readonly description: string; readonly bodyTemplate: string };
   readonly breadcrumbLabel: string;
   readonly heading: string;
   readonly intro: string;

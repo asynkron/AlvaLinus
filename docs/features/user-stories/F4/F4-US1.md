@@ -77,7 +77,24 @@ Use a known route or the home URL; repair/redeploy static route artifacts if mis
 - vitest, [src/styles.header-nav-tap-targets.test.ts](../../../../src/styles.header-nav-tap-targets.test.ts), declaration `keeps the mobile menu targets and the sticky header row unchanged` (technical): Source-text check pins the unchanged mobile page-link, sub-link, Kalkyler-summary and toggle classNames plus the single `min-h-16` header row height, so the desktop enlargement leaves the mobile targets and sticky row untouched.
 - vitest, [src/styles.header-nav-tap-targets.test.ts](../../../../src/styles.header-nav-tap-targets.test.ts), declaration `reaches at least 32px of tap height inside the unchanged 64px header row` (technical): Compiled-utility check computes the `text-sm py-2` target's line height plus vertical padding at at least 32px and no taller than the `min-h-16` row minimum. Tailwind-compile evidence; it does not render the header in a browser or measure real touch input.
 - vitest, [src/styles.footer-tap-targets.test.ts](../../../../src/styles.footer-tap-targets.test.ts), declaration `blockifies every footer nav link and keeps the email link as an inline-flex target` (technical): Source-text check pins the footer page and services nav link classNames and the email link className as inline-flex targets carrying `py-2`, the tap-target padding fk257 delivered. It reads the page source only and does not render the footer or measure a browser.
-- vitest, [src/styles.footer-tap-targets.test.ts](../../../../src/styles.footer-tap-targets.test.ts), declaration `keeps the footer identity, grid and list layout unchanged` (technical): Source-text check pins the unchanged four-column footer grid, the two nav list classNames, the footer shell element and colors and the shared footer link hover colors, so the enlargement leaves the footer structure untouched.
+- vitest, [src/styles.footer-tap-targets.test.ts](../../../../src/styles.footer-tap-targets.test.ts), declaration `keeps the footer identity, grid and list layout unchanged` (technical): Source-text check pins the unchanged four-column footer grid, the two nav list classNames, the footer shell element and colors, so the enlargement leaves the footer structure untouched.
 - vitest, [src/styles.footer-tap-targets.test.ts](../../../../src/styles.footer-tap-targets.test.ts), declaration `reaches at least 36px of tap height for the unchanged text-sm footer links` (technical): Compiled-utility check computes the `text-sm inline-flex py-2` target's line height plus vertical padding at at least 36px. Tailwind-compile evidence; it does not render the footer in a browser or measure real touch input.
 
 Backend entry-point references: none (frontend-only). Test mappings were reviewed as source declarations; this document is not an execution receipt.
+
+## Company telephone contact (fk274, 2026-11-19)
+
+The home contact section, /kontakt/ and shared footer display 070-214 67 83
+as a native `tel:+46702146783` link alongside linus.svardd@outlook.com.
+The footer derives the telephone item from the same typed contact items as
+the contact section. Its link occupies its own row with vertical padding;
+existing responsive columns remain in place.
+
+The direct SiteHomePage.test.tsx declaration
+`offers the company phone contact with native keyboard access on %s`
+checks the home, contact and both calculator footers, literal telephone
+href/text, focusability and the retained email; it also checks the contact
+section on home and /kontakt/. It does not exercise a phone handler or render
+mobile/desktop layout. The footer stylesheet test no longer counts identical
+color substrings, which would incorrectly forbid adding another contact link.
+Existing source layout checks and compiled tap-height coverage remain.

@@ -30,7 +30,7 @@ As a property owner or project representative, I want to enter initial project d
 
 ## Expected outcome
 
-The form requests a plain-text mail-client handoff to kontakt@svardentreprenad.se with the configured subject and the actually selected Tjänst option; delivery is not established.
+The form requests a plain-text mail-client handoff to linus.svardd@outlook.com with the configured subject and the actually selected Tjänst option; delivery is not established.
 
 ## Failure and recovery
 
@@ -52,3 +52,20 @@ Use the address linked in the explanation or copy it into working email software
 - vitest, [src/pages/SiteHomePage.test.tsx](../../../../src/pages/SiteHomePage.test.tsx), declaration `keeps every contact form control at the 16px base text size on home and /kontakt/` (technical): Class-level check pins text-base on the Namn, Kundtyp, Tjänst and Meddelande controls on home and /kontakt/ and rejects responsive sm/md/lg/xl/2xl text-size classes that would shrink them below the iOS Safari 16px focus-zoom floor. It inspects rendered classNames only and does not execute the iOS zoom behavior.
 
 Backend entry-point references: none (frontend-only). Test mappings were reviewed as source declarations; this document is not an execution receipt.
+
+## Company telephone contact (fk274, 2026-11-19)
+
+The home contact section, /kontakt/ and shared footer display 070-214 67 83
+as a native `tel:+46702146783` link alongside linus.svardd@outlook.com.
+The footer derives the telephone item from the same typed contact items as
+the contact section. Its link occupies its own row with vertical padding;
+existing responsive columns remain in place.
+
+The direct SiteHomePage.test.tsx declaration
+`offers the company phone contact with native keyboard access on %s`
+checks the home, contact and both calculator footers, literal telephone
+href/text, focusability and the retained email; it also checks the contact
+section on home and /kontakt/. It does not exercise a phone handler or render
+mobile/desktop layout. The footer stylesheet test no longer counts identical
+color substrings, which would incorrectly forbid adding another contact link.
+Existing source layout checks and compiled tap-height coverage remain.

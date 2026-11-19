@@ -1,6 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { siteContent } from "../data/siteContent";
-import { vatStatusLabel } from "../lib/quote";
 import { quoteShareParams } from "../lib/quote-share";
 import { QuotePage } from "./QuotePage";
 
@@ -13,10 +12,6 @@ function labelPattern(label: string): RegExp {
   return new RegExp(label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
 }
 
-function draftBody(values: Record<string, string>): string {
-  return text.mail.bodyTemplate.replace(/\{(\w+)\}/g, (placeholder, key: string) => values[key] ?? placeholder);
-}
-
 function chooseUppfart() {
   window.location.hash = "uppfart";
   fireEvent(window, new Event("hashchange"));
@@ -26,10 +21,6 @@ function areaInput() {
   return screen.getByRole("spinbutton", { name: labelPattern(text.areaLabel) });
 }
 
-function loadsInput() {
-  return screen.getByRole("spinbutton", { name: labelPattern(text.loadsLabel) });
-}
-
 function asphaltCheckbox() {
   return screen.getByRole("checkbox", { name: labelPattern(text.asphaltLabel) });
 }
@@ -37,7 +28,7 @@ function asphaltCheckbox() {
 function decodedEmailHref(): string {
   const link = screen.getByRole("link", { name: labelPattern(shared.sendLabel) });
 
-  expect(link.getAttribute("href") ?? "").toContain(`mailto:${text.mail.recipientEmail}`);
+  expect(link.getAttribute("href") ?? "").toContain("mailto:linus.svardd@outlook.com");
 
   return decodeURIComponent(link.getAttribute("href") ?? "").replace(/[\u00a0\u202f]/g, " ");
 }
@@ -56,7 +47,6 @@ describe("QuotePage", () => {
     expect(screen.getByRole("link", { name: text.drivewayChoiceLabel })).toHaveAttribute("href", "#uppfart");
 
     expect(screen.queryByRole("spinbutton", { name: labelPattern(text.areaLabel) })).not.toBeInTheDocument();
-    expect(screen.queryByRole("spinbutton", { name: labelPattern(text.loadsLabel) })).not.toBeInTheDocument();
     expect(screen.queryByRole("checkbox", { name: labelPattern(text.asphaltLabel) })).not.toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: shared.resultHeading })).not.toBeInTheDocument();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
@@ -67,12 +57,13 @@ describe("QuotePage", () => {
     chooseUppfart();
 
     expect(areaInput()).toHaveValue(100);
-    expect(loadsInput()).toHaveValue(1);
     expect(asphaltCheckbox()).toBeChecked();
+    expect(screen.getAllByRole("spinbutton")).toHaveLength(1);
+    expect(screen.queryByText(/antal lass/i)).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { name: shared.resultHeading })).toBeInTheDocument();
     expect(screen.getByText(shared.resultCaption)).toBeInTheDocument();
-    expect(screen.getByText(money(168600))).toBeInTheDocument();
-    expect(screen.getByText(vatStatusLabel)).toBeInTheDocument();
+    expect(screen.getByText(money(166600))).toBeInTheDocument();
+    expect(screen.getByRole("complementary")).toHaveTextContent("Inkl. moms");
     expect(screen.getByText(shared.disclaimer)).toBeInTheDocument();
 
     expect(screen.queryByRole("link", { name: text.drainageChoiceLabel })).not.toBeInTheDocument();
@@ -100,12 +91,12 @@ describe("QuotePage", () => {
     chooseUppfart();
     fireEvent.change(areaInput(), { target: { value: "50" } });
 
-    expect(screen.getByText(money(87750))).toBeInTheDocument();
+    expect(screen.getByText(money(85750))).toBeInTheDocument();
 
     fireEvent.click(asphaltCheckbox());
 
-    expect(screen.getByText(money(54400))).toBeInTheDocument();
-    expect(screen.queryByText(money(87750))).not.toBeInTheDocument();
+    expect(screen.getByText(money(52400))).toBeInTheDocument();
+    expect(screen.queryByText(money(85750))).not.toBeInTheDocument();
     expect(document.querySelector(".quote-lines")).toBeNull();
     expect(document.querySelector(".quote-prices")).toBeNull();
     expect(screen.queryByText(/Priser och beräkningsgrund/)).not.toBeInTheDocument();
@@ -116,23 +107,31 @@ describe("QuotePage", () => {
     render(<QuotePage />);
     chooseUppfart();
     fireEvent.change(areaInput(), { target: { value: "50" } });
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: "Villa & garage" } });
 
     const href = decodedEmailHref();
 
     expect(href).toContain(text.mail.subject);
-    expect(href).toContain(draftBody({ area: "50", loads: "1", asphalt: text.asphaltYesLabel, total: money(87750), vat: vatStatusLabel.toLowerCase(), notes: "" }));
+    expect(href).toContain("Yta: 50 m\u00b2\nAsfalt: Ja\nPrelimin\u00e4r summa: 85 750 kr");
+    expect(href).not.toMatch(/lass/i);
+    expect(href).toContain("Villa & garage");
+    expect(href).toContain("Inkl. moms");
+    expect(href).toContain("Omfattning behöver bekräftas");
     expect(href).not.toMatch(/kr\/m|Fast kostnad|950|667/);
 
     fireEvent.click(asphaltCheckbox());
 
-    expect(decodedEmailHref()).toContain(draftBody({ area: "50", loads: "1", asphalt: text.asphaltNoLabel, total: money(54400), vat: vatStatusLabel.toLowerCase(), notes: "" }));
+    expect(decodedEmailHref()).toContain("Asfalt: Nej\nPrelimin\u00e4r summa: 52 400 kr");
+    fireEvent.change(areaInput(), { target: { value: "100" } });
+    expect(screen.getByText(money(99900))).toBeInTheDocument();
+    expect(decodedEmailHref()).toContain("99 900 kr");
   });
 
   it("blocks invalid quantities without a misleading result and resets the calculator", () => {
     render(<QuotePage />);
     chooseUppfart();
 
-    fireEvent.change(loadsInput(), { target: { value: "1.5" } });
+    fireEvent.change(areaInput(), { target: { value: "0" } });
 
     expect(screen.getByRole("alert")).toHaveTextContent(text.error);
     expect(screen.queryByRole("link", { name: labelPattern(shared.sendLabel) })).not.toBeInTheDocument();
@@ -141,7 +140,6 @@ describe("QuotePage", () => {
     expect(screen.queryByText(shared.totalLabel)).not.toBeInTheDocument();
 
     fireEvent.change(areaInput(), { target: { value: "-5" } });
-    fireEvent.change(loadsInput(), { target: { value: "1" } });
     expect(screen.getByRole("alert")).toBeInTheDocument();
 
     fireEvent.change(areaInput(), { target: { value: "" } });
@@ -151,9 +149,8 @@ describe("QuotePage", () => {
 
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect(areaInput()).toHaveValue(100);
-    expect(loadsInput()).toHaveValue(1);
     expect(asphaltCheckbox()).toBeChecked();
-    expect(screen.getByText(money(168600))).toBeInTheDocument();
+    expect(screen.getByText(money(166600))).toBeInTheDocument();
   });
 
   it("describes the quantity fields and announces updates in a polite live region", () => {
@@ -164,16 +161,15 @@ describe("QuotePage", () => {
 
     expect(help).toHaveAttribute("id", "quote-quantity-help");
     expect(areaInput()).toHaveAttribute("aria-describedby", "quote-quantity-help");
-    expect(loadsInput()).toHaveAttribute("aria-describedby", "quote-quantity-help");
 
     const liveRegion = document.querySelector('[aria-live="polite"]');
     expect(liveRegion).not.toBeNull();
     expect(liveRegion).toHaveAttribute("aria-atomic", "true");
 
-    fireEvent.change(loadsInput(), { target: { value: "2" } });
+    fireEvent.change(areaInput(), { target: { value: "50" } });
 
     expect(liveRegion).toHaveTextContent(shared.totalLabel);
-    expect(liveRegion).toHaveTextContent(money(170600));
+    expect(liveRegion).toHaveTextContent(money(85750));
   });
 
   it("serves the decorative hero from responsive WebP variants of the registry asset", () => {
@@ -196,31 +192,29 @@ describe("QuotePage", () => {
     render(<QuotePage />);
     chooseUppfart();
     fireEvent.change(areaInput(), { target: { value: "50" } });
-    fireEvent.change(loadsInput(), { target: { value: "2" } });
     fireEvent.click(asphaltCheckbox());
 
-    expect(screen.getByText(money(56400))).toBeInTheDocument();
+    expect(screen.getByText(money(52400))).toBeInTheDocument();
 
-    const shareHref = `${window.location.origin}/offertberakning/?${quoteShareParams.area}=50&${quoteShareParams.loads}=2&${quoteShareParams.asphalt}=0#uppfart`;
+    const shareHref = `${window.location.origin}/offertberakning/?${quoteShareParams.area}=50&${quoteShareParams.asphalt}=0#uppfart`;
 
     expect(screen.queryByRole("link", { name: shareHref })).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: shared.shareLabel }));
 
-    expect(window.location.search).toBe(`?${quoteShareParams.area}=50&${quoteShareParams.loads}=2&${quoteShareParams.asphalt}=0`);
+    expect(window.location.search).toBe(`?${quoteShareParams.area}=50&${quoteShareParams.asphalt}=0`);
     expect(window.location.hash).toBe("#uppfart");
     expect(screen.getByRole("link", { name: shareHref })).toHaveAttribute("href", shareHref);
   });
 
   it("restores the shared driveway inputs and recomputes the same total on load", () => {
-    window.history.replaceState(null, "", `/offertberakning/?${quoteShareParams.area}=50&${quoteShareParams.loads}=2&${quoteShareParams.asphalt}=0#uppfart`);
+    window.history.replaceState(null, "", `/offertberakning/?${quoteShareParams.area}=50&lass=invalid&${quoteShareParams.asphalt}=0#uppfart`);
     render(<QuotePage />);
 
     expect(document.activeElement).toBe(document.body);
     expect(areaInput()).toHaveValue(50);
-    expect(loadsInput()).toHaveValue(2);
     expect(asphaltCheckbox()).not.toBeChecked();
-    expect(screen.getByText(money(56400))).toBeInTheDocument();
+    expect(screen.getByText(money(52400))).toBeInTheDocument();
     expect(screen.getByRole("textbox")).toHaveValue("");
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
@@ -230,29 +224,29 @@ describe("QuotePage", () => {
     chooseUppfart();
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "Villa i Örebro" } });
 
-    const shareHref = `${window.location.origin}/offertberakning/?${quoteShareParams.area}=100&${quoteShareParams.loads}=1&${quoteShareParams.asphalt}=1&${quoteShareParams.notes}=Villa+i+%C3%96rebro#uppfart`;
+    const shareHref = `${window.location.origin}/offertberakning/?${quoteShareParams.area}=100&${quoteShareParams.asphalt}=1&${quoteShareParams.notes}=Villa+i+%C3%96rebro#uppfart`;
 
     expect(screen.queryByRole("link", { name: shareHref })).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: shared.shareLabel }));
 
-    expect(window.location.search).toBe(`?${quoteShareParams.area}=100&${quoteShareParams.loads}=1&${quoteShareParams.asphalt}=1&${quoteShareParams.notes}=Villa+i+%C3%96rebro`);
+    expect(window.location.search).toBe(`?${quoteShareParams.area}=100&${quoteShareParams.asphalt}=1&${quoteShareParams.notes}=Villa+i+%C3%96rebro`);
     expect(screen.getByRole("link", { name: shareHref })).toHaveAttribute("href", shareHref);
   });
 
   it("restores the shared note into the project description on load", () => {
-    window.history.replaceState(null, "", `/offertberakning/?${quoteShareParams.area}=50&${quoteShareParams.loads}=2&${quoteShareParams.asphalt}=0&${quoteShareParams.notes}=Villa+i+%C3%96rebro#uppfart`);
+    window.history.replaceState(null, "", `/offertberakning/?${quoteShareParams.area}=50&${quoteShareParams.asphalt}=0&${quoteShareParams.notes}=Villa+i+%C3%96rebro#uppfart`);
     render(<QuotePage />);
 
     expect(document.activeElement).toBe(document.body);
     expect(areaInput()).toHaveValue(50);
     expect(screen.getByRole("textbox")).toHaveValue("Villa i Örebro");
-    expect(screen.getByText(money(56400))).toBeInTheDocument();
+    expect(screen.getByText(money(52400))).toBeInTheDocument();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
 
   it("degrades invalid shared inputs through the existing invalid-input path", () => {
-    window.history.replaceState(null, "", `/offertberakning/?${quoteShareParams.area}=-5&${quoteShareParams.loads}=2#uppfart`);
+    window.history.replaceState(null, "", `/offertberakning/?${quoteShareParams.area}=-5#uppfart`);
     render(<QuotePage />);
 
     expect(screen.getByRole("alert")).toHaveTextContent(text.error);

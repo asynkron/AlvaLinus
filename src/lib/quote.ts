@@ -3,7 +3,9 @@ import type { SiteQuoteDrainagePricing, SiteQuoteMail, SiteQuoteUppfartPricing }
 const moneyFormat = new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK", minimumFractionDigits: 0, maximumFractionDigits: 2 });
 const numberFormat = new Intl.NumberFormat("sv-SE", { maximumFractionDigits: 2 });
 
-export const vatStatusLabel = "Momsstatus ej bekräftad";
+export function quoteTotalForVat(inclusiveTotal: number, includeVat: boolean): number {
+  return includeVat ? inclusiveTotal : inclusiveTotal / 1.25;
+}
 
 export function formatMoney(value: number): string {
   return moneyFormat.format(value);
@@ -27,6 +29,6 @@ export function drainageTotal(meters: number, pricing: SiteQuoteDrainagePricing)
   return firstTier * pricing.firstTierPerMeter + aboveTier * pricing.aboveBoundaryPerMeter + pricing.fixedCost;
 }
 
-export function drivewayTotal(area: number, loads: number, includeAsphalt: boolean, pricing: SiteQuoteUppfartPricing): number {
-  return area * pricing.perSquareMeter + (includeAsphalt ? area * pricing.asphaltPerSquareMeter : 0) + pricing.fixedCost + loads * pricing.perLoad;
+export function drivewayTotal(area: number, includeAsphalt: boolean, pricing: SiteQuoteUppfartPricing): number {
+  return area * pricing.perSquareMeter + (includeAsphalt ? area * pricing.asphaltPerSquareMeter : 0) + pricing.fixedCost;
 }

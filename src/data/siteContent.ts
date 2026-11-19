@@ -369,7 +369,7 @@ export const siteContent = {
     offertLabel: "Boka ett kostnadsfritt besök eller be om offert",
     form: {
       ariaLabel: "Offertförfrågan via e-post",
-      recipientEmail: "kontakt@svardentreprenad.se",
+      recipientEmail: "linus.svardd@outlook.com",
       subject: "Offertförfrågan från alvalinus.se",
       submitLabel: "Skicka offertförfrågan",
       handoffNote:
@@ -397,11 +397,17 @@ export const siteContent = {
       },
     },
     items: [
-      { label: "E-post", value: "kontakt@svardentreprenad.se", href: "mailto:kontakt@svardentreprenad.se" },
+      { label: "E-post", value: "linus.svardd@outlook.com", href: "mailto:linus.svardd@outlook.com" },
+      { label: "Telefon", value: "070-214 67 83", href: "tel:+46702146783" },
     ],
   },
   quote: {
     shared: {
+      vatLegend: "Moms",
+      vatInclusiveLabel: "Inkl. moms",
+      vatExclusiveLabel: "Exkl. moms",
+      individualQuoteHeading: "Kontakta oss för en individuell offert",
+      individualQuoteSendLabel: "Kontakta oss för offert",
       formAriaLabel: "Projektets förutsättningar",
       resultAriaLabel: "Din beräkning",
       resultHeading: "Din kostnadsbild",
@@ -431,9 +437,7 @@ export const siteContent = {
       workSummary: "Asfalterad uppfart med markarbete och transport.",
       areaLabel: "Uppfartens yta",
       areaUnit: "m²",
-      loadsLabel: "Antal lass",
-      loadsUnit: "st",
-      quantityHelp: "Ange en yta större än noll och ett helt antal lass.",
+      quantityHelp: "Ange en yta större än noll.",
       asphaltLabel: "Inkludera asfalt",
       asphaltHelp: "Avmarkera för att bara beräkna markarbete.",
       asphaltYesLabel: "Ja",
@@ -442,14 +446,18 @@ export const siteContent = {
       notesOptionalLabel: "(valfritt)",
       notesPlaceholder: "Plats, nuvarande underlag och önskad tid för arbetet…",
       resetLabel: "Återställ exempel",
-      error: "Ange en yta större än 0, ett helt antal lass och högst 100 000.",
+      error: "Ange en yta större än 0.",
       mail: {
-        recipientEmail: "kontakt@svardentreprenad.se",
+        recipientEmail: "linus.svardd@outlook.com",
         subject: "Offertförfrågan – uppfart",
         bodyTemplate:
-          "Hej! Jag önskar en offert för uppfart.\n\nYta: {area} m²\nAntal lass: {loads}\nAsfalt: {asphalt}\nPreliminär summa: {total} ({vat}).\nOmfattning behöver bekräftas.\n\nProjekt / plats / kontaktuppgifter:\n{notes}",
+          "Hej! Jag önskar en offert för uppfart.\n\nYta: {area} m²\nAsfalt: {asphalt}\nPreliminär summa: {total} ({vat}).\nOmfattning behöver bekräftas.\n\nProjekt / plats / kontaktuppgifter:\n{notes}",
       },
-      pricing: { perSquareMeter: 950, asphaltPerSquareMeter: 667, fixedCost: 4900, perLoad: 2000 },
+      individualQuote: {
+        description: "För uppfarter med en yta över 100 m² behöver vi göra en individuell bedömning. Kontakta oss så hjälper vi dig med en offert anpassad efter projektets omfattning och förutsättningar.",
+        bodyTemplate: "Hej! Jag önskar en individuell offert för uppfart.\n\nYta: {area} m²\nAsfalt: {asphalt}\n\nProjekt / plats / kontaktuppgifter:\n{notes}",
+      },
+      pricing: { perSquareMeter: 950, asphaltPerSquareMeter: 667, fixedCost: 4900 },
     },
     drainage: {
       breadcrumbLabel: "Dräneringsberäkning",
@@ -469,14 +477,18 @@ export const siteContent = {
       notesOptionalLabel: "(valfritt)",
       notesPlaceholder: "Plats, förutsättningar och önskad tid för arbetet…",
       resetLabel: "Återställ exempel",
-      error: "Ange en längd större än 0 och högst 100 000 meter.",
+      error: "Ange en längd större än 0.",
       drivewayCrossLinkQuestion: "Ska du istället bygga en uppfart?",
       drivewayCrossLinkLabel: "Räkna på uppfart",
       mail: {
-        recipientEmail: "kontakt@svardentreprenad.se",
+        recipientEmail: "linus.svardd@outlook.com",
         subject: "Offertförfrågan – husdränering",
         bodyTemplate:
           "Hej! Jag önskar en offert för husdränering.\n\nLängd: {length} löpmeter\nPreliminär summa: {total} ({vat}).\nOmfattning behöver bekräftas.\n\nProjekt / plats / kontaktuppgifter:\n{notes}",
+      },
+      individualQuote: {
+        description: "För dräneringsarbeten med en längd över 100 löpmeter behöver vi göra en individuell bedömning. Kontakta oss så hjälper vi dig med en offert anpassad efter projektets omfattning och förutsättningar.",
+        bodyTemplate: "Hej! Jag önskar en individuell offert för husdränering.\n\nLängd: {length} löpmeter\n\nProjekt / plats / kontaktuppgifter:\n{notes}",
       },
       pricing: { boundaryMeters: 55, firstTierPerMeter: 3500, aboveBoundaryPerMeter: 3000, fixedCost: 6900 },
     },

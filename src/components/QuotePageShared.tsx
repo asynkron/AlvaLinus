@@ -1,7 +1,6 @@
 import { ArrowRight, Link2, Printer, RotateCcw } from "lucide-react";
-import { useState } from "react";
+import { useId, useState } from "react";
 import type { ChangeEvent, ReactNode } from "react";
-import { vatStatusLabel } from "../lib/quote";
 import type { SiteQuoteShared } from "../types/site";
 import { Button } from "./ui/button";
 
@@ -36,6 +35,7 @@ export function QuotePageShell({ homeLabel, formAriaLabel, hero, breadcrumbLabel
 }
 
 type QuoteResultAsideProps = {
+  readonly vatLabel: string;
   readonly shared: SiteQuoteShared;
   readonly error: string;
   readonly valid: boolean;
@@ -43,9 +43,10 @@ type QuoteResultAsideProps = {
   readonly email: string;
   readonly hidden?: boolean;
   readonly shareHref: string;
+  readonly individualQuote?: string;
 };
 
-export function QuoteResultAside({ shared, error, valid, total, email, hidden, shareHref }: QuoteResultAsideProps) {
+export function QuoteResultAside({ shared, error, valid, total, email, hidden, shareHref, individualQuote, vatLabel }: QuoteResultAsideProps) {
   const [shareLink, setShareLink] = useState<string | null>(null);
   const [shareMessage, setShareMessage] = useState<string | null>(null);
 
@@ -61,22 +62,39 @@ export function QuoteResultAside({ shared, error, valid, total, email, hidden, s
   }
 
   return <aside className="quote-result" aria-label={shared.resultAriaLabel} hidden={hidden}>
-    <h2>{shared.resultHeading}</h2>
-    <p className="quote-result-caption">{shared.resultCaption}</p>
     <div aria-live="polite" aria-atomic="true">
-      {valid
-        ? <div className="quote-total"><span>{shared.totalLabel}</span><strong>{total}</strong><span>{vatStatusLabel}</span></div>
+      <h2>{individualQuote ? shared.individualQuoteHeading : shared.resultHeading}</h2>
+      {!individualQuote ? <p className="quote-result-caption">{shared.resultCaption}</p> : null}
+      {individualQuote
+        ? <p className="quote-individual">{individualQuote}</p>
+        : valid
+        ? <div className="quote-total"><span>{shared.totalLabel}</span><strong>{total}</strong><span>{vatLabel}</span></div>
         : <p role="alert" className="quote-error">{error}</p>}
     </div>
-    <p className="quote-disclaimer">{shared.disclaimer}</p>
-    <Button asChild disabled={!valid} className="quote-send">{valid ? <a href={email}>{shared.sendLabel}<ArrowRight size={18} aria-hidden="true" /></a> : <button disabled>{shared.sendInvalidLabel}</button>}</Button>
+    {!individualQuote ? <p className="quote-disclaimer">{shared.disclaimer}</p> : null}
+    <Button asChild disabled={!valid} className="quote-send">{valid ? <a href={email}>{individualQuote ? shared.individualQuoteSendLabel : shared.sendLabel}<ArrowRight size={18} aria-hidden="true" /></a> : <button disabled>{shared.sendInvalidLabel}</button>}</Button>
     <p className="quote-mail-help">{shared.mailHelp}</p>
-    <button className="quote-print" onClick={() => window.print()} disabled={!valid}><Printer size={16} aria-hidden="true" />{shared.printLabel}</button>
+    <button className="quote-print" onClick={() => window.print()} disabled={!valid || Boolean(individualQuote)}><Printer size={16} aria-hidden="true" />{shared.printLabel}</button>
     <button className="quote-share" onClick={share} disabled={!valid}><Link2 size={16} aria-hidden="true" />{shared.shareLabel}</button>
     {shareLink ? <p className="quote-share-link"><a href={shareLink}>{shareLink}</a></p> : null}
     <p className="quote-share-help">{shared.shareHelp}</p>
     <p role="status" className="quote-share-status">{shareMessage}</p>
   </aside>;
+}
+
+export function QuoteVatField({ shared, includeVat, onChange }: {
+  readonly shared: SiteQuoteShared;
+  readonly includeVat: boolean;
+  readonly onChange: (includeVat: boolean) => void;
+}) {
+  const name = useId();
+  return <fieldset className="quote-vat">
+    <legend>{shared.vatLegend}</legend>
+    <div className="quote-vat-options">
+      <label><input type="radio" name={name} value="inclusive" checked={includeVat} onChange={() => onChange(true)} />{shared.vatInclusiveLabel}</label>
+      <label><input type="radio" name={name} value="exclusive" checked={!includeVat} onChange={() => onChange(false)} />{shared.vatExclusiveLabel}</label>
+    </div>
+  </fieldset>;
 }
 
 type QuoteNotesFieldProps = {

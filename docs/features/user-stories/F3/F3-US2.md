@@ -12,7 +12,7 @@ As a project visitor, I want to find the visible company email address so I can 
 
 ## Flow
 
-1. Read kontakt@svardentreprenad.se in the contact section, the in-form handoff explanation or footer.
+1. Read linus.svardd@outlook.com in the contact section, the in-form handoff explanation or footer.
 2. Use its email link or copy the address into an email tool.
 3. Describe the project and a way to reply.
 

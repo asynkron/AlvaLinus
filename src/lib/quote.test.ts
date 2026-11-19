@@ -1,5 +1,5 @@
 import { siteContent } from "../data/siteContent";
-import type { SiteQuoteDrainagePricing, SiteQuoteMail, SiteQuoteUppfartPricing } from "../types/site";
+import type { SiteQuoteDrainagePricing, SiteQuoteMail } from "../types/site";
 import {
   buildQuoteMailto,
   drainageTotal,
@@ -7,11 +7,9 @@ import {
   fillTemplate,
   formatMoney,
   formatNumber,
-  vatStatusLabel,
 } from "./quote";
 
 const drainagePricing: SiteQuoteDrainagePricing = siteContent.quote.drainage.pricing;
-const drivewayPricing: SiteQuoteUppfartPricing = siteContent.quote.uppfart.pricing;
 
 const svNonBreakingSpace = /[\u00a0\u202f]/g;
 
@@ -53,23 +51,10 @@ describe("quote lib money logic", () => {
     });
   });
 
-  describe("drivewayTotal", () => {
-    it("charges the area at the declared per-square-meter price plus declared fixed and load costs without asphalt", () => {
-      expect(drivewayTotal(75, 0, false, drivewayPricing)).toBe(75 * drivewayPricing.perSquareMeter + drivewayPricing.fixedCost);
-      expect(drivewayTotal(100, 1, false, drivewayPricing)).toBe(100 * drivewayPricing.perSquareMeter + drivewayPricing.fixedCost + drivewayPricing.perLoad);
-    });
-
-    it("adds the declared per-square-meter asphalt price when asphalt is included", () => {
-      expect(drivewayTotal(100, 1, true, drivewayPricing)).toBe(
-        100 * drivewayPricing.perSquareMeter + 100 * drivewayPricing.asphaltPerSquareMeter + drivewayPricing.fixedCost + drivewayPricing.perLoad,
-      );
-      expect(drivewayTotal(75, 0, true, drivewayPricing) - drivewayTotal(75, 0, false, drivewayPricing)).toBe(75 * drivewayPricing.asphaltPerSquareMeter);
-    });
-
-    it("adds the declared per-load cost per load", () => {
-      expect(drivewayTotal(75, 3, false, drivewayPricing)).toBe(75 * drivewayPricing.perSquareMeter + drivewayPricing.fixedCost + 3 * drivewayPricing.perLoad);
-      expect(drivewayTotal(75, 4, false, drivewayPricing) - drivewayTotal(75, 3, false, drivewayPricing)).toBe(drivewayPricing.perLoad);
-    });
+  it("uses the supplied driveway area, asphalt and fixed prices", () => {
+    const pricing = { perSquareMeter: 10, asphaltPerSquareMeter: 3, fixedCost: 7 };
+    expect(drivewayTotal(2.5, false, pricing)).toBe(32);
+    expect(drivewayTotal(2.5, true, pricing)).toBe(39.5);
   });
 
   describe("sv-SE formatting", () => {
@@ -86,10 +71,6 @@ describe("quote lib money logic", () => {
       expect(plainSpaces(formatNumber(55.5))).toBe("55,5");
       expect(plainSpaces(formatNumber(1234.25))).toBe("1 234,25");
     });
-  });
-
-  it("exports the exact VAT status label constant", () => {
-    expect(vatStatusLabel).toBe("Momsstatus ej bekräftad");
   });
 
   describe("fillTemplate", () => {
@@ -112,8 +93,8 @@ describe("quote lib money logic", () => {
     };
 
     it("percent-encodes the subject and the filled body in a mailto URL", () => {
-      expect(buildQuoteMailto(mail, { length: "55", total: "199 200 kr", vat: "momsstatus ej bekräftad", notes: "" })).toBe(
-        `mailto:info@example.se?subject=${encodeURIComponent("Offertförfrågan")}&body=${encodeURIComponent("Längd: 55 m\nTotal: 199 200 kr\nmomsstatus ej bekräftad\n\n")}`,
+      expect(buildQuoteMailto(mail, { length: "55", total: "199 200 kr", vat: "inkl. moms", notes: "" })).toBe(
+        `mailto:info@example.se?subject=${encodeURIComponent("Offertförfrågan")}&body=${encodeURIComponent("Längd: 55 m\nTotal: 199 200 kr\ninkl. moms\n\n")}`,
       );
     });
 
