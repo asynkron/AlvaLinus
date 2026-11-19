@@ -6,7 +6,19 @@ const shared = siteContent.quote.shared;
 const shareHref = `${window.location.origin}/offertberakning/?yta=50&asfalt=1`;
 
 function renderAside() {
-  render(<QuoteResultAside shared={shared} error="" valid total="1 234 kr" vatLabel="Inkl. moms" email="mailto:test@example.se" shareHref={shareHref} />);
+  const props = { shared, error: "", valid: true, total: "1 234 kr", vatLabel: "Inkl. moms", email: "mailto:test@example.se", shareHref };
+  const view = render(<QuoteResultAside {...props} />);
+  return (href: string, valid = true) => view.rerender(<QuoteResultAside {...props} shareHref={href} valid={valid} />);
+}
+
+function pendingWrite() {
+  let resolve!: () => void;
+  let reject!: (reason: Error) => void;
+  const promise = new Promise<void>((onResolve, onReject) => {
+    resolve = onResolve;
+    reject = onReject;
+  });
+  return { promise, resolve, reject };
 }
 
 function useClipboard(writeText?: (text: string) => Promise<void>) {
@@ -15,6 +27,7 @@ function useClipboard(writeText?: (text: string) => Promise<void>) {
 
 afterEach(() => {
   delete (navigator as { clipboard?: unknown }).clipboard;
+  window.history.replaceState(null, "", "/");
 });
 
 describe("QuoteResultAside", () => {
@@ -51,6 +64,74 @@ describe("QuoteResultAside", () => {
     fireEvent.click(screen.getByRole("button", { name: shared.shareLabel }));
 
     expect(screen.getByRole("status")).toHaveTextContent(shared.shareFallbackMessage);
+    expect(screen.getByRole("link", { name: shareHref })).toHaveAttribute("href", shareHref);
+  });
+
+  it.each([
+    ["measurements change", `${window.location.origin}/offertberakning/?yta=80&asfalt=1`, true],
+    ["notes change", `${shareHref}&anteckning=Ny%20anteckning`, true],
+    ["values reset", `${window.location.origin}/offertberakning/`, true],
+    ["inputs become invalid", shareHref, false],
+  ] as const)("discards shared feedback when %s without publishing another URL", (_change, nextHref, valid) => {
+    useClipboard();
+    const update = renderAside();
+    fireEvent.click(screen.getByRole("button", { name: shared.shareLabel }));
+    expect(screen.getByRole("status")).toHaveTextContent(shared.shareFallbackMessage);
+    const publishedHref = window.location.href;
+
+    update(nextHref, valid);
+
+    expect(screen.queryByRole("link", { name: shareHref })).not.toBeInTheDocument();
+    expect(screen.getByRole("status")).toBeEmptyDOMElement();
+    expect(window.location.href).toBe(publishedHref);
+    if (valid) {
+      fireEvent.click(screen.getByRole("button", { name: shared.shareLabel }));
+      expect(screen.getByRole("link", { name: nextHref })).toHaveAttribute("href", nextHref);
+      expect(screen.getByRole("status")).toHaveTextContent(shared.shareFallbackMessage);
+      expect(window.location.href).toBe(nextHref);
+    } else {
+      expect(screen.getByRole("button", { name: shared.shareLabel })).toBeDisabled();
+    }
+  });
+
+  it.each(["resolve", "reject"] as const)("ignores an obsolete clipboard %s even after returning to the original quote", async settlement => {
+    const write = pendingWrite();
+    useClipboard(() => write.promise);
+    const update = renderAside();
+    fireEvent.click(screen.getByRole("button", { name: shared.shareLabel }));
+    update(`${shareHref}&anteckning=Changed`);
+    update(shareHref);
+
+    await act(async () => {
+      if (settlement === "resolve") write.resolve();
+      else write.reject(new Error("clipboard denied"));
+    });
+
+    expect(screen.queryByRole("link", { name: shareHref })).not.toBeInTheDocument();
+    expect(screen.getByRole("status")).toBeEmptyDOMElement();
+  });
+
+  it.each([true, false])("keeps the newest attempt's feedback when the older attempt succeeds: %s", async olderSucceeds => {
+    const older = pendingWrite();
+    const newer = pendingWrite();
+    useClipboard(vi.fn().mockReturnValueOnce(older.promise).mockReturnValueOnce(newer.promise));
+    renderAside();
+    fireEvent.click(screen.getByRole("button", { name: shared.shareLabel }));
+    fireEvent.click(screen.getByRole("button", { name: shared.shareLabel }));
+
+    await act(async () => {
+      if (olderSucceeds) newer.reject(new Error("clipboard denied"));
+      else newer.resolve();
+    });
+    const newestMessage = olderSucceeds ? shared.shareFallbackMessage : shared.shareCopiedMessage;
+    expect(screen.getByRole("status")).toHaveTextContent(newestMessage);
+
+    await act(async () => {
+      if (olderSucceeds) older.resolve();
+      else older.reject(new Error("clipboard denied"));
+    });
+
+    expect(screen.getByRole("status")).toHaveTextContent(newestMessage);
     expect(screen.getByRole("link", { name: shareHref })).toHaveAttribute("href", shareHref);
   });
 });
