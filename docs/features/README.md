@@ -1,6 +1,6 @@
 # Feature catalog
 
-Reviewed against source: 2026-11-18.
+Latest bounded source review: F5 on 2026-11-19; other records retain their own review dates.
 
 The catalog introduced in `f7b481f` already covers the current route inventory.
 The maintained catalog retains its published identities, including F4-US3 for
@@ -81,6 +81,12 @@ footer tap-target declarations into F4-US1, adds
 [styles.footer-tap-targets.test.ts](../../src/styles.footer-tap-targets.test.ts)
 to the test-reference list, and re-stamps the F4 and F6 records.
 
+The 2026-11-19 F5 review reconciles the shipped optional momsstatus selection
+and its stated/omitted draft variants across the retained capability and
+F5-US1/US2 records. It maps the three existing selector/draft declarations in
+InquiryPage.test.tsx as source-reviewed evidence, without claiming email-client
+execution or delivery. The six-feature inventory and published identities remain.
+
 This catalog maps the static Swedish Svärd Entreprenad site to visitor outcomes.
 It is product-development input, not a claim that construction work, email delivery
 or analytics runs inside the site.
@@ -113,7 +119,7 @@ there too. The renderer is the authority for visible sections.
 | `/dranering/` | [F1-US5](user-stories/F1/F1-US5.md) | Hero; drainage summary and dedicated moisture-protection paragraph; tags; suitability aside; process; calculator link band to [F6](quote-calculators.md); inquiry band; footer. |
 | `/tradgardsplanering/` | [F1-US6](user-stories/F1/F1-US6.md) | Hero; levels/surfaces/planting summary and tags; suitability aside; process; inquiry band; footer. |
 | `/om-oss/` | [F2-US1](user-stories/F2/F2-US1.md) | Hero and breadcrumb; company paragraphs; contact link band; footer. |
-| `/inhyrning/` | [F5-US1](user-stories/F5/F5-US1.md), [F5-US2](user-stories/F5/F5-US2.md) | Hero and breadcrumb; staffing inquiry form with Swedish validation, VAT note and mail-draft handoff; guidance aside; footer. |
+| `/inhyrning/` | [F5-US1](user-stories/F5/F5-US1.md), [F5-US2](user-stories/F5/F5-US2.md) | Hero and breadcrumb; staffing inquiry form with Swedish validation, VAT note, optional momsstatus select and mail-draft handoff carrying a stated basis beside the rate while omission preserves the declared body; guidance aside; footer. |
 | `/kontakt/` | [F3-US1](user-stories/F3/F3-US1.md), [F3-US2](user-stories/F3/F3-US2.md) | Hero; quote/site-visit prompt; email address; native form; footer. |
 | `/offertberakning/` | [F6-US1](user-stories/F6/F6-US1.md), [F6-US2](user-stories/F6/F6-US2.md), [F6-US3](user-stories/F6/F6-US3.md), [F6-US4](user-stories/F6/F6-US4.md), [F6-US5](user-stories/F6/F6-US5.md); [F4-US1](user-stories/F4/F4-US1.md) | Hero; breadcrumb; calculator choice (`#uppfart` selects the driveway calculator) with preliminary total, share link carrying the measurements and any written note, email handoff and print; footer. |
 | `/draneringsberakning/` | [F6-US1](user-stories/F6/F6-US1.md), [F6-US2](user-stories/F6/F6-US2.md), [F6-US3](user-stories/F6/F6-US3.md), [F6-US4](user-stories/F6/F6-US4.md), [F6-US5](user-stories/F6/F6-US5.md); [F4-US1](user-stories/F4/F4-US1.md) | Hero; breadcrumb; drainage length calculator with preliminary total, share link carrying the measurements and any written note, email handoff and print; footer. |

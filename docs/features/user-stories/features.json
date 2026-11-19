@@ -1120,12 +1120,12 @@
           "/inhyrning/"
         ],
         "principal_states": [
-          "Ready staffing inquiry page",
+          "Ready staffing inquiry page with optional momsstatus select defaulting to Ej angivet",
           "Swedish per-field validation feedback",
-          "Mail-draft handoff with self-send confirmation",
+          "Mail-draft handoff with a stated basis beside the rate or the unchanged declared body on omission, plus self-send confirmation",
           "Fallback reopen draft link"
         ],
-        "current_limitations": "A configured mail client is required. The site stores no inquiry, tracks no delivery and displays no confirmed-send state; the VAT basis of the offered rate relies on the visitor's description.",
+        "current_limitations": "A configured mail client is required. The site stores no inquiry, tracks no delivery and displays no confirmed-send state. The rate's momsstatus is optional and self-reported through the select or description; Ej angivet leaves it unspecified and the site never confirms a stated basis.",
         "failure_behavior": "Custom Swedish validation blocks blank required fields, a malformed email and a missing, non-numeric or negative rate with per-field messages and an alert summary; a missing or incompatible mail client can prevent handoff without a site error receipt.",
         "recovery": "Correct the named fields, or use the displayed address and the reopen-draft fallback link in a working mail client. Retype or copy details; the site offers no persistent draft recovery.",
         "runtime_owners": [
@@ -1135,11 +1135,11 @@
         "background_component_relations": [],
         "product_role": "customer_outcome",
         "supports_feature_ids": [],
-        "customer_outcome": "Companies can prepare a staffing inquiry addressed to the company with assignment, rate, duration and contact details.",
+        "customer_outcome": "Companies can prepare a staffing inquiry addressed to the company with assignment, rate, optional self-reported momsstatus, duration and contact details.",
         "outcome_signals": [
-          "In an observed browser task, the nine inquiry controls can be located in mockup order with required and optional marks.",
+          "In an observed browser task, the nine original inquiry controls plus the optional momsstatus select can be located in order with required and optional marks.",
           "Submitting invalid input names each blocking field in Swedish and opens no draft.",
-          "A valid submit exposes the linus.svardd@outlook.com draft with its subject and labeled body, and the visitor is told they send the email themselves."
+          "A valid submit exposes the linus.svardd@outlook.com draft with its subject and labeled body, carries a selected momsstatus beside the rate or preserves the declared body when omitted, and tells the visitor they send the email themselves."
         ]
       },
       "user_stories": [
@@ -1148,7 +1148,7 @@
           "title": "Prepare a staffing inquiry with company and assignment details",
           "status": "current",
           "role": "Company representative",
-          "action": "enter company details, needed help, offered hourly rate, duration and description",
+          "action": "enter company details, needed help, offered hourly rate with optional momsstatus, duration and description",
           "benefit": "give the company a useful basis to reply to the staffing request",
           "source_anchors": [
             "src/data/siteContent.ts",
@@ -1162,6 +1162,13 @@
               "name": "collects the nine fields in mockup order with required and optional marks",
               "evidence_type": "direct",
               "supports": "Checks field order, required/optional attributes, autocomplete hints, the rate minimum, the VAT note association, the guidance aside and the handoff note. Does not establish visual layout."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/InquiryPage.test.tsx",
+              "name": "renders the declared optional momsstatus select after the rate field with registry copy",
+              "evidence_type": "direct",
+              "supports": "Checks that the additional select follows the rate field, is not required, defaults to the empty value and offers the registry-declared empty option and VAT bases. Does not establish visual layout or verify the visitor's stated basis."
             },
             {
               "framework": "vitest",
@@ -1207,13 +1214,13 @@
           "flow": [
             "Open /inhyrning/ from the header Inhyrning link or a not-found shortcut.",
             "Enter Företagets namn, Kontaktperson and E-post; Telefon and Organisationsnummer are optional.",
-            "Enter what help is needed, the offered hourly rate and how long the assignment runs.",
+            "Enter what help is needed and the offered hourly rate; optionally select Momsstatus för timpriset (inklusive moms or exklusive moms), then enter how long the assignment runs.",
             "Describe the assignment in Beskriv ärendet."
           ],
           "variants": [
             "Missing required fields show a role=alert summary, one Swedish message per field, aria-invalid/aria-describedby and focus on the first invalid field.",
             "A malformed email and a missing, non-numeric or negative rate each get their own Swedish message; correcting a field clears its message.",
-            "The rate field's description carries the note about stating whether the price includes or excludes VAT."
+            "The rate field's description invites stating momsstatus in the list or description; the additional select defaults to Ej angivet and is optional, so omission does not block submission or imply a basis."
           ],
           "expected_outcome": "The visitor completes every required staffing detail or learns in Swedish exactly which field blocks the handoff; no draft opens while input is invalid.",
           "failure_behavior": "The page cannot verify company details beyond shape checks; visitors correct the named fields from the messages.",
@@ -1247,6 +1254,20 @@
             },
             {
               "framework": "vitest",
+              "path": "src/pages/InquiryPage.test.tsx",
+              "name": "carries a stated momsstatus into the mail draft beside the offered rate",
+              "evidence_type": "direct",
+              "supports": "Selects the declared exklusive moms option and checks the decoded rate line received by the injected draft opener. Does not exercise a real email program or verify the stated VAT basis."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/InquiryPage.test.tsx",
+              "name": "keeps the mail draft byte-identical to the declared body when momsstatus is omitted",
+              "evidence_type": "direct",
+              "supports": "Checks default versus explicit empty helper input and the form's decoded draft against the declared body, without a momsstatus dash suffix. Uses an injected opener; it does not establish email delivery."
+            },
+            {
+              "framework": "vitest",
               "path": "src/styles.primary-contrast.test.ts",
               "name": "keeps white primary-foreground labels readable on primary buttons at WCAG AA",
               "evidence_type": "technical",
@@ -1273,14 +1294,16 @@
             "A mail client is configured for the handoff."
           ],
           "flow": [
-            "Complete the staffing inquiry form with valid values.",
+            "Complete the staffing inquiry form with valid values and optionally select the offered rate's momsstatus.",
             "Select Skicka förfrågan.",
             "The page hands a mailto draft to linus.svardd@outlook.com with the subject Förfrågan om inhyrning and a labeled body to the email program.",
             "Read the role=status confirmation that the draft awaits review and that the visitor sends the email themselves.",
             "If the email program did not open, follow Öppna utkastet igen or copy the displayed address."
           ],
           "variants": [
-            "Empty optional fields are marked with a dash in the draft body instead of blocking the handoff.",
+            "Empty Telefon and Organisationsnummer fields are marked with a dash in the draft body instead of blocking the handoff.",
+            "A selected inklusive moms or exklusive moms basis is appended in parentheses beside the offered rate; it remains the visitor's statement, not a confirmed VAT basis.",
+            "Leaving Momsstatus för timpriset on Ej angivet preserves the declared draft body without appending a basis or a momsstatus dash and does not block the handoff.",
             "The static help line beside the submit button states the draft handoff and the manual send before submitting."
           ],
           "expected_outcome": "The form requests a mailto handoff to linus.svardd@outlook.com with the staffing subject and details; the visitor sends the email themselves and delivery is not established.",

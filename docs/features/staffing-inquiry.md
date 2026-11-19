@@ -1,6 +1,6 @@
 # F5: Prepare a company staffing inquiry
 
-Reviewed: 2026-11-14. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-19. Runtime: `ui`. Product role: `customer_outcome`.
 
 Companies that need hired help can prepare a staffing inquiry addressed to the
 company. The website cannot establish that an email was sent, delivered or
@@ -35,7 +35,7 @@ a field clears its message.
 A valid submit builds a `mailto:` draft to the configured contact address
 (`linus.svardd@outlook.com`) with the subject "Förfrågan om inhyrning" and
 a labeled body containing every supplied value, with a stated momsstatus added
-beside the offered rate; empty optional fields are marked with a dash, and
+beside the offered rate; empty phone and organization fields are marked with a dash, and
 leaving the select on "Ej angivet" reproduces the earlier draft exactly. The
 page hands the draft to the visitor's email program
 and shows a `role="status"` confirmation that says the draft is opened in the
@@ -46,7 +46,7 @@ button states the same handoff before submitting.
 
 ## Outcome and support
 
-Observable checks are locating the nine form fields in mockup order plus the
+Observable checks are locating the nine original form fields in mockup order plus the
 optional momsstatus select, reading the Swedish validation messages for missing
 company details, an invalid email and
 a negative rate, and inspecting the drafted recipient, subject and body after a
@@ -86,13 +86,19 @@ authentication or spam-control workflow.
 
 The dedicated page declaration checks the nav link, heading, breadcrumb and
 form presence. The field-order declaration checks labels, required and
-optional attributes, autocomplete hints, the VAT note association and the
-optional momsstatus select with its declared options. The validation
+optional attributes, autocomplete hints and the VAT note association. The separate
+`renders the declared optional momsstatus select after the rate field with registry copy`
+declaration maps to F5-US1 and checks the selector's order, optional attribute,
+empty default and declared options. The validation
 declarations check the Swedish messages, focus movement and that no draft is
 opened for invalid input. The mail-draft declaration checks the recipient,
-subject, labeled body values, optional-field dashes, the stated momsstatus
-beside the rate, the identical draft when momsstatus is omitted, the
-self-send confirmation and the fallback link. The helper declaration checks
+subject, labeled body values, the self-send confirmation and the fallback link;
+a separate declaration checks phone and organization dashes. F5-US2 additionally maps
+`carries a stated momsstatus into the mail draft beside the offered rate` and
+`keeps the mail draft byte-identical to the declared body when momsstatus is omitted`:
+these inspect the decoded draft at an injected opener, including the selected
+exklusive moms variant and omission without an invented basis. They do not launch
+an email client or prove delivery. The helper declaration checks
 the validation function directly, including optional fields staying outside
 the error set. These are in-memory DOM assertions; they do not send email or
 establish responsive layout in a browser. The 2026-11-11 review additionally
