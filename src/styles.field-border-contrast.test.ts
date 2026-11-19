@@ -1,10 +1,13 @@
+import { list, parse } from "postcss";
 import rawInquiryStyles from "./pages/InquiryPage.css?raw";
 import rawQuoteStyles from "./pages/QuotePage.css?raw";
 
 const fieldBoundaryRules: { readonly stylesheet: string; readonly selector: string }[] = [
   { stylesheet: rawQuoteStyles, selector: ".quote-input" },
-  { stylesheet: rawQuoteStyles, selector: ".quote-field select,.quote-field textarea" },
-  { stylesheet: rawInquiryStyles, selector: ".inquiry-field input,.inquiry-field textarea" },
+  { stylesheet: rawQuoteStyles, selector: ".quote-field select" },
+  { stylesheet: rawQuoteStyles, selector: ".quote-field textarea" },
+  { stylesheet: rawInquiryStyles, selector: ".inquiry-field input" },
+  { stylesheet: rawInquiryStyles, selector: ".inquiry-field textarea" },
 ];
 
 function hexChannel(hex: string, index: number): number {
@@ -18,23 +21,86 @@ function contrastOnWhite(hex: string): number {
 }
 
 function fieldBoundaryBorder(stylesheet: string, selector: string): string {
-  const ruleStart = stylesheet.indexOf(`${selector}{`);
-  if (ruleStart === -1) {
+  let foundRule = false;
+  let border = "";
+  // Inspect the explicit base boundaries, not focus/validation or media overrides.
+  // This is a stylesheet guard for these rules, not a browser cascade evaluator.
+  for (const rule of parse(stylesheet).nodes) {
+    if (rule.type !== "rule" || !rule.selectors.some((member) => member.trim().replace(/\s+/g, " ") === selector)) {
+      continue;
+    }
+    foundRule = true;
+    for (const declaration of rule.nodes) {
+      if (declaration.type === "decl" && declaration.prop.toLowerCase() === "border") {
+        border = declaration.value;
+      }
+    }
+  }
+  if (!foundRule) {
     throw new Error(`Missing form field boundary rule ${selector} in the page stylesheet`);
   }
-  const ruleBody = stylesheet.slice(ruleStart, stylesheet.indexOf("}", ruleStart));
-  const border = ruleBody.match(/border:1px solid (#(?:[0-9a-f]{6}))/)?.[1];
-  if (!border) {
-    throw new Error(`Missing 1px solid hex border color on the form field boundary rule ${selector}`);
+  const tokens = list.space(border.toLowerCase());
+  const color = tokens.find((token) => /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/.test(token));
+  const width = tokens.find((token) => /^(?:\d*\.)?\d+px$/.test(token));
+  if (tokens.length !== 3 || !tokens.includes("solid") || !width || parseFloat(width) <= 0 || !color) {
+    throw new Error(`Missing visible solid hex border on the form field boundary rule ${selector}`);
   }
-  return border;
+  return color.length === 4 ? `#${[...color.slice(1)].map((channel) => channel + channel).join("")}` : color;
+}
+
+function assertFieldBoundaryContrast(stylesheet: string, selector: string): void {
+  const contrast = contrastOnWhite(fieldBoundaryBorder(stylesheet, selector));
+  if (contrast < 3) {
+    throw new Error(`Field boundary ${selector} has ${contrast.toFixed(2)}:1 contrast on white; requires at least 3:1`);
+  }
 }
 
 describe("page form field border contrast", () => {
   it("keeps quote and inquiry form field boundaries at WCAG AA non-text contrast on white", () => {
-    expect(fieldBoundaryRules).toHaveLength(3);
     for (const { stylesheet, selector } of fieldBoundaryRules) {
-      expect(contrastOnWhite(fieldBoundaryBorder(stylesheet, selector)), selector).toBeGreaterThanOrEqual(3);
+      assertFieldBoundaryContrast(stylesheet, selector);
     }
+  });
+
+  it("accepts equivalent whitespace, selector order and border token order", () => {
+    const stylesheet = `
+      /* Independent black boundaries have 21:1 contrast on white. */
+      .inquiry-field   textarea,
+      .quote-field\ttextarea , .quote-input,
+      .inquiry-field input , .quote-field select
+      {
+        background: white;
+        border :
+          #000   solid
+          2px ;
+      }
+    `;
+    for (const { selector } of fieldBoundaryRules) {
+      assertFieldBoundaryContrast(stylesheet, selector);
+    }
+  });
+
+  it.each([
+    [".quote-input input{border:1px solid #000}", ".quote-input"],
+    [".quote-field select{border:1px solid #000}", ".quote-field textarea"],
+    [".inquiry-field input{border:1px solid #000}", ".inquiry-field textarea"],
+  ])("rejects a missing boundary rather than borrowing a neighbor: %s", (stylesheet, selector) => {
+    expect(() => assertFieldBoundaryContrast(stylesheet, selector)).toThrow(`Missing form field boundary rule ${selector}`);
+  });
+
+  it.each(["background:white", "border:0px solid #000", "border:1px none #000"])(
+    "rejects an absent or invisible border: %s",
+    (declarations) => {
+      expect(() => assertFieldBoundaryContrast(`.quote-input{${declarations}}`, ".quote-input"))
+        .toThrow("Missing visible solid hex border on the form field boundary rule .quote-input");
+    },
+  );
+
+  it.each([".quote-field select", ".quote-field textarea"])("rejects below-threshold contrast for %s in a selector list", (selector) => {
+    // White against white is independently known to have 1:1 contrast.
+    expect(() => assertFieldBoundaryContrast(
+      ".quote-field textarea, .quote-field select { border: 1px solid #FFFFFF; }",
+      selector,
+    )).toThrow(`Field boundary ${selector} has 1.00:1 contrast on white; requires at least 3:1`);
   });
 });

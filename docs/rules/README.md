@@ -8,3 +8,4 @@ small, issue-traceable, and grouped by semantic topic rather than by incident.
 | [Generated local artifacts](generated-local-artifacts.md) | Before committing browser captures, local tool output, generated reports, or other non-product artifacts. |
 | [Typed route content](typed-route-content.md) | Before adding or changing page-specific metadata for declared public routes. |
 | [Asynchronous UI feedback](async-ui-feedback.md) | When asynchronous action feedback depends on editable inputs or repeated actions. |
+| [Stylesheet behavior guards](stylesheet-behavior-guards.md) | When adding or changing stylesheet regression tests. |
