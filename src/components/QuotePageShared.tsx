@@ -46,21 +46,33 @@ type QuoteResultAsideProps = {
   readonly individualQuote?: string;
 };
 
-export function QuoteResultAside({ shared, error, valid, total, email, hidden, shareHref, individualQuote, vatLabel }: QuoteResultAsideProps) {
-  const [shareLink, setShareLink] = useState<string | null>(null);
-  const [shareMessage, setShareMessage] = useState<string | null>(null);
+function QuoteShareControls({ shared, valid, shareHref }: Pick<QuoteResultAsideProps, "shared" | "valid" | "shareHref">) {
+  const [attempt, setAttempt] = useState<{ message: string | null } | null>(null);
 
   function share() {
     window.history.replaceState(null, "", shareHref);
-    setShareLink(shareHref);
+    const currentAttempt = { message: null };
+    setAttempt(currentAttempt);
+    function announce(message: string) {
+      setAttempt(current => current === currentAttempt ? { message } : current);
+    }
     const write = navigator.clipboard?.writeText(shareHref);
     if (write) {
-      void write.then(() => setShareMessage(shared.shareCopiedMessage), () => setShareMessage(shared.shareFallbackMessage));
+      void write.then(() => announce(shared.shareCopiedMessage), () => announce(shared.shareFallbackMessage));
     } else {
-      setShareMessage(shared.shareFallbackMessage);
+      announce(shared.shareFallbackMessage);
     }
   }
 
+  return <>
+    <button className="quote-share" onClick={share} disabled={!valid}><Link2 size={16} aria-hidden="true" />{shared.shareLabel}</button>
+    {attempt ? <p className="quote-share-link"><a href={shareHref}>{shareHref}</a></p> : null}
+    <p className="quote-share-help">{shared.shareHelp}</p>
+    <p role="status" className="quote-share-status">{attempt?.message}</p>
+  </>;
+}
+
+export function QuoteResultAside({ shared, error, valid, total, email, hidden, shareHref, individualQuote, vatLabel }: QuoteResultAsideProps) {
   return <aside className="quote-result" aria-label={shared.resultAriaLabel} hidden={hidden}>
     <div aria-live="polite" aria-atomic="true">
       <h2>{individualQuote ? shared.individualQuoteHeading : shared.resultHeading}</h2>
@@ -75,10 +87,8 @@ export function QuoteResultAside({ shared, error, valid, total, email, hidden, s
     <Button asChild disabled={!valid} className="quote-send">{valid ? <a href={email}>{individualQuote ? shared.individualQuoteSendLabel : shared.sendLabel}<ArrowRight size={18} aria-hidden="true" /></a> : <button disabled>{shared.sendInvalidLabel}</button>}</Button>
     <p className="quote-mail-help">{shared.mailHelp}</p>
     <button className="quote-print" onClick={() => window.print()} disabled={!valid || Boolean(individualQuote)}><Printer size={16} aria-hidden="true" />{shared.printLabel}</button>
-    <button className="quote-share" onClick={share} disabled={!valid}><Link2 size={16} aria-hidden="true" />{shared.shareLabel}</button>
-    {shareLink ? <p className="quote-share-link"><a href={shareLink}>{shareLink}</a></p> : null}
-    <p className="quote-share-help">{shared.shareHelp}</p>
-    <p role="status" className="quote-share-status">{shareMessage}</p>
+    {/* A changed or invalid quote discards feedback and pending clipboard ownership. */}
+    <QuoteShareControls key={`${valid}:${shareHref}`} shared={shared} valid={valid} shareHref={shareHref} />
   </aside>;
 }
 
