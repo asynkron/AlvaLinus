@@ -76,7 +76,9 @@ describe("SiteHomePage", () => {
     if (currentPath === "/" || currentPath === "/kontakt/") {
       const contact = document.getElementById("kontakt");
       if (!contact) throw new Error("Missing contact section");
-      const contactPhone = within(contact).getByRole("link", { name: "Telefon 070-214 67 83" });
+      const contactPhone = within(contact).getByRole("link", { name: /070-214 67 83/ });
+      expect(contactPhone).toHaveTextContent("Telefon");
+      expect(within(contactPhone).getByText("070-214 67 83")).toBeVisible();
       expect(contactPhone).toHaveAttribute("href", "tel:+46702146783");
       contactPhone.focus();
       expect(contactPhone).toHaveFocus();
