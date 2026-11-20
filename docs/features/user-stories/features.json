@@ -703,7 +703,7 @@
           "Mobile menu closed/open",
           "Keyboard bypass to the page body"
         ],
-        "current_limitations": "Header, mobile-menu and footer navigation derive their destinations from the typed route registry, whose six inventory shortcuts remain a display subset; desktop dropdown keyboard interaction is unmapped. Hosting may reject unknown paths before React can display not-found.",
+        "current_limitations": "Header, mobile-menu and footer navigation cover all twelve typed routes, including both calculators; the six inventory shortcuts remain a display subset. Desktop dropdown DOM declarations cover focusability, links and uncancelled Tab events, not browser tab movement or the focus-only CSS reveal. Hosting may reject unknown paths before React can display not-found.",
         "failure_behavior": "Unknown in-app paths show declared-route shortcuts. The empty-services state retains the header but has no footer.",
         "recovery": "Use header links or reload; unknown ready routes provide all registered shortcuts. Static-host handling remains a deployment concern.",
         "runtime_owners": [
@@ -1959,9 +1959,9 @@
             {
               "framework": "vitest",
               "path": "src/components/QuoteResultAside.test.tsx",
-              "name": "keeps the newest attempt's feedback when the older attempt succeeds: %s",
+              "name": "keeps feedback owned by the newest attempt (older succeeds: %s, older settles first: %s)",
               "evidence_type": "direct",
-              "supports": "Parameterized true / false cases control two clipboard promises: newer rejection followed by older success, and newer success followed by older rejection. Only the newer Swedish fallback/confirmation remains, with the current link. These in-memory shared-component declarations use mocked clipboard APIs, controlled promises and rerendered props. They cover shared-control feedback ownership, not page edit-event wiring, full browser/device/clipboard-service execution or actual screen-reader announcements. Source mappings are not execution receipts."
+              "supports": "Four controlled-promise cases combine older success/rejection with older-first/newer-first completion. An older result leaves status empty while the latest attempt is pending; after the latest attempt settles, only its Swedish fallback/confirmation remains, with the current link. These in-memory shared-component declarations use mocked clipboard APIs, controlled promises and rerendered props. They cover shared-control feedback ownership, not page edit-event wiring, full browser/device/clipboard-service execution or actual screen-reader announcements. Source mappings are not execution receipts."
             }
           ],
           "entry_point_refs": [],

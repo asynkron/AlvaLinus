@@ -2,7 +2,7 @@
 
 Feature: [F6 — Calculate a preliminary quote](../../quote-calculators.md)  
 Status: current  
-Reviewed: 2026-11-19
+Reviewed: 2026-11-20
 
 As a project visitor, I want to print or save the preliminary quote, or share it through a link carrying the measurements and any written note, so I can keep or share the cost picture outside the browser session.
 
@@ -71,7 +71,7 @@ These in-memory shared-component declarations use mocked clipboard APIs, control
 - vitest, [QuoteResultAside.test.tsx](../../../../src/components/QuoteResultAside.test.tsx), declaration `announces the manual-copy fallback when the clipboard is unavailable` (direct): Checks the Swedish fallback status and copyable link without a clipboard API.
 - vitest, [QuoteResultAside.test.tsx](../../../../src/components/QuoteResultAside.test.tsx), declaration `discards shared feedback when %s without publishing another URL` (direct): Parameterized measurements change / notes change / values reset / inputs become invalid cases rerender the shared aside's shareHref/valid props. They check removal of the old link and status without another URL publication; valid cases explicitly share the new URL, while invalid input disables sharing. This does not exercise page edit-event wiring or assert clipboard call counts during edits.
 - vitest, [QuoteResultAside.test.tsx](../../../../src/components/QuoteResultAside.test.tsx), declaration `ignores an obsolete clipboard %s even after returning to the original quote` (direct): Controlled-promise resolve / reject cases rerender changed and then original quote props before settling the old write; the old link and status remain absent.
-- vitest, [QuoteResultAside.test.tsx](../../../../src/components/QuoteResultAside.test.tsx), declaration `keeps the newest attempt's feedback when the older attempt succeeds: %s` (direct): Parameterized true / false cases control two clipboard promises: newer rejection followed by older success, and newer success followed by older rejection. Only the newer Swedish fallback/confirmation remains, with the current link.
+- vitest, [QuoteResultAside.test.tsx](../../../../src/components/QuoteResultAside.test.tsx), declaration `keeps feedback owned by the newest attempt (older succeeds: %s, older settles first: %s)` (direct): Four controlled-promise cases combine older success/rejection with older-first/newer-first completion. An older result leaves status empty while the latest attempt is pending; after the latest attempt settles, only its Swedish fallback/confirmation remains, with the current link.
 
 ## Individual-quote boundary (fk274, 2026-11-19)
 
