@@ -126,12 +126,19 @@ function requireAcceptedQualityEvidence(bytes) {
       `Quality evidence status ${quote(document.status)} is not an accepted complete quality session.`,
     );
   }
+  const counts = requireTestCounts(document.payload?.counts);
+  if (counts.failed > 0) {
+    throw new Error(`Quality evidence contains ${counts.failed} failed tests; accepted evidence requires zero failures.`);
+  }
+  if (counts.passed === 0) {
+    throw new Error("Quality evidence contains no passed tests; accepted evidence requires at least one passed test.");
+  }
   return {
     digest: sha256(bytes),
     schema_version: document.schema_version,
     producer_id: document.producer_id,
     status: document.status,
-    counts: requireTestCounts(document.payload?.counts),
+    counts,
   };
 }
 

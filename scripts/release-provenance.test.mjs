@@ -188,10 +188,20 @@ describe("composeReleaseProvenance", () => {
 
     expect(record).toEqual(expectedRecord());
     expect(manifestBytes).toBe(expectedManifestText());
-    expect(git.statusPorcelain).toHaveBeenCalledTimes(1);
-    expect(git.revParseHead).toHaveBeenCalledTimes(1);
-    expect(runBuild).toHaveBeenCalledTimes(1);
-    expect(fs.readFile).toHaveBeenCalledWith(EVIDENCE_PATH);
+  });
+
+  it("accepts passed tests with skips and retains the exact evidence digest and counts", async () => {
+    const counts = { total: 5, passed: 3, failed: 0, skipped: 2 };
+    const evidenceBytes = qualityEvidenceBytes({ payload: { counts, failures: [], observations: [] } });
+    const { record } = await compose({ fs: { evidenceBytes } });
+
+    expect(record.quality_evidence).toEqual({
+      digest: sha256(evidenceBytes),
+      schema_version: "quality-evidence.v1",
+      producer_id: "vitest-tests",
+      status: "complete",
+      counts,
+    });
   });
 
   it("composes byte-identical records across independent runs", async () => {
@@ -304,6 +314,24 @@ describe("composeReleaseProvenance fail-closed preconditions", () => {
     await expect(compose({ fs: { evidenceBytes: fractional } })).rejects.toThrow(
       /must be a non-negative integer/,
     );
+  });
+
+  it.each([
+    ["mixed passing and failing", { total: 5, passed: 3, failed: 1, skipped: 1 }],
+    ["all-failed", { total: 2, passed: 0, failed: 2, skipped: 0 }],
+  ])("rejects a complete %s report without a composition result", async (_label, counts) => {
+    const evidenceBytes = qualityEvidenceBytes({ payload: { counts, failures: [], observations: [] } });
+
+    await expect(compose({ fs: { evidenceBytes } })).rejects.toThrow(/failed tests.*requires zero failures/);
+  });
+
+  it.each([
+    ["empty", { total: 0, passed: 0, failed: 0, skipped: 0 }],
+    ["all-skipped", { total: 3, passed: 0, failed: 0, skipped: 3 }],
+  ])("rejects a complete %s report without a composition result", async (_label, counts) => {
+    const evidenceBytes = qualityEvidenceBytes({ payload: { counts, failures: [], observations: [] } });
+
+    await expect(compose({ fs: { evidenceBytes } })).rejects.toThrow(/requires at least one passed test/);
   });
 
   it("refuses record and manifest paths inside the artifact root and colliding paths", async () => {

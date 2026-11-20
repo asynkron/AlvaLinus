@@ -41,7 +41,9 @@ source that produced it and a rollback cannot prove what it restored.
 
 ### One composed command
 
-The first three identities are composed into a single repo-owned command:
+The checkout revision, artifact identity, and retained test evidence are
+composed into a single repo-owned command. The accepted canonical quality
+session must still be recorded separately:
 
 ```sh
 node scripts/write-release-provenance.mjs
@@ -53,16 +55,29 @@ dirty working tree and captures the full source revision (`git status
 --porcelain`, `git rev-parse HEAD`); rebuilds `dist/` fresh from that clean
 revision (the same pipeline as `make build`); writes the checksum manifest to
 `artifacts/release.manifest.json` and verifies it against the built tree; reads
-the accepted `quality-evidence.v1` session under `FAKTORIAL_QUALITY_EVIDENCE_DIR`
+the retained `quality-evidence.v1` session under `FAKTORIAL_QUALITY_EVIDENCE_DIR`
 (default `.faktorial/quality`, outside Git) and requires it to be a complete
-session; then writes `artifacts/release-provenance.json` — a deterministic
+session with at least one passed test and zero failed tests (skipped tests
+alongside passing tests are allowed); then writes
+`artifacts/release-provenance.json` — a deterministic
 `release-provenance.v1` record joining the source revision, the artifact
 manifest's path and sha256 digest, and the quality evidence's digest, schema,
 producer, status, and test counts. It fails closed: if any precondition is
 unmet (dirty tree, failed build, manifest verification mismatch, missing,
-malformed, or incomplete quality evidence), it exits nonzero with a descriptive
+malformed, incomplete, failed, empty, or all-skipped test evidence), it exits nonzero with a descriptive
 message and writes no provenance record. Re-running it on identical inputs
 yields a byte-identical record with no timestamps or machine paths.
+
+`status: complete` means the test report is terminal, not that its tests
+passed. The command accepts that report only after validating its counts and
+requiring positive passed and zero failed counts. The retained test evidence
+contains neither a source revision nor the full canonical-gate verdict, so
+even a passing report establishes neither source-revision identity nor full
+`make quality` acceptance. Its digest identifies the exact retained bytes;
+the separately captured checkout revision does not prove those tests ran on
+that revision. The operator must connect the accepted canonical quality
+session to the released revision before publication. The provenance command
+does not run quality or supply that missing acceptance evidence.
 
 Optional positional arguments override the defaults:
 `node scripts/write-release-provenance.mjs [dist-root] [manifest-path]
