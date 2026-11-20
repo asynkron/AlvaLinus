@@ -7,5 +7,9 @@ discarded feedback. Keep URL and clipboard writes behind explicit user actions.
 
 For quote sharing, the shared controls reset through React identity when the
 validity or share URL changes; only the latest attempt can update its status.
-Protect this behavior with rendered component assertions and controlled promises,
-without sleeps or duplicate coverage at each calculator page (fk276).
+Protect shared attempt ownership with rendered component assertions and
+controlled promises, without sleeps or duplicate race cases at each calculator
+page (fk276). Use actual page interactions for the distinct event-wiring
+boundary: share before each field edit, assert feedback removal without URL or
+clipboard publication, then explicitly share independently expected current
+values. Include reset from changed values and invalid-to-valid recovery (fk292).

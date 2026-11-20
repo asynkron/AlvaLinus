@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { siteContent } from "../data/siteContent";
 import { quoteShareParams } from "../lib/quote-share";
 import { QuotePage } from "./QuotePage";
@@ -188,23 +188,99 @@ describe("QuotePage", () => {
     expect(hero).toHaveAttribute("fetchpriority", "high");
   });
 
-  it("produces a share link that encodes the driveway inputs and lands on the uppfart view", () => {
-    render(<QuotePage />);
-    chooseUppfart();
-    fireEvent.change(areaInput(), { target: { value: "50" } });
-    fireEvent.click(asphaltCheckbox());
+  it.each(["resolved", "unavailable"] as const)("discards driveway share feedback on actual edits and explicitly shares current inputs (%s)", async clipboard => {
+    const writeText = vi.fn(() => Promise.resolve());
+    const previousClipboard = Object.getOwnPropertyDescriptor(navigator, "clipboard");
+    Object.defineProperty(navigator, "clipboard", {
+      value: clipboard === "resolved" ? { writeText } : undefined,
+      configurable: true,
+    });
 
-    expect(screen.getByText(money(52400))).toBeInTheDocument();
+    try {
+      render(<QuotePage />);
+      chooseUppfart();
 
-    const shareHref = `${window.location.origin}/offertberakning/?${quoteShareParams.area}=50&${quoteShareParams.asphalt}=0#uppfart`;
+      const replaceState = vi.spyOn(window.history, "replaceState");
+      const pushState = vi.spyOn(window.history, "pushState");
+      let publications = 0;
+      let publishedHref = window.location.href;
 
-    expect(screen.queryByRole("link", { name: shareHref })).not.toBeInTheDocument();
+      function expectUnpublished() {
+        expect(screen.queryByRole("link", { name: /^https?:/ })).not.toBeInTheDocument();
+        expect(screen.getByRole("status")).toBeEmptyDOMElement();
+        expect(window.location.href).toBe(publishedHref);
+        expect(pushState).not.toHaveBeenCalled();
+        expect(replaceState).toHaveBeenCalledTimes(publications);
+        expect(writeText).toHaveBeenCalledTimes(clipboard === "resolved" ? publications : 0);
+      }
 
-    fireEvent.click(screen.getByRole("button", { name: shared.shareLabel }));
+      async function publish(search: string) {
+        const href = `${window.location.origin}/offertberakning/?${search}#uppfart`;
+        await act(async () => {
+          fireEvent.click(screen.getByRole("button", { name: shared.shareLabel }));
+        });
+        publications += 1;
+        publishedHref = href;
 
-    expect(window.location.search).toBe(`?${quoteShareParams.area}=50&${quoteShareParams.asphalt}=0`);
-    expect(window.location.hash).toBe("#uppfart");
-    expect(screen.getByRole("link", { name: shareHref })).toHaveAttribute("href", shareHref);
+        expect(window.location.href).toBe(href);
+        expect(pushState).not.toHaveBeenCalled();
+        expect(replaceState).toHaveBeenCalledTimes(publications);
+        expect(replaceState).toHaveBeenLastCalledWith(null, "", href);
+        expect(screen.getByRole("link", { name: href })).toHaveAttribute("href", href);
+        expect(screen.getByRole("status")).toHaveTextContent(
+          clipboard === "resolved" ? shared.shareCopiedMessage : shared.shareFallbackMessage,
+        );
+        if (clipboard === "resolved") {
+          expect(writeText).toHaveBeenCalledTimes(publications);
+          expect(writeText).toHaveBeenLastCalledWith(href);
+        } else {
+          expect(writeText).not.toHaveBeenCalled();
+        }
+      }
+
+      expectUnpublished();
+      await publish("yta=100&asfalt=1");
+
+      // Each edit starts with feedback, so another field cannot mask missing wiring.
+      fireEvent.change(areaInput(), { target: { value: "50" } });
+      expectUnpublished();
+      await publish("yta=50&asfalt=1");
+
+      fireEvent.click(asphaltCheckbox());
+      expectUnpublished();
+      await publish("yta=50&asfalt=0");
+
+      fireEvent.change(screen.getByRole("textbox"), { target: { value: "Villa i Örebro" } });
+      expectUnpublished();
+      await publish("yta=50&asfalt=0&anteckning=Villa+i+%C3%96rebro");
+
+      fireEvent.click(screen.getByRole("radio", { name: shared.vatExclusiveLabel }));
+      expectUnpublished();
+      await publish("yta=50&asfalt=0&anteckning=Villa+i+%C3%96rebro&moms=exkl");
+
+      fireEvent.click(screen.getByRole("button", { name: text.resetLabel }));
+      expectUnpublished();
+      expect(areaInput()).toHaveValue(100);
+      expect(screen.getByRole("textbox")).toHaveValue("");
+      expect(screen.getByRole("radio", { name: shared.vatInclusiveLabel })).toBeChecked();
+      expect(asphaltCheckbox()).toBeChecked();
+      await publish("yta=100&asfalt=1");
+
+      fireEvent.change(areaInput(), { target: { value: "0" } });
+      expectUnpublished();
+      expect(screen.getByRole("button", { name: shared.shareLabel })).toBeDisabled();
+      fireEvent.click(screen.getByRole("button", { name: shared.shareLabel }));
+      expectUnpublished();
+
+      fireEvent.change(areaInput(), { target: { value: "100" } });
+      expectUnpublished();
+      expect(screen.getByRole("button", { name: shared.shareLabel })).toBeEnabled();
+      await publish("yta=100&asfalt=1");
+    } finally {
+      vi.restoreAllMocks();
+      if (previousClipboard) Object.defineProperty(navigator, "clipboard", previousClipboard);
+      else delete (navigator as { clipboard?: unknown }).clipboard;
+    }
   });
 
   it("restores the shared driveway inputs and recomputes the same total on load", () => {
@@ -217,21 +293,6 @@ describe("QuotePage", () => {
     expect(screen.getByText(money(52400))).toBeInTheDocument();
     expect(screen.getByRole("textbox")).toHaveValue("");
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
-  });
-
-  it("encodes a written note into the produced share link", () => {
-    render(<QuotePage />);
-    chooseUppfart();
-    fireEvent.change(screen.getByRole("textbox"), { target: { value: "Villa i Örebro" } });
-
-    const shareHref = `${window.location.origin}/offertberakning/?${quoteShareParams.area}=100&${quoteShareParams.asphalt}=1&${quoteShareParams.notes}=Villa+i+%C3%96rebro#uppfart`;
-
-    expect(screen.queryByRole("link", { name: shareHref })).not.toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole("button", { name: shared.shareLabel }));
-
-    expect(window.location.search).toBe(`?${quoteShareParams.area}=100&${quoteShareParams.asphalt}=1&${quoteShareParams.notes}=Villa+i+%C3%96rebro`);
-    expect(screen.getByRole("link", { name: shareHref })).toHaveAttribute("href", shareHref);
   });
 
   it("restores the shared note into the project description on load", () => {

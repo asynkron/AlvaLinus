@@ -142,6 +142,16 @@ props support that shared boundary; they do not establish page edit-event wiring
 or real browser/device/clipboard-service execution. Edits discard feedback;
 URL and clipboard publication require an explicit share action.
 
+The 2026-11-20 fk292 follow-up extends the two existing page share declarations
+through actual measurement, note and VAT edits, driveway asphalt, reset from
+changed values and invalid-to-valid recovery. Each edit starts with share
+feedback present. Resolved/unavailable clipboard fixtures check feedback removal
+and no automatic history/clipboard publication; fresh explicit shares check
+current URL fields and clipboard payloads. The separate note-only share cases
+were absorbed into these stronger page cases; restore-on-load coverage remains.
+F6-US4 and its structured references map these declarations. Native quality
+owns execution; these mappings do not claim browser or clipboard-service use.
+
 The 2026-11-20 reconciliation includes both calculator routes in F4's shared
 inventory, matching its existing twelve-route capability and supporting role.
 It retains the F6 success/rejection/unavailable clipboard mappings delivered
