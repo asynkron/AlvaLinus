@@ -1,6 +1,6 @@
 # F4: Home, navigation and route recovery
 
-Reviewed: 2026-11-18. Runtime: `ui`. Product role: `surface`.
+Reviewed: 2026-11-20. Runtime: `ui`. Product role: `surface`.
 Supports **F1, F2, F3, F5 and F6**, all active customer-outcome features.
 
 Home and shared route handling make the service, company and inquiry outcomes
@@ -9,7 +9,8 @@ a separate customer result because it has tests.
 
 ## Entry points and current behavior
 
-All twelve routes listed in the [index](README.md) share Header. Desktop navigation
+All twelve routes listed in the [index](README.md) and [shared inventory](features.json),
+including `/offertberakning/` and `/draneringsberakning/`, share Header. Desktop navigation
 links home, services (with five service links), the Kalkyler group with the two
 calculator links, about, the staffing inquiry and contact. At md+ widths every
 desktop target — the nav links, the Tjänster trigger and the desktop Kalkyler

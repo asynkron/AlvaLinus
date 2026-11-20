@@ -171,7 +171,7 @@
           "description": "Quote route kind, the shared and per-calculator quote copy contracts and the calculator band contract."
         }
       ],
-      "reviewed_against_source": "2026-11-19",
+      "reviewed_against_source": "2026-11-20",
       "slice_refs": [],
       "entry_point_refs": []
     },
@@ -179,8 +179,10 @@
       "name": "Home, navigation and route recovery",
       "description": "Shared home orientation, header, footer, breadcrumbs and static route states help visitors reach the customer outcomes.",
       "document": "docs/features/navigation-and-recovery.md",
-      "route_scope": "/, /tjanster/, /om-oss/, /inhyrning/, /stensattning/, /markarbete/, /gravjobb/, /dranering/, /tradgardsplanering/, /kontakt/",
+      "route_scope": "/offertberakning/, /draneringsberakning/, /, /tjanster/, /om-oss/, /inhyrning/, /stensattning/, /markarbete/, /gravjobb/, /dranering/, /tradgardsplanering/, /kontakt/",
       "routes": [
+        "/offertberakning/",
+        "/draneringsberakning/",
         "/",
         "/tjanster/",
         "/om-oss/",
@@ -214,7 +216,7 @@
           "description": "Shared document-emission helpers: route metadata stamping, per-route hero preload links and per-document woff2 font preload links."
         }
       ],
-      "reviewed_against_source": "2026-11-18",
+      "reviewed_against_source": "2026-11-20",
       "slice_refs": [],
       "entry_point_refs": []
     }

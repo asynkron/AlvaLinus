@@ -1,6 +1,6 @@
 # F6: Calculate a preliminary quote
 
-Reviewed: 2026-11-19. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-20. Runtime: `ui`. Product role: `customer_outcome`.
 
 Visitors choose a driveway or husdränering calculator and get a total-only
 preliminary estimate for positive finite measurements up to and including 100.
@@ -117,7 +117,8 @@ parameters and special-character note round-trips.
 [QuoteResultAside.test.tsx](../../src/components/QuoteResultAside.test.tsx)
 owns the F6-US4 shared-control lifecycle declarations mapped in the story:
 confirmation, rejection/unavailable fallback, input-change invalidation, obsolete
-completion after returning to original inputs and overlapping attempts.
+completion after returning to original inputs and overlapping attempts in both
+completion orders, including an obsolete result while the latest attempt is pending.
 These in-memory shared-component declarations use mocked clipboard APIs, controlled promises and rerendered props. They cover shared-control feedback ownership, not page edit-event wiring, full browser/device/clipboard-service execution or actual screen-reader announcements. Source mappings are not execution receipts.
 
 Existing field-border, focus-zoom, accent-contrast and quote-print stylesheet
@@ -127,7 +128,6 @@ exercised by these declarations. Canonical native quality owns execution.
 
 ## What Works Less Well
 
-The standing selected VAT label still limits estimates as budgeting input.
 A calculation persists only through its share URL. Soil, depth and access
 still require assessment by the company. The site cannot confirm email
 delivery, a real printout or a binding price. After editing, visitors must

@@ -1,6 +1,6 @@
 # Feature catalog
 
-Latest bounded source review: F5 and F6 sharing lifecycle on 2026-11-19;
+Latest bounded source review: F4 route coverage and F6 sharing evidence on 2026-11-20;
 other records retain their own review dates.
 
 The catalog introduced in `f7b481f` already covers the current route inventory.
@@ -141,6 +141,13 @@ completion and latest-attempt declarations. Controlled promises and rerendered
 props support that shared boundary; they do not establish page edit-event wiring
 or real browser/device/clipboard-service execution. Edits discard feedback;
 URL and clipboard publication require an explicit share action.
+
+The 2026-11-20 reconciliation includes both calculator routes in F4's shared
+inventory, matching its existing twelve-route capability and supporting role.
+It retains the F6 success/rejection/unavailable clipboard mappings delivered
+by the later 2026-11-19 review and updates F6-US4 to the current overlapping-attempt
+declaration: both completion orders are covered, including an obsolete result
+while the latest attempt is pending. These remain source-reviewed mappings.
 
 ## Sources and runtime boundaries
 
