@@ -121,6 +121,14 @@ completion after returning to original inputs and overlapping attempts in both
 completion orders, including an obsolete result while the latest attempt is pending.
 These in-memory shared-component declarations use mocked clipboard APIs, controlled promises and rerendered props. They cover shared-control feedback ownership, not page edit-event wiring, full browser/device/clipboard-service execution or actual screen-reader announcements. Source mappings are not execution receipts.
 
+The fk292 page share declarations in QuotePage.test.tsx and
+DrainageQuotePage.test.tsx separately exercise actual measurement, note and VAT
+edits, driveway asphalt, changed-value reset and invalid-input recovery. With
+resolved/unavailable clipboard fixtures, each edit discards existing feedback
+without publishing; explicit resharing uses independently expected current URL
+fields and clipboard payloads. The F6-US4 mappings name these declarations;
+shared races remain solely with QuoteResultAside.test.tsx.
+
 Existing field-border, focus-zoom, accent-contrast and quote-print stylesheet
 tests retain their bounded source-level coverage. A real mail client,
 screen-reader announcement, print dialog and rendered paper output are not

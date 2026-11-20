@@ -1784,16 +1784,16 @@
             {
               "framework": "vitest",
               "path": "src/pages/QuotePage.test.tsx",
-              "name": "produces a share link that encodes the driveway inputs and lands on the uppfart view",
+              "name": "discards driveway share feedback on actual edits and explicitly shares current inputs (%s)",
               "evidence_type": "direct",
-              "supports": "Checks that Skapa delbar länk writes the yta and asfalt values into the page URL while keeping the #uppfart hash so the recipient lands on the driveway view, and renders the same absolute URL as the copyable link's href."
+              "supports": "Resolved and unavailable clipboard cases drive actual area, asphalt, note and VAT controls after sharing, reset changed values and recover from invalid input. Each edit clears the visible link/status without a history or clipboard publication; only a fresh explicit share publishes the independently expected current yta/asfalt/anteckning/moms URL with #uppfart and matching clipboard payload."
             },
             {
               "framework": "vitest",
               "path": "src/pages/DrainageQuotePage.test.tsx",
-              "name": "produces a share link that encodes the drainage length",
+              "name": "discards drainage share feedback on actual edits and explicitly shares current inputs (%s)",
               "evidence_type": "direct",
-              "supports": "Checks that Skapa delbar länk writes the langd length into the page URL and renders the same absolute URL as the copyable link's href."
+              "supports": "Resolved and unavailable clipboard cases drive actual length, note and VAT controls after sharing, reset changed values and recover from invalid input. Each edit clears the visible link/status without a history or clipboard publication; only a fresh explicit share publishes the independently expected current langd/anteckning/moms URL and matching clipboard payload."
             },
             {
               "framework": "vitest",
@@ -1822,20 +1822,6 @@
               "name": "builds an absolute share href from the current page location",
               "evidence_type": "technical",
               "supports": "Helper-level check pins the absolute href construction that keeps the rendered share link usable regardless of the origin path."
-            },
-            {
-              "framework": "vitest",
-              "path": "src/pages/QuotePage.test.tsx",
-              "name": "encodes a written note into the produced share link",
-              "evidence_type": "direct",
-              "supports": "Checks that a written project note is encoded into the produced share URL and the copyable link's href as the anteckning parameter alongside the yta and asfalt values."
-            },
-            {
-              "framework": "vitest",
-              "path": "src/pages/DrainageQuotePage.test.tsx",
-              "name": "encodes a written note into the produced share link",
-              "evidence_type": "direct",
-              "supports": "Checks the same note encoding on /draneringsberakning/ alongside the langd length."
             },
             {
               "framework": "vitest",
