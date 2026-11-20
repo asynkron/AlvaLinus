@@ -111,13 +111,31 @@ describe("QuoteResultAside", () => {
     expect(screen.getByRole("status")).toBeEmptyDOMElement();
   });
 
-  it.each([true, false])("keeps the newest attempt's feedback when the older attempt succeeds: %s", async olderSucceeds => {
+  it.each([
+    [true, true],
+    [true, false],
+    [false, true],
+    [false, false],
+  ])("keeps feedback owned by the newest attempt (older succeeds: %s, older settles first: %s)", async (olderSucceeds, olderSettlesFirst) => {
     const older = pendingWrite();
     const newer = pendingWrite();
     useClipboard(vi.fn().mockReturnValueOnce(older.promise).mockReturnValueOnce(newer.promise));
     renderAside();
     fireEvent.click(screen.getByRole("button", { name: shared.shareLabel }));
     fireEvent.click(screen.getByRole("button", { name: shared.shareLabel }));
+
+    async function settleOlder() {
+      await act(async () => {
+        if (olderSucceeds) older.resolve();
+        else older.reject(new Error("clipboard denied"));
+      });
+    }
+
+    if (olderSettlesFirst) {
+      await settleOlder();
+      expect(screen.getByRole("status")).toBeEmptyDOMElement();
+      expect(screen.getByRole("link", { name: shareHref })).toHaveAttribute("href", shareHref);
+    }
 
     await act(async () => {
       if (olderSucceeds) newer.reject(new Error("clipboard denied"));
@@ -126,10 +144,7 @@ describe("QuoteResultAside", () => {
     const newestMessage = olderSucceeds ? shared.shareFallbackMessage : shared.shareCopiedMessage;
     expect(screen.getByRole("status")).toHaveTextContent(newestMessage);
 
-    await act(async () => {
-      if (olderSucceeds) older.resolve();
-      else older.reject(new Error("clipboard denied"));
-    });
+    if (!olderSettlesFirst) await settleOlder();
 
     expect(screen.getByRole("status")).toHaveTextContent(newestMessage);
     expect(screen.getByRole("link", { name: shareHref })).toHaveAttribute("href", shareHref);
