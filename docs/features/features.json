@@ -100,7 +100,7 @@
     },
     {
       "name": "Prepare a company staffing inquiry",
-      "description": "Company representatives collect company details, needed help, offered hourly rate with optional self-reported momsstatus, duration and a description, receive Swedish validation feedback, and hand a draft to their own email program. A stated basis appears beside the rate; omission preserves the declared draft body.",
+      "description": "Company representatives collect company details, needed help, offered hourly rate with optional self-reported momsstatus, duration and a description, receive Swedish validation feedback, and hand a draft to their own email program. A stated basis appears beside the rate; omission preserves the declared draft body. Editing fields or momsstatus clears the prior confirmation and reopen link; a fresh valid submit prepares current details.",
       "document": "docs/features/staffing-inquiry.md",
       "route_scope": "/inhyrning/",
       "routes": [
@@ -124,13 +124,13 @@
           "description": "Static content and route contracts, including the inquiry route kind, SiteInquiry.rateBasis select copy and SiteInquiryMail.rateBasisTemplate."
         }
       ],
-      "reviewed_against_source": "2026-11-19",
+      "reviewed_against_source": "2026-11-21",
       "slice_refs": [],
       "entry_point_refs": []
     },
     {
       "name": "Calculate a preliminary quote",
-      "description": "Visitors choose the husdränering or uppfart calculator, enter measurements and get a total-only preliminary quote they can carry onward through a share link carrying the measurements and any written note, email or print. Share feedback belongs to the current inputs and latest explicit sharing attempt; edits discard old feedback without publishing.",
+      "description": "Visitors choose husdränering or uppfart, enter measurements and select inclusive/exclusive VAT for a total-only preliminary estimate at or below 100 m² or 100 löpmeter; larger scopes show individual-contact guidance without a price. Explicit share links retain measurements, VAT mode and notes, while estimates also offer email and print. Edits discard old share feedback without publishing.",
       "document": "docs/features/quote-calculators.md",
       "route_scope": "/offertberakning/, /draneringsberakning/",
       "routes": [
@@ -171,7 +171,7 @@
           "description": "Quote route kind, the shared and per-calculator quote copy contracts and the calculator band contract."
         }
       ],
-      "reviewed_against_source": "2026-11-20",
+      "reviewed_against_source": "2026-11-21",
       "slice_refs": [],
       "entry_point_refs": []
     },

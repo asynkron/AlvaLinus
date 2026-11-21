@@ -1,6 +1,6 @@
 # F6: Calculate a preliminary quote
 
-Reviewed: 2026-11-20. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-21. Runtime: `ui`. Product role: `customer_outcome`.
 
 Visitors choose a driveway or husdränering calculator and get a total-only
 preliminary estimate for positive finite measurements up to and including 100.
@@ -78,11 +78,11 @@ for drainage. Exclusive VAT adds `moms=exkl`; absent or unknown VAT values
 default to inclusive, keeping old links compatible. Old `lass` parameters are ignored and never generated.
 A share restores the inputs on load and recomputes the estimate or the
 individual-contact state. Invalid shared values use normal validation.
-Changing measurements or notes, resetting values or making inputs invalid discards the old displayed share link and status. Editing alone does not publish another URL or write to the clipboard; valid inputs require a fresh explicit share action.
+Changing measurements, notes or VAT mode, resetting values or making inputs invalid discards the old displayed share link and status. Editing alone does not publish another URL or write to the clipboard; valid inputs require a fresh explicit share action.
 
 An obsolete clipboard resolution or rejection cannot restore discarded feedback, even after returning to the original inputs. Only the latest explicit sharing attempt can announce its result.
 
-A successful clipboard write announces: Länken har kopierats till urklipp. Rejection or an unavailable clipboard announces: Kopieringen misslyckades. Markera och kopiera länken ovan manuellt. The fallback leaves the current attempt's link available for manual copying.
+A successful clipboard write announces in `role="status"`: Länken har kopierats till urklipp. Rejection or an unavailable clipboard announces: Kopieringen misslyckades. Markera och kopiera länken ovan manuellt. The fallback leaves the current attempt's link available for manual copying.
 Nothing persists beyond the URL.
 
 [QuotePage](../../src/pages/QuotePage.tsx) and

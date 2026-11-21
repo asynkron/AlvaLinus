@@ -2,38 +2,38 @@
 
 Feature: [F6 — Calculate a preliminary quote](../../quote-calculators.md)  
 Status: current  
-Reviewed: 2026-11-20
+Reviewed: 2026-11-21
 
 As a project visitor, I want to print or save the preliminary quote, or share it through a link carrying the measurements and any written note, so I can keep or share the cost picture outside the browser session.
 
 ## Preconditions
 
-- A calculator shows a valid preliminary total.
+- A calculator has positive finite measurements; printing requires an estimate at or below 100 m² or 100 löpmeter. Larger scopes can still be shared for individual contact.
 
 ## Flow
 
-1. Enter valid measurements and read the announced total.
-2. Select "Skriv ut / spara som PDF" to open the browser's print dialog.
-3. Keep or share the printed page; it carries the same total-only content as the view.
-4. Or select "Skapa delbar länk" to write the measurements and any written note into the page URL and copy or send the displayed share link onward.
+1. Enter valid measurements and select Inkl. moms or Exkl. moms; read the total or the individual-quote contact state above 100.
+2. For an estimate, select "Skriv ut / spara som PDF" to open the browser's print dialog and keep the total with its selected VAT label.
+3. Or select "Skapa delbar länk" to write the measurements, selected VAT mode and any written note into the page URL.
+4. Read the Swedish copy confirmation or manual-copy fallback in role="status", then copy or send the displayed current link onward.
 
 ## Variants
 
-- Both calculators expose the same print control in the Din kostnadsbild aside; it stays disabled while input is invalid.
+- Both calculators expose the same print control in the Din kostnadsbild aside; it stays disabled while input is invalid or scope exceeds 100.
 - The share link encodes yta and the asphalt choice on /offertberakning/ while keeping the #uppfart hash, and längd on /draneringsberakning/, together with the optional project note (anteckning) whenever one is written; the control copies through the browser clipboard when that API is available and stays usable as a plain link when it is not.
-- Opening a share link restores the shared inputs and the note once on load and recomputes the identical total; missing parameters fall back to the example defaults and invalid shared values go through the existing invalid-input alert with the share control disabled alongside the email and print controls.
+- Opening a share link restores measurements, VAT mode and the note once on load and recomputes the estimate or individual-contact state; missing parameters fall back to the example defaults and invalid shared values go through the existing invalid-input alert with share, email and print disabled.
 
-- Changing measurements or notes, resetting values or making inputs invalid discards the old displayed share link and status. Editing alone does not publish another URL or write to the clipboard; valid inputs require a fresh explicit share action.
+- Changing measurements, notes or VAT mode, resetting values or making inputs invalid discards the old displayed share link and status. Editing alone does not publish another URL or write to the clipboard; valid inputs require a fresh explicit share action.
 - An obsolete clipboard resolution or rejection cannot restore discarded feedback, even after returning to the original inputs. Only the latest explicit sharing attempt can announce its result.
 - A successful clipboard write announces: Länken har kopierats till urklipp. Rejection or an unavailable clipboard announces: Kopieringen misslyckades. Markera och kopiera länken ovan manuellt. The fallback leaves the current attempt's link available for manual copying.
 
 ## Expected outcome
 
-The visitor hands the preliminary total to paper or a PDF through the browser's own print path, or carries the exact calculation onward through a share link carrying the measurements and any written note, whose recipient sees the same recomputed total; the website stores nothing beyond that link.
+The visitor keeps the preliminary total and selected VAT label through the browser's print path, or shares a link that restores measurements, VAT mode and any written note and recomputes the estimate or individual-contact state; the website stores nothing beyond that link.
 
 ## Failure and recovery
 
-The website cannot confirm that a printout or PDF was produced; browser and printer availability stay outside the site. The share control is disabled alongside the email and print controls while input is invalid. A recipient without the exact link URL starts from the example values.
+The website cannot confirm that a printout or PDF was produced; browser and printer availability stay outside the site. Invalid input disables email, print and share; scope above 100 instead keeps contact and share available with print disabled. Clipboard rejection or unavailability leaves the current link available with the Swedish manual-copy fallback. After edits discard the link/status, explicitly share again; obsolete clipboard completion cannot restore them. A recipient without the exact link URL starts from the example values.
 
 ## Source and evidence
 

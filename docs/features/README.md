@@ -1,7 +1,14 @@
 # Feature catalog
 
-Latest bounded source review: F4 route coverage and F6 sharing evidence on 2026-11-20;
+Latest bounded source review: F5 draft invalidation and F6 sharing states on 2026-11-21;
 other records retain their own review dates.
+
+The current review retains the twelve-route F4 coverage and the existing F6
+clipboard confirmation/fallback mappings already reconciled on the newer base.
+F6-US4 now carries the selected VAT label and the shareable individual-contact
+state through its primary flow and failure/recovery prose. F5-US2 maps the
+shipped form-edit invalidation of draft feedback to the existing page tests.
+These are source-reviewed mappings, not email, clipboard or test execution receipts.
 
 The catalog introduced in `f7b481f` already covers the current route inventory.
 The maintained catalog retains its published identities, including F4-US3 for

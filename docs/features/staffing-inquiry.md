@@ -1,6 +1,6 @@
 # F5: Prepare a company staffing inquiry
 
-Reviewed: 2026-11-19. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-21. Runtime: `ui`. Product role: `customer_outcome`.
 
 Companies that need hired help can prepare a staffing inquiry addressed to the
 company. The website cannot establish that an email was sent, delivered or
@@ -43,6 +43,12 @@ visitor's own email program, that the visitor sends the email themselves, that
 the website cannot send or confirm delivery, and repeats the draft as an
 "Öppna utkastet igen" fallback link. The static help line beside the submit
 button states the same handoff before submitting.
+
+Editing any of the nine fields or the optional momsstatus clears the previous
+confirmation and reopen link while retaining the current form values. Editing
+does not open another draft. A fresh valid submit creates the current draft;
+invalid submission or restoring an earlier value cannot revive the old feedback.
+This cannot retract a draft already opened in external email software.
 
 ## Outcome and support
 
@@ -118,6 +124,13 @@ textarea, the `.inquiry-layout` buttons and links and the `.inquiry-alert`
 summary to a 3px solid token outline with a 3px offset in the orange brand hue
 band, reading the page CSS only. The same declaration's quote-side rules map
 under F6-US5 in [quote-calculators.md](quote-calculators.md).
+
+F5-US2 also maps the existing page declarations for editing each of the nine
+fields, changing or clearing momsstatus, and invalid submission followed by
+restoring the earlier email. They check stale confirmation/link removal,
+retained form values, no draft opened by edits, and current details after a
+fresh valid submit through the injected opener. They do not control an external
+email draft or establish delivery.
 
 A mail handler can fail without a website error state. Recovery is copying the
 displayed address and details into a working email tool, or using the
