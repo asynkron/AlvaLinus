@@ -148,6 +148,7 @@ export function InquiryPage({ openDraft = openDefaultMailDraft }: InquiryPagePro
 
   function updateValue(key: InquiryFieldKey, event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const value = event.target.value;
+    setDraftHref("");
     setValues((current) => ({ ...current, [key]: value }));
     setErrors((current) => {
       if (!(key in current)) {
@@ -280,7 +281,10 @@ export function InquiryPage({ openDraft = openDefaultMailDraft }: InquiryPagePro
               <select
                 id="inquiry-rate-basis"
                 value={rateBasis}
-                onChange={(event: ChangeEvent<HTMLSelectElement>) => setRateBasis(event.target.value)}
+                onChange={(event: ChangeEvent<HTMLSelectElement>) => {
+                  setDraftHref("");
+                  setRateBasis(event.target.value);
+                }}
               >
                 <option value="">{inquiry.rateBasis.emptyOption}</option>
                 {inquiry.rateBasis.options.map((option) => (

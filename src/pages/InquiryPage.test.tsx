@@ -5,7 +5,6 @@ import { siteContent } from "../data/siteContent";
 import {
   InquiryPage,
   inquiryFieldOrder,
-  inquiryMailtoHref,
   validateInquiry,
   type InquiryFieldKey,
 } from "./InquiryPage";
@@ -59,9 +58,20 @@ function statedRateBasis(): string {
 }
 
 function draftBody(values: Record<InquiryFieldKey, string>): string {
-  return text.mail.bodyTemplate.replace(/\{(\w+)\}/g, (placeholder, key: string) =>
-    key in values ? values[key as InquiryFieldKey] : placeholder,
-  );
+  return [
+    "Förfrågan om inhyrning via webbplatsen.",
+    "",
+    `Företag: ${values.company}`,
+    `Kontaktperson: ${values.person}`,
+    `E-post: ${values.email}`,
+    `Telefon: ${values.phone}`,
+    `Organisationsnummer: ${values.org}`,
+    `Behov av inhyrning: ${values.work}`,
+    `Erbjudet timpris: ${values.rate} kr/timme`,
+    `Uppdragets längd: ${values.duration}`,
+    "Beskriv ärendet:",
+    values.description,
+  ].join("\n");
 }
 
 function fillField(label: string, value: string) {
@@ -167,19 +177,112 @@ describe("InquiryPage", () => {
     fillValidForm();
     submit();
 
-    const expected = inquiryMailtoHref(validValues);
-    expect(expected).toContain(`mailto:${recipient}?`);
     expect(openMailDraftSpy).toHaveBeenCalledTimes(1);
-    expect(openMailDraftSpy).toHaveBeenCalledWith(expected);
+    const href = openMailDraftSpy.mock.calls[0]?.[0] ?? "";
+    expect(href).toContain(`mailto:${recipient}?`);
 
-    const decoded = decodeURIComponent(expected);
+    const decoded = decodeURIComponent(href);
     expect(decoded).toContain(`subject=${text.mail.subject}`);
     expect(decoded).toContain(draftBody(validValues));
 
     const status = screen.getByRole("status");
     expect(status).toHaveTextContent(text.confirmationTemplate.replace("{recipient}", recipient));
     const reopen = screen.getByRole("link", { name: text.reopenLinkLabel });
-    expect(reopen).toHaveAttribute("href", expected);
+    expect(reopen).toHaveAttribute("href", href);
+  });
+
+  it.each<{ key: InquiryFieldKey; value: string }>([
+    { key: "company", value: "Nybygg & Söner AB" },
+    { key: "person", value: "Erik Eriksson" },
+    { key: "email", value: "erik@nybygg.se" },
+    { key: "phone", value: "070-987 65 43" },
+    { key: "org", value: "559988-7766" },
+    { key: "work", value: "Hjullastarförare" },
+    { key: "rate", value: "725" },
+    { key: "duration", value: "6 veckor från vecka 20" },
+    { key: "description", value: "Lastning vid ett vägbygge i Västerås." },
+  ])("discards the prepared draft after editing $key and resubmits current details", ({ key, value }) => {
+    renderPage();
+    fillValidForm();
+    submit();
+    expect(screen.getByRole("status")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: text.reopenLinkLabel })).toBeInTheDocument();
+
+    fillField(fieldLabel(key), value);
+
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: text.reopenLinkLabel })).not.toBeInTheDocument();
+    expect(openMailDraftSpy).toHaveBeenCalledTimes(1);
+    const updated = { ...validValues, [key]: value };
+    for (const field of inquiryFieldOrder) {
+      expect(screen.getByLabelText(fieldLabel(field))).toHaveValue(field === "rate" ? Number(updated[field]) : updated[field]);
+    }
+
+    submit();
+
+    expect(openMailDraftSpy).toHaveBeenCalledTimes(2);
+    const href = openMailDraftSpy.mock.calls[1]?.[0] ?? "";
+    expect(decodeURIComponent(href)).toContain(draftBody(updated));
+    expect(screen.getByRole("status")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: text.reopenLinkLabel })).toHaveAttribute("href", href);
+  });
+
+  it.each(["", statedRateBasis()])("discards the prepared draft when momsstatus changes to '%s'", (basis) => {
+    renderPage();
+    fillValidForm();
+    fillField(rateBasisLabel(), basis === "" ? statedRateBasis() : "");
+    submit();
+    expect(screen.getByRole("status")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: text.reopenLinkLabel })).toBeInTheDocument();
+
+    fillField(rateBasisLabel(), basis);
+
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: text.reopenLinkLabel })).not.toBeInTheDocument();
+    expect(openMailDraftSpy).toHaveBeenCalledTimes(1);
+    expect(screen.getByLabelText(rateBasisLabel())).toHaveValue(basis);
+    for (const field of inquiryFieldOrder) {
+      expect(screen.getByLabelText(fieldLabel(field))).toHaveValue(field === "rate" ? Number(validValues[field]) : validValues[field]);
+    }
+
+    submit();
+
+    expect(openMailDraftSpy).toHaveBeenCalledTimes(2);
+    const href = openMailDraftSpy.mock.calls[1]?.[0] ?? "";
+    expect(decodeURIComponent(href)).toContain(draftBody({
+      ...validValues,
+      rate: basis === "" ? "650" : `650 (${basis})`,
+    }));
+    expect(screen.getByRole("status")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: text.reopenLinkLabel })).toHaveAttribute("href", href);
+  });
+
+  it("keeps discarded feedback hidden through invalid submission and restoring the previous value", () => {
+    renderPage();
+    fillValidForm();
+    submit();
+
+    fillField(fieldLabel("email"), "invalid");
+    submit();
+
+    expect(openMailDraftSpy).toHaveBeenCalledTimes(1);
+    expect(screen.getByLabelText(fieldLabel("email"))).toHaveFocus();
+    expect(screen.getByRole("alert")).toHaveTextContent(text.errorSummary);
+    expect(screen.getByText(text.validation.emailInvalid)).toBeInTheDocument();
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: text.reopenLinkLabel })).not.toBeInTheDocument();
+
+    fillField(fieldLabel("email"), validValues.email);
+
+    expect(screen.queryByText(text.validation.emailInvalid)).not.toBeInTheDocument();
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: text.reopenLinkLabel })).not.toBeInTheDocument();
+    expect(openMailDraftSpy).toHaveBeenCalledTimes(1);
+
+    submit();
+    expect(openMailDraftSpy).toHaveBeenCalledTimes(2);
+    expect(decodeURIComponent(openMailDraftSpy.mock.calls[1]?.[0] ?? "")).toContain(draftBody(validValues));
+    expect(screen.getByRole("status")).toBeInTheDocument();
   });
 
   it("marks empty optional fields with a dash in the mail draft without blocking the handoff", () => {
@@ -207,32 +310,6 @@ describe("InquiryPage", () => {
       expect(screen.getByRole("option", { name: option })).toBeInTheDocument();
     }
     expect(screen.getByText(rateHint())).toHaveAttribute("id", "inquiry-rate-hint");
-  });
-
-  it("carries a stated momsstatus into the mail draft beside the offered rate", () => {
-    renderPage();
-    fillValidForm();
-    fireEvent.change(screen.getByLabelText(rateBasisLabel()), { target: { value: statedRateBasis() } });
-    submit();
-
-    expect(openMailDraftSpy).toHaveBeenCalledTimes(1);
-    const decoded = decodeURIComponent(openMailDraftSpy.mock.calls[0]?.[0] ?? "");
-    expect(decoded).toContain(
-      `Erbjudet timpris: ${validValues.rate}${text.mail.rateBasisTemplate.replace("{basis}", statedRateBasis())} kr/timme`,
-    );
-  });
-
-  it("keeps the mail draft byte-identical to the declared body when momsstatus is omitted", () => {
-    expect(inquiryMailtoHref(validValues)).toBe(inquiryMailtoHref(validValues, ""));
-
-    renderPage();
-    fillValidForm();
-    submit();
-
-    expect(openMailDraftSpy).toHaveBeenCalledTimes(1);
-    const decoded = decodeURIComponent(openMailDraftSpy.mock.calls[0]?.[0] ?? "");
-    expect(decoded).toContain(draftBody(validValues));
-    expect(decoded).not.toContain(text.mail.rateBasisTemplate.replace("{basis}", text.mail.emptyValue));
   });
 
   it("keeps validation in helper functions so optional fields stay out of the error set", () => {
