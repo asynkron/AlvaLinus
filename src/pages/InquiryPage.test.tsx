@@ -25,7 +25,7 @@ const validValues: Record<InquiryFieldKey, string> = {
   work: "Grävmaskinist",
   rate: "650",
   duration: "3 veckor från vecka 12",
-  description: "Vi söker en grävmaskinist till ett bostadsbygge i Örebro.",
+  description: "Vi söker en grävmaskinist till ett bostadsbygge i Örebro.\nÅterkom gärna – ange referens $&!",
 };
 
 function fieldLabel(key: InquiryFieldKey): string {
@@ -72,6 +72,13 @@ function draftBody(values: Record<InquiryFieldKey, string>): string {
     "Beskriv ärendet:",
     values.description,
   ].join("\n");
+}
+
+function expectSelectableDraft(values: Record<InquiryFieldKey, string>) {
+  const preview = screen.getByRole("textbox", { name: "Utkast att kopiera" });
+  expect(preview).toHaveAttribute("readonly");
+  expect(preview).not.toBeDisabled();
+  expect(preview).toHaveValue(`Till: ${recipient}\nÄmne: Förfrågan om inhyrning\n\n${draftBody(values)}`);
 }
 
 function fillField(label: string, value: string) {
@@ -134,6 +141,7 @@ describe("InquiryPage", () => {
 
     expect(openMailDraftSpy).not.toHaveBeenCalled();
     expect(screen.getByRole("alert")).toHaveTextContent(text.errorSummary);
+    expect(screen.queryByRole("textbox", { name: "Utkast att kopiera" })).not.toBeInTheDocument();
     expect(screen.getByText(text.validation.companyRequired)).toBeInTheDocument();
     expect(screen.getByText(text.validation.personRequired)).toBeInTheDocument();
     expect(screen.getByText(text.validation.emailRequired)).toBeInTheDocument();
@@ -189,6 +197,7 @@ describe("InquiryPage", () => {
     expect(status).toHaveTextContent(text.confirmationTemplate.replace("{recipient}", recipient));
     const reopen = screen.getByRole("link", { name: text.reopenLinkLabel });
     expect(reopen).toHaveAttribute("href", href);
+    expectSelectableDraft(validValues);
   });
 
   it.each<{ key: InquiryFieldKey; value: string }>([
@@ -212,6 +221,7 @@ describe("InquiryPage", () => {
 
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: text.reopenLinkLabel })).not.toBeInTheDocument();
+    expect(screen.queryByRole("textbox", { name: "Utkast att kopiera" })).not.toBeInTheDocument();
     expect(openMailDraftSpy).toHaveBeenCalledTimes(1);
     const updated = { ...validValues, [key]: value };
     for (const field of inquiryFieldOrder) {
@@ -223,6 +233,7 @@ describe("InquiryPage", () => {
     expect(openMailDraftSpy).toHaveBeenCalledTimes(2);
     const href = openMailDraftSpy.mock.calls[1]?.[0] ?? "";
     expect(decodeURIComponent(href)).toContain(draftBody(updated));
+    expectSelectableDraft(updated);
     expect(screen.getByRole("status")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: text.reopenLinkLabel })).toHaveAttribute("href", href);
   });
@@ -239,6 +250,7 @@ describe("InquiryPage", () => {
 
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: text.reopenLinkLabel })).not.toBeInTheDocument();
+    expect(screen.queryByRole("textbox", { name: "Utkast att kopiera" })).not.toBeInTheDocument();
     expect(openMailDraftSpy).toHaveBeenCalledTimes(1);
     expect(screen.getByLabelText(rateBasisLabel())).toHaveValue(basis);
     for (const field of inquiryFieldOrder) {
@@ -253,6 +265,7 @@ describe("InquiryPage", () => {
       ...validValues,
       rate: basis === "" ? "650" : `650 (${basis})`,
     }));
+    expectSelectableDraft({ ...validValues, rate: basis === "" ? "650" : `650 (${basis})` });
     expect(screen.getByRole("status")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: text.reopenLinkLabel })).toHaveAttribute("href", href);
   });
@@ -269,12 +282,14 @@ describe("InquiryPage", () => {
     expect(screen.getByLabelText(fieldLabel("email"))).toHaveFocus();
     expect(screen.getByRole("alert")).toHaveTextContent(text.errorSummary);
     expect(screen.getByText(text.validation.emailInvalid)).toBeInTheDocument();
+    expect(screen.queryByRole("textbox", { name: "Utkast att kopiera" })).not.toBeInTheDocument();
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: text.reopenLinkLabel })).not.toBeInTheDocument();
 
     fillField(fieldLabel("email"), validValues.email);
 
     expect(screen.queryByText(text.validation.emailInvalid)).not.toBeInTheDocument();
+    expect(screen.queryByRole("textbox", { name: "Utkast att kopiera" })).not.toBeInTheDocument();
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: text.reopenLinkLabel })).not.toBeInTheDocument();
     expect(openMailDraftSpy).toHaveBeenCalledTimes(1);
@@ -283,6 +298,7 @@ describe("InquiryPage", () => {
     expect(openMailDraftSpy).toHaveBeenCalledTimes(2);
     expect(decodeURIComponent(openMailDraftSpy.mock.calls[1]?.[0] ?? "")).toContain(draftBody(validValues));
     expect(screen.getByRole("status")).toBeInTheDocument();
+    expectSelectableDraft(validValues);
   });
 
   it("marks empty optional fields with a dash in the mail draft without blocking the handoff", () => {
@@ -292,7 +308,8 @@ describe("InquiryPage", () => {
 
     expect(openMailDraftSpy).toHaveBeenCalledTimes(1);
     const decoded = decodeURIComponent(openMailDraftSpy.mock.calls[0]?.[0] ?? "");
-    expect(decoded).toContain(draftBody({ ...validValues, phone: text.mail.emptyValue, org: text.mail.emptyValue }));
+    expect(decoded).toContain(draftBody({ ...validValues, phone: "–", org: "–" }));
+    expectSelectableDraft({ ...validValues, phone: "–", org: "–" });
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
 

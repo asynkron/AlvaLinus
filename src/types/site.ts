@@ -236,6 +236,11 @@ export type SiteInquiry = {
   readonly confirmationTemplate: string;
   readonly reopenPrompt: string;
   readonly reopenLinkLabel: string;
+  readonly draft: {
+    readonly label: string;
+    readonly help: string;
+    readonly textTemplate: string;
+  };
   readonly asideAriaLabel: string;
   readonly asideHeading: string;
   readonly asideSummary: string;

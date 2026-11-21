@@ -510,7 +510,7 @@
           "Visible email fallback",
           "Handoff explanation associated with the form"
         ],
-        "current_limitations": "A configured mail client is required. The site stores no inquiry, tracks no delivery and displays no confirmed-send state; no email or phone field is collected.",
+        "current_limitations": "Mailto requires a configured mail client; the complete selectable draft can instead be copied into webmail without clipboard permissions. The site stores no inquiry, tracks no delivery and displays no confirmed-send state; no email or phone field is collected.",
         "failure_behavior": "Browser validation can block blank required fields; a missing or incompatible mail client can prevent handoff without a site error receipt.",
         "recovery": "Use the displayed email address in a working mail client. Retype or copy details; the site offers no persistent draft recovery.",
         "runtime_owners": [
@@ -1124,7 +1124,7 @@
           "Swedish per-field validation feedback",
           "Mail-draft handoff with a stated basis beside the rate or the unchanged declared body on omission, plus self-send confirmation",
           "Fallback reopen draft link",
-          "Edited form retains values but discards the prior draft confirmation and reopen link"
+          "Edited form retains values but discards the prior draft confirmation, selectable preview and reopen link"
         ],
         "current_limitations": "A configured mail client is required. The site stores no inquiry, tracks no delivery and displays no confirmed-send state. The rate's momsstatus is optional and self-reported through the select or description; Ej angivet leaves it unspecified and the site never confirms a stated basis.",
         "failure_behavior": "Custom Swedish validation blocks blank required fields, a malformed email and a missing, non-numeric or negative rate with per-field messages and an alert summary; a missing or incompatible mail client can prevent handoff without a site error receipt.",
@@ -1244,28 +1244,28 @@
               "path": "src/pages/InquiryPage.test.tsx",
               "name": "opens a mail draft to the existing contact address with every supplied detail and explains the manual send",
               "evidence_type": "direct",
-              "supports": "Checks the handed-off mailto recipient, subject and decoded body values, the injected draft opener call, the role=status self-send confirmation with the recipient address and the fallback link carrying the same draft. Uses an injected opener, so it does not exercise a real email program."
+              "supports": "Checks the handed-off mailto recipient, subject and decoded body values, the injected draft opener call, the role=status self-send confirmation with the recipient address and the fallback link carrying the same draft, and the read-only selectable complete draft against independent expected recipient, subject and body values including Swedish multiline text. Uses an injected opener, so it does not exercise a real email program."
             },
             {
               "framework": "vitest",
               "path": "src/pages/InquiryPage.test.tsx",
               "name": "marks empty optional fields with a dash in the mail draft without blocking the handoff",
               "evidence_type": "direct",
-              "supports": "Checks the dash placeholders for empty optional fields and the absence of an alert on the successful handoff."
+              "supports": "Checks independent expected dash placeholders in the mailto and selectable draft and the absence of an alert on the successful handoff."
             },
             {
               "framework": "vitest",
               "path": "src/pages/InquiryPage.test.tsx",
               "name": "discards the prepared draft after editing $key and resubmits current details",
               "evidence_type": "direct",
-              "supports": "Nine field-edit cases check removal of the prior status/reopen link, retained current values, no new opener call during edits and current decoded draft details after resubmission. Uses an injected opener, not a real mail client."
+              "supports": "Nine field-edit cases check removal of the prior status/reopen link and selectable preview, retained current values, no new opener call during edits and current decoded draft details after resubmission. Uses an injected opener, not a real mail client."
             },
             {
               "framework": "vitest",
               "path": "src/pages/InquiryPage.test.tsx",
               "name": "discards the prepared draft when momsstatus changes to '%s'",
               "evidence_type": "direct",
-              "supports": "Selecting or clearing momsstatus removes the prior status/link without opening a draft or losing field values; resubmission carries the selected basis or omits it. Uses an injected opener."
+              "supports": "Selecting or clearing momsstatus removes the prior status/link/preview without opening a draft or losing field values; resubmission carries the selected basis or omits it. Uses an injected opener."
             },
             {
               "framework": "vitest",
@@ -1313,7 +1313,7 @@
           "entry_point_refs": [],
           "preconditions": [
             "All required fields contain valid values.",
-            "A mail client is configured for the handoff."
+            "A mail client is needed for mailto; manual copying into webmail needs no handler or clipboard API."
           ],
           "flow": [
             "Complete the staffing inquiry form with valid values and optionally select the offered rate's momsstatus.",
@@ -1327,11 +1327,11 @@
             "A selected inklusive moms or exklusive moms basis is appended in parentheses beside the offered rate; it remains the visitor's statement, not a confirmed VAT basis.",
             "Leaving Momsstatus för timpriset on Ej angivet preserves the declared draft body without appending a basis or a momsstatus dash and does not block the handoff.",
             "The static help line beside the submit button states the draft handoff and the manual send before submitting.",
-            "Editing any field or changing/clearing momsstatus removes the previous confirmation and reopen link without opening another draft or clearing current inputs. A fresh valid submit creates a draft from the current values."
+            "Editing any field or changing/clearing momsstatus removes the previous confirmation, selectable preview and reopen link without opening another draft or clearing current inputs. A fresh valid submit creates a draft from the current values."
           ],
           "expected_outcome": "The form requests a mailto handoff to linus.svardd@outlook.com with the staffing subject and details; the visitor sends the email themselves and delivery is not established.",
           "failure_behavior": "The mail handler may fail to open; the page cannot confirm acceptance or sending.",
-          "recovery": "Use the reopen-draft fallback link or copy the displayed address and details into working email software; the site offers no persistent draft recovery or alternate transport. After edits discard the old feedback, submit valid current details again; invalid submission or restoring an earlier value cannot revive it. A draft already opened in external email software is outside this reset."
+          "recovery": "Use the reopen-draft fallback link or copy the complete read-only selectable draft (recipient, subject and labeled body) into working email software; the site offers no persistent draft recovery or alternate transport. After edits discard the old feedback, submit valid current details again; invalid submission or restoring an earlier value cannot revive it. A draft already opened in external email software is outside this reset."
         }
       ],
       "user_story_documents": [

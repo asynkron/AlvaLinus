@@ -45,7 +45,7 @@ the website cannot send or confirm delivery, and repeats the draft as an
 button states the same handoff before submitting.
 
 Editing any of the nine fields or the optional momsstatus clears the previous
-confirmation and reopen link while retaining the current form values. Editing
+confirmation, selectable preview and reopen link while retaining the current form values. Editing
 does not open another draft. A fresh valid submit creates the current draft;
 invalid submission or restoring an earlier value cannot revive the old feedback.
 This cannot retract a draft already opened in external email software.
@@ -56,11 +56,13 @@ Observable checks are locating the nine original form fields in mockup order plu
 optional momsstatus select, reading the Swedish validation messages for missing
 company details, an invalid email and
 a negative rate, and inspecting the drafted recipient, subject and body after a
-valid submit. An actual send must be confirmed outside the site. No funnel
+valid submit. The same composition also renders a read-only selectable textarea
+with recipient, subject and labeled body, even when the injected mail opener does
+nothing. Swedish characters and internal newlines are preserved. An actual send must be confirmed outside the site. No funnel
 measurement, delivery tracking or response-time metric is installed. F4
 supplies navigation. Unlike the F3 customer inquiry this form has no backend,
-no stored draft and no confirmation screen; the handoff is
-the page's single submission channel.
+no persistent draft and no confirmation screen; the visitor sends through
+their own email tool.
 
 ## Source, states and evidence
 
@@ -74,13 +76,14 @@ and the rate's VAT hint with the optional mark, the rate's momsstatus select
 label, empty option and declared options, every validation message, the
 mail subject, the body template with `{placeholder}` substitution, the
 momsstatus draft template and the empty-value dash, the `{recipient}`
-mail-help and confirmation templates, the reopen prompt and link label, and
+mail-help and confirmation templates, the reopen prompt and link label, the selectable draft label, help and addressed
+text template, and
 the aside copy.
 [The inquiry page](../../src/pages/InquiryPage.tsx) keeps the runtime
 ownership: the input attribute specs in `inquiryFields` (optional flags, input
 types, autocomplete tokens, `inputMode`, `min`/`step` and textarea rows), the
 field order and email pattern, `validateInquiry` execution,
-`inquiryMailtoHref` composition using the shared recipient from
+`composeInquiryDraft` composition using the shared recipient from
 `contact.form.recipientEmail`, rendering with `aria-invalid` and
 `aria-describedby` wiring, the alert summary and focus management, and the
 status confirmation with the reopen fallback, and receives the draft opener
@@ -99,7 +102,9 @@ empty default and declared options. The validation
 declarations check the Swedish messages, focus movement and that no draft is
 opened for invalid input. The mail-draft declaration checks the recipient,
 subject, labeled body values, the self-send confirmation and the fallback link;
-a separate declaration checks phone and organization dashes. F5-US2 additionally maps
+a separate declaration checks phone and organization dashes in both outputs.
+These existing page cases also inspect the selectable textarea against independent
+expected recipient, subject and body values, including multiline Swedish text. F5-US2 additionally maps
 `carries a stated momsstatus into the mail draft beside the offered rate` and
 `keeps the mail draft byte-identical to the declared body when momsstatus is omitted`:
 these inspect the decoded draft at an injected opener, including the selected
@@ -127,7 +132,7 @@ under F6-US5 in [quote-calculators.md](quote-calculators.md).
 
 F5-US2 also maps the existing page declarations for editing each of the nine
 fields, changing or clearing momsstatus, and invalid submission followed by
-restoring the earlier email. They check stale confirmation/link removal,
+restoring the earlier email. They check stale confirmation/link/preview removal,
 retained form values, no draft opened by edits, and current details after a
 fresh valid submit through the injected opener. They do not control an external
 email draft or establish delivery.
@@ -140,9 +145,10 @@ handoff; this catalog makes no privacy-law or compliance assurance claim.
 
 ## What Works Less Well
 
-Sending still depends on a configured compatible email handler; the website
-cannot confirm delivery or receipt by design. The fallback link still requires
-an email handler. The rate's momsstatus select is optional and self-reported:
+The website cannot confirm delivery or receipt by design. The fallback link
+requires an email handler, but Utkast att kopiera contains the recipient,
+subject and complete labeled body for manual copying into webmail without
+clipboard permissions. The rate's momsstatus select is optional and self-reported:
 visitors who leave it on "Ej angivet" still leave the VAT basis to their
 description, and the website never assumes or confirms a stated basis.
 
