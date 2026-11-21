@@ -508,6 +508,11 @@ export const siteContent = {
       "Webbplatsen har bett ditt e-postprogram öppna ett utkast till {recipient} med uppgifterna ifyllda. Granska utkastet och skicka mejlet själv – webbplatsen kan inte skicka eller bekräfta att mejlet har levererats.",
     reopenPrompt: "Öppnas inte ditt e-postprogram?",
     reopenLinkLabel: "Öppna utkastet igen",
+    draft: {
+      label: "Utkast att kopiera",
+      help: "Markera och kopiera texten nedan till din webbmejl eller ett annat e-postprogram. Granska och skicka mejlet själv. Om du ändrar uppgifterna behöver du förbereda utkastet igen.",
+      textTemplate: "Till: {recipient}\nÄmne: {subject}\n\n{body}",
+    },
     asideAriaLabel: "Bra att veta inför förfrågan",
     asideHeading: "En tydlig start",
     asideSummary:

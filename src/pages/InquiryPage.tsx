@@ -80,11 +80,11 @@ export function validateInquiry(values: InquiryValues): InquiryErrors {
   return errors;
 }
 
-export function inquiryMailtoHref(
+function composeInquiryDraft(
   values: InquiryValues,
   rateBasis: string = "",
   recipient: string = siteContent.contact.form.recipientEmail,
-): string {
+) {
   const mail = inquiry.mail;
   const orDash = (value: string) => (value.trim() === "" ? mail.emptyValue : value.trim());
   const rateWithBasis = values.rate.trim() + (rateBasis === "" ? "" : mail.rateBasisTemplate.replace("{basis}", rateBasis));
@@ -103,7 +103,13 @@ export function inquiryMailtoHref(
     key in filled ? filled[key as InquiryFieldKey] : placeholder,
   );
 
-  return `mailto:${recipient}?subject=${encodeURIComponent(mail.subject)}&body=${encodeURIComponent(body)}`;
+  return {
+    href: `mailto:${recipient}?subject=${encodeURIComponent(mail.subject)}&body=${encodeURIComponent(body)}`,
+    text: inquiry.draft.textTemplate
+      .replace("{recipient}", recipient)
+      .replace("{subject}", mail.subject)
+      .replace("{body}", () => body),
+  };
 }
 
 type InquiryFieldSpec = {
@@ -143,12 +149,12 @@ export function InquiryPage({ openDraft = openDefaultMailDraft }: InquiryPagePro
   const [values, setValues] = useState<InquiryValues>(inquiryDefaults);
   const [errors, setErrors] = useState<InquiryErrors>({});
   const [rateBasis, setRateBasis] = useState("");
-  const [draftHref, setDraftHref] = useState("");
+  const [draft, setDraft] = useState<ReturnType<typeof composeInquiryDraft> | null>(null);
   const recipient = siteContent.contact.form.recipientEmail;
 
   function updateValue(key: InquiryFieldKey, event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const value = event.target.value;
-    setDraftHref("");
+    setDraft(null);
     setValues((current) => ({ ...current, [key]: value }));
     setErrors((current) => {
       if (!(key in current)) {
@@ -165,7 +171,7 @@ export function InquiryPage({ openDraft = openDefaultMailDraft }: InquiryPagePro
     event.preventDefault();
     const nextErrors = validateInquiry(values);
     setErrors(nextErrors);
-    setDraftHref("");
+    setDraft(null);
 
     const firstInvalid = inquiryFieldOrder.find((key) => key in nextErrors);
 
@@ -174,9 +180,9 @@ export function InquiryPage({ openDraft = openDefaultMailDraft }: InquiryPagePro
       return;
     }
 
-    const href = inquiryMailtoHref(values, rateBasis);
-    setDraftHref(href);
-    openDraft(href);
+    const prepared = composeInquiryDraft(values, rateBasis);
+    setDraft(prepared);
+    openDraft(prepared.href);
   }
 
   function renderField(field: InquiryFieldSpec) {
@@ -282,7 +288,7 @@ export function InquiryPage({ openDraft = openDefaultMailDraft }: InquiryPagePro
                 id="inquiry-rate-basis"
                 value={rateBasis}
                 onChange={(event: ChangeEvent<HTMLSelectElement>) => {
-                  setDraftHref("");
+                  setDraft(null);
                   setRateBasis(event.target.value);
                 }}
               >
@@ -301,14 +307,27 @@ export function InquiryPage({ openDraft = openDefaultMailDraft }: InquiryPagePro
               <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
             </Button>
             <p className="inquiry-help">{inquiry.mailHelpTemplate.replace("{recipient}", recipient)}</p>
-            {draftHref ? (
-              <div role="status" className="inquiry-confirmation">
-                <p>{inquiry.confirmationTemplate.replace("{recipient}", recipient)}</p>
-                <p>
-                  {inquiry.reopenPrompt}{" "}
-                  <a href={draftHref}>{inquiry.reopenLinkLabel}</a>.
-                </p>
-              </div>
+            {draft ? (
+              <>
+                <div role="status" className="inquiry-confirmation">
+                  <p>{inquiry.confirmationTemplate.replace("{recipient}", recipient)}</p>
+                  <p>
+                    {inquiry.reopenPrompt}{" "}
+                    <a href={draft.href}>{inquiry.reopenLinkLabel}</a>.
+                  </p>
+                </div>
+                <div className="inquiry-field">
+                  <label htmlFor="inquiry-draft">{inquiry.draft.label}</label>
+                  <small id="inquiry-draft-help" className="inquiry-hint">{inquiry.draft.help}</small>
+                  <textarea
+                    id="inquiry-draft"
+                    aria-describedby="inquiry-draft-help"
+                    readOnly
+                    rows={16}
+                    value={draft.text}
+                  />
+                </div>
+              </>
             ) : null}
           </form>
         </section>

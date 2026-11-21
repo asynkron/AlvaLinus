@@ -16,6 +16,8 @@ values. Include reset from changed values and invalid-to-valid recovery (fk292).
 
 For inquiry email drafts, clear the prepared confirmation and recovery link on
 every field edit, including optional fields and the separate momsstatus select.
+Clear the selectable plain-text recovery draft in the same prepared state;
+derive it and the mailto handoff from one composition (fk304).
 Keep form values intact and open a new draft only on explicit valid submission.
 Cover each control through rendered form interactions and inspect the actual
 mail output against independently expected details (fk298).
