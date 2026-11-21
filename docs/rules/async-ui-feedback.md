@@ -13,3 +13,9 @@ page (fk276). Use actual page interactions for the distinct event-wiring
 boundary: share before each field edit, assert feedback removal without URL or
 clipboard publication, then explicitly share independently expected current
 values. Include reset from changed values and invalid-to-valid recovery (fk292).
+
+For inquiry email drafts, clear the prepared confirmation and recovery link on
+every field edit, including optional fields and the separate momsstatus select.
+Keep form values intact and open a new draft only on explicit valid submission.
+Cover each control through rendered form interactions and inspect the actual
+mail output against independently expected details (fk298).
