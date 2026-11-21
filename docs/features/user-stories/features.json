@@ -1806,6 +1806,13 @@
           "test_references": [
             {
               "framework": "vitest",
+              "path": "src/components/QuoteResultAside.test.tsx",
+              "name": "discloses shared notes and recipient access before sharing",
+              "evidence_type": "direct",
+              "supports": "Visible Swedish guidance discloses measurements, options/VAT, project notes and recipient readability before sharing, including after a note-bearing input update, without URL or clipboard publication."
+            },
+            {
+              "framework": "vitest",
               "path": "src/pages/QuotePage.test.tsx",
               "name": "discards driveway share feedback on actual edits and explicitly shares current inputs (%s)",
               "evidence_type": "direct",
