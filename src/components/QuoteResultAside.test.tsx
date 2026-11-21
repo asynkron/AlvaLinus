@@ -31,6 +31,29 @@ afterEach(() => {
 });
 
 describe("QuoteResultAside", () => {
+  it("discloses shared notes and recipient access before sharing", () => {
+    const writeText = vi.fn(() => Promise.resolve());
+    useClipboard(writeText);
+    const originalUrl = window.location.href;
+    const update = renderAside();
+
+    function expectDisclosure() {
+      const help = screen.getByText(/alla som får länken kan läsa/i);
+      expect(help).toBeVisible();
+      expect(help).toHaveTextContent(/mått/i);
+      expect(help).toHaveTextContent(/tillval och moms/i);
+      expect(help).toHaveTextContent(/projektanteckningar/i);
+      expect(screen.getByRole("button", { name: shared.shareLabel })).toBeEnabled();
+      expect(screen.queryByRole("link", { name: /^https?:/ })).not.toBeInTheDocument();
+      expect(writeText).not.toHaveBeenCalled();
+      expect(window.location.href).toBe(originalUrl);
+    }
+
+    expectDisclosure();
+    update(`${shareHref}&anteckning=Privat%20projektanteckning`);
+    expectDisclosure();
+  });
+
   it("announces the Swedish copy confirmation when the clipboard write resolves", async () => {
     const writeText = vi.fn(() => Promise.resolve());
     useClipboard(writeText);

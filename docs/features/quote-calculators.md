@@ -72,6 +72,12 @@ print and share actions. Reset restores each page's defaults and clears notes.
 
 ## Share and static architecture
 
+Before either calculator's explicit share action, Swedish help explains that
+the link includes measurements, options, VAT mode and any project notes, and
+that anyone receiving it can read its contents. The help remains visible with
+notes entered. QuoteResultAside.test.tsx owns this pre-action disclosure check;
+existing page and URL declarations retain note restoration and edit coverage.
+
 Skapa delbar länk writes `yta`, `asfalt` and optional `anteckning`
 for driveway, preserving `#uppfart`, or `langd` and optional `anteckning`
 for drainage. Exclusive VAT adds `moms=exkl`; absent or unknown VAT values

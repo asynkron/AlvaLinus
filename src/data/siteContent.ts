@@ -420,7 +420,7 @@ export const siteContent = {
       mailHelp: "Öppnar ditt e-postprogram. Inget skickas automatiskt.",
       printLabel: "Skriv ut / spara som PDF",
       shareLabel: "Skapa delbar länk",
-      shareHelp: "Länken innehåller dina mått. Den som öppnar den ser samma beräkning.",
+      shareHelp: "Länken innehåller dina mått, val av tillval och moms samt eventuella projektanteckningar. Alla som får länken kan läsa innehållet och se samma beräkning.",
       shareCopiedMessage: "Länken har kopierats till urklipp.",
       shareFallbackMessage: "Kopieringen misslyckades. Markera och kopiera länken ovan manuellt.",
     },

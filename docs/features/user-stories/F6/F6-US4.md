@@ -14,7 +14,7 @@ As a project visitor, I want to print or save the preliminary quote, or share it
 
 1. Enter valid measurements and select Inkl. moms or Exkl. moms; read the total or the individual-quote contact state above 100.
 2. For an estimate, select "Skriv ut / spara som PDF" to open the browser's print dialog and keep the total with its selected VAT label.
-3. Or select "Skapa delbar länk" to write the measurements, selected VAT mode and any written note into the page URL.
+3. Or read the Swedish help explaining that measurements, options, VAT mode and any project notes will be readable by anyone receiving the link, then select "Skapa delbar länk" to write them into the page URL. The help is visible before sharing, including with a note entered.
 4. Read the Swedish copy confirmation or manual-copy fallback in role="status", then copy or send the displayed current link onward.
 
 ## Variants
@@ -36,6 +36,8 @@ The visitor keeps the preliminary total and selected VAT label through the brows
 The website cannot confirm that a printout or PDF was produced; browser and printer availability stay outside the site. Invalid input disables email, print and share; scope above 100 instead keeps contact and share available with print disabled. Clipboard rejection or unavailability leaves the current link available with the Swedish manual-copy fallback. After edits discard the link/status, explicitly share again; obsolete clipboard completion cannot restore them. A recipient without the exact link URL starts from the example values.
 
 ## Source and evidence
+
+- vitest, [QuoteResultAside.test.tsx](../../../../src/components/QuoteResultAside.test.tsx), declaration `discloses shared notes and recipient access before sharing` (direct): Checks visible Swedish disclosure of measurements, options/VAT, notes and recipient readability before sharing, including after a note-bearing input update, without URL or clipboard publication. Source declaration only; native quality owns execution.
 
 - [src/pages/QuotePage.tsx](../../../../src/pages/QuotePage.tsx)
 - [src/pages/DrainageQuotePage.tsx](../../../../src/pages/DrainageQuotePage.tsx)
