@@ -2,7 +2,7 @@
 
 Feature: [F5 — Prepare a company staffing inquiry](../../staffing-inquiry.md)  
 Status: current  
-Reviewed: 2026-11-19
+Reviewed: 2026-11-21
 
 As a company representative, I want the staffing inquiry handed to my own email program as a draft addressed to the company, so I can review and send it myself.
 
@@ -26,6 +26,7 @@ As a company representative, I want the staffing inquiry handed to my own email 
 - Leaving Momsstatus för timpriset on Ej angivet preserves the declared draft body without appending a basis or a dash for momsstatus and does not block the handoff.
 - The static help line beside the submit button states the draft handoff and the manual send before submitting.
 - The fallback link carries the same draft as the handed-off href.
+- Editing any field or changing/clearing momsstatus removes the previous confirmation and reopen link without opening another draft or clearing current inputs. A fresh valid submit creates a draft from the current values.
 
 ## Expected outcome
 
@@ -37,6 +38,8 @@ The mail handler may fail to open; the page cannot confirm acceptance or sending
 
 Use the Öppna utkastet igen link, or copy the displayed address and details into working email software; the site offers no persistent draft recovery or alternate transport.
 
+After edits discard the old feedback, submit valid current details again. Invalid submission or restoring an earlier value cannot revive the old confirmation or link. A draft already opened in external email software is outside this reset.
+
 ## Source and evidence
 
 - [src/pages/InquiryPage.tsx](../../../../src/pages/InquiryPage.tsx)
@@ -47,6 +50,9 @@ Use the Öppna utkastet igen link, or copy the displayed address and details int
 
 - vitest, [src/pages/InquiryPage.test.tsx](../../../../src/pages/InquiryPage.test.tsx), declaration `opens a mail draft to the existing contact address with every supplied detail and explains the manual send` (direct): Checks the handed-off mailto recipient, subject and decoded body values, the call into the injected draft opener, the role="status" self-send confirmation with the recipient address and the fallback link carrying the same draft. Uses an injected opener, so it does not exercise a real email program.
 - vitest, [src/pages/InquiryPage.test.tsx](../../../../src/pages/InquiryPage.test.tsx), declaration `marks empty optional fields with a dash in the mail draft without blocking the handoff` (direct): Checks the dash placeholders for empty optional fields and the absence of an alert on the successful handoff.
+- vitest, [src/pages/InquiryPage.test.tsx](../../../../src/pages/InquiryPage.test.tsx), declaration `discards the prepared draft after editing $key and resubmits current details` (direct): Nine field-edit cases check removal of the prior status/reopen link, retained current values, no new opener call during edits and current decoded draft details after resubmission. Uses an injected opener, not a real mail client.
+- vitest, [src/pages/InquiryPage.test.tsx](../../../../src/pages/InquiryPage.test.tsx), declaration `discards the prepared draft when momsstatus changes to '%s'` (direct): Selecting or clearing momsstatus removes the prior status/link without opening a draft or losing field values; resubmission carries the selected basis or omits it. Uses an injected opener.
+- vitest, [src/pages/InquiryPage.test.tsx](../../../../src/pages/InquiryPage.test.tsx), declaration `keeps discarded feedback hidden through invalid submission and restoring the previous value` (direct): An invalid email blocks the opener, shows Swedish validation and focus, and keeps stale feedback absent even after restoring the email; only valid resubmission opens a fresh draft. Does not establish email delivery.
 - vitest, [src/pages/InquiryPage.test.tsx](../../../../src/pages/InquiryPage.test.tsx), declaration `carries a stated momsstatus into the mail draft beside the offered rate` (direct): Selects the declared exklusive moms option and checks the decoded rate line received by the injected draft opener. Does not exercise a real email program or verify the stated VAT basis.
 - vitest, [src/pages/InquiryPage.test.tsx](../../../../src/pages/InquiryPage.test.tsx), declaration `keeps the mail draft byte-identical to the declared body when momsstatus is omitted` (direct): Checks default versus explicit empty helper input and the form's decoded draft against the declared body, without a momsstatus dash suffix. Uses an injected opener; it does not establish email delivery.
 - vitest, [src/styles.primary-contrast.test.ts](../../../../src/styles.primary-contrast.test.ts), declaration `keeps white primary-foreground labels readable on primary buttons at WCAG AA` (technical): Token-level stylesheet check pins the white `--primary-foreground` label against the `--primary` button surface at 4.5:1, the pairing this story's Skicka förfrågan submit button renders through the shared primary button variant. It reads the root tokens only; the quote pages' send button override is pinned separately by the page-accent check below.

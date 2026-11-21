@@ -1123,11 +1123,12 @@
           "Ready staffing inquiry page with optional momsstatus select defaulting to Ej angivet",
           "Swedish per-field validation feedback",
           "Mail-draft handoff with a stated basis beside the rate or the unchanged declared body on omission, plus self-send confirmation",
-          "Fallback reopen draft link"
+          "Fallback reopen draft link",
+          "Edited form retains values but discards the prior draft confirmation and reopen link"
         ],
         "current_limitations": "A configured mail client is required. The site stores no inquiry, tracks no delivery and displays no confirmed-send state. The rate's momsstatus is optional and self-reported through the select or description; Ej angivet leaves it unspecified and the site never confirms a stated basis.",
         "failure_behavior": "Custom Swedish validation blocks blank required fields, a malformed email and a missing, non-numeric or negative rate with per-field messages and an alert summary; a missing or incompatible mail client can prevent handoff without a site error receipt.",
-        "recovery": "Correct the named fields, or use the displayed address and the reopen-draft fallback link in a working mail client. Retype or copy details; the site offers no persistent draft recovery.",
+        "recovery": "Correct the named fields, or use the displayed address and the reopen-draft fallback link in a working mail client. Retype or copy details; the site offers no persistent draft recovery. After editing any field or momsstatus, submit valid current details again to create a fresh draft; restoring earlier values does not revive old feedback or retract an external draft.",
         "runtime_owners": [
           "src/pages/InquiryPage.tsx",
           "src/data/siteContent.ts"
@@ -1255,6 +1256,27 @@
             {
               "framework": "vitest",
               "path": "src/pages/InquiryPage.test.tsx",
+              "name": "discards the prepared draft after editing $key and resubmits current details",
+              "evidence_type": "direct",
+              "supports": "Nine field-edit cases check removal of the prior status/reopen link, retained current values, no new opener call during edits and current decoded draft details after resubmission. Uses an injected opener, not a real mail client."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/InquiryPage.test.tsx",
+              "name": "discards the prepared draft when momsstatus changes to '%s'",
+              "evidence_type": "direct",
+              "supports": "Selecting or clearing momsstatus removes the prior status/link without opening a draft or losing field values; resubmission carries the selected basis or omits it. Uses an injected opener."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/InquiryPage.test.tsx",
+              "name": "keeps discarded feedback hidden through invalid submission and restoring the previous value",
+              "evidence_type": "direct",
+              "supports": "An invalid email blocks the opener, shows Swedish validation and focus, and keeps stale feedback absent even after restoring the email; only valid resubmission opens a fresh draft. Does not establish email delivery."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/InquiryPage.test.tsx",
               "name": "carries a stated momsstatus into the mail draft beside the offered rate",
               "evidence_type": "direct",
               "supports": "Selects the declared exklusive moms option and checks the decoded rate line received by the injected draft opener. Does not exercise a real email program or verify the stated VAT basis."
@@ -1304,11 +1326,12 @@
             "Empty Telefon and Organisationsnummer fields are marked with a dash in the draft body instead of blocking the handoff.",
             "A selected inklusive moms or exklusive moms basis is appended in parentheses beside the offered rate; it remains the visitor's statement, not a confirmed VAT basis.",
             "Leaving Momsstatus för timpriset on Ej angivet preserves the declared draft body without appending a basis or a momsstatus dash and does not block the handoff.",
-            "The static help line beside the submit button states the draft handoff and the manual send before submitting."
+            "The static help line beside the submit button states the draft handoff and the manual send before submitting.",
+            "Editing any field or changing/clearing momsstatus removes the previous confirmation and reopen link without opening another draft or clearing current inputs. A fresh valid submit creates a draft from the current values."
           ],
           "expected_outcome": "The form requests a mailto handoff to linus.svardd@outlook.com with the staffing subject and details; the visitor sends the email themselves and delivery is not established.",
           "failure_behavior": "The mail handler may fail to open; the page cannot confirm acceptance or sending.",
-          "recovery": "Use the reopen-draft fallback link or copy the displayed address and details into working email software; the site offers no persistent draft recovery or alternate transport."
+          "recovery": "Use the reopen-draft fallback link or copy the displayed address and details into working email software; the site offers no persistent draft recovery or alternate transport. After edits discard the old feedback, submit valid current details again; invalid submission or restoring an earlier value cannot revive it. A draft already opened in external email software is outside this reset."
         }
       ],
       "user_story_documents": [
@@ -1355,9 +1378,9 @@
         "supports_feature_ids": [],
         "customer_outcome": "Visitors get a self-serve preliminary cost picture for husdränering or an asfalterad uppfart before deciding to engage the company.",
         "outcome_signals": [
-          "In an observed task, a visitor selects husdränering or uppfart and sees one preliminary total for the entered measurements.",
-          "A valid calculation exposes the Begär offert mailto draft with the measurements and total and a print/PDF path, with nothing sent automatically.",
-          "A visitor creates the share link carrying the measurements and any written note, and opening it restores the inputs and the note and recomputes the same total.",
+          "In an observed task, a visitor selects husdränering or uppfart and sees one preliminary total for positive finite measurements at or below 100, or individual-contact guidance above 100.",
+          "An estimate exposes the Begär offert mailto draft with measurements, total and selected VAT label and a print/PDF path; above 100, contact carries scope and notes without a price and print is disabled. Nothing is sent automatically.",
+          "A visitor explicitly creates a share link carrying measurements, selected VAT mode and any written note; opening it restores inputs and recomputes the estimate or individual-contact state.",
           "Invalid input shows a Swedish blocking message instead of a misleading total."
         ]
       },
@@ -1952,26 +1975,26 @@
           ],
           "entry_point_refs": [],
           "preconditions": [
-            "A calculator shows a valid preliminary total."
+            "A calculator has positive finite measurements; printing requires an estimate at or below 100 m² or 100 löpmeter. Larger scopes can still be shared for individual contact."
           ],
           "flow": [
-            "Enter valid measurements and read the announced total.",
-            "Select Skriv ut / spara som PDF to open the browser's print dialog.",
-            "Keep or share the printed page; it carries the same total-only content as the view.",
-            "Or select Skapa delbar länk to write the measurements and any written note into the page URL and copy or send the displayed share link onward."
+            "Enter valid measurements and select Inkl. moms or Exkl. moms; read the total or the individual-quote contact state above 100.",
+            "For an estimate, select Skriv ut / spara som PDF to open the browser's print dialog and keep the total with its selected VAT label.",
+            "Or select Skapa delbar länk to write the measurements, selected VAT mode and any written note into the page URL.",
+            "Read the Swedish copy confirmation or manual-copy fallback in role=status, then copy or send the displayed current link onward."
           ],
           "variants": [
-            "Both calculators expose the same print control in the Din kostnadsbild aside; it stays disabled while input is invalid.",
+            "Both calculators expose the same print control in the Din kostnadsbild aside; it stays disabled while input is invalid or scope exceeds 100.",
             "The share link encodes yta and the asphalt choice on /offertberakning/ while keeping the #uppfart hash, and längd on /draneringsberakning/, together with the optional project note (anteckning) whenever one is written; the control copies through the browser clipboard when that API is available and stays usable as a plain link when it is not.",
-            "Opening a share link restores the shared inputs and the note once on load and recomputes the identical total; missing parameters fall back to the example defaults and invalid shared values go through the existing invalid-input alert with the share control disabled alongside the email and print controls.",
+            "Opening a share link restores measurements, VAT mode and the note once on load and recomputes the estimate or individual-contact state; missing parameters fall back to the example defaults and invalid shared values go through the existing invalid-input alert with share, email and print disabled.",
             "Above 100 m² or 100 löpmeter, the polite live region shows Kontakta oss för en individuell offert. The keyboard-accessible contact link carries scope and notes to linus.svardd@outlook.com without an estimated total; print is disabled and browser printing cannot include a removed total. Lowering the measurement to at most 100 restores the estimate. Share links preserve this contact state.",
             "Prices include 25% VAT. Native Inkl. moms / Exkl. moms radios default to inclusive; exclusive = original unrounded inclusive total / 1.25. Result, email and printed document carry the selected mode; reset returns to inclusive. Above 100 remains price-free in both modes. Exclusive links carry moms=exkl; absent/unknown values default to inclusive.",
-            "Changing measurements or notes, resetting values or making inputs invalid discards the old displayed share link and status. Editing alone does not publish another URL or write to the clipboard; valid inputs require a fresh explicit share action.",
+            "Changing measurements, notes or VAT mode, resetting values or making inputs invalid discards the old displayed share link and status. Editing alone does not publish another URL or write to the clipboard; valid inputs require a fresh explicit share action.",
             "An obsolete clipboard resolution or rejection cannot restore discarded feedback, even after returning to the original inputs. Only the latest explicit sharing attempt can announce its result.",
             "A successful clipboard write announces: Länken har kopierats till urklipp. Rejection or an unavailable clipboard announces: Kopieringen misslyckades. Markera och kopiera länken ovan manuellt. The fallback leaves the current attempt's link available for manual copying."
           ],
-          "expected_outcome": "The visitor hands the preliminary total to paper or a PDF through the browser's own print path, or carries the exact calculation onward through a share link carrying the measurements and any written note, whose recipient sees the same recomputed total; the website stores nothing beyond that link.",
-          "failure_behavior": "The website cannot confirm that a printout or PDF was produced; browser and printer availability stay outside the site. The share control is disabled alongside the email and print controls while input is invalid. An obsolete clipboard resolution or rejection cannot restore discarded feedback, even after returning to the original inputs. Only the latest explicit sharing attempt can announce its result. A successful clipboard write announces: Länken har kopierats till urklipp. Rejection or an unavailable clipboard announces: Kopieringen misslyckades. Markera och kopiera länken ovan manuellt. The fallback leaves the current attempt's link available for manual copying.",
+          "expected_outcome": "The visitor keeps the preliminary total and selected VAT label through the browser's print path, or shares a link that restores measurements, VAT mode and any written note and recomputes the estimate or individual-contact state; the website stores nothing beyond that link.",
+          "failure_behavior": "The website cannot confirm that a printout or PDF was produced; browser and printer availability stay outside the site. Invalid input disables email, print and share; scope above 100 instead keeps contact and share available with print disabled. Clipboard rejection or unavailability leaves the current link available with the Swedish manual-copy fallback. After edits discard the link/status, explicitly share again; obsolete clipboard completion cannot restore them. A recipient without the exact link URL starts from the example values.",
           "recovery": "Retry the print control or read the total on screen; a recipient without the exact link URL starts from the example values. The print hand-off is owned by the window.print() control in the shared result aside and the shared quote stylesheet's @media print rules, pinned by the styles.quote-print.test.ts stylesheet declarations; no declaration exercises a real print dialog. After edits discard the old link/status, explicitly share again with valid inputs; copy the displayed current link manually if clipboard copying fails."
         },
         {
