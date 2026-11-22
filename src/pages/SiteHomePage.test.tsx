@@ -986,6 +986,78 @@ describe("SiteHomePage", () => {
     expect(screen.queryByRole("link", { name: /Källa/ })).not.toBeInTheDocument();
   });
 
+  it.each(["/", "/kontakt/"])("prepares a complete selectable project inquiry without email on %s", (currentPath) => {
+    const configuredContent: SiteContent = {
+      ...content,
+      contact: { ...content.contact, form: { ...content.contact.form, recipientEmail: "projekt@example.se", subject: "Offert: gård & grävning?" } },
+    };
+    render(<SiteHomePage currentPath={currentPath} content={configuredContent} inquiryServiceId="dranering" />);
+    const form = screen.getByRole("form", { name: "Offertförfrågan via e-post" });
+    const scope = within(form);
+    form.addEventListener("submit", () => { throw new Error("Manual preparation must not submit email"); });
+    const prepare = scope.getByRole("button", { name: "Förbered utkast att kopiera" });
+    expect(prepare).toHaveAttribute("type", "button");
+    expect(scope.queryByRole("textbox", { name: "Projektförfrågan att kopiera" })).not.toBeInTheDocument();
+    fireEvent.change(scope.getByLabelText("Namn"), { target: { value: "Åsa Öberg & Söner" } });
+    fireEvent.change(scope.getByLabelText("Kundtyp"), { target: { value: "Företag" } });
+    expect(scope.getByLabelText("Tjänst")).toHaveValue("Dränering");
+    fireEvent.change(scope.getByLabelText("Tjänst"), { target: { value: "Annat" } });
+    fireEvent.change(scope.getByLabelText("Meddelande"), { target: { value: "Gård: 40 m² – grävning?\nÖnskas i vår, tack!" } });
+    fireEvent.click(prepare);
+    const draft = scope.getByRole<HTMLTextAreaElement>("textbox", { name: "Projektförfrågan att kopiera" });
+    expect(draft).toHaveValue("Till: projekt@example.se\nÄmne: Offert: gård & grävning?\n\nNamn: Åsa Öberg & Söner\nKundtyp: Företag\nTjänst: Annat\nMeddelande: Gård: 40 m² – grävning?\nÖnskas i vår, tack!");
+    expect(draft).toHaveAttribute("readonly");
+    expect(draft).toHaveAccessibleDescription(/Granska och skicka mejlet själv/);
+    draft.focus();
+    draft.select();
+    expect(draft.selectionStart).toBe(0);
+    expect(draft.selectionEnd).toBe(draft.value.length);
+    expect(new FormData(form as HTMLFormElement).getAll("message")).toEqual(["Gård: 40 m² – grävning?\nÖnskas i vår, tack!"]);
+    expect(screen.queryByText(/tack för din förfrågan|meddelandet har skickats/i)).not.toBeInTheDocument();
+  });
+
+  it("blocks manual project preparation until every required control is valid", () => {
+    render(<SiteHomePage currentPath="/kontakt/" content={content} />);
+    const scope = within(screen.getByRole("form", { name: "Offertförfrågan via e-post" }));
+    const prepare = scope.getByRole("button", { name: "Förbered utkast att kopiera" });
+    for (const [label, validValue] of [["Namn", "Åsa"], ["Meddelande", "En ny gård"], ["Kundtyp", "Företag"], ["Tjänst", "Annat"]] as const) {
+      // All other required fields are valid, isolating this control's native validity.
+      fireEvent.change(scope.getByLabelText("Namn"), { target: { value: "Åsa" } });
+      fireEvent.change(scope.getByLabelText("Meddelande"), { target: { value: "En ny gård" } });
+      fireEvent.change(scope.getByLabelText(label), { target: { value: "" } });
+      fireEvent.click(prepare);
+      expect(scope.queryByRole("textbox", { name: "Projektförfrågan att kopiera" })).not.toBeInTheDocument();
+      fireEvent.change(scope.getByLabelText(label), { target: { value: validValue } });
+    }
+    fireEvent.click(prepare);
+    expect(scope.getByRole("textbox", { name: "Projektförfrågan att kopiera" })).toBeInTheDocument();
+  });
+
+  it.each([
+    ["Namn", "Åsa", "Örjan"],
+    ["Kundtyp", "Privatperson", "Företag"],
+    ["Tjänst", "Stensättning", "Dränering"],
+    ["Meddelande", "En ny gård", "Grävning\nvid huset"],
+  ])("discards the prepared project inquiry on every %s edit until fresh preparation", (label, original, changed) => {
+    render(<SiteHomePage currentPath="/kontakt/" content={content} />);
+    const scope = within(screen.getByRole("form", { name: "Offertförfrågan via e-post" }));
+    fireEvent.change(scope.getByLabelText("Namn"), { target: { value: "Åsa" } });
+    fireEvent.change(scope.getByLabelText("Meddelande"), { target: { value: "En ny gård" } });
+    const prepare = scope.getByRole("button", { name: "Förbered utkast att kopiera" });
+    fireEvent.click(prepare);
+    expect(scope.getByRole("textbox", { name: "Projektförfrågan att kopiera" })).toBeInTheDocument();
+    const edit = label === "Namn" || label === "Meddelande" ? fireEvent.input : fireEvent.change;
+    edit(scope.getByLabelText(label), { target: { value: changed } });
+    expect(scope.queryByRole("textbox", { name: "Projektförfrågan att kopiera" })).not.toBeInTheDocument();
+    fireEvent.change(scope.getByLabelText(label), { target: { value: original } });
+    expect(scope.queryByRole("textbox", { name: "Projektförfrågan att kopiera" })).not.toBeInTheDocument();
+    fireEvent.change(scope.getByLabelText(label), { target: { value: changed } });
+    fireEvent.click(prepare);
+    expect(scope.getByRole("textbox", { name: "Projektförfrågan att kopiera" })).toHaveValue(
+      `Till: linus.svardd@outlook.com\nÄmne: Offertförfrågan från alvalinus.se\n\nNamn: ${label === "Namn" ? "Örjan" : "Åsa"}\nKundtyp: ${label === "Kundtyp" ? "Företag" : "Privatperson"}\nTjänst: ${label === "Tjänst" ? "Dränering" : "Stensättning"}\nMeddelande: ${label === "Meddelande" ? "Grävning\nvid huset" : "En ny gård"}`,
+    );
+  });
+
   it("keeps every contact form control at the 16px base text size on home and /kontakt/", () => {
     const fields = [
       { label: "Namn", name: "name" },

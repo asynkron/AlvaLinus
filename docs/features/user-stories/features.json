@@ -508,11 +508,13 @@
           "Native required-field validation",
           "Mail-client handoff",
           "Visible email fallback",
-          "Handoff explanation associated with the form"
+          "Handoff explanation associated with the form",
+          "Complete selectable project draft after explicit valid preparation",
+          "Prepared draft discarded on every control edit"
         ],
         "current_limitations": "Mailto requires a configured mail client; the complete selectable draft can instead be copied into webmail without clipboard permissions. The site stores no inquiry, tracks no delivery and displays no confirmed-send state; no email or phone field is collected.",
         "failure_behavior": "Browser validation can block blank required fields; a missing or incompatible mail client can prevent handoff without a site error receipt.",
-        "recovery": "Use the displayed email address in a working mail client. Retype or copy details; the site offers no persistent draft recovery.",
+        "recovery": "Explicitly prepare valid current input, then manually copy the complete addressed selectable draft into webmail without a mail handler or clipboard permission. No draft persists across reloads.",
         "runtime_owners": [
           "src/pages/SiteHomePage.tsx",
           "src/data/siteContent.ts"
@@ -525,7 +527,8 @@
           "In an observed browser task, name, customer type, service and message controls can be located.",
           "The form exposes the configured mailto recipient and subject; actual sending is confirmed outside the site.",
           "A service-page inquiry action preselects that service in the Tjänst select, and the visitor can change it before the handoff.",
-          "Before submitting, a visitor can identify the external email step, the delivery limit and the direct-email fallback."
+          "Before submitting, a visitor can identify the external email step, the delivery limit and the direct-email fallback.",
+          "A visitor can prepare and select recipient, subject and all four labeled current values without opening email; edits remove the draft until fresh valid preparation."
         ]
       },
       "user_stories": [
@@ -596,19 +599,40 @@
               "name": "offers the company phone contact with native keyboard access on %s",
               "evidence_type": "direct",
               "supports": "Home, contact and both calculator footers expose the literal telephone number/href and keyboard focus; home/contact also expose the telephone in their contact section, while retaining the email."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "prepares a complete selectable project inquiry without email on %s",
+              "evidence_type": "direct",
+              "supports": "Both shared entry points expose independently expected configured recipient/subject, current selections, Swedish punctuation and multiline text in a selectable read-only draft without submitting email."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "blocks manual project preparation until every required control is valid",
+              "evidence_type": "direct",
+              "supports": "Isolates native invalidity for all four required controls before successful manual preparation."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/SiteHomePage.test.tsx",
+              "name": "discards the prepared project inquiry on every %s edit until fresh preparation",
+              "evidence_type": "direct",
+              "supports": "Every control edit discards the draft; restoring values cannot revive it, and fresh valid preparation exposes independently expected current values."
             }
           ],
           "entry_point_refs": [],
           "preconditions": [
             "Home or /kontakt/ has loaded.",
-            "A mail client is configured for the handoff."
+            "External email software is needed to send; manual preparation needs no configured mail handler."
           ],
           "flow": [
             "Find Kontakta oss för offert; from a service page its inquiry action opens /kontakt/ with that service preselected in Tjänst.",
             "Enter Namn, confirm or change Kundtyp and Tjänst, and describe the project, place and desired timing in Meddelande.",
             "Read the explanation before the submit button: review and send in your own email program; the website cannot confirm delivery.",
-            "Select Skicka offertförfrågan.",
-            "Review and send in the external mail client if it opens."
+            "Select Skicka offertförfrågan for the native email handoff, or Förbered utkast att kopiera without opening email.",
+            "Review and send externally, or select and copy the complete prepared draft into webmail and send it yourself."
           ],
           "variants": [
             "Customer types are Privatperson, Företag, and BRF eller fastighetsägare.",
@@ -617,11 +641,12 @@
             "Service-page inquiry actions target /kontakt/?tjanst=<service id> using the typed service record id; contact preselects the matching typed option and keeps manual change available, while direct /kontakt/ and home /#kontakt without context and unknown or malformed context keep the first option without creating new options.",
             "Required fields use browser-native validation; the site has no custom submit handler.",
             "The same typed explanation and subject-bearing fallback email link appear inside the form on home and /kontakt/; aria-describedby associates the note with the form.",
-            "Home and /kontakt/ contact sections and the shared footer show 070-214 67 83 as tel:+46702146783 alongside linus.svardd@outlook.com; native links support keyboard focus."
+            "Home and /kontakt/ contact sections and the shared footer show 070-214 67 83 as tel:+46702146783 alongside linus.svardd@outlook.com; native links support keyboard focus.",
+            "Manual preparation requires current native validity and displays recipient, subject and all four labeled values as selectable read-only text. Every control edit discards it; restoring old values requires fresh valid preparation. No clipboard permission is required."
           ],
-          "expected_outcome": "The form requests a plain-text mail-client handoff to linus.svardd@outlook.com with the configured subject and the actually selected Tjänst option; delivery is not established.",
+          "expected_outcome": "A complete addressed selectable draft or a plain-text mail-client handoff with the configured recipient, subject and actual selected options; delivery is not established.",
           "failure_behavior": "The mail handler may fail to open; the page cannot confirm acceptance or sending.",
-          "recovery": "Use the address linked in the explanation or copy it into working email software and include project details manually; the fallback link still needs an email handler."
+          "recovery": "Explicitly prepare valid current input, then manually copy the complete addressed selectable draft into webmail without a mail handler or clipboard permission. No draft persists across reloads."
         },
         {
           "id": "F3-US2",

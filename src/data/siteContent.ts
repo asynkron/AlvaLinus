@@ -372,6 +372,13 @@ export const siteContent = {
       recipientEmail: "linus.svardd@outlook.com",
       subject: "Offertförfrågan från alvalinus.se",
       submitLabel: "Skicka offertförfrågan",
+      draft: {
+        prepareLabel: "Förbered utkast att kopiera",
+        label: "Projektförfrågan att kopiera",
+        help: "Markera och kopiera texten till din webbmejl eller ett annat e-postprogram. Granska och skicka mejlet själv. Ändrar du uppgifterna behöver du förbereda utkastet igen.",
+        recipientLabel: "Till",
+        subjectLabel: "Ämne",
+      },
       handoffNote:
         "Din förfrågan öppnas i ditt eget e-postprogram för granskning och utskick. Webbplatsen kan inte bekräfta att meddelandet har levererats. Fungerar inte överlämningen når du oss direkt på",
       nameField: {

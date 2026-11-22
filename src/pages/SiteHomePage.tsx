@@ -1051,6 +1051,19 @@ function Contact({
   readonly serviceOption?: string;
 }) {
   const form = content.contact.form;
+  const [preparedDraft, setPreparedDraft] = useState<string | null>(null);
+
+  function prepareDraft(element: HTMLFormElement | null) {
+    if (!element?.reportValidity()) return;
+    const values = new FormData(element);
+    const fields = [form.nameField, form.customerTypeField, form.serviceField, form.messageField];
+    setPreparedDraft([
+      `${form.draft.recipientLabel}: ${form.recipientEmail}`,
+      `${form.draft.subjectLabel}: ${form.subject}`,
+      "",
+      ...fields.map((field) => `${field.label}: ${String(values.get(field.name) ?? "")}`),
+    ].join("\n"));
+  }
   const emailAction = `mailto:${form.recipientEmail}?subject=${encodeURIComponent(form.subject)}`;
 
   return (
@@ -1086,6 +1099,8 @@ function Contact({
           action={emailAction}
           method="post"
           encType="text/plain"
+          onInput={() => setPreparedDraft(null)}
+          onChange={() => setPreparedDraft(null)}
           className="grid gap-4 rounded-lg border bg-card p-6 text-foreground"
         >
           <input type="hidden" name="subject" value={form.subject} />
@@ -1150,6 +1165,30 @@ function Contact({
             {form.submitLabel}
             <Send className="ml-2 h-4 w-4" aria-hidden="true" />
           </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="h-auto min-h-11 whitespace-normal justify-self-start"
+            onClick={(event) => prepareDraft(event.currentTarget.form)}
+          >
+            {form.draft.prepareLabel}
+          </Button>
+          <div aria-live="polite">
+            {preparedDraft !== null ? (
+              <div className="grid gap-2">
+                <label htmlFor="kontakt-draft" className="text-sm font-medium">{form.draft.label}</label>
+                <p id="kontakt-draft-help" className="text-sm leading-6 text-muted-foreground">{form.draft.help}</p>
+                <textarea
+                  id="kontakt-draft"
+                  aria-describedby="kontakt-draft-help"
+                  readOnly
+                  value={preparedDraft}
+                  rows={12}
+                  className={`w-full resize-y ${CONTACT_FIELD_BASE_CLASS}`}
+                />
+              </div>
+            ) : null}
+          </div>
         </form>
       </div>
     </section>

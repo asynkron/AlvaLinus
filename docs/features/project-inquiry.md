@@ -1,6 +1,6 @@
 # F3: Prepare an initial project inquiry
 
-Reviewed: 2026-11-13. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-23. Runtime: `ui`. Product role: `customer_outcome`.
 
 The current outcome is preparing an addressed inquiry with useful project
 details. The website cannot establish that an email was sent, delivered or read.
@@ -24,13 +24,22 @@ project, place and desired timing. No phone/email reply field is collected.
 Required controls use native browser validation.
 
 The form uses `method="post"`, `encType="text/plain"` and a `mailto:` action
-with an encoded subject. It has no custom submit handler, stored draft,
+with an encoded subject. It has no custom submit handler, persistent draft,
 confirmation screen or backend receipt. A typed note beside the submit action
 explains that the visitor reviews and sends the inquiry in their own email
 software, that the website cannot confirm delivery, and links the configured
 address directly from the form for a failed handoff. The note is associated
 with the form through `aria-describedby`. [F3-US2](user-stories/F3/F3-US2.md)
 covers using the visible address directly.
+
+Alternatively, Förbered utkast att kopiera checks the form's current native
+validity without submitting or opening email. Valid input produces a labeled,
+read-only selectable textarea containing Till, Ämne, Namn, Kundtyp, Tjänst and
+Meddelande. Values come from the current named controls and typed recipient and
+subject, preserving Swedish characters and message newlines. The visitor can
+select and copy it manually to webmail without clipboard permission, then review
+and send it themselves. Every input or select edit discards the prepared draft;
+restoring old values does not restore it without fresh valid preparation.
 
 ## Outcome and support
 
@@ -79,24 +88,34 @@ controls and no responsive text-size class that would shrink them below the
 iOS Safari 16px focus-zoom floor — and does not execute the iOS zoom behavior
 itself.
 
+The declarations `prepares a complete selectable project inquiry without email on %s`,
+`blocks manual project preparation until every required control is valid` and
+`discards the prepared project inquiry on every %s edit until fresh preparation`
+cover both shared entry points, addressed selectable Unicode/multiline content,
+actual selected options, required-field invalidity and all four control edits,
+including edit-and-restore. These are in-memory DOM proofs, not external email
+or operating-system clipboard acceptance.
+
 The contact body stays available when
 the services list is empty. A mail handler can fail without
-a website error state. Recovery is copying the displayed address and details
-into a working email tool. There is no persistent draft recovery or alternate
+a website error state. Recovery is explicitly preparing the complete selectable
+draft and manually copying it into a working email tool. There is no persistent draft recovery or alternate
 submission channel. Project details leave through the visitor's external mail
 handoff; this catalog makes no privacy-law or compliance assurance claim.
 
 ## What Works Less Well
 
-Sending still depends on a configured compatible email handler; the website
-cannot confirm delivery or receipt by design. The in-form fallback link and
-visible address still require external email and manual copying of project
-details when the handoff fails. No reply address is collected in the form;
+The native submit path depends on a configured compatible email handler; the
+selectable draft offers manual webmail recovery, but the visitor still needs
+external email software and must send the message themselves. The website
+cannot confirm delivery or receipt by design. No reply address is collected in the form;
 contactability depends on the external email message and what the visitor
 includes.
 
 ## Roadmap
 
+- Fix (delivered 2026-11-23): complete selectable project drafts on both shared
+  entry points, with native validity and unconditional invalidation on edits.
 - Fix (delivered 2026-10-28): service-page inquiry actions carry the typed
   service id into `/kontakt/` and the form preselects the matching option;
   manual selection and the static boundary are preserved.

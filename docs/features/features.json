@@ -69,7 +69,7 @@
     },
     {
       "name": "Prepare an initial project inquiry",
-      "description": "Visitors collect initial project details, arrive with the service preselected when coming from a service-page inquiry action, and initiate a static email handoff or use the visible contact address.",
+      "description": "Visitors collect initial project details, retain service-context selection, and prepare a complete selectable addressed draft for manual webmail copying or initiate the native email handoff.",
       "document": "docs/features/project-inquiry.md",
       "route_scope": "/, /kontakt/",
       "routes": [
@@ -94,7 +94,7 @@
           "description": "Static content and route contracts."
         }
       ],
-      "reviewed_against_source": "2026-11-13",
+      "reviewed_against_source": "2026-11-23",
       "slice_refs": [],
       "entry_point_refs": []
     },
