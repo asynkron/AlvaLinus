@@ -1,5 +1,12 @@
 # Feature catalog
 
+F6 selectable-email recovery reviewed on 2026-11-23: both calculators explicitly
+prepare the complete addressed draft for manual webmail copying. Input changes
+discard it, invalid input disables it and above-100 scope remains price-free.
+F6-US5 and its structured metadata map the in-memory declarations; published IDs,
+twelve routes and the separate sharing lifecycle remain unchanged. This is source
+review, not a runtime or delivery receipt.
+
 Latest bounded source review: F5 draft invalidation and F6 sharing states on 2026-11-21;
 other records retain their own review dates.
 

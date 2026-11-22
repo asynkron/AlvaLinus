@@ -130,7 +130,7 @@
     },
     {
       "name": "Calculate a preliminary quote",
-      "description": "Visitors choose husdränering or uppfart, enter measurements and select inclusive/exclusive VAT for a total-only preliminary estimate at or below 100 m² or 100 löpmeter; larger scopes show individual-contact guidance without a price. Explicit share links retain measurements, VAT mode and notes, while estimates also offer email and print. Edits discard old share feedback without publishing.",
+      "description": "Visitors choose husdränering or uppfart, enter measurements and select inclusive/exclusive VAT for a total-only preliminary estimate at or below 100 m² or 100 löpmeter; larger scopes show individual-contact guidance without a price. Explicit share links retain measurements, VAT mode and notes, while estimates also offer email and print. Edits discard old share feedback without publishing. Explicit selectable recipient, subject and complete current email body support manual webmail recovery; edits discard prepared text and above-100 scope stays price-free.",
       "document": "docs/features/quote-calculators.md",
       "route_scope": "/offertberakning/, /draneringsberakning/",
       "routes": [
@@ -171,7 +171,7 @@
           "description": "Quote route kind, the shared and per-calculator quote copy contracts and the calculator band contract."
         }
       ],
-      "reviewed_against_source": "2026-11-21",
+      "reviewed_against_source": "2026-11-23",
       "slice_refs": [],
       "entry_point_refs": []
     },

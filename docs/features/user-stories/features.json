@@ -1360,11 +1360,12 @@
           "Invalid input feedback",
           "Individual quote contact for finite positive measurements above 100; no estimate",
           "Current-input share link and Swedish confirmation or manual-copy fallback",
-          "Discarded share feedback after inputs change; obsolete clipboard completion ignored"
+          "Discarded share feedback after inputs change; obsolete clipboard completion ignored",
+          "Explicitly prepared selectable recipient, subject and complete current email body; discarded after every relevant edit"
         ],
-        "current_limitations": "Totals are client-side estimates from the registry-declared quote.uppfart and quote.drainage pricing with selectable inclusive/exclusive VAT; a calculation persists only through the share link the visitor explicitly creates, and a configured mail client plus the browser print dialog carry the handoff.",
-        "failure_behavior": "Invalid measurements replace the total with a Swedish role=alert message, mark the input and disable the email and print controls; a missing or incompatible mail client can prevent handoff without a site error receipt. Invalid input also disables sharing. Clipboard rejection or unavailability leaves a manually copyable link with Swedish fallback feedback; obsolete completions cannot restore discarded status.",
-        "recovery": "Correct the named measurement or use Återställ exempel; use the displayed address in a working email tool when the handoff fails. After changing inputs, explicitly create a new share link; manually copy the current displayed link if clipboard copying fails.",
+        "current_limitations": "Totals are client-side preliminary estimates with selectable VAT; above 100 contact is scope-only. Mailto requires a configured handler; explicit selectable email fields support manual webmail recovery without a clipboard API. No draft persistence, sending service or delivery assurance. Browser print remains an external handoff.",
+        "failure_behavior": "Invalid measurements replace the total with a Swedish role=alert message, mark the input and disable the email and print controls; a missing or incompatible mail client can prevent handoff without a site error receipt. Invalid input also disables sharing. Clipboard rejection or unavailability leaves a manually copyable link with Swedish fallback feedback; obsolete completions cannot restore discarded status. Invalid input also disables manual draft preparation; prepared text never retains an invalid or stale estimate.",
+        "recovery": "Correct measurements or reset the example; explicitly prepare the current selectable recipient, subject and body for manual copying into webmail. Edits, changed-value reset and invalidation discard prepared fields; returning to old values requires fresh preparation. Explicitly share again after changes and manually copy the displayed current link if clipboard copying fails.",
         "runtime_owners": [
           "src/pages/QuotePage.tsx",
           "src/pages/DrainageQuotePage.tsx",
@@ -1381,7 +1382,8 @@
           "In an observed task, a visitor selects husdränering or uppfart and sees one preliminary total for positive finite measurements at or below 100, or individual-contact guidance above 100.",
           "An estimate exposes the Begär offert mailto draft with measurements, total and selected VAT label and a print/PDF path; above 100, contact carries scope and notes without a price and print is disabled. Nothing is sent automatically.",
           "A visitor explicitly creates a share link carrying measurements, selected VAT mode and any written note; opening it restores inputs and recomputes the estimate or individual-contact state.",
-          "Invalid input shows a Swedish blocking message instead of a misleading total."
+          "Invalid input shows a Swedish blocking message instead of a misleading total.",
+          "A visitor explicitly prepares selectable addressed email text and can manually copy it into webmail, without opening mail or publishing a URL."
         ]
       },
       "user_stories": [
@@ -1879,21 +1881,21 @@
               "path": "src/styles.quote-print.test.ts",
               "name": "hides the hero image and intro decoration from the printed page",
               "evidence_type": "technical",
-              "supports": "Stylesheet check pins the shared quote stylesheet's @media print rule that removes the hero photo and the intro gradient decoration from the printed page. It reads the stylesheet source only and does not render print output."
+              "supports": "PostCSS source-level checks inspect each owned print selector independently of grouping, formatting or print-block order. Decoration, chrome, actions and draft fields are hidden; the result is released from sticky layout for paper. No browser cascade, real print dialog or rendered-paper proof."
             },
             {
               "framework": "vitest",
               "path": "src/styles.quote-print.test.ts",
               "name": "hides the page chrome and every action control from the printed page",
               "evidence_type": "technical",
-              "supports": "Stylesheet check pins the shared quote stylesheet's @media print rule that hides the page header and footer, the intro links and every action control — the send button, mail help line, Skriv ut control, reset control, share control, rendered share link and its help line and the back-to-choice link — with display:none from the printed page. It reads the stylesheet source only and does not render print output."
+              "supports": "PostCSS source-level checks inspect each owned print selector independently of grouping, formatting or print-block order. Decoration, chrome, actions and draft fields are hidden; the result is released from sticky layout for paper. No browser cascade, real print dialog or rendered-paper proof."
             },
             {
               "framework": "vitest",
               "path": "src/styles.quote-print.test.ts",
               "name": "restyles the result column for paper",
               "evidence_type": "technical",
-              "supports": "Stylesheet check pins the shared quote stylesheet's @media print restyle that lays the result column out as a block, releases the sticky result aside, removes its shadow and keeps the result together for paper. It reads the stylesheet source only and does not render print output."
+              "supports": "PostCSS source-level checks inspect each owned print selector independently of grouping, formatting or print-block order. Decoration, chrome, actions and draft fields are hidden; the result is released from sticky layout for paper. No browser cascade, real print dialog or rendered-paper proof."
             },
             {
               "framework": "vitest",
@@ -2013,7 +2015,8 @@
           "benefit": "start the discussion from the same numbers",
           "source_anchors": [
             "src/pages/QuotePage.tsx",
-            "src/pages/DrainageQuotePage.tsx"
+            "src/pages/DrainageQuotePage.tsx",
+            "src/components/QuotePageShared.tsx"
           ],
           "test_references": [
             {
@@ -2134,29 +2137,52 @@
               "name": "restores and shares an exclusive VAT estimate while old links default to inclusive",
               "evidence_type": "direct",
               "supports": "Exclusive share inputs restore selected radio and amount, and generated links preserve moms=exkl; default-inclusive cases cover older links."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteDraft.test.tsx",
+              "name": "explicitly prepares the complete selectable addressed estimate with literal multiline notes",
+              "evidence_type": "direct",
+              "supports": "Both calculator pages: explicit current selectable addressed text, independent estimates and literal multiline notes, actual edit/reset/invalidation wiring, and price-free scope recovery without publishing or clipboard requirements."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteDraft.test.tsx",
+              "name": "discards drafts on every relevant edit, return, reset and invalidation without copying or publishing",
+              "evidence_type": "direct",
+              "supports": "Both calculator pages: explicit current selectable addressed text, independent estimates and literal multiline notes, actual edit/reset/invalidation wiring, and price-free scope recovery without publishing or clipboard requirements."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteDraft.test.tsx",
+              "name": "prepares only current scope above 100 and requires preparation after price-free VAT edits",
+              "evidence_type": "direct",
+              "supports": "Both calculator pages: explicit current selectable addressed text, independent estimates and literal multiline notes, actual edit/reset/invalidation wiring, and price-free scope recovery without publishing or clipboard requirements."
             }
           ],
           "entry_point_refs": [],
           "preconditions": [
-            "A calculator shows a valid preliminary total.",
-            "A mail client is configured for the handoff."
+            "Valid positive finite calculator measurements: estimate up to and including 100, individual scope above 100.",
+            "A mail client for mailto or a working webmail tool for manual copying."
           ],
           "flow": [
             "Optionally add the project note with place, current substrate and desired timing.",
             "Select Begär offert på underlaget.",
             "Review and send the prepared draft in the own email program.",
-            "Read Öppnar ditt e-postprogram. Inget skickas automatiskt. beside the control."
+            "Read Öppnar ditt e-postprogram. Inget skickas automatiskt. beside the control.",
+            "Alternatively select Visa e-postutkast, then manually copy Mottagare, Ämne and the complete Meddelande into webmail; preparation opens no mail, copies no content and publishes no URL."
           ],
           "variants": [
             "The driveway draft has the subject Offertförfrågan – uppfart and a body with Yta, the Asfalt answer, the preliminary sum labeled Inkl. moms / Exkl. moms and Omfattning behöver bekräftas; unchecking asphalt changes the Asfalt answer.",
             "The drainage draft has the subject Offertförfrågan – husdränering and a body with the length in löpmeter, the preliminary sum and Omfattning behöver bekräftas.",
             "Both drafts address linus.svardd@outlook.com and never contain internal unit prices, fixed costs or part amounts.",
             "Above 100 m² or 100 löpmeter, the polite live region shows Kontakta oss för en individuell offert. The keyboard-accessible contact link carries scope and notes to linus.svardd@outlook.com without an estimated total; print is disabled and browser printing cannot include a removed total. Lowering the measurement to at most 100 restores the estimate. Share links preserve this contact state.",
-            "Prices include 25% VAT. Native Inkl. moms / Exkl. moms radios default to inclusive; exclusive = original unrounded inclusive total / 1.25. Result, email and printed document carry the selected mode; reset returns to inclusive. Above 100 remains price-free in both modes. Exclusive links carry moms=exkl; absent/unknown values default to inclusive."
+            "Prices include 25% VAT. Native Inkl. moms / Exkl. moms radios default to inclusive; exclusive = original unrounded inclusive total / 1.25. Result, email and printed document carry the selected mode; reset returns to inclusive. Above 100 remains price-free in both modes. Exclusive links carry moms=exkl; absent/unknown values default to inclusive.",
+            "Selectable fields decode the same mailto composition, preserving Swedish characters, literal special characters and multiline notes. Estimates include current total and selected VAT; above 100 retains only scope and notes. Every measurement, asphalt, note or VAT edit, changed-value reset and invalidation discards prepared content, even after returning to old inputs or a VAT edit with unchanged price-free body. Invalid inputs cannot prepare a usable draft."
           ],
-          "expected_outcome": "The email program receives a draft carrying the entered measurements and the preliminary total; the visitor sends it themselves and delivery is not established.",
+          "expected_outcome": "The visitor can hand off the current addressed draft through mailto or selectable text: measurements and selected-VAT total for estimates, scope and notes without price above 100. The visitor sends it themselves; delivery is not established.",
           "failure_behavior": "The mail handler may fail to open; the page cannot confirm acceptance or sending.",
-          "recovery": "Copy the address and details into a working email tool; the site offers no persistent draft recovery or alternate transport."
+          "recovery": "Select Visa e-postutkast and manually copy the labeled recipient, subject and complete body into webmail without a handler or clipboard permission. After editing, reset or invalidation, correct inputs and explicitly prepare again. No persistent draft or alternate sending transport; edits cannot retract an external draft."
         }
       ],
       "user_story_documents": [
