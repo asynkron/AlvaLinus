@@ -705,7 +705,7 @@
         ],
         "current_limitations": "Header, mobile-menu and footer navigation cover all twelve typed routes, including both calculators; the six inventory shortcuts remain a display subset. Desktop dropdown DOM declarations cover focusability, links and uncancelled Tab events, not browser tab movement or the focus-only CSS reveal. Hosting may reject unknown paths before React can display not-found.",
         "failure_behavior": "Unknown in-app paths show declared-route shortcuts. The empty-services state retains the header but has no footer.",
-        "recovery": "Use header links or reload; unknown ready routes provide all registered shortcuts. Static-host handling remains a deployment concern.",
+        "recovery": "Use header links or the empty-services contact action; correcting missing bundled services requires source correction and static redeployment, not retrying a request. Unknown ready routes provide all registered shortcuts. Static-host handling remains unverified.",
         "runtime_owners": [
           "src/pages/SiteHomePage.tsx",
           "src/data/siteContent.ts",
@@ -1040,7 +1040,7 @@
             "The default boot renders bundled content immediately, without network I/O; the page imports the bundled content module directly and no loader module exists."
           ],
           "expected_outcome": "The rendered state identifies content availability and provides route recovery when ready.",
-          "failure_behavior": "The empty-services state has no inline retry; it renders the registry-declared Kontakta oss action linking to the contact route, and its feedback applies to the service-dependent home and services-index bodies.",
+          "failure_behavior": "The empty-services state renders the registry-declared Kontakta oss action linking to the contact route, and its feedback applies to the service-dependent home and services-index bodies. Services are bundled static content, not a retryable request.",
           "recovery": "Use header navigation; a content defect needs a corrected static deployment."
         },
         {
@@ -1123,12 +1123,12 @@
           "Ready staffing inquiry page with optional momsstatus select defaulting to Ej angivet",
           "Swedish per-field validation feedback",
           "Mail-draft handoff with a stated basis beside the rate or the unchanged declared body on omission, plus self-send confirmation",
-          "Fallback reopen draft link",
+          "Fallback reopen draft link and read-only selectable addressed draft for manual copying",
           "Edited form retains values but discards the prior draft confirmation, selectable preview and reopen link"
         ],
-        "current_limitations": "A configured mail client is required. The site stores no inquiry, tracks no delivery and displays no confirmed-send state. The rate's momsstatus is optional and self-reported through the select or description; Ej angivet leaves it unspecified and the site never confirms a stated basis.",
+        "current_limitations": "The mailto handoff and reopen link require a configured mail client; the complete selectable draft can instead be copied into webmail without a handler or clipboard API. The site stores no inquiry, tracks no delivery and displays no confirmed-send state. The rate's momsstatus is optional and self-reported through the select or description; Ej angivet leaves it unspecified and the site never confirms a stated basis.",
         "failure_behavior": "Custom Swedish validation blocks blank required fields, a malformed email and a missing, non-numeric or negative rate with per-field messages and an alert summary; a missing or incompatible mail client can prevent handoff without a site error receipt.",
-        "recovery": "Correct the named fields, or use the displayed address and the reopen-draft fallback link in a working mail client. Retype or copy details; the site offers no persistent draft recovery. After editing any field or momsstatus, submit valid current details again to create a fresh draft; restoring earlier values does not revive old feedback or retract an external draft.",
+        "recovery": "Correct the named fields, reopen the draft in a working mail client, or manually copy the complete selectable recipient, subject and labeled body into webmail. The site offers no persistent draft recovery. After editing any field or momsstatus, submit valid current details again to create a fresh draft; restoring earlier values does not revive old feedback or retract an external draft.",
         "runtime_owners": [
           "src/pages/InquiryPage.tsx",
           "src/data/siteContent.ts"

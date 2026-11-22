@@ -2,7 +2,7 @@
 
 Feature: [F4 — Home, navigation and route recovery](../../navigation-and-recovery.md)  
 Status: current  
-Reviewed: 2026-11-16
+Reviewed: 2026-11-22
 
 As a site visitor, I want to interpret empty and unknown-route feedback so I can avoid mistaking missing content for a successful page.
 
@@ -29,7 +29,7 @@ The rendered state identifies content availability and provides route recovery w
 
 ## Failure and recovery
 
-The empty-services state has no inline retry; it renders the registry-declared Kontakta oss action linking to the contact route, and its feedback applies to the service-dependent home and services-index bodies.
+The empty-services state renders the registry-declared Kontakta oss action linking to the contact route, and its feedback applies to the service-dependent home and services-index bodies. Services are bundled static content, not a retryable request.
 
 Use header navigation; a content defect needs a corrected static deployment.
 

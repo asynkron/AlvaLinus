@@ -1,6 +1,6 @@
 # F5: Prepare a company staffing inquiry
 
-Reviewed: 2026-11-21. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-22. Runtime: `ui`. Product role: `customer_outcome`.
 
 Companies that need hired help can prepare a staffing inquiry addressed to the
 company. The website cannot establish that an email was sent, delivered or
@@ -60,9 +60,10 @@ valid submit. The same composition also renders a read-only selectable textarea
 with recipient, subject and labeled body, even when the injected mail opener does
 nothing. Swedish characters and internal newlines are preserved. An actual send must be confirmed outside the site. No funnel
 measurement, delivery tracking or response-time metric is installed. F4
-supplies navigation. Unlike the F3 customer inquiry this form has no backend,
-no persistent draft and no confirmation screen; the visitor sends through
-their own email tool.
+supplies navigation. Both this form and the F3 customer inquiry use an external
+email handoff with no backend or persistent draft. F5 additionally provides
+custom validation, draft feedback and selectable draft text; that feedback is
+not a confirmed-send receipt.
 
 ## Source, states and evidence
 
@@ -138,7 +139,7 @@ fresh valid submit through the injected opener. They do not control an external
 email draft or establish delivery.
 
 A mail handler can fail without a website error state. Recovery is copying the
-displayed address and details into a working email tool, or using the
+complete selectable draft into a working email tool, or using the
 fallback link again. There is no persistent draft recovery or alternate
 submission channel. Company details leave through the visitor's external mail
 handoff; this catalog makes no privacy-law or compliance assurance claim.

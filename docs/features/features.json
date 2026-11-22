@@ -113,7 +113,7 @@
         },
         {
           "path": "src/pages/InquiryPage.tsx",
-          "description": "Staffing inquiry form rendering the nine original fields plus separate optional rateBasis state/select, input attribute specs, validation execution, mailto composition appending only a stated basis beside the rate, unchanged declared body on omission, and the self-send confirmation."
+          "description": "Staffing inquiry form rendering the nine original fields plus separate optional rateBasis state/select, input attribute specs, validation execution, mailto composition appending only a stated basis beside the rate, unchanged declared body on omission, self-send feedback and a complete selectable addressed draft for manual copying; edits discard draft feedback."
         },
         {
           "path": "src/pages/SiteHomePage.tsx",
@@ -124,7 +124,7 @@
           "description": "Static content and route contracts, including the inquiry route kind, SiteInquiry.rateBasis select copy and SiteInquiryMail.rateBasisTemplate."
         }
       ],
-      "reviewed_against_source": "2026-11-21",
+      "reviewed_against_source": "2026-11-22",
       "slice_refs": [],
       "entry_point_refs": []
     },
@@ -216,7 +216,7 @@
           "description": "Shared document-emission helpers: route metadata stamping, per-route hero preload links and per-document woff2 font preload links."
         }
       ],
-      "reviewed_against_source": "2026-11-20",
+      "reviewed_against_source": "2026-11-22",
       "slice_refs": [],
       "entry_point_refs": []
     }
