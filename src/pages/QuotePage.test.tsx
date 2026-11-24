@@ -131,24 +131,38 @@ describe("QuotePage", () => {
     render(<QuotePage />);
     chooseUppfart();
 
+    expect(areaInput()).toHaveAttribute("aria-invalid", "false");
+
     fireEvent.change(areaInput(), { target: { value: "0" } });
 
+    expect(areaInput()).toHaveAttribute("aria-invalid", "true");
     expect(screen.getByRole("alert")).toHaveTextContent(text.error);
     expect(screen.queryByRole("link", { name: labelPattern(shared.sendLabel) })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: shared.sendInvalidLabel })).toBeDisabled();
     expect(screen.getByRole("button", { name: shared.printLabel })).toBeDisabled();
+    expect(screen.getByRole("button", { name: shared.shareLabel })).toBeDisabled();
     expect(screen.queryByText(shared.totalLabel)).not.toBeInTheDocument();
 
     fireEvent.change(areaInput(), { target: { value: "-5" } });
+    expect(areaInput()).toHaveAttribute("aria-invalid", "true");
     expect(screen.getByRole("alert")).toBeInTheDocument();
 
+    fireEvent.change(areaInput(), { target: { value: "0.5" } });
+    expect(areaInput()).toHaveAttribute("aria-invalid", "false");
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: labelPattern(shared.sendLabel) })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: shared.printLabel })).toBeEnabled();
+    expect(screen.getByRole("button", { name: shared.shareLabel })).toBeEnabled();
+
     fireEvent.change(areaInput(), { target: { value: "" } });
+    expect(areaInput()).toHaveAttribute("aria-invalid", "true");
     expect(screen.getByRole("alert")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: text.resetLabel }));
 
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect(areaInput()).toHaveValue(100);
+    expect(areaInput()).toHaveAttribute("aria-invalid", "false");
     expect(asphaltCheckbox()).toBeChecked();
     expect(screen.getByText(money(166600))).toBeInTheDocument();
   });
@@ -289,6 +303,7 @@ describe("QuotePage", () => {
 
     expect(document.activeElement).toBe(document.body);
     expect(areaInput()).toHaveValue(50);
+    expect(areaInput()).toHaveAttribute("aria-invalid", "false");
     expect(asphaltCheckbox()).not.toBeChecked();
     expect(screen.getByText(money(52400))).toBeInTheDocument();
     expect(screen.getByRole("textbox")).toHaveValue("");
@@ -310,6 +325,7 @@ describe("QuotePage", () => {
     window.history.replaceState(null, "", `/offertberakning/?${quoteShareParams.area}=-5#uppfart`);
     render(<QuotePage />);
 
+    expect(areaInput()).toHaveAttribute("aria-invalid", "true");
     expect(screen.getByRole("alert")).toHaveTextContent(text.error);
     expect(screen.queryByText(shared.totalLabel)).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: shared.sendInvalidLabel })).toBeDisabled();
