@@ -1,6 +1,6 @@
 # F4: Home, navigation and route recovery
 
-Reviewed: 2026-11-20. Runtime: `ui`. Product role: `surface`.
+Reviewed: 2026-11-22. Runtime: `ui`. Product role: `surface`.
 Supports **F1, F2, F3, F5 and F6**, all active customer-outcome features.
 
 Home and shared route handling make the service, company and inquiry outcomes
@@ -121,8 +121,9 @@ The header stays during the empty-services state, but the footer does not. Partn
 is omitted independently when its list is empty. The empty-services section
 also renders StaticState's optional action: the registry-declared
 `chrome.emptyStateActionLabel` "Kontakta oss" links to the contact route,
-giving visitors a next step while no inline retry mechanism exists. These are
-current behaviors, not new error recovery mechanisms.
+giving visitors a next step. Services come from the bundled registry, not a
+retryable request; correcting missing service content requires a source change
+and static redeployment.
 
 ## Sources and evidence
 
@@ -199,13 +200,12 @@ claim for the route inventory.
 
 ## What Works Less Well
 
-Empty-services feedback provides no inline retry; its standing contact path is
-the registry-declared Kontakta oss link to the contact route.
-
-## Roadmap
-
-- Expand: document the actual production-host unknown-path behavior when known.
-
+An empty bundled services list prevents service comparison on home and the
+services index. Visitors can still reach contact through Kontakta oss or the
+header, but navigation cannot restore the missing offerings; maintainers must
+correct and redeploy the static content. Production-host recovery for unknown
+paths remains unverified, so the in-app shortcuts cannot establish recovery
+before React mounts.
 
 ## Company telephone contact (fk274, 2026-11-19)
 
@@ -223,3 +223,7 @@ section on home and /kontakt/. It does not exercise a phone handler or render
 mobile/desktop layout. The footer stylesheet test no longer counts identical
 color substrings, which would incorrectly forbid adding another contact link.
 Existing source layout checks and compiled tap-height coverage remain.
+
+## Roadmap
+
+- Expand: document the actual production-host unknown-path behavior when known.

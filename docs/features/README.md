@@ -1,14 +1,21 @@
 # Feature catalog
 
+F4 static recovery and F5 selectable draft recovery reviewed
+on 2026-11-22; other records retain their own review dates.
+
+The twelve-route registry and F4 calculator inventory already agree on the
+current base. F4 recovery now distinguishes missing bundled content from a
+retryable request. F5 capability metadata includes the shipped selectable draft
+for manual copying into webmail, matching its story and page implementation.
+F6's existing pre-share note disclosure and current test mappings are retained.
+No route, feature/story identity or runtime boundary changes in this review.
+
 F6 selectable-email recovery reviewed on 2026-11-23: both calculators explicitly
 prepare the complete addressed draft for manual webmail copying. Input changes
 discard it, invalid input disables it and above-100 scope remains price-free.
 F6-US5 and its structured metadata map the in-memory declarations; published IDs,
 twelve routes and the separate sharing lifecycle remain unchanged. This is source
 review, not a runtime or delivery receipt.
-
-Latest bounded source review: F5 draft invalidation and F6 sharing states on 2026-11-21;
-other records retain their own review dates.
 
 The current review retains the twelve-route F4 coverage and the existing F6
 clipboard confirmation/fallback mappings already reconciled on the newer base.
@@ -134,7 +141,7 @@ there too. The renderer is the authority for visible sections.
 | `/dranering/` | [F1-US5](user-stories/F1/F1-US5.md) | Hero; drainage summary and dedicated moisture-protection paragraph; tags; suitability aside; process; calculator link band to [F6](quote-calculators.md); inquiry band; footer. |
 | `/tradgardsplanering/` | [F1-US6](user-stories/F1/F1-US6.md) | Hero; levels/surfaces/planting summary and tags; suitability aside; process; inquiry band; footer. |
 | `/om-oss/` | [F2-US1](user-stories/F2/F2-US1.md) | Hero and breadcrumb; company paragraphs; contact link band; footer. |
-| `/inhyrning/` | [F5-US1](user-stories/F5/F5-US1.md), [F5-US2](user-stories/F5/F5-US2.md) | Hero and breadcrumb; staffing inquiry form with Swedish validation, VAT note, optional momsstatus select and mail-draft handoff carrying a stated basis beside the rate while omission preserves the declared body; guidance aside; footer. |
+| `/inhyrning/` | [F5-US1](user-stories/F5/F5-US1.md), [F5-US2](user-stories/F5/F5-US2.md) | Hero and breadcrumb; staffing inquiry form with Swedish validation, VAT note, optional momsstatus select and mail-draft handoff carrying a stated basis beside the rate while omission preserves the declared body; selectable addressed draft and reopen link after valid submit, discarded on edits; guidance aside; footer. |
 | `/kontakt/` | [F3-US1](user-stories/F3/F3-US1.md), [F3-US2](user-stories/F3/F3-US2.md) | Hero; quote/site-visit prompt; email address; native form; footer. |
 | `/offertberakning/` | [F6-US1](user-stories/F6/F6-US1.md), [F6-US2](user-stories/F6/F6-US2.md), [F6-US3](user-stories/F6/F6-US3.md), [F6-US4](user-stories/F6/F6-US4.md), [F6-US5](user-stories/F6/F6-US5.md); [F4-US1](user-stories/F4/F4-US1.md) | Hero; breadcrumb; calculator choice (`#uppfart` selects the driveway calculator) with preliminary total, share link carrying the measurements and any written note, email handoff and print; footer. |
 | `/draneringsberakning/` | [F6-US1](user-stories/F6/F6-US1.md), [F6-US2](user-stories/F6/F6-US2.md), [F6-US3](user-stories/F6/F6-US3.md), [F6-US4](user-stories/F6/F6-US4.md), [F6-US5](user-stories/F6/F6-US5.md); [F4-US1](user-stories/F4/F4-US1.md) | Hero; breadcrumb; drainage length calculator with preliminary total, share link carrying the measurements and any written note, email handoff and print; footer. |
