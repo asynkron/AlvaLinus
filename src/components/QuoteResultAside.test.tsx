@@ -31,6 +31,24 @@ afterEach(() => {
 });
 
 describe("QuoteResultAside", () => {
+  it("keeps draft preparation independent of a pending share attempt", async () => {
+    const write = pendingWrite();
+    const writeText = vi.fn(() => write.promise);
+    useClipboard(writeText);
+    renderAside();
+    fireEvent.click(screen.getByRole("button", { name: shared.shareLabel }));
+    const publishedHref = window.location.href;
+    fireEvent.click(screen.getByRole("button", { name: shared.draftLabel }));
+    expect(screen.getByRole("textbox", { name: shared.draftRecipientLabel })).toHaveValue("test@example.se");
+    expect(screen.getByRole("link", { name: shareHref })).toHaveAttribute("href", shareHref);
+    expect(screen.getByRole("status")).toBeEmptyDOMElement();
+    expect(writeText).toHaveBeenCalledTimes(1);
+    expect(window.location.href).toBe(publishedHref);
+    await act(async () => write.resolve());
+    expect(screen.getByRole("status")).toHaveTextContent(shared.shareCopiedMessage);
+    expect(screen.getByRole("textbox", { name: shared.draftRecipientLabel })).toBeVisible();
+  });
+
   it("discloses shared notes and recipient access before sharing", () => {
     const writeText = vi.fn(() => Promise.resolve());
     useClipboard(writeText);

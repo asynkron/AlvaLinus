@@ -122,6 +122,11 @@ export type SiteQuoteShared = {
   readonly sendLabel: string;
   readonly sendInvalidLabel: string;
   readonly mailHelp: string;
+  readonly draftLabel: string;
+  readonly draftHelp: string;
+  readonly draftRecipientLabel: string;
+  readonly draftSubjectLabel: string;
+  readonly draftBodyLabel: string;
   readonly printLabel: string;
   readonly shareLabel: string;
   readonly shareHelp: string;
