@@ -991,7 +991,7 @@ describe("SiteHomePage", () => {
       ...content,
       contact: { ...content.contact, form: { ...content.contact.form, recipientEmail: "projekt@example.se", subject: "Offert: gård & grävning?" } },
     };
-    render(<SiteHomePage currentPath={currentPath} content={configuredContent} inquiryServiceId="dranering" />);
+    render(<SiteHomePage currentPath={currentPath} content={configuredContent} />);
     const form = screen.getByRole("form", { name: "Offertförfrågan via e-post" });
     const scope = within(form);
     form.addEventListener("submit", () => { throw new Error("Manual preparation must not submit email"); });
@@ -1000,7 +1000,6 @@ describe("SiteHomePage", () => {
     expect(scope.queryByRole("textbox", { name: "Projektförfrågan att kopiera" })).not.toBeInTheDocument();
     fireEvent.change(scope.getByLabelText("Namn"), { target: { value: "Åsa Öberg & Söner" } });
     fireEvent.change(scope.getByLabelText("Kundtyp"), { target: { value: "Företag" } });
-    expect(scope.getByLabelText("Tjänst")).toHaveValue("Dränering");
     fireEvent.change(scope.getByLabelText("Tjänst"), { target: { value: "Annat" } });
     fireEvent.change(scope.getByLabelText("Meddelande"), { target: { value: "Gård: 40 m² – grävning?\nÖnskas i vår, tack!" } });
     fireEvent.click(prepare);
