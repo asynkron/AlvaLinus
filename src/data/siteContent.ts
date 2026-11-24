@@ -372,6 +372,13 @@ export const siteContent = {
       recipientEmail: "linus.svardd@outlook.com",
       subject: "Offertförfrågan från alvalinus.se",
       submitLabel: "Skicka offertförfrågan",
+      draft: {
+        prepareLabel: "Förbered utkast att kopiera",
+        label: "Projektförfrågan att kopiera",
+        help: "Markera och kopiera texten till din webbmejl eller ett annat e-postprogram. Granska och skicka mejlet själv. Ändrar du uppgifterna behöver du förbereda utkastet igen.",
+        recipientLabel: "Till",
+        subjectLabel: "Ämne",
+      },
       handoffNote:
         "Din förfrågan öppnas i ditt eget e-postprogram för granskning och utskick. Webbplatsen kan inte bekräfta att meddelandet har levererats. Fungerar inte överlämningen når du oss direkt på",
       nameField: {
@@ -418,6 +425,11 @@ export const siteContent = {
       sendLabel: "Begär offert på underlaget",
       sendInvalidLabel: "Kontrollera dina uppgifter",
       mailHelp: "Öppnar ditt e-postprogram. Inget skickas automatiskt.",
+      draftLabel: "Visa e-postutkast",
+      draftHelp: "Markera och kopiera mottagare, ämne och meddelande till din webmail. Inget skickas eller kopieras automatiskt. Ändrar du uppgifterna behöver du visa utkastet igen.",
+      draftRecipientLabel: "Mottagare",
+      draftSubjectLabel: "Ämne",
+      draftBodyLabel: "Meddelande",
       printLabel: "Skriv ut / spara som PDF",
       shareLabel: "Skapa delbar länk",
       shareHelp: "Länken innehåller dina mått, val av tillval och moms samt eventuella projektanteckningar. Alla som får länken kan läsa innehållet och se samma beräkning.",

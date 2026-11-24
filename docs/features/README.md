@@ -1,6 +1,6 @@
 # Feature catalog
 
-Latest bounded source review: F4 static recovery and F5 selectable draft recovery
+F4 static recovery and F5 selectable draft recovery reviewed
 on 2026-11-22; other records retain their own review dates.
 
 The twelve-route registry and F4 calculator inventory already agree on the
@@ -9,6 +9,13 @@ retryable request. F5 capability metadata includes the shipped selectable draft
 for manual copying into webmail, matching its story and page implementation.
 F6's existing pre-share note disclosure and current test mappings are retained.
 No route, feature/story identity or runtime boundary changes in this review.
+
+F6 selectable-email recovery reviewed on 2026-11-23: both calculators explicitly
+prepare the complete addressed draft for manual webmail copying. Input changes
+discard it, invalid input disables it and above-100 scope remains price-free.
+F6-US5 and its structured metadata map the in-memory declarations; published IDs,
+twelve routes and the separate sharing lifecycle remain unchanged. This is source
+review, not a runtime or delivery receipt.
 
 The current review retains the twelve-route F4 coverage and the existing F6
 clipboard confirmation/fallback mappings already reconciled on the newer base.

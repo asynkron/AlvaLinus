@@ -21,3 +21,8 @@ derive it and the mailto handoff from one composition (fk304).
 Keep form values intact and open a new draft only on explicit valid submission.
 Cover each control through rendered form interactions and inspect the actual
 mail output against independently expected details (fk298).
+
+For the shared project Contact form, keep manual preparation separate from the
+native email submit path. Gate it on current native validity, expose complete
+addressed selectable text, and discard it on every input/select edit. Restoring
+values must require explicit fresh preparation (fk311).

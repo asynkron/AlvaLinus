@@ -93,6 +93,13 @@ export type ContactForm = {
   readonly subject: string;
   readonly submitLabel: string;
   readonly handoffNote: string;
+  readonly draft: {
+    readonly prepareLabel: string;
+    readonly label: string;
+    readonly help: string;
+    readonly recipientLabel: string;
+    readonly subjectLabel: string;
+  };
   readonly nameField: ContactTextField;
   readonly customerTypeField: ContactSelectField;
   readonly serviceField: ContactSelectField;
@@ -122,6 +129,11 @@ export type SiteQuoteShared = {
   readonly sendLabel: string;
   readonly sendInvalidLabel: string;
   readonly mailHelp: string;
+  readonly draftLabel: string;
+  readonly draftHelp: string;
+  readonly draftRecipientLabel: string;
+  readonly draftSubjectLabel: string;
+  readonly draftBodyLabel: string;
   readonly printLabel: string;
   readonly shareLabel: string;
   readonly shareHelp: string;

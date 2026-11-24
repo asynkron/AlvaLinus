@@ -72,6 +72,22 @@ function QuoteShareControls({ shared, valid, shareHref }: Pick<QuoteResultAsideP
   </>;
 }
 
+function QuoteDraftControls({ shared, valid, email }: Pick<QuoteResultAsideProps, "shared" | "valid" | "email">) {
+  const [prepared, setPrepared] = useState(false);
+  const id = useId();
+  // Decode the very same composition handed to the mail client, including literal notes.
+  const mail = valid && prepared ? new URL(email) : null;
+  return <div className="quote-draft-controls">
+    <button type="button" className="quote-draft-button" disabled={!valid} aria-expanded={prepared} aria-controls={id} onClick={() => setPrepared(true)}>{shared.draftLabel}</button>
+    <section id={id} aria-label={shared.draftLabel} hidden={!mail}>{mail ? <>
+      <p className="quote-help">{shared.draftHelp}</p>
+      <label className="quote-field"><span>{shared.draftRecipientLabel}</span><textarea readOnly rows={2} value={decodeURIComponent(mail.pathname)} /></label>
+      <label className="quote-field"><span>{shared.draftSubjectLabel}</span><textarea readOnly rows={2} value={mail.searchParams.get("subject") ?? ""} /></label>
+      <label className="quote-field"><span>{shared.draftBodyLabel}</span><textarea readOnly rows={12} value={mail.searchParams.get("body") ?? ""} /></label>
+    </> : null}</section>
+  </div>;
+}
+
 export function QuoteResultAside({ shared, error, valid, total, email, hidden, shareHref, individualQuote, vatLabel }: QuoteResultAsideProps) {
   return <aside className="quote-result" aria-label={shared.resultAriaLabel} hidden={hidden}>
     <div aria-live="polite" aria-atomic="true">
@@ -86,6 +102,8 @@ export function QuoteResultAside({ shared, error, valid, total, email, hidden, s
     {!individualQuote ? <p className="quote-disclaimer">{shared.disclaimer}</p> : null}
     <Button asChild disabled={!valid} className="quote-send">{valid ? <a href={email}>{individualQuote ? shared.individualQuoteSendLabel : shared.sendLabel}<ArrowRight size={18} aria-hidden="true" /></a> : <button disabled>{shared.sendInvalidLabel}</button>}</Button>
     <p className="quote-mail-help">{shared.mailHelp}</p>
+    {/* Raw inputs in shareHref also invalidate price-free drafts on VAT edits. */}
+    <QuoteDraftControls key={`${valid}:${shareHref}:${email}`} shared={shared} valid={valid} email={email} />
     <button className="quote-print" onClick={() => window.print()} disabled={!valid || Boolean(individualQuote)}><Printer size={16} aria-hidden="true" />{shared.printLabel}</button>
     {/* A changed or invalid quote discards feedback and pending clipboard ownership. */}
     <QuoteShareControls key={`${valid}:${shareHref}`} shared={shared} valid={valid} shareHref={shareHref} />

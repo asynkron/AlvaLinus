@@ -2,14 +2,14 @@
 
 Feature: [F6 — Calculate a preliminary quote](../../quote-calculators.md)  
 Status: current  
-Reviewed: 2026-11-19
+Reviewed: 2026-11-23
 
 As a project visitor, I want to hand my measurements and the preliminary total to the company by email so the discussion starts from the same numbers.
 
 ## Preconditions
 
-- A calculator shows a valid preliminary total.
-- A mail client is configured for the handoff.
+- A calculator has valid positive finite measurements (an estimate up to 100, individual scope above 100).
+- The visitor has a mail client for mailto, or a working webmail tool for manual copying.
 
 ## Flow
 
@@ -17,6 +17,7 @@ As a project visitor, I want to hand my measurements and the preliminary total t
 2. Select "Begär offert på underlaget".
 3. Review and send the prepared draft in the own email program.
 4. Read "Öppnar ditt e-postprogram. Inget skickas automatiskt." beside the control.
+5. Alternatively select "Visa e-postutkast" and manually copy the labeled recipient, subject and complete message into webmail; preparation does not open mail, copy content or publish a link.
 
 ## Variants
 
@@ -26,13 +27,16 @@ As a project visitor, I want to hand my measurements and the preliminary total t
 
 ## Expected outcome
 
-The email program receives a draft carrying the entered measurements and the preliminary total; the visitor sends it themselves and delivery is not established.
+The visitor can hand off the current addressed draft through mailto or selectable text: measurements and the selected-VAT preliminary total for estimates, scope and notes without a price above 100. The visitor sends it themselves and delivery is not established.
 
 ## Failure and recovery
 
-The mail handler may fail to open; the page cannot confirm acceptance or sending. Copy the address and details into a working email tool; the site offers no persistent draft recovery or alternate transport.
+The mail handler may fail to open; the page cannot confirm acceptance or sending. Explicitly select Visa e-postutkast and copy Mottagare, Ämne and Meddelande into webmail without clipboard API support. Every measurement, asphalt, note or VAT edit, changed-value reset and invalidation discards the prepared fields. Returning to earlier values requires fresh preparation, including VAT edits above 100 where the price-free body is unchanged. Invalid inputs cannot prepare a draft. Nothing is persisted or sent by the site; edits cannot retract an external draft.
 
 ## Source and evidence
+
+- vitest, [src/pages/QuoteDraft.test.tsx](../../../../src/pages/QuoteDraft.test.tsx), declarations `explicitly prepares the complete selectable addressed estimate with literal multiline notes`, `discards drafts on every relevant edit, return, reset and invalidation without copying or publishing`, and `prepares only current scope above 100 and requires preparation after price-free VAT edits` (direct): Both calculator pages, independent complete decoded expectations and amounts, read-only accessible fields without clipboard, edit-away-and-back, asphalt, notes, VAT, reset, invalid recovery and scope-only drafts. Existing share race and math declarations remain their owners.
+- vitest, [src/components/QuoteResultAside.test.tsx](../../../../src/components/QuoteResultAside.test.tsx), declaration `keeps draft preparation independent of a pending share attempt` (direct): Preparing a manual draft retains the current shared link and lets the controlled pending clipboard operation announce its result without discarding the prepared fields.
 
 - [src/pages/QuotePage.tsx](../../../../src/pages/QuotePage.tsx)
 - [src/pages/DrainageQuotePage.tsx](../../../../src/pages/DrainageQuotePage.tsx)

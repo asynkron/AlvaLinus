@@ -1,6 +1,6 @@
 # F6: Calculate a preliminary quote
 
-Reviewed: 2026-11-21. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-23. Runtime: `ui`. Product role: `customer_outcome`.
 
 Visitors choose a driveway or husdränering calculator and get a total-only
 preliminary estimate for positive finite measurements up to and including 100.
@@ -70,6 +70,30 @@ Empty, non-numeric, non-finite and non-positive measurements instead show the
 Swedish alert and aria-invalid input, remove the total and disable send,
 print and share actions. Reset restores each page's defaults and clears notes.
 
+## Selectable email recovery
+
+On either calculator, Visa e-postutkast explicitly reveals native read-only,
+selectable Mottagare, Ämne and Meddelande fields. The complete decoded body
+comes from the same composed mailto URL as the existing email action, preserving
+Swedish characters, literal special characters and multiline project notes.
+No mail handler or clipboard permission is needed to prepare and manually copy
+the fields into webmail. Preparing does not open mail, copy content or publish
+a share URL. Nothing is sent automatically or saved as a persistent draft.
+
+Estimates retain measurements, asphalt where applicable, selected VAT label and
+current total. Above 100 the draft contains only scope and notes, without an
+estimated price or VAT estimate. Invalid measurements disable preparation and
+leave no usable draft. Every measurement, asphalt, note or VAT edit, changed-value
+reset and invalidation discards the prepared fields, including VAT changes above
+100 that do not change the scope-only body. Returning to prior values requires
+fresh explicit preparation. Sharing retains its independent clipboard lifecycle.
+Draft fields and their preparation control are hidden from browser print output.
+
+[QuoteDraft.test.tsx](../../src/pages/QuoteDraft.test.tsx) maps independent full
+recipient, subject and body expectations, inclusive/exclusive examples, literal
+multiline notes, actual edit/reset/invalidation wiring and scope-only recovery
+on both calculators. These in-memory declarations are not execution receipts.
+
 ## Share and static architecture
 
 Before either calculator's explicit share action, Swedish help explains that
@@ -100,7 +124,7 @@ live result, contact action, print, share, notes and reset controls.
 [Quote helpers](../../src/lib/quote.ts) calculate totals and format values;
 [share helpers](../../src/lib/quote-share.ts) encode and decode URLs.
 [QuotePage.css](../../src/pages/QuotePage.css) preserves responsive layout and
-the two `@media print` blocks hiding decoration, chrome and action controls.
+the `@media print` rules hiding decoration, chrome, action controls and drafts.
 There is no backend, database, authentication, price feed or serverless runtime.
 
 ## Source and evidence
@@ -146,6 +170,8 @@ A calculation persists only through its share URL. Soil, depth and access
 still require assessment by the company. The site cannot confirm email
 delivery, a real printout or a binding price. After editing, visitors must
 explicitly create a new share link; clipboard restrictions can require manual copying.
+Manual webmail recovery requires copying three fields and sending in another tool;
+editing the calculator discards its prepared draft and cannot retract an external draft.
 
 ## Roadmap
 

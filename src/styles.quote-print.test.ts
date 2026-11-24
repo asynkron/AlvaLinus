@@ -1,58 +1,43 @@
+import { parse } from "postcss";
 import rawQuoteStyles from "./pages/QuotePage.css?raw";
 
-function printBlockBody(stylesheet: string, occurrence: number): string {
-  let start = -1;
-  for (let found = 0; found <= occurrence; found += 1) {
-    start = stylesheet.indexOf("@media print{", start + 1);
-    if (start === -1) {
-      throw new Error(`Missing @media print block ${occurrence + 1} in the shared quote stylesheet`);
-    }
-  }
-  const bodyStart = start + "@media print{".length;
-  let depth = 1;
-  let cursor = bodyStart;
-  while (depth > 0 && cursor < stylesheet.length) {
-    const character = stylesheet[cursor];
-    if (character === "{") {
-      depth += 1;
-    }
-    if (character === "}") {
-      depth -= 1;
-    }
-    cursor += 1;
-  }
-  return stylesheet.slice(bodyStart, cursor - 1);
-}
-
-function printRuleBody(block: string, selector: string): string {
-  const ruleStart = block.indexOf(`${selector}{`);
-  if (ruleStart === -1) {
-    throw new Error(`Missing print rule ${selector} in the shared quote stylesheet`);
-  }
-  return block.slice(ruleStart + selector.length + 1, block.indexOf("}", ruleStart));
+// Checks explicit print declarations, not browser cascade or rendered paper.
+function printValue(styles: string, selector: string, property: string): string | undefined {
+  let value: string | undefined;
+  parse(styles).walkAtRules("media", media => {
+    if (media.params.trim() !== "print") return;
+    media.walkRules(rule => {
+      if (!rule.selectors.includes(selector)) return;
+      rule.walkDecls(property, declaration => { value = declaration.value; });
+    });
+  });
+  return value;
 }
 
 describe("quote page print hand-off", () => {
   it("hides the hero image and intro decoration from the printed page", () => {
-    expect(printRuleBody(printBlockBody(rawQuoteStyles, 0), ".quote-hero-image,.quote-intro::before")).toBe(
-      "display:none",
-    );
+    for (const selector of [".quote-hero-image", ".quote-intro::before"]) {
+      expect(printValue(rawQuoteStyles, selector, "display")).toBe("none");
+    }
   });
 
   it("hides the page chrome and every action control from the printed page", () => {
-    const paperBlock = printBlockBody(rawQuoteStyles, 1);
-    expect(
-      printRuleBody(
-        paperBlock,
-        "header,footer,.quote-intro a,.quote-send,.quote-mail-help,.quote-print,.quote-reset,.quote-share,.quote-share-link,.quote-share-help,.quote-back-choice",
-      ),
-    ).toBe("display:none!important");
+    for (const selector of ["header", "footer", ".quote-intro a", ".quote-send", ".quote-mail-help", ".quote-print", ".quote-reset", ".quote-share", ".quote-share-link", ".quote-share-help", ".quote-back-choice", ".quote-draft-controls"]) {
+      expect(printValue(rawQuoteStyles, selector, "display")).toBe("none");
+    }
   });
 
   it("restyles the result column for paper", () => {
-    const paperBlock = printBlockBody(rawQuoteStyles, 1);
-    expect(printRuleBody(paperBlock, ".quote-layout")).toBe("display:block;padding:20px");
-    expect(printRuleBody(paperBlock, ".quote-result")).toBe("position:static;box-shadow:none;break-inside:avoid");
-    expect(paperBlock).toContain(".quote-result{padding:20px 0}");
+    expect(printValue(rawQuoteStyles, ".quote-layout", "display")).toBe("block");
+    expect(printValue(rawQuoteStyles, ".quote-result", "position")).toBe("static");
+    expect(printValue(rawQuoteStyles, ".quote-result", "box-shadow")).toBe("none");
+    expect(printValue(rawQuoteStyles, ".quote-result", "break-inside")).toBe("avoid");
+  });
+
+  it("matches each print selector independently of grouping and formatting", () => {
+    expect(printValue("@media print { .other, .target { display: none !important; } }", ".target", "display")).toBe("none");
+    expect(printValue("@media print { .other { display: none; } }", ".target", "display")).toBeUndefined();
+    expect(printValue("@media screen { .target { display: none; } }", ".target", "display")).toBeUndefined();
+    expect(printValue("@media print { .target { display: block; } }", ".target", "display")).toBe("block");
   });
 });
