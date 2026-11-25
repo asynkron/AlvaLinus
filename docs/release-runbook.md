@@ -58,26 +58,57 @@ revision (the same pipeline as `make build`); writes the checksum manifest to
 the retained `quality-evidence.v1` session under `FAKTORIAL_QUALITY_EVIDENCE_DIR`
 (default `.faktorial/quality`, outside Git) and requires it to be a complete
 session with at least one passed test and zero failed tests (skipped tests
-alongside passing tests are allowed); then writes
+alongside passing tests are allowed) whose `source_revision` exactly matches
+the clean checkout's full revision; then writes
 `artifacts/release-provenance.json` — a deterministic
 `release-provenance.v1` record joining the source revision, the artifact
 manifest's path and sha256 digest, and the quality evidence's digest, schema,
-producer, status, and test counts. It fails closed: if any precondition is
+producer, status, observed source revision, and test counts. It fails closed:
+if any precondition is
 unmet (dirty tree, failed build, manifest verification mismatch, missing,
-malformed, incomplete, failed, empty, or all-skipped test evidence), it exits nonzero with a descriptive
-message and writes no provenance record. Re-running it on identical inputs
+malformed, incomplete, failed, empty, all-skipped, unstamped, or different-revision
+test evidence), it exits nonzero with a descriptive message and writes no
+provenance record. Re-running it on identical inputs
 yields a byte-identical record with no timestamps or machine paths.
 
 `status: complete` means the test report is terminal, not that its tests
 passed. The command accepts that report only after validating its counts and
-requiring positive passed and zero failed counts. The retained test evidence
-contains neither a source revision nor the full canonical-gate verdict, so
-even a passing report establishes neither source-revision identity nor full
-`make quality` acceptance. Its digest identifies the exact retained bytes;
-the separately captured checkout revision does not prove those tests ran on
-that revision. The operator must connect the accepted canonical quality
-session to the released revision before publication. The provenance command
-does not run quality or supply that missing acceptance evidence.
+requiring positive passed and zero failed counts. The retained test evidence's
+source stamp binds it to the observed checkout revision, but does not contain
+the full canonical-gate verdict. A passing stamped report can also come from
+`make coverage`; it does not establish that the typecheck, build, or static
+route/asset gates passed. The operator must still connect the accepted
+canonical quality session to the released revision before publication. The
+provenance command does not run quality or supply that acceptance evidence.
+
+### Retained test evidence contract and recovery
+
+The `vitest-tests` producer retains the `quality-evidence.v1` envelope and
+`test-results.v1` payload. Its additive top-level `source_revision` field is
+the lowercase full Git commit SHA (40 characters for SHA-1 repositories or
+64 for SHA-256 repositories). `scripts/make.js` observes `HEAD^{commit}` in
+the actual repository root before Vitest starts, after removing stale report
+and evidence files. The writer observes Git again before atomic publication,
+validates the full SHA, and rejects a changed session revision. Neither an
+environment variable nor a supplied revision label can replace this observation.
+Unavailable Git or malformed identity aborts production without publishing
+replacement evidence or reusing a prior identity. This is commit identity,
+not an attestation that uncommitted source was absent during the test session.
+
+Release composition requires this field and compares it with the clean artifact
+checkout revision. The deterministic `release-provenance.v1` record retains it
+as `quality_evidence.source_revision`, alongside the SHA-256 digest of the exact
+raw evidence bytes and the original counts. Existing envelope and payload
+schema identifiers remain unchanged; older evidence consumers may ignore the
+additive field, but release composition rejects legacy unstamped documents.
+
+For missing, malformed, different-revision, or legacy unstamped evidence,
+regenerate evidence through canonical `make quality` on the intended release
+checkout (Faktorial agents request native verification). Keep its evidence
+directory with that revision's acceptance record, then retry composition.
+Do not repair evidence by inserting a SHA manually, relabel evidence from
+another revision, or mistake a successful provenance command for full-gate
+acceptance. Runtime reports and provenance records stay outside Git.
 
 Optional positional arguments override the defaults:
 `node scripts/write-release-provenance.mjs [dist-root] [manifest-path]

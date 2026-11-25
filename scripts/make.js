@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { access, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { writeQualityEvidence } from "./quality-evidence.mjs";
+import { observeCheckoutRevision, writeQualityEvidence } from "./quality-evidence.mjs";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const environment = { ...process.env };
@@ -87,12 +87,13 @@ async function tests(coverage = false) {
   for (const file of [report, path.join(directory, "vitest-tests.quality-evidence.json")]) {
     await rm(file, { force: true });
   }
+  const revision = await observeCheckoutRevision(root);
   const code = await run(process.execPath, [
     path.join(root, "node_modules/vitest/vitest.mjs"), "run",
     "--reporter=default", "--reporter=json", `--outputFile=${report}`,
     ...(coverage ? ["--coverage"] : []),
   ], { allowFailure: true });
-  await writeQualityEvidence(report, directory, root);
+  await writeQualityEvidence(report, directory, root, revision);
   if (code !== 0) {
     const error = new Error(`Vitest failed (exit ${code}).`);
     error.code = code;

@@ -54,6 +54,7 @@ function qualityEvidenceBytes(overrides = {}) {
         kind: "test-results",
         payload_schema: "test-results.v1",
         status: "complete",
+        source_revision: "e5f6a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8",
         payload: { counts: { ...ACCEPTED_COUNTS }, failures: [], observations: [] },
         ...overrides,
       },
@@ -77,6 +78,7 @@ function expectedRecord({ manifestText = expectedManifestText(), evidenceBytes =
       schema_version: "quality-evidence.v1",
       producer_id: "vitest-tests",
       status: "complete",
+      source_revision: REVISION,
       counts: { ...ACCEPTED_COUNTS },
     },
     publication: { deployment_id: null, timestamp: null, publisher: null },
@@ -200,6 +202,7 @@ describe("composeReleaseProvenance", () => {
       schema_version: "quality-evidence.v1",
       producer_id: "vitest-tests",
       status: "complete",
+      source_revision: REVISION,
       counts,
     });
   });
@@ -218,15 +221,32 @@ describe("composeReleaseProvenance", () => {
 
     expect(record.artifact_manifest.path).toBe("artifacts/sub/release.manifest.json");
   });
-
-  it("keeps publication identity a null operator placeholder", async () => {
-    const { record } = await compose();
-
-    expect(record.publication).toEqual({ deployment_id: null, timestamp: null, publisher: null });
-  });
 });
 
 describe("composeReleaseProvenance fail-closed preconditions", () => {
+  it("rejects passing evidence observed on a different full checkout revision", async () => {
+    const evidenceBytes = qualityEvidenceBytes({ source_revision: "1234567890abcdef1234567890abcdef12345678" });
+    await expect(compose({ fs: { evidenceBytes } })).rejects.toThrow(
+      /source revision "1234567890abcdef1234567890abcdef12345678" does not match checkout revision/,
+    );
+  });
+
+  it.each([undefined, null, "", "e5f6a1b", "g".repeat(40), "A".repeat(40), "a".repeat(41), 123])(
+    "rejects missing or malformed evidence source_revision %s", async (source_revision) => {
+      await expect(compose({ fs: { evidenceBytes: qualityEvidenceBytes({ source_revision }) } })).rejects.toThrow(
+        /Quality evidence source_revision must be a full hexadecimal commit SHA/,
+      );
+    },
+  );
+
+  it("accepts matching full SHA-256 revisions and retains the evidence identity", async () => {
+    const evidenceBytes = qualityEvidenceBytes({ source_revision: "ab".repeat(32) });
+    const { record } = await compose({ git: gitExecutor({ revision: "ab".repeat(32) }), fs: { evidenceBytes } });
+    expect(record.source_revision).toBe("ab".repeat(32));
+    expect(JSON.parse(serializeReleaseProvenance(record)).quality_evidence.source_revision).toBe("ab".repeat(32));
+    expect(record.quality_evidence.digest).toBe(sha256(evidenceBytes));
+  });
+
   it("refuses a dirty working tree before building", async () => {
     const runBuild = vi.fn(async () => {});
     await expect(
@@ -382,6 +402,7 @@ describe("serializeReleaseProvenance", () => {
       "schema_version",
       "producer_id",
       "status",
+      "source_revision",
       "counts",
     ]);
     expect(Object.keys(document.publication)).toEqual(["deployment_id", "timestamp", "publisher"]);

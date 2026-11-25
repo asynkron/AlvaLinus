@@ -1,5 +1,25 @@
+import { execFile } from "node:child_process";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { promisify } from "node:util";
+
+const execFileAsync = promisify(execFile);
+
+// Observe Git in this checkout, never an environment variable or revision label.
+// Each call observes afresh: a failed observation cannot reuse a previous SHA.
+export async function observeCheckoutRevision(root) {
+  let stdout;
+  try {
+    ({ stdout } = await execFileAsync("git", ["rev-parse", "--verify", "HEAD^{commit}"], { cwd: root }));
+  } catch (error) {
+    throw new Error(`Cannot establish test evidence source revision: ${error.message}`);
+  }
+  const revision = typeof stdout === "string" ? stdout.trim() : "";
+  if (!/^(?:[0-9a-f]{40}|[0-9a-f]{64})$/.test(revision)) {
+    throw new Error("Test evidence source revision must be a full hexadecimal commit SHA (40 or 64 characters).");
+  }
+  return revision;
+}
 
 // The installed Vitest JSON reporter (vitest 4.1.9 StatusMap) emits only these
 // assertion statuses; anything else is an unsupported reporter state.
@@ -62,7 +82,7 @@ export function normalizeQualityEvidence(report, root) {
 }
 
 // Consume the JSON reporter from the same Vitest session shown in the terminal.
-export async function writeQualityEvidence(reportFile, directory, root) {
+export async function writeQualityEvidence(reportFile, directory, root, expectedRevision) {
   let report;
   try {
     report = JSON.parse(await readFile(reportFile, "utf8"));
@@ -70,6 +90,10 @@ export async function writeQualityEvidence(reportFile, directory, root) {
     throw new Error(`Vitest report ${reportFile} is not valid JSON: ${error.message}`);
   }
   const { counts, failures, observations } = normalizeQualityEvidence(report, root);
+  const sourceRevision = await observeCheckoutRevision(root);
+  if (expectedRevision !== undefined && sourceRevision !== expectedRevision) {
+    throw new Error("Checkout source revision changed during the test session; refusing to publish test evidence.");
+  }
   await mkdir(directory, { recursive: true });
   const destination = path.join(directory, "vitest-tests.quality-evidence.json");
   const temporary = `${destination}.tmp`;
@@ -79,6 +103,7 @@ export async function writeQualityEvidence(reportFile, directory, root) {
     kind: "test-results",
     payload_schema: "test-results.v1",
     status: "complete",
+    source_revision: sourceRevision,
     payload: { counts, failures, observations },
   }, null, 2)}\n`);
   await rename(temporary, destination);
