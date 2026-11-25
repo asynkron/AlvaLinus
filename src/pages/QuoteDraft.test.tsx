@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { QuotePage } from "./QuotePage";
 import { DrainageQuotePage } from "./DrainageQuotePage";
 
@@ -8,13 +8,37 @@ const calculators = [
   { name: "drainage", path: "/draneringsberakning/", Page: DrainageQuotePage, subject: "Offertförfrågan – husdränering", scope: "40", inclusive: "146 900", exclusive: "117 520", project: "husdränering", measurements: "Längd: 40 löpmeter", large: "Längd: 101 löpmeter" },
 ] as const;
 
+const draftHelp = "Markera och kopiera mottagare, ämne och meddelande till din webmail. Inget skickas eller kopieras automatiskt. Ändrar du uppgifterna behöver du visa utkastet igen.";
+
 function prepare() {
   fireEvent.click(screen.getByRole("button", { name: "Visa e-postutkast" }));
+  for (const label of ["Mottagare", "Ämne", "Meddelande"]) {
+    expect(screen.getByRole("textbox", { name: label })).toHaveAccessibleDescription(draftHelp);
+  }
 }
 
 function body() {
   return (screen.getByRole("textbox", { name: "Meddelande" }) as HTMLTextAreaElement).value.replace(/[\u00a0\u202f]/g, " ");
 }
+
+it("associates each calculator draft with its own copy guidance", () => {
+  window.history.replaceState(null, "", "/offertberakning/#uppfart");
+  render(<><QuotePage /><DrainageQuotePage /></>);
+  for (const button of screen.getAllByRole("button", { name: "Visa e-postutkast" })) {
+    fireEvent.click(button);
+  }
+  const drafts = screen.getAllByRole("region", { name: "Visa e-postutkast" });
+  expect(drafts).toHaveLength(2);
+  const helps = drafts.map(draft => within(draft).getByText(draftHelp));
+  expect(new Set(helps.map(help => help.id)).size).toBe(2);
+  for (const [index, draft] of drafts.entries()) {
+    for (const label of ["Mottagare", "Ämne", "Meddelande"]) {
+      const field = within(draft).getByRole("textbox", { name: label });
+      expect(field).toHaveAccessibleDescription(draftHelp);
+      expect(document.getElementById(field.getAttribute("aria-describedby") ?? "")).toBe(helps[index]);
+    }
+  }
+});
 
 describe.each(calculators)("$name manual email draft", ({ name, path, Page, subject, scope, inclusive, exclusive, project, measurements, large }) => {
   beforeEach(() => {

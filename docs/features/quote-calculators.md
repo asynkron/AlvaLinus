@@ -80,6 +80,12 @@ No mail handler or clipboard permission is needed to prepare and manually copy
 the fields into webmail. Preparing does not open mail, copy content or publish
 a share URL. Nothing is sent automatically or saved as a persistent draft.
 
+Each prepared field keeps its visible label as its accessible name and exposes
+the existing Swedish manual-copy/send help as its accessible description.
+The help reference belongs to that draft instance, including after fresh
+preparation following an edit. This native HTML/ARIA relationship is covered
+in memory; actual screen-reader behavior and compliance are not established.
+
 Estimates retain measurements, asphalt where applicable, selected VAT label and
 current total. Above 100 the draft contains only scope and notes, without an
 estimated price or VAT estimate. Invalid measurements disable preparation and
@@ -92,7 +98,10 @@ Draft fields and their preparation control are hidden from browser print output.
 [QuoteDraft.test.tsx](../../src/pages/QuoteDraft.test.tsx) maps independent full
 recipient, subject and body expectations, inclusive/exclusive examples, literal
 multiline notes, actual edit/reset/invalidation wiring and scope-only recovery
-on both calculators. These in-memory declarations are not execution receipts.
+on both calculators. Every preparation checks all three accessible descriptions;
+`associates each calculator draft with its own copy guidance` checks that two
+rendered drafts reference their own help. These in-memory declarations are not
+execution receipts.
 
 ## Share and static architecture
 

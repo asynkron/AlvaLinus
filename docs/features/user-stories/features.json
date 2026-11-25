@@ -2166,6 +2166,13 @@
             {
               "framework": "vitest",
               "path": "src/pages/QuoteDraft.test.tsx",
+              "name": "associates each calculator draft with its own copy guidance",
+              "evidence_type": "direct",
+              "supports": "Two rendered calculator drafts reference their own copy/send help; existing parameterized preparation checks all three named fields' accessible descriptions, including after edits, invalid recovery and scope-only drafts. In-memory DOM coverage does not establish screen-reader execution or compliance."
+            },
+            {
+              "framework": "vitest",
+              "path": "src/pages/QuoteDraft.test.tsx",
               "name": "explicitly prepares the complete selectable addressed estimate with literal multiline notes",
               "evidence_type": "direct",
               "supports": "Both calculator pages: explicit current selectable addressed text, independent estimates and literal multiline notes, actual edit/reset/invalidation wiring, and price-free scope recovery without publishing or clipboard requirements."
