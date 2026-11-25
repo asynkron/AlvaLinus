@@ -1,9 +1,17 @@
 // @vitest-environment node
+import { execFile } from "node:child_process";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { normalizeQualityEvidence, writeQualityEvidence } from "./quality-evidence.mjs";
+import { normalizeQualityEvidence, observeCheckoutRevision, writeQualityEvidence } from "./quality-evidence.mjs";
+
+// Preserve execFile's promisified { stdout, stderr } boundary without processes.
+vi.mock("node:child_process", () => {
+  const execFile = vi.fn();
+  execFile[Symbol.for("nodejs.util.promisify.custom")] = execFile;
+  return { execFile };
+});
 
 vi.mock("node:fs/promises", () => ({
   mkdir: vi.fn(),
@@ -17,6 +25,7 @@ const suitePath = path.join(root, "src", "app.test.tsx");
 const reportPath = path.join(root, ".faktorial", "quality", "vitest-results.json");
 const evidenceDirectory = path.join(root, ".faktorial", "quality");
 const destinationPath = path.join(evidenceDirectory, "vitest-tests.quality-evidence.json");
+const observedRevision = "1234567890abcdef1234567890abcdef12345678";
 
 function assertionResult(fullName, status, duration, failureMessages = []) {
   const titles = fullName.split(" ");
@@ -162,6 +171,7 @@ describe("normalizeQualityEvidence", () => {
 describe("writeQualityEvidence", () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    execFile.mockResolvedValue({ stdout: `${observedRevision}\n` });
   });
 
   it("publishes evidence atomically with preserved schema identity", async () => {
@@ -174,8 +184,6 @@ describe("writeQualityEvidence", () => {
 
     await writeQualityEvidence(reportPath, evidenceDirectory, root);
 
-    expect(mkdir).toHaveBeenCalledWith(evidenceDirectory, { recursive: true });
-    expect(writeFile).toHaveBeenCalledTimes(1);
     expect(writeFile.mock.calls[0][0]).toBe(`${destinationPath}.tmp`);
     const document = JSON.parse(writeFile.mock.calls[0][1]);
     expect(document).toEqual({
@@ -184,6 +192,7 @@ describe("writeQualityEvidence", () => {
       kind: "test-results",
       payload_schema: "test-results.v1",
       status: "complete",
+      source_revision: "1234567890abcdef1234567890abcdef12345678",
       payload: {
         counts: { total: 2, passed: 1, failed: 1, skipped: 0 },
         failures: [{ test: "publishing keeps failures", file: "src/app.test.tsx", message: "AssertionError: boom" }],
@@ -194,9 +203,57 @@ describe("writeQualityEvidence", () => {
       },
     });
     expect(writeFile.mock.calls[0][1].endsWith("\n")).toBe(true);
-    expect(rename).toHaveBeenCalledTimes(1);
     expect(rename).toHaveBeenCalledWith(`${destinationPath}.tmp`, destinationPath);
     expect(writeFile.mock.invocationCallOrder[0]).toBeLessThan(rename.mock.invocationCallOrder[0]);
+  });
+
+  it("observes the repository root rather than trusting a caller revision label", async () => {
+    expect(await observeCheckoutRevision(root)).toBe("1234567890abcdef1234567890abcdef12345678");
+    expect(execFile).toHaveBeenCalledWith("git", ["rev-parse", "--verify", "HEAD^{commit}"], { cwd: root });
+    readFile.mockResolvedValue(reportWith(suite(suitePath, [assertionResult("passed", "passed", 0)])));
+
+    await expect(writeQualityEvidence(reportPath, evidenceDirectory, root,
+      "abcdefabcdefabcdefabcdefabcdefabcdefabcd")).rejects.toThrow(/source revision changed/);
+    expect(writeFile).not.toHaveBeenCalled();
+    expect(rename).not.toHaveBeenCalled();
+  });
+
+  it("accepts a full SHA-256 observation with a matching session revision", async () => {
+    execFile.mockResolvedValue({ stdout: `${"ab".repeat(32)}\n` });
+    readFile.mockResolvedValue(reportWith(suite(suitePath, [assertionResult("passed", "passed", 0)])));
+
+    await writeQualityEvidence(reportPath, evidenceDirectory, root, "ab".repeat(32));
+
+    expect(JSON.parse(writeFile.mock.calls[0][1]).source_revision).toBe("ab".repeat(32));
+    expect(rename).toHaveBeenCalledWith(`${destinationPath}.tmp`, destinationPath);
+  });
+
+  it.each([undefined, "", "abc123", "x".repeat(40), "A".repeat(40), "a".repeat(41)])(
+    "publishes no replacement evidence for malformed Git output %s", async (stdout) => {
+      readFile.mockResolvedValue(reportWith(suite(suitePath, [assertionResult("passed", "passed", 0)])));
+      execFile.mockResolvedValue({ stdout });
+
+      await expect(writeQualityEvidence(reportPath, evidenceDirectory, root)).rejects.toThrow(/full hexadecimal commit SHA/);
+      expect(writeFile).not.toHaveBeenCalled();
+      expect(rename).not.toHaveBeenCalled();
+    },
+  );
+
+  it("does not reuse an earlier identity or publish replacement evidence when Git fails", async () => {
+    readFile.mockResolvedValue(reportWith(suite(suitePath, [assertionResult("passed", "passed", 0)])));
+    const published = new Map();
+    writeFile.mockImplementation(async (file, bytes) => { published.set(file, bytes); });
+    rename.mockImplementation(async (from, to) => { published.set(to, published.get(from)); published.delete(from); });
+    await writeQualityEvidence(reportPath, evidenceDirectory, root);
+    const original = published.get(destinationPath);
+    readFile.mockResolvedValue(reportWith(suite(suitePath, [assertionResult("a later session", "passed", 1)])));
+    execFile.mockRejectedValue(new Error("Git unavailable"));
+
+    await expect(writeQualityEvidence(reportPath, evidenceDirectory, root)).rejects.toThrow(
+      "Cannot establish test evidence source revision: Git unavailable",
+    );
+    expect(published.get(destinationPath)).toBe(original);
+    expect(published.has(`${destinationPath}.tmp`)).toBe(false);
   });
 
   it("publishes no evidence file for unparseable JSON", async () => {

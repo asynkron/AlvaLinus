@@ -96,7 +96,7 @@ function requireTestCounts(counts) {
   return normalized;
 }
 
-function requireAcceptedQualityEvidence(bytes) {
+function requireAcceptedQualityEvidence(bytes, revision) {
   let document;
   try {
     document = JSON.parse(bytes.toString("utf8"));
@@ -126,6 +126,18 @@ function requireAcceptedQualityEvidence(bytes) {
       `Quality evidence status ${quote(document.status)} is not an accepted complete quality session.`,
     );
   }
+  if (typeof document.source_revision !== "string" || !FULL_REVISION_PATTERN.test(document.source_revision)) {
+    throw new Error(
+      "Quality evidence source_revision must be a full hexadecimal commit SHA (40 or 64 characters). " +
+        "Regenerate evidence with make quality on the release checkout; legacy unstamped evidence is not accepted.",
+    );
+  }
+  if (document.source_revision !== revision) {
+    throw new Error(
+      `Quality evidence source revision ${quote(document.source_revision)} does not match checkout revision ${quote(revision)}. ` +
+        "Run make quality on the release checkout before composing release provenance.",
+    );
+  }
   const counts = requireTestCounts(document.payload?.counts);
   if (counts.failed > 0) {
     throw new Error(`Quality evidence contains ${counts.failed} failed tests; accepted evidence requires zero failures.`);
@@ -138,6 +150,7 @@ function requireAcceptedQualityEvidence(bytes) {
     schema_version: document.schema_version,
     producer_id: document.producer_id,
     status: document.status,
+    source_revision: document.source_revision,
     counts,
   };
 }
@@ -207,7 +220,7 @@ export async function composeReleaseProvenance({
     }
     throw error;
   }
-  const qualityEvidence = requireAcceptedQualityEvidence(evidenceBytes);
+  const qualityEvidence = requireAcceptedQualityEvidence(evidenceBytes, revision);
 
   return {
     manifestBytes,
@@ -255,6 +268,7 @@ export function serializeReleaseProvenance(record) {
         schema_version: record.quality_evidence.schema_version,
         producer_id: record.quality_evidence.producer_id,
         status: record.quality_evidence.status,
+        source_revision: record.quality_evidence.source_revision,
         counts: {
           total: record.quality_evidence.counts.total,
           passed: record.quality_evidence.counts.passed,
