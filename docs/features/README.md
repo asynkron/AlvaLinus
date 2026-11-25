@@ -1,5 +1,14 @@
 # Feature catalog
 
+F6 sharing feedback and disclosure reconciled on 2026-11-25 against the current
+source. The newer base already contains all three clipboard outcome mappings;
+this review retains them, aligns F6-US4's structured disclosure flow with its
+Markdown, and names `QuoteResultAside` and its internal `QuoteShareControls`
+beside the registry-owned Swedish status copy. The inventory now describes
+copy confirmation and manual-copy recovery explicitly. This source review does
+not establish real clipboard, screen-reader, print or email execution.
+Other feature review dates and all published identities remain unchanged.
+
 F4 static recovery and F5 selectable draft recovery reviewed
 on 2026-11-22; other records retain their own review dates.
 

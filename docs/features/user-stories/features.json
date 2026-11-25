@@ -1384,7 +1384,7 @@
           "Preliminary total announced",
           "Invalid input feedback",
           "Individual quote contact for finite positive measurements above 100; no estimate",
-          "Current-input share link and Swedish confirmation or manual-copy fallback",
+          "Current-input share link and registry-owned Swedish role=status confirmation or manual-copy fallback",
           "Discarded share feedback after inputs change; obsolete clipboard completion ignored",
           "Explicitly prepared selectable recipient, subject and complete current email body; discarded after every relevant edit"
         ],
@@ -1828,6 +1828,7 @@
             "src/pages/DrainageQuotePage.tsx",
             "src/lib/quote-share.ts",
             "src/components/QuotePageShared.tsx",
+            "src/data/siteContent.ts",
             "src/pages/QuotePage.css"
           ],
           "test_references": [
@@ -2014,7 +2015,7 @@
           "flow": [
             "Enter valid measurements and select Inkl. moms or Exkl. moms; read the total or the individual-quote contact state above 100.",
             "For an estimate, select Skriv ut / spara som PDF to open the browser's print dialog and keep the total with its selected VAT label.",
-            "Or select Skapa delbar länk to write the measurements, selected VAT mode and any written note into the page URL.",
+            "Or read the Swedish help explaining that measurements, options, VAT mode and any project notes will be readable by anyone receiving the link, then select Skapa delbar länk to write them into the page URL. The help is visible before sharing, including with a note entered.",
             "Read the Swedish copy confirmation or manual-copy fallback in role=status, then copy or send the displayed current link onward."
           ],
           "variants": [

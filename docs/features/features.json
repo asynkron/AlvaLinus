@@ -130,7 +130,7 @@
     },
     {
       "name": "Calculate a preliminary quote",
-      "description": "Visitors choose husdränering or uppfart, enter measurements and select inclusive/exclusive VAT for a total-only preliminary estimate at or below 100 m² or 100 löpmeter; larger scopes show individual-contact guidance without a price. Explicit share links retain measurements, VAT mode and notes, while estimates also offer email and print. Edits discard old share feedback without publishing. Explicit selectable recipient, subject and complete current email body support manual webmail recovery; edits discard prepared text and above-100 scope stays price-free.",
+      "description": "Visitors choose husdränering or uppfart, enter measurements and select inclusive/exclusive VAT for a total-only preliminary estimate at or below 100 m² or 100 löpmeter; larger scopes show individual-contact guidance without a price. Explicit share links retain measurements, VAT mode and notes, with Swedish copy confirmation or manual-copy fallback retaining the current link. Estimates also offer email and print. Edits discard old share feedback without publishing. Explicit selectable recipient, subject and complete current email body support manual webmail recovery; edits discard prepared text and above-100 scope stays price-free.",
       "document": "docs/features/quote-calculators.md",
       "route_scope": "/offertberakning/, /draneringsberakning/",
       "routes": [
@@ -148,7 +148,7 @@
         },
         {
           "path": "src/components/QuotePageShared.tsx",
-          "description": "Shared quote page shell, result aside, notes field and reset button both calculators render; QuoteShareControls owns explicit URL/clipboard publication and latest-attempt feedback, remounted when shareHref or validity changes to discard old feedback and pending ownership."
+          "description": "Exports QuotePageShell, QuoteResultAside, notes and reset controls for both calculators. QuoteResultAside renders the live result, contact and print handoff; internal QuoteShareControls owns explicit URL/clipboard publication, the current link and registry-owned Swedish success/fallback status, remounted when shareHref or validity changes to discard old feedback and pending ownership."
         },
         {
           "path": "src/lib/quote.ts",
@@ -171,7 +171,7 @@
           "description": "Quote route kind, the shared and per-calculator quote copy contracts and the calculator band contract."
         }
       ],
-      "reviewed_against_source": "2026-11-23",
+      "reviewed_against_source": "2026-11-25",
       "slice_refs": [],
       "entry_point_refs": []
     },
