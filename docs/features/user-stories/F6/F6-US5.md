@@ -24,6 +24,7 @@ As a project visitor, I want to hand my measurements and the preliminary total t
 - The driveway draft has the subject "Offertförfrågan – uppfart" and a body with Yta, the Asfalt answer, the preliminary sum labeled "Inkl. moms / Exkl. moms" and "Omfattning behöver bekräftas"; unchecking asphalt changes the Asfalt answer.
 - The drainage draft has the subject "Offertförfrågan – husdränering" and a body with the length in löpmeter, the preliminary sum and "Omfattning behöver bekräftas".
 - Both drafts address linus.svardd@outlook.com and never contain internal unit prices, fixed costs or part amounts.
+- Each selectable field retains its visible accessible name and exposes the existing Swedish copy/send help as its accessible description, with a reference to its own draft instance's help. Fresh preparation restores this relationship after edits.
 
 ## Expected outcome
 
@@ -35,6 +36,7 @@ The mail handler may fail to open; the page cannot confirm acceptance or sending
 
 ## Source and evidence
 
+- vitest, [src/pages/QuoteDraft.test.tsx](../../../../src/pages/QuoteDraft.test.tsx), declaration `associates each calculator draft with its own copy guidance` (direct): Two rendered calculator drafts reference their own help without sharing identities. The existing parameterized preparation helper checks all three named fields' accessible descriptions on initial preparation, edits, invalid recovery and scope-only drafts. This is in-memory DOM coverage, not a screen-reader execution or compliance verdict.
 - vitest, [src/pages/QuoteDraft.test.tsx](../../../../src/pages/QuoteDraft.test.tsx), declarations `explicitly prepares the complete selectable addressed estimate with literal multiline notes`, `discards drafts on every relevant edit, return, reset and invalidation without copying or publishing`, and `prepares only current scope above 100 and requires preparation after price-free VAT edits` (direct): Both calculator pages, independent complete decoded expectations and amounts, read-only accessible fields without clipboard, edit-away-and-back, asphalt, notes, VAT, reset, invalid recovery and scope-only drafts. Existing share race and math declarations remain their owners.
 - vitest, [src/components/QuoteResultAside.test.tsx](../../../../src/components/QuoteResultAside.test.tsx), declaration `keeps draft preparation independent of a pending share attempt` (direct): Preparing a manual draft retains the current shared link and lets the controlled pending clipboard operation announce its result without discarding the prepared fields.
 

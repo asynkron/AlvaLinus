@@ -75,15 +75,16 @@ function QuoteShareControls({ shared, valid, shareHref }: Pick<QuoteResultAsideP
 function QuoteDraftControls({ shared, valid, email }: Pick<QuoteResultAsideProps, "shared" | "valid" | "email">) {
   const [prepared, setPrepared] = useState(false);
   const id = useId();
+  const helpId = `${id}-help`;
   // Decode the very same composition handed to the mail client, including literal notes.
   const mail = valid && prepared ? new URL(email) : null;
   return <div className="quote-draft-controls">
     <button type="button" className="quote-draft-button" disabled={!valid} aria-expanded={prepared} aria-controls={id} onClick={() => setPrepared(true)}>{shared.draftLabel}</button>
     <section id={id} aria-label={shared.draftLabel} hidden={!mail}>{mail ? <>
-      <p className="quote-help">{shared.draftHelp}</p>
-      <label className="quote-field"><span>{shared.draftRecipientLabel}</span><textarea readOnly rows={2} value={decodeURIComponent(mail.pathname)} /></label>
-      <label className="quote-field"><span>{shared.draftSubjectLabel}</span><textarea readOnly rows={2} value={mail.searchParams.get("subject") ?? ""} /></label>
-      <label className="quote-field"><span>{shared.draftBodyLabel}</span><textarea readOnly rows={12} value={mail.searchParams.get("body") ?? ""} /></label>
+      <p id={helpId} className="quote-help">{shared.draftHelp}</p>
+      <label className="quote-field"><span>{shared.draftRecipientLabel}</span><textarea aria-describedby={helpId} readOnly rows={2} value={decodeURIComponent(mail.pathname)} /></label>
+      <label className="quote-field"><span>{shared.draftSubjectLabel}</span><textarea aria-describedby={helpId} readOnly rows={2} value={mail.searchParams.get("subject") ?? ""} /></label>
+      <label className="quote-field"><span>{shared.draftBodyLabel}</span><textarea aria-describedby={helpId} readOnly rows={12} value={mail.searchParams.get("body") ?? ""} /></label>
     </> : null}</section>
   </div>;
 }
