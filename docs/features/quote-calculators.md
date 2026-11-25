@@ -1,6 +1,6 @@
 # F6: Calculate a preliminary quote
 
-Reviewed: 2026-11-23. Runtime: `ui`. Product role: `customer_outcome`.
+Reviewed: 2026-11-25. Runtime: `ui`. Product role: `customer_outcome`.
 
 Visitors choose a driveway or husdränering calculator and get a total-only
 preliminary estimate for positive finite measurements up to and including 100.
@@ -126,8 +126,12 @@ Nothing persists beyond the URL.
 
 [QuotePage](../../src/pages/QuotePage.tsx) and
 [DrainageQuotePage](../../src/pages/DrainageQuotePage.tsx) own input state.
-[QuotePageShared](../../src/components/QuotePageShared.tsx) owns the shell,
-live result, contact action, print, share, notes and reset controls.
+[QuotePageShared](../../src/components/QuotePageShared.tsx) exports the shell,
+`QuoteResultAside`, notes and reset controls. `QuoteResultAside` renders the live
+result, contact action and print handoff; its internal `QuoteShareControls`
+owns URL publication, the displayed link and latest-attempt `role="status"`
+feedback. The success and fallback text come from
+`siteContent.quote.shared.shareCopiedMessage` and `shareFallbackMessage`.
 [Typed content](../../src/data/siteContent.ts) and
 [types](../../src/types/site.ts) hold Swedish copy, mail templates and prices.
 [Quote helpers](../../src/lib/quote.ts) calculate totals and format values;
@@ -184,4 +188,6 @@ editing the calculator discards its prepared draft and cannot retract an externa
 
 ## Roadmap
 
+- Fix: reduce the three-field copying needed for manual webmail recovery,
+  while keeping the complete addressed draft selectable without clipboard permission.
 - Add calculator choices when the company defines further project types.

@@ -2,7 +2,7 @@
 
 Feature: [F6 — Calculate a preliminary quote](../../quote-calculators.md)  
 Status: current  
-Reviewed: 2026-11-21
+Reviewed: 2026-11-25
 
 As a project visitor, I want to print or save the preliminary quote, or share it through a link carrying the measurements and any written note, so I can keep or share the cost picture outside the browser session.
 
@@ -43,7 +43,15 @@ The website cannot confirm that a printout or PDF was produced; browser and prin
 - [src/pages/DrainageQuotePage.tsx](../../../../src/pages/DrainageQuotePage.tsx)
 - [src/lib/quote-share.ts](../../../../src/lib/quote-share.ts)
 - [src/components/QuotePageShared.tsx](../../../../src/components/QuotePageShared.tsx)
+- [src/data/siteContent.ts](../../../../src/data/siteContent.ts)
 - [src/pages/QuotePage.css](../../../../src/pages/QuotePage.css)
+
+`QuoteResultAside` in QuotePageShared renders the shared result and print
+handoff. Its internal `QuoteShareControls` publishes the URL, retains the current
+link and renders `role="status"` using the registry's `shareCopiedMessage` or
+`shareFallbackMessage`. Both calculators use this same owner; the three clipboard
+declarations below map rendered feedback with mocked APIs, not operating-system
+clipboard or screen-reader execution.
 
 The 2026-11-17 reconciliation maps the `fk233` share-link declarations into this story; the 2026-11-18 `fk253` change then carried the optional project note through the same link, and the same-day print mapping names the delivered print hand-off's source anchors and stylesheet declarations:
 
